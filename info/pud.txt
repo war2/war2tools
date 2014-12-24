@@ -1,0 +1,676 @@
+Source: http://cade.datamax.bg/war2x/pudspec.html
+
+
+PUD file format revision 3
+
+
+
+Symbols used:
+
+char    occupy 1 byte.
+byte    occupy 1 byte.
+word    occupy 2 bytes.
+long    occupy 4 bytes.
+
+The pud format consist of many sections, all sections start the same way:
+
+        4 char          name of section
+        long            length of the data (excluding header info)
+        ...             data
+
+0: Section 'TYPE', identifies as a PUD file
+
+       10 bytes     'WAR2 MAP' + 00 00
+        2 bytes     unused (always set to $0a and $ff by edtior,
+                            but can be anything for the game)
+        4 bytes     id tag (for consistence check in multiplayer)
+
+1: Section 'VER ', identifies PUD version
+
+        word        version
+        0x11 = Maps without new heroes. (see Note1)
+
+        0x13 = Maps with new heroes. (see Note2)
+
+        Note1: v1.3 supports new heroes, but the editor does not.
+
+        Note2: v1.00 - 1.3 will not accept a map vith this set.
+               It will not show up in selectlist of maps in the game.
+
+2: Section 'DESC', PUD description
+
+        32 bytes        null terminated description
+
+3: Section 'OWNR', identifies controller of each side
+
+        8 bytes         8 player slots (0-7)
+        7 bytes         "unusable" 7 player slots (8-14)
+        byte            neutral (15)
+
+        should be:
+
+        0x02             passive computer
+        0x03             nobody
+        0x04             computer
+        0x05             human
+        0x06             rescue (passive)
+        0x07             rescue (active)
+
+        can also be:
+
+        0x00             passive computer
+        0x01             computer
+        0x08 - 0xff      passive computer
+
+See appendix E for possible use of "unusable" 7 players.
+
+4: Section 'ERA ', terrain type.
+
+        word            terrain
+
+        should be:
+
+        $00             forest
+        $01             winter
+        $02             wasteland
+        $03             swamp (see Note1 and Note2)
+
+        Note1: The mapeditor, v1.0 - 1.3 will make a runtime error.
+               v1.33 will display this as forest.
+
+        Note2: The game, v1.0 - 1.2p will display this as forest.
+               v1.3 - 1.33 will display this as swamp
+
+        can also be:
+
+        $04 - $ff       forest
+
+4.1: Section 'ERAX', terrain type. (Optional)
+
+       *If v1.33 ERAX will be used instead of ERA, if it is present.
+       *If v1.0 - 1.3 ERAX is ignored, ERA will be used.
+       *This has nothing to do with what VER it is.
+
+        word            terrain
+
+        should be:
+
+        $00             forest
+        $01             winter
+        $02             wasteland
+        $03             swamp
+
+        can also be:
+
+        $04 - $ff       forest
+
+5: Section 'DIM ', map dimensions
+
+        word            x
+        word            y
+
+        Standard i 32x32, 64x64, 96x96 and 128x128.
+        The minimap in the game will automatic fit it self to the size.
+
+        The map can be any size you want, but max. 128x128.
+        Just be sure that MTXM,SQN,OILM and REGN correspond to that size, or
+        contains enough data to make a map, else you get an error. The
+        x and y size has to be the same size, in fact no the don't, because
+        the game will always make a map out of the y size. (looks like
+        the x size is just fill ?)
+        If the y size is off standard, the minimap in the game will
+        default to 128x128, but the units movement on the map will correspond
+        to the size, and so the white square, the fog of war thing will
+        move as to a 128x128 map.
+        The editor will make an error if you try to read an off standard map
+        size.
+
+6: Section 'UDTA', Unit Data
+
+        word            use default data (0 no, 1 yes)
+        110 words       overlap frames
+        508 words       obselete data (ignore it) was frame used by each
+                        3 tileset: Forest, winter, wasteland.
+        110 longs       sight range (can be 0 through 9)
+        110 words       hit points
+        110 bytes       magic (0 no, 1 yes)
+        110 bytes       build time (6 = 1 sec.)
+        110 bytes       1/10 gold cost
+        110 bytes       1/10 lumber cost
+        110 bytes       1/10 oil cost
+        110 longs       unit size (x then y)
+        110 longs       box size (x then y)
+        110 bytes       attack range
+        110 bytes       react range (computer)
+        110 bytes       react range (human)
+        110 bytes       armor
+        110 bytes       selectable via rectangle (0 no, 1 yes)
+        110 bytes       priority (the higher, the fewer)
+        110 bytes       basic damage
+        110 bytes       piercing damage
+        110 bytes       weapons upgradable (0 no, 1 yes)
+        110 bytes       armor upgradable (0 no, 1 yes)
+        110 bytes       missile weapon
+
+                0x00    lightning
+                0x01    griffon hammer
+                0x02    dragon breath
+                0x03    flame shield
+                0x07    big cannon
+                0x0a    touch of death
+                0x0d    catapult rock
+                0x0e    ballista bolt
+                0x0f    arrow
+                0x10    axe
+                0x11    submarine missile
+                0x12    turtle missile
+                0x18    small cannon
+                0x1b    demon fire
+                0x1d    none
+
+        110 bytes       unit type (0 land, 1 fly, 2 naval)
+                        only changes appearance
+        110 bytes       decay rate (dies in rate * 6 secs time, 0 never decays)
+                        only applies to units you build or create via spell
+        110 bytes       Annoy computer factor
+         58 bytes       2nd mouse button action
+
+               0x01 attack
+               0x02 move
+               0x03 harvest
+               0x04 haul oil
+               0x05 demolish
+               0x06 sail
+
+               only the first 58 units, sometimes crashes if wrong
+
+        110 words       point value for killing unit
+        110 bytes       can target (1 land, 2 sea, 4 air, OR together)
+                        note: some missiles can't hit air units
+        110 longs       flags
+                        bit 0: Land unit
+                        bit 1: Air unit
+                        bit 2: Explode when killed (used on catapult)
+                        bit 3: Sea unit
+                        bit 4: Critter
+                        bit 5: Is a building
+                        bit 6: Is a submarine
+                        bit 7: Can see submarine
+                        bit 8: Is a peon
+                        bit 9: Is a tanker
+                        bit10: Is a transport
+                        bit11: Is a place to get oil
+                        bit12: Is a storage for gold
+                        bit13: Not used
+                        bit14: Can ground attack (only applies to catapult and
+                               ships)
+                        bit15: Is undead (exorcism work on them)
+                        bit16: Is a Shore building
+                        bit17: Can cast spell
+                        bit18: Is a storage for wood
+                        bit19: Can attack
+                        bit20: Is a tower
+                        bit21: Is an oil patch
+                        bit22: Is a mine
+                        bit23: Is a hero
+                        bit24: Is a storage for oil
+                        bit25: Is invisibility/unholy armor kill this unit
+                        bit26: Is this unit act like a mage
+                        bit27: Is this unit organic (spells)
+                        bit28: not used
+                        bit29: not used
+                        bit30: not used
+                        bit31: not used
+
+        127 words       Obselete. frame used by Swamp tileset.
+                        note: only present in map from "maindat.war"
+
+        See Appendix A for correct order of units inside the 110 values.
+
+7: Section 'ALOW', Pud restrictions (Optional)
+        16 longs        Units and buildings allowed. (16 players)
+        16 longs        Spell you start with. (16 players)
+        16 longs        Spell allowed to research. (16 players)
+        16 longs        Spell currently researching (only good for save file).
+        16 longs        Upgrade allowed. (16 players)
+        16 longs        Upgrade currently being acquired. (16 players)
+
+        units bit order:
+        0000000000000000000000000000000x        bit0:  footman/grunt
+        000000000000000000000000000000x0        bit1:  peasant/peon
+        00000000000000000000000000000x00        bit2:  ballista/catapult
+        0000000000000000000000000000x000        bit3:  knight/ogre
+        000000000000000000000000000x0000        bit4:  archer/axe thrower
+        00000000000000000000000000x00000        bit5:  mage/death knights
+        0000000000000000000000000x000000        bit6:  tanker
+        000000000000000000000000x0000000        bit7:  destroyer
+        00000000000000000000000x00000000        bit8:  transport
+        0000000000000000000000x000000000        bit9:  battleship/juggernault
+        000000000000000000000x0000000000        bit10: submarine/turtle
+        00000000000000000000x00000000000        bit11: flying machine/balloon
+        0000000000000000000x000000000000        bit12: gryphon/dragon
+        000000000000000000x0000000000000        bit13: unused/unused
+        00000000000000000x00000000000000        bit14: demo. squad/sapper
+        0000000000000000x000000000000000        bit15: aviary/roost
+        000000000000000x0000000000000000        bit16: farm
+        00000000000000x00000000000000000        bit17: barracks
+        0000000000000x000000000000000000        bit18: lumber mill
+        000000000000x0000000000000000000        bit19: stables/mound
+        00000000000x00000000000000000000        bit20: mage tower/temple
+        0000000000x000000000000000000000        bit21: foundry
+        000000000x0000000000000000000000        bit22: refinery
+        00000000x00000000000000000000000        bit23: inventor/alchemist
+        0000000x000000000000000000000000        bit24: church/altar storms
+        000000x0000000000000000000000000        bit25: tower
+        00000x00000000000000000000000000        bit26: town hall/great hall
+        0000x000000000000000000000000000        bit27: keep/stronghold
+        000x0000000000000000000000000000        bit28: castle/fortress
+        00x00000000000000000000000000000        bit29: blacksmith
+        0x000000000000000000000000000000        bit30: shipyard
+        x0000000000000000000000000000000        bit31: unused
+
+        spells bit order:
+        0000000000000000000000000000000x        bit0:  holy vision
+        000000000000000000000000000000x0        bit1:  healing
+        00000000000000000000000000000x00        bit2:  unused
+        0000000000000000000000000000x000        bit3:  exorcism
+        000000000000000000000000000x0000        bit4:  flame shield
+        00000000000000000000000000x00000        bit5:  fireball
+        0000000000000000000000000x000000        bit6:  slow
+        000000000000000000000000x0000000        bit7:  invisibility
+        00000000000000000000000x00000000        bit8:  polymorph
+        0000000000000000000000x000000000        bit9:  blizzard
+        000000000000000000000x0000000000        bit10: eye of kilrog
+        00000000000000000000x00000000000        bit11: bloodlust
+        0000000000000000000x000000000000        bit12: unused
+        000000000000000000x0000000000000        bit13: raise dead
+        00000000000000000x00000000000000        bit14: death coil
+        0000000000000000x000000000000000        bit15: whirlwind
+        00000000000000x00000000000000000        bit16: haste
+        0000000000000x000000000000000000        bit17: unholy armor
+        000000000000x0000000000000000000        bit18: runes
+        00000000000x00000000000000000000        bit19: death and decay
+                                          bit20-bit31: unused
+
+8: Section 'UGRD', Upgrade Data
+
+        word            use default data (0 no, 1 yes)
+        52 bytes        upgrade time
+        52 words        gold cost
+        52 words        lumber cost
+        52 words        oil cost
+        52 words        upgrade icon
+        52 words        group applies to
+        52 longs        Affect flags (What does the upgrade give)
+
+        See Appendix B for correct order of upgrades inside the 52 values.
+
+9: Section 'SIDE', Identifies race of each player
+
+        8 bytes         8 player slots (0-7)
+        7 bytes         "unusable" 7 player slots (8-14)
+        1 byte          neutral (15)
+
+        should be:
+
+        0x00             human
+        0x01             orc
+        0x02             neutral (shows up as human, when use of
+                                  non standard neutral units)
+        can also be:
+
+        0x03 - 0xff      neutral (shows up as human, when use of
+                                 nonstandart neutral units)
+
+10: Section 'SGLD', Starting gold
+
+        8 words         gold for the 8 players (0-7)
+        7 words         gold for "unusable" 7 players (8-14)
+        1 word          gold for neutral (15)
+
+11: Section 'SLBR', Starting lumber
+
+        8 words         lumber for the 8 players (0-7)
+        7 words         lumber for "unusable" 7 players (8-14)
+        1 word          lumber for neutral (15)
+
+12: Section 'SOIL', Starting oil
+
+        8 words         oil for the 8 players
+        7 words         oil for "unusable" 7 players (8-14)
+        1 word          oil for neutral (15)
+
+13: Section 'AIPL', AI of each player
+
+        8 bytes         ai for the 8 players (0-7)
+        7 bytes         ai for "unusable" 7 players (8-14)
+        1 byte          ai for neutral (0x00) (15)
+
+        See Appendix C for the known AIs.
+
+14: Section 'MTXM', tiles map
+
+        X * Y words       tile
+
+        See Appendix D for general info on map tiles.
+
+15: Section 'SQM ', movement map
+
+        X * Y words
+
+        should be:
+
+        0x0001           land
+        0x0002           coast (corner?)
+        0x0011           dirt
+        0x0040           water
+        0x0081           forest and mountains
+        0x0082           coast
+        0x008d           walls (crashes if not really a wall)
+
+        Other good values:
+
+        0x0000           bridge (land, navy, air)
+        0x0fxx           space (nothing)
+        0x02xx           cave (no flying units allowed)
+
+16: Section 'OILM', Obsolete oil concentration map.
+
+        X * Y bytes     Concentration level up to 7.
+                        Set it to 0 for no oil at this location.
+                        (this section was used in beta version)
+
+17: Section 'REGM', action map
+
+        X * Y words
+
+        should be:
+
+        0x0000           water
+        0x4000           land
+        0xfaff           island (no trans, no land)
+        0xfbff           wall
+        0xfdff           mountains
+        0xfeff           forest
+
+18: Section 'UNIT', Units
+
+        length/8 units, where a unit is:
+
+        word            x coord
+        word            y coord
+        byte            type
+        byte            owner
+        word            if gold mine or oil well, contains 2500 * this
+                        otherwise 0 passive 1 active
+
+Appendix A: Unit Types
+
+        00              infantry
+        01              grunt
+        02              peasant
+        03              peon
+        04              ballista
+        05              catapult
+        06              knight
+        07              ogre
+        08              archer
+        09              axethrower
+        0a              mage
+        0b              death knight
+        0c              paladin
+        0d              ogre-mage
+        0e              dwarves
+        0f              goblin sapper
+        10              attack peasant
+        11              attack peon
+        12              ranger
+        13              berserker
+        14              alleria
+        15              teron gorefiend
+        16              kurdan and sky'ree
+        17              dentarg
+        18              khadgar
+        19              grom hellscream
+        1a              human tanker
+        1b              orc tanker
+        1c              human transport
+        1d              orc transport
+        1e              elven destroyer
+        1f              troll destroyer
+        20              battleship
+        21              juggernaught
+        23              deathwing
+        26              gnomish submarine
+        27              giant turtle
+        28              gnomish flying machine
+        29              goblin zepplin
+        2a              gryphon rider
+        2b              dragon
+        2c              turalyon
+        2d              eye of kilrogg
+        2e              danath
+        2f              khorgath bladefist
+        31              cho'gall
+        32              lothar
+        33              gul'dan
+        34              uther lightbringer
+        35              zuljin
+        37              skeleton
+        38              daemon
+        39              critter
+        3a              farm
+        3b              pig farm
+        3c              human barracks
+        3d              orc barracks
+        3e              church
+        3f              altar of storms
+        40              human scout tower
+        41              orc scout tower
+        42              stables
+        43              ogre mound
+        44              gnomish inventor
+        45              goblin alchemist
+        46              gryphon aviary
+        47              dragon roost
+        48              human shipyard
+        49              orc shipyard
+        4a              town hall
+        4b              great hall
+        4c              elven lumber mill
+        4d              troll lumber mill
+        4e              human foundry
+        4f              orc foundry
+        50              mage tower
+        51              temple of the damned
+        52              human blacksmith
+        53              orc blacksmith
+        54              human refinery
+        55              orc refinery
+        56              human oil well
+        57              orc oil well
+        58              keep
+        59              stronghold
+        5a              castle
+        5b              fortress
+        5c              gold mine
+        5d              oil patch
+        5e              human start
+        5f              orc start
+        60              human guard tower
+        61              orc guard tower
+        62              human cannon tower
+        63              orc cannon tower
+        64              circle of power
+        65              dark portal
+        66              runestone
+        67              human wall
+        68              orc wall
+
+Appendix B: Upgrade types
+
+        00              sword 1
+        01              sword 2
+        02              axe 1
+        03              axe 2
+        04              arrow 1
+        05              arrow 2
+        06              spear 1
+        07              spear 2
+        08              human shield 1
+        09              human shield 2
+        0a              orc shield 1
+        0b              orc shield 2
+        0c              human ship cannon 1
+        0d              human ship cannon 2
+        0e              orc ship cannon 1
+        0f              orc ship cannon 2
+        10              human ship armor 1
+        11              human ship armor 2
+        12              orc ship armor 1
+        13              orc ship armor 2
+        14              catapult 1
+        15              catapult 2
+        16              ballista 1
+        17              ballista 2
+        18              train rangers
+        19              longbow
+        1a              ranger scouting
+        1b              ranger marksmanship
+        1c              train berserkers
+        1d              lighter axes
+        1e              berserker scouting
+        1f              berserker regeneration
+        20              train ogre-mages
+        21              train paladins
+        22              holy vision
+        23              healing
+        24              exorcism
+        25              flame shield
+        26              fireball
+        27              slow
+        28              invisibility
+        29              polymorph
+        2a              blizzard
+        2b              eye of kilrogg
+        2c              bloodlust
+        2d              raise dead
+        2e              death coil
+        2f              whirlwind
+        30              haste
+        31              unholy armor
+        32              runes
+        33              death and decay
+
+Appendix C: Computer AIs
+
+        $00             land attack
+        $01             passive
+        $02             Orc 3
+        $03             Human 4
+        $04             Orc 4
+        $05             Human 5
+        $06             Orc 5
+        $07             Human 6
+        $08             Orc 6
+        $09             Human 7
+        $0A             Orc 7
+        $0B             Human 8
+        $0C             Orc 8
+        $0D             Human 9
+        $0E             Orc 9
+        $0F             Human 10
+        $10             Orc 10
+        $11             Human 11
+        $12             Orc 11
+        $13             Human 12
+        $14             Orc 12
+        $15             Human 13
+        $16             Orc 13
+        $17             Human 14 (Orange)
+        $18             Orc 14 (Blue)
+        $19             sea attack
+        $1a             air attack
+        $1b             Human 14 (Red)
+        $1c             Human 14 (White)
+        $1d             Human 14 (Black)
+        $1e             Orc 14 (Green)
+        $1f             Orc 14 (White)
+        $20             Expansion 1
+        ...
+        $52             Expansion 51
+
+Appendix D: General map tiles
+
+        solid tiles
+
+        001x            light water
+        002x            dark water
+        003x            light coast
+        004x            dark coast
+        005x            light ground
+        006x            dark ground
+        007x            forest
+        008x            mountains
+        009x            human wall
+        00ax            orc walls
+        00bx            human walls
+        00cx            orc walls
+
+        boundry tiles
+
+        09..            orc wall
+        08..            human wall
+        07..            forest and grass
+        06..            dark grass and grass
+        05..            coast and grass
+        04..            mount and coast
+        03..            dark coast and coast
+        02..            water and coast
+        01..            dark water and water
+
+        where .. is:
+
+        filled  clear
+        0x      Dx      upper left
+        1x      Cx      upper right
+        2x      Bx      upper half
+        3x      Ax      lower left
+        4x      9x      left half
+        7x      6x      lower right
+        8x      5x      upper left, lower right
+
+        Black Plague tiles: these tiles have no swamp terrain
+        counterpart and must be remapped.
+
+        $003a   $003b   $004a   $004b
+
+Appendix E: "Unusable" 7 players.
+
+This 7 players is not really in the game, so the can't be used as normal
+players. However there are some use for them.
+They don't work as passive computer, human or computer, if set to this
+they just stand there, looking funny.
+
+If set to rescue(active), you can rescue them, and the become you
+units, whom you can control as normally.
+
+If rescue(active) has a peon/peasant, he will only build a town hall
+and x number of farm, depending of the number of peon/peasant he has, then
+stop and do nothing.
+
+If set to rescue(passive), you can rescue his units, and then control
+them.
+
+So if you are in need of more rescue players on your map, you can used
+the  "unusable" 7 players.
+
+Note : player 14 unit will never be displayed ?, but he's units IS on
+the map, because you can't build were he's units would have been !.
+
+Credits:
+Daniel Lemberg.
+Simon Pelsser (Scorpions).
+Lasse Jensen.
+
+

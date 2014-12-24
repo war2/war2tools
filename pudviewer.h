@@ -64,7 +64,7 @@ void pud_free(Pud *pud);
 int pud_parse(Pud *pud);
 void pud_verbose_set(Pud *pud, int on);
 bool pud_section_is_optional(Pud_Section sec);
-bool pud_go_to_section(Pud *pud, Pud_Section sec);
+uint32_t pud_go_to_section(Pud *pud, Pud_Section sec);
 void pud_print(Pud *pud, FILE *stream);
 
 bool pud_parse_type(Pud *pud);
@@ -72,7 +72,9 @@ bool pud_parse_ver(Pud *pud);
 bool pud_parse_desc(Pud *pud);
 bool pud_parse_era(Pud *pud);
 bool pud_parse_dim(Pud *pud);
-
+bool pud_parse_sgld(Pud *pud);
+bool pud_parse_slbr(Pud *pud);
+bool pud_parse_soil(Pud *pud);
 
 #endif /* ! _PUDVIEWER_H_ */
 

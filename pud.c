@@ -28,6 +28,12 @@ struct _Pud
    uint16_t      era;
    Pud_Dimensions dims;
 
+   struct {
+      uint16_t  players[8];
+      uint16_t  unusable[7];
+      uint16_t  neutral;
+   } sgld, slbr, soil;
+
    Pud_Section   current_section;
 
    unsigned int  verbose    : 1;
@@ -48,7 +54,7 @@ pud_section_is_optional(Pud_Section sec)
            (sec == PUD_SECTION_ALOW));
 }
 
-bool
+uint32_t
 pud_go_to_section(Pud         *pud,
                   Pud_Section  sec)
 {
@@ -58,8 +64,8 @@ pud_go_to_section(Pud         *pud,
    char buf[4];
    const char *sec_str;
 
-   PUD_SANITY_CHECK(pud, 1);
-   if (sec > 19) DIE_RETURN(1, "Invalid section ID [%i]", sec);
+   PUD_SANITY_CHECK(pud, 0);
+   if (sec > 19) DIE_RETURN(0, "Invalid section ID [%i]", sec);
 
    f = pud->file;
    sec_str = _sections[sec];
@@ -79,7 +85,9 @@ pud_go_to_section(Pud         *pud,
           {
              /* Update current section */
              pud->current_section = sec;
-             return true;
+             fread(&l, sizeof(uint32_t), 1, f);
+             PUD_CHECK_FERROR(f, 0);
+             return l;
           }
 
         memmove(buf, &(buf[1]), 3 * sizeof(char));
@@ -89,7 +97,7 @@ pud_go_to_section(Pud         *pud,
      }
    pud->current_section = PUD_SECTION_UNIT; // Go to last section
 
-   return false;
+   return 0;
 }
 
 
@@ -132,37 +140,58 @@ void
 pud_print(Pud  *pud,
           FILE *stream)
 {
+   int i;
+
    if (!stream) stream = stdout;
 
-   fprintf(stream,
-           "Type...: %x\n"
-           "Ver....: %x\n"
-           "Desc...: %s\n"
-           "Era....: %x\n"
-           "Dims...: %x\n",
-           pud->tag,
-           pud->version,
-           pud->description,
-           pud->era,
-           pud->dims);
+   fprintf(stream, "Tag ID..........: %x\n", pud->tag);
+   fprintf(stream, "Version.........: %x\n", pud->version);
+   fprintf(stream, "Description.....: %s\n", pud->description);
+   fprintf(stream, "Era.............: %x\n", pud->era);
+   fprintf(stream, "Dimensions......: %x\n", pud->dims);
+
+   fprintf(stream, "Starting Gold...:\n");
+   for (i = 0; i < 8; i++)
+     fprintf(stream, "   player %i.....: %u\n", i + 1, pud->sgld.players[i]);
+   for (i = 0; i < 7; i++)
+     fprintf(stream, "   unusable %i...: %u\n", i + 1, pud->sgld.unusable[i]);
+   fprintf(stream, "   neutral......: %u\n", pud->sgld.neutral);
+
+   fprintf(stream, "Starting Lumber.:\n");
+   for (i = 0; i < 8; i++)
+     fprintf(stream, "   player %i.....: %u\n", i + 1, pud->slbr.players[i]);
+   for (i = 0; i < 7; i++)
+     fprintf(stream, "   unusable %i...: %u\n", i + 1, pud->slbr.unusable[i]);
+   fprintf(stream, "   neutral......: %u\n", pud->slbr.neutral);
+
+   fprintf(stream, "Starting Oil....:\n");
+   for (i = 0; i < 8; i++)
+     fprintf(stream, "   player %i.....: %u\n", i + 1, pud->soil.players[i]);
+   for (i = 0; i < 7; i++)
+     fprintf(stream, "   unusable %i...: %u\n", i + 1, pud->soil.unusable[i]);
+   fprintf(stream, "   neutral......: %u\n", pud->soil.neutral);
+
 }
 
 int
 pud_parse(Pud *pud)
 {
- //  char buf[32];
+   //  char buf[32];
 
- //  fread(buf, sizeof(char), 32, pud->file);
- //  for (int i = 0; i < 32; i++)
- //    printf("0x%hhx ", buf[i]);
- //  printf("\n");
- //  rewind(pud->file);
+   //  fread(buf, sizeof(char), 32, pud->file);
+   //  for (int i = 0; i < 32; i++)
+   //    printf("0x%hhx ", buf[i]);
+   //  printf("\n");
+   //  rewind(pud->file);
 
    pud_parse_type(pud);
    pud_parse_ver(pud);
    pud_parse_desc(pud);
    pud_parse_era(pud);
    pud_parse_dim(pud);
+   pud_parse_sgld(pud);
+   pud_parse_slbr(pud);
+   pud_parse_soil(pud);
 
 
    pud_print(pud, stdout);
@@ -183,21 +212,21 @@ pud_parse_type(Pud *pud)
    char buf[16];
    FILE *f = pud->file;
    uint32_t l;
-   bool chk;
+   uint32_t chk;
 
    chk = pud_go_to_section(pud, PUD_SECTION_TYPE);
    if (!chk) DIE_RETURN(false, "Failed to reach section TYPE");
-   PUD_VERBOSE(pud, "At section TYPE");
-
-   /* Read ID TAG */
-   l = file_read_long(f);
-   PUD_CHECK_FERROR(f, false);
+   PUD_VERBOSE(pud, "At section TYPE (size = %u)", chk);
 
    /* Read 10bytes + 2 unused */
    fread(buf, sizeof(uint8_t), 12, f);
    PUD_CHECK_FERROR(f, false);
    if (strncmp(buf, "WAR2 MAP\0\0", 10))
      DIE_RETURN(false, "TYPE section has a wrong header");
+
+   /* Read ID TAG */
+   l = file_read_long(f);
+   PUD_CHECK_FERROR(f, false);
 
    pud->tag = l;
 
@@ -211,11 +240,11 @@ pud_parse_ver(Pud *pud)
 
    FILE *f = pud->file;
    uint16_t w;
-   bool chk;
+   uint32_t chk;
 
    chk = pud_go_to_section(pud, PUD_SECTION_VER);
    if (!chk) DIE_RETURN(false, "Failed to reach section VER");
-   PUD_VERBOSE(pud, "At section VER");
+   PUD_VERBOSE(pud, "At section VER (size = %u)", chk);
 
    fread(&w, sizeof(uint16_t), 1, f);
    PUD_CHECK_FERROR(f, false);
@@ -229,13 +258,13 @@ pud_parse_desc(Pud *pud)
 {
    PUD_SANITY_CHECK(pud, false);
 
-   bool chk;
+   uint32_t chk;
    FILE *f = pud->file;
    char buf[32];
 
    chk = pud_go_to_section(pud, PUD_SECTION_DESC);
    if (!chk) DIE_RETURN(false, "Failed to reach section DESC");
-   PUD_VERBOSE(pud, "At section DESC");
+   PUD_VERBOSE(pud, "At section DESC (size = %u)", chk);
 
    fread(buf, sizeof(char), 32, f);
    PUD_CHECK_FERROR(f, false);
@@ -253,7 +282,7 @@ pud_parse_era(Pud *pud)
 {
    PUD_SANITY_CHECK(pud, false);
 
-   bool chk;
+   uint32_t chk;
    FILE *f = pud->file;
    uint16_t w;
 
@@ -263,7 +292,7 @@ pud_parse_era(Pud *pud)
         PUD_VERBOSE(pud, "Failed to find ERAX. Trying with ERA...");
         chk = pud_go_to_section(pud, PUD_SECTION_ERA);
         if (!chk) DIE_RETURN(false, "Failed to reach section ERA");
-        PUD_VERBOSE(pud, "At section ERA");
+        PUD_VERBOSE(pud, "At section ERA (size = %u)", chk);
      }
 
    fread(&w, sizeof(uint16_t), 1, f);
@@ -278,18 +307,17 @@ pud_parse_dim(Pud *pud)
 {
    PUD_SANITY_CHECK(pud, false);
 
-   bool chk;
+   uint32_t chk;
    FILE *f = pud->file;
    uint16_t x, y;
 
    chk = pud_go_to_section(pud, PUD_SECTION_DIM);
    if (!chk) DIE_RETURN(false, "Failed to reach section DIM");
-   PUD_VERBOSE(pud, "At section DIM");
+   PUD_VERBOSE(pud, "At section DIM (size = %u)", chk);
 
    fread(&x, sizeof(uint16_t), 1, f);
    fread(&y, sizeof(uint16_t), 1, f);
    PUD_CHECK_FERROR(f, false);
-   printf("%x %x\n", x, y);
 
    if ((x == 32) && (y == 32))
      pud->dims = PUD_DIMENSIONS_32_32;
@@ -310,5 +338,74 @@ pud_parse_udta(Pud *pud)
 {
    PUD_SANITY_CHECK(pud, false);
    return false;
+}
+
+bool
+pud_parse_sgld(Pud *pud)
+{
+   PUD_SANITY_CHECK(pud, false);
+
+   uint32_t chk;
+   FILE *f = pud->file;
+   uint16_t buf[16];
+
+   chk = pud_go_to_section(pud, PUD_SECTION_SGLD);
+   if (!chk) DIE_RETURN(false, "Failed to reach section SGLD");
+   PUD_VERBOSE(pud, "At section SGLD (size = %u)", chk);
+
+   fread(buf, sizeof(uint16_t), 16, f);
+   PUD_CHECK_FERROR(f, false);
+
+   memcpy(&(pud->sgld.players[0]),  &(buf[0]),  sizeof(uint16_t) * 8);
+   memcpy(&(pud->sgld.unusable[0]), &(buf[8]),  sizeof(uint16_t) * 7);
+   memcpy(&(pud->sgld.neutral),     &(buf[15]), sizeof(uint16_t) * 1);
+
+   return true;
+}
+
+bool
+pud_parse_slbr(Pud *pud)
+{
+   PUD_SANITY_CHECK(pud, false);
+
+   uint32_t chk;
+   FILE *f = pud->file;
+   uint16_t buf[16];
+
+   chk = pud_go_to_section(pud, PUD_SECTION_SLBR);
+   if (!chk) DIE_RETURN(false, "Failed to reach section SLBR");
+   PUD_VERBOSE(pud, "At section SLBR (size = %u)", chk);
+
+   fread(buf, sizeof(uint16_t), 16, f);
+   PUD_CHECK_FERROR(f, false);
+
+   memcpy(&(pud->slbr.players[0]),  &(buf[0]),  sizeof(uint16_t) * 8);
+   memcpy(&(pud->slbr.unusable[0]), &(buf[8]),  sizeof(uint16_t) * 7);
+   memcpy(&(pud->slbr.neutral),     &(buf[15]), sizeof(uint16_t) * 1);
+
+   return true;
+}
+
+bool
+pud_parse_soil(Pud *pud)
+{
+   PUD_SANITY_CHECK(pud, false);
+
+   uint32_t chk;
+   FILE *f = pud->file;
+   uint16_t buf[16];
+
+   chk = pud_go_to_section(pud, PUD_SECTION_SOIL);
+   if (!chk) DIE_RETURN(false, "Failed to reach section SOIL");
+   PUD_VERBOSE(pud, "At section SOIL (size = %u)", chk);
+
+   fread(buf, sizeof(uint16_t), 16, f);
+   PUD_CHECK_FERROR(f, false);
+
+   memcpy(&(pud->soil.players[0]),  &(buf[0]),  sizeof(uint16_t) * 8);
+   memcpy(&(pud->soil.unusable[0]), &(buf[8]),  sizeof(uint16_t) * 7);
+   memcpy(&(pud->soil.neutral),     &(buf[15]), sizeof(uint16_t) * 1);
+
+   return true;
 }
 

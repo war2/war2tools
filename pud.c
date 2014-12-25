@@ -29,14 +29,25 @@ struct _Pud
    Pud_Dimensions dims;
 
    struct {
-      uint16_t  players[8];
-      uint16_t  unusable[7];
-      uint16_t  neutral;
+      uint16_t players[8];
+      uint16_t unusable[7];
+      uint16_t neutral;
    } sgld, slbr, soil;
+
+   struct _alow {
+      uint32_t players[8];
+      uint32_t unusable[7];
+      uint32_t neutral;
+   } unit_alow, spell_start, spell_alow, spell_acq, up_alow, up_acq;
+
+// XXX Used by UDTA   struct {
+// XXX Used by UDTA
+// XXX Used by UDTA   } unit[110];
 
    Pud_Section   current_section;
 
-   unsigned int  verbose    : 1;
+   unsigned int  verbose       : 1;
+   unsigned int  default_allow : 1;
 };
 
 static const char * const _sections[] =
@@ -150,6 +161,8 @@ pud_print(Pud  *pud,
    fprintf(stream, "Era.............: %x\n", pud->era);
    fprintf(stream, "Dimensions......: %x\n", pud->dims);
 
+//   fprintf(stream, "Units & Building allowed
+
    fprintf(stream, "Starting Gold...:\n");
    for (i = 0; i < 8; i++)
      fprintf(stream, "   player %i.....: %u\n", i + 1, pud->sgld.players[i]);
@@ -176,19 +189,13 @@ pud_print(Pud  *pud,
 int
 pud_parse(Pud *pud)
 {
-   //  char buf[32];
-
-   //  fread(buf, sizeof(char), 32, pud->file);
-   //  for (int i = 0; i < 32; i++)
-   //    printf("0x%hhx ", buf[i]);
-   //  printf("\n");
-   //  rewind(pud->file);
-
    pud_parse_type(pud);
    pud_parse_ver(pud);
    pud_parse_desc(pud);
    pud_parse_era(pud);
    pud_parse_dim(pud);
+   pud_parse_udta(pud);
+   pud_parse_alow(pud);
    pud_parse_sgld(pud);
    pud_parse_slbr(pud);
    pud_parse_soil(pud);
@@ -337,7 +344,57 @@ bool
 pud_parse_udta(Pud *pud)
 {
    PUD_SANITY_CHECK(pud, false);
+
+   uint32_t chk;
+  // FILE *f = pud->file;
+
+   chk = pud_go_to_section(pud, PUD_SECTION_UDTA);
+   if (!chk) DIE_RETURN(false, "Failed to reach section UDTA");
+   PUD_VERBOSE(pud, "At section UDTA (size = %u)", chk);
+
    return false;
+}
+
+bool
+pud_parse_alow(Pud *pud)
+{
+   PUD_SANITY_CHECK(pud, false);
+
+   uint32_t chk;
+   FILE *f = pud->file;
+   uint32_t buf[16];
+   struct _alow *ptrs[] = {
+      &(pud->unit_alow),
+      &(pud->spell_start),
+      &(pud->spell_alow),
+      &(pud->spell_acq),
+      &(pud->up_alow),
+      &(pud->up_acq)
+   };
+   const int ptrs_count = sizeof(ptrs) / sizeof(void *);
+   int i;
+
+   pud->default_allow = 0; // Reset before checking
+   chk = pud_go_to_section(pud, PUD_SECTION_ALOW);
+   if (!chk)
+     {
+        PUD_VERBOSE(pud, "Section ALOW (optional) not present. Skipping...");
+        pud->default_allow = 1;
+        return true;
+     }
+   PUD_VERBOSE(pud, "At section ALOW (size = %u)", chk);
+
+   for (i = 0; i < ptrs_count; i++)
+     {
+        fread(buf, sizeof(uint32_t), 16, f);
+        PUD_CHECK_FERROR(f, false);
+
+        memcpy(&(ptrs[i]->players[0]),  &(buf[0]),  sizeof(uint32_t) * 8);
+        memcpy(&(ptrs[i]->unusable[0]), &(buf[8]),  sizeof(uint32_t) * 7);
+        memcpy(&(ptrs[i]->neutral),     &(buf[15]), sizeof(uint32_t) * 1);
+     }
+
+   return true;
 }
 
 bool

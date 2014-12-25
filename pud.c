@@ -133,45 +133,64 @@ static Color
 _pud_tile_to_color(Pud      *pud,
                    uint16_t  tile)
 {
+   uint16_t var;
+
    if (tile < 0x0020)
      {
-        /* Light water */
+        /* Light water (4 tiles) */
+        var = tile - 0x0010;
         return _color_make(0x04, 0x38, 0x74);
      }
    else if (tile < 0x0030)
      {
-        /* Dark water */
+        /* Dark water (4 tiles) */
+        var = tile - 0x0020;
         return _color_make(0x04, 0x34, 0x70);
      }
    else if (tile < 0x0040)
      {
+        /* Light coast */ 
      }
    else if (tile < 0x0050)
      {
+        /* Dark coast */
+
      }
    else if (tile < 0x0060)
      {
+        /* Light ground */
+        return _color_make(0x28, 0x54, 0x0c);
      }
    else if (tile < 0x0070)
      {
+        /* Dark ground */
+        return _color_make(0x24, 0x48, 0x04);
      }
    else if (tile < 0x0080)
      {
+        /* Forest */
+        return _color_make(0x00, 0x4c, 0x00);
      }
    else if (tile < 0x0090)
      {
+        /* Mountains */
+        return _color_make(0x3c, 0x3c, 0x3c);
      }
    else if (tile < 0x00a0)
      {
+        /* Human wall */
      }
    else if (tile < 0x00b0)
      {
+        /* Orc wall */
      }
    else if (tile < 0x00c0)
      {
+        /* Human walls */
      }
    else if (tile < 0x00d0)
      {
+        /* Orc walls */
      }
 
    return _color_make(0x00, 0x00, 0x00);
@@ -698,12 +717,34 @@ pud_parse_mtxm(Pud *pud)
    if (!pud->map_tiles) DIE_RETURN(false, "Failed to allocate memory");
    pud->map_tiles_count = size;
 
+   //uint16_t memory[1024];
+   //int count = 0;
+   //int k = 0;
+   //bool add;
+
    for (i = 0; i < size; i++)
      {
         fread(&w, sizeof(uint16_t), 1, f);
         PUD_CHECK_FERROR(f, false);
+
+        //add = true;
+        //for (k = 0; k < count; k++)
+        //  {
+        //     if (memory[k] == w)
+        //       {
+        //          add = false;
+        //          break;
+        //       }
+        //  }
+        //if (add)
+        //  {
+        //     memory[count++] = w;
+        //  }
         pud->map_tiles[i] = w;
      }
+   //for (k = 0; k < count;k++)
+   //  printf("%04x\n", memory[k]);
+   //printf("Total: %i\n", count);
 
    return true;
 }

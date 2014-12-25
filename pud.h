@@ -225,10 +225,8 @@ bool pud_parse_regm(Pud *pud);
 bool pud_parse_unit(Pud *pud);
 
 
-bool
-pud_minimap_to_ppm(Pud        *pud,
-                   const char *file,
-                   float       scale);
+bool pud_minimap_to_ppm(Pud *pud, const char *file);
+bool pud_minimap_to_jpeg(Pud *pud, const char *file);
 
 
 #endif /* ! _PUD_H_ */

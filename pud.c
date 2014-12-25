@@ -755,66 +755,56 @@ pud_parse_unit(Pud *pud)
    return true;
 }
 
-bool
-pud_minimap_to_ppm(Pud        *pud,
-                   const char *file,
-                   float       scale)
+static unsigned char *
+_minimap_bitmap_generate(Pud *pud,
+                         int *size_ret)
 {
-   PUD_SANITY_CHECK(pud, false);
-   if (scale < 0.0f) scale = 1.0f;
+   PUD_SANITY_CHECK(pud, NULL);
 
-   bool chk;
    unsigned char *map;
-   int i;
-   int size;
    struct _unit *u;
    Color c;
-   FILE *f;
+   int i;
    int idx;
-
-
-   // x = (float)x * scale;
-   // y = (float)y * scale;
+   int size;
 
    size = pud->map_x * pud->map_y * 3;
    map = calloc(size, sizeof(unsigned char));
-   if (!map) DIE_RETURN(false, "Failed to allocate memory");
+   if (!map) DIE_RETURN(NULL, "Failed to allocate memory");
 
-   for (i = 0; i < size; i++)
-     {  
-
-     }
-
- //  memset(map, 0xff, size);
- //  map[0] = 0xff;
- //  map[1] = 0x00;
- //  map[2] = 0xff;
-
- //  map[3] = 0xff;
- //  map[4] = 0x00;
- //  map[5] = 0xff;
-
-     for (i = 0; i < pud->units_count; i++)
+   for (i = 0; i < pud->units_count; i++)
        {
           u = &(pud->units[i]);
           c = _color_for_player(u->owner);
 
           idx = ((u->y * pud->map_x) + u->x) * 3;
 
-          printf("Found unit [%i] at [%i][%i] {%hhx,%hhx,%hhx}\n", u->owner, u->x, u->y,
-                 c.r, c.g, c.b);
-
           map[idx + 0] = c.r;
           map[idx + 1] = c.g;
           map[idx + 2] = c.b;
-          printf("   Setting [%i] => %02hhx ; [%i] => %02hhx ; [%i] => %02hhx\n",
-                 idx+0,c.r, idx+1,c.g, idx+2,c.b);
        }
+
+   if (size_ret) *size_ret = size;
+
+   return map;
+}
+
+bool
+pud_minimap_to_ppm(Pud        *pud,
+                   const char *file)
+{
+   PUD_SANITY_CHECK(pud, false);
+
+   FILE *f;
+   int i, size;
+   unsigned char *map;
+
+   map = _minimap_bitmap_generate(pud, &size);
+   if (!map) DIE_RETURN(false, "Failed to generate bitmap");
 
    f = fopen(file, "w");
    if (!f) DIE_RETURN(false, "Failed to open [%s]", file);
-   printf("Size: %i (%i * %i * 3)\n", size, pud->map_x,  pud->map_y);
-
+  
    /* Write PPM header */
    fprintf(f,
            "P3\n"
@@ -822,24 +812,35 @@ pud_minimap_to_ppm(Pud        *pud,
            "255\n",
            pud->map_x, pud->map_y);
 
-   int k = 0;
    for (i = 0; i < size; i += 3)
      {
-        printf("   Getting [%i] => %02hhx ; [%i] => %02hhx ; [%i] => %02hhx\n",
-                 i+0,map[i+0], i+1,map[i+1],i+2,map[i+2]);
         fprintf(f, "%i %i %i\n", 
                 map[i + 0],
                 map[i + 1],
                 map[i + 2]);
-        k++;
      }
-   fprintf(f, "\n"); 
    fclose(f);
-   printf("-> %i\n", k);
+   free(map);
 
    return true;
-   //   chk = jpeg_write(file, pud->map_x, pud->map_y, map);
+//      chk = jpeg_write(file, pud->map_x, pud->map_y, map);
+}
 
-//   return chk;
+bool
+pud_minimap_to_jpeg(Pud        *pud,
+                    const char *file)
+{
+   PUD_SANITY_CHECK(pud, false);
+
+   unsigned char *map;
+   bool chk;
+
+   map = _minimap_bitmap_generate(pud, NULL);
+   if (!map) DIE_RETURN(false, "Failed to generate bitmap");
+
+   chk = jpeg_write(file, pud->map_x, pud->map_y, map);
+   free(map);
+
+   return chk;
 }
 

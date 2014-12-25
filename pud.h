@@ -194,8 +194,15 @@ typedef enum
    PUD_UNIT_ORC_WALL
 } Pud_Unit;
 
-typedef struct _Pud Pud;
+typedef enum
+{
+   PUD_ERA_FOREST,
+   PUD_ERA_WINTER,
+   PUD_ERA_WASTELAND,
+   PUD_ERA_SWAMP
+} Pud_Era;
 
+typedef struct _Pud Pud;
 
 
 Pud *pud_new(const char *file);

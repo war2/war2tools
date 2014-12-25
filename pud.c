@@ -35,7 +35,7 @@ struct _Pud
    uint32_t      tag;
    uint16_t      version;
    char          description[32];
-   uint16_t      era;
+   uint8_t       era;
    Pud_Dimensions dims;
 
    struct {
@@ -60,10 +60,12 @@ struct _Pud
       uint32_t          flags;
    } upgrade_cost[52];
 
-   int map_x;
-   int map_y;
+   int map_w;
+   int map_h;
 
    uint16_t *map_tiles;
+
+   int map_tiles_count;
 
    struct _unit {
       uint16_t x;
@@ -75,9 +77,9 @@ struct _Pud
 
    int units_count;
 
-// XXX Used by UDTA   struct {
-// XXX Used by UDTA
-// XXX Used by UDTA   } unit[110];
+   // XXX Used by UDTA   struct {
+   // XXX Used by UDTA
+   // XXX Used by UDTA   } unit[110];
 
    Pud_Section   current_section;
 
@@ -131,61 +133,48 @@ static Color
 _pud_tile_to_color(Pud      *pud,
                    uint16_t  tile)
 {
-   Color c;
-
-   if (tile & 0x0010)
+   if (tile < 0x0020)
      {
-        switch (pud->era)
-          {
-           case 0x00:
-           case 0x04 ... 0xff:
-              break;
-
-           case 0x01:
-              break;
-
-           case 0x02:
-              break;
-
-           case 0x03:
-              break;
-          }
+        /* Light water */
+        return _color_make(0x04, 0x38, 0x74);
      }
-   else if (tile & 0x0020)
+   else if (tile < 0x0030)
+     {
+        /* Dark water */
+        return _color_make(0x04, 0x34, 0x70);
+     }
+   else if (tile < 0x0040)
      {
      }
-   else if (tile & 0x0030)
+   else if (tile < 0x0050)
      {
      }
-   else if (tile & 0x0040)
+   else if (tile < 0x0060)
      {
      }
-   else if (tile & 0x0050)
+   else if (tile < 0x0070)
      {
      }
-   else if (tile & 0x0060)
+   else if (tile < 0x0080)
      {
      }
-   else if (tile & 0x0070)
+   else if (tile < 0x0090)
      {
      }
-   else if (tile & 0x0080)
+   else if (tile < 0x00a0)
      {
      }
-   else if (tile & 0x0090)
+   else if (tile < 0x00b0)
      {
      }
-   else if (tile & 0x00a0)
+   else if (tile < 0x00c0)
      {
      }
-   else if (tile & 0x00b0)
-     {
-     }
-   else if (tile & 0x00c0)
+   else if (tile < 0x00d0)
      {
      }
 
-   return c;
+   return _color_make(0x00, 0x00, 0x00);
 }
 
 bool
@@ -290,7 +279,7 @@ pud_print(Pud  *pud,
    fprintf(stream, "Tag ID..........: %x\n", pud->tag);
    fprintf(stream, "Version.........: %x\n", pud->version);
    fprintf(stream, "Description.....: %s\n", pud->description);
-   fprintf(stream, "Era.............: %x\n", pud->era);
+   fprintf(stream, "Era.............: %i\n", pud->era);
    fprintf(stream, "Dimensions......: %x\n", pud->dims);
 
    //   fprintf(stream, "Units & Building allowed
@@ -374,7 +363,7 @@ pud_parse(Pud *pud)
    pud_parse_regm(pud);
    pud_parse_unit(pud);
 
-  // pud_print(pud, stdout);
+   // pud_print(pud, stdout);
 
 
    return 0;
@@ -478,7 +467,30 @@ pud_parse_era(Pud *pud)
    fread(&w, sizeof(uint16_t), 1, f);
    PUD_CHECK_FERROR(f, false);
 
-   pud->era = w;
+   switch (w)
+     {
+      case 0x00:
+      case 0x04 ... 0xff:
+         pud->era = PUD_ERA_FOREST;
+         break;
+
+      case 0x01:
+         pud->era = PUD_ERA_WINTER;
+         break;
+
+      case 0x02:
+         pud->era = PUD_ERA_WASTELAND;
+         break;
+
+      case 0x03:
+         pud->era = PUD_ERA_SWAMP;
+         break;
+
+      default:
+         DIE_RETURN(false, "Failed to parse Era [%x]", w);
+         break;
+     }
+
    return true;
 }
 
@@ -510,7 +522,7 @@ pud_parse_dim(Pud *pud)
    else
      return false;
 
-   pud_dimensions_to_size(pud->dims, &pud->map_x, &pud->map_y);
+   pud_dimensions_to_size(pud->dims, &pud->map_w, &pud->map_h);
 
    return true;
 }
@@ -670,23 +682,27 @@ pud_parse_mtxm(Pud *pud)
    uint32_t chk;
    FILE *f = pud->file;
    uint16_t w;
-   int i, j, k = 0;
+   int i;
+   int size;
 
    chk = pud_go_to_section(pud, PUD_SECTION_MTXM);
    if (!chk) DIE_RETURN(false, "Failed to reach section MTXM");
    PUD_VERBOSE(pud, "At section MTXM (size = %u)", chk);
 
-   pud->map_tiles = calloc(pud->map_x * pud->map_y, sizeof(uint16_t));
-   if (!pud->map_tiles) DIE_RETURN(false, "Failed to allocate memory");
+   /* Check for integrity */
+   size = pud->map_w * pud->map_h;
+   if ((size * sizeof(uint16_t)) != chk)
+     DIE_RETURN(false, "Mismatch between dims and tiles number");
 
-   for (i = 0; i < pud->map_x; i++)
+   pud->map_tiles = calloc(size, sizeof(uint16_t));
+   if (!pud->map_tiles) DIE_RETURN(false, "Failed to allocate memory");
+   pud->map_tiles_count = size;
+
+   for (i = 0; i < size; i++)
      {
-        for (j = 0; j < pud->map_y; j++)
-          {
-             fread(&w, sizeof(uint16_t), 1, f);
-             PUD_CHECK_FERROR(f, false);
-             pud->map_tiles[k++] = w;
-          }
+        fread(&w, sizeof(uint16_t), 1, f);
+        PUD_CHECK_FERROR(f, false);
+        pud->map_tiles[i] = w;
      }
 
    return true;
@@ -755,6 +771,12 @@ pud_parse_unit(Pud *pud)
    return true;
 }
 
+
+
+/*============================================================================*
+ *                              Output to images                              *
+ *============================================================================*/
+
 static unsigned char *
 _minimap_bitmap_generate(Pud *pud,
                          int *size_ret)
@@ -767,22 +789,32 @@ _minimap_bitmap_generate(Pud *pud,
    int i;
    int idx;
    int size;
+   uint16_t w;
 
-   size = pud->map_x * pud->map_y * 3;
+   size = pud->map_tiles_count * 3;
    map = calloc(size, sizeof(unsigned char));
    if (!map) DIE_RETURN(NULL, "Failed to allocate memory");
 
+   for (i = 0, idx = 0; i < pud->map_tiles_count; i++, idx += 3)
+     {
+        c = _pud_tile_to_color(pud, pud->map_tiles[i]);
+
+        map[idx + 0] = c.r;
+        map[idx + 1] = c.g;
+        map[idx + 2] = c.b;
+     }
+
    for (i = 0; i < pud->units_count; i++)
-       {
-          u = &(pud->units[i]);
-          c = _color_for_player(u->owner);
+     {
+        u = &(pud->units[i]);
+        c = _color_for_player(u->owner);
 
-          idx = ((u->y * pud->map_x) + u->x) * 3;
+        idx = ((u->y * pud->map_w) + u->x) * 3;
 
-          map[idx + 0] = c.r;
-          map[idx + 1] = c.g;
-          map[idx + 2] = c.b;
-       }
+        map[idx + 0] = c.r;
+        map[idx + 1] = c.g;
+        map[idx + 2] = c.b;
+     }
 
    if (size_ret) *size_ret = size;
 
@@ -804,13 +836,13 @@ pud_minimap_to_ppm(Pud        *pud,
 
    f = fopen(file, "w");
    if (!f) DIE_RETURN(false, "Failed to open [%s]", file);
-  
+
    /* Write PPM header */
    fprintf(f,
            "P3\n"
            "%i %i\n"
            "255\n",
-           pud->map_x, pud->map_y);
+           pud->map_w, pud->map_h);
 
    for (i = 0; i < size; i += 3)
      {
@@ -837,7 +869,7 @@ pud_minimap_to_jpeg(Pud        *pud,
    map = _minimap_bitmap_generate(pud, NULL);
    if (!map) DIE_RETURN(false, "Failed to generate bitmap");
 
-   chk = jpeg_write(file, pud->map_x, pud->map_y, map);
+   chk = jpeg_write(file, pud->map_w, pud->map_h, map);
    free(map);
 
    return chk;

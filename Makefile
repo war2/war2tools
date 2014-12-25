@@ -1,6 +1,7 @@
 BIN = pudviewer
-OBJ = file.o pud.o main.o
+OBJ = file.o pud.o main.o jpeg.o
 CFLAGS := -O2 -Wall -W
+LIBS := -ljpeg
 
 .PHONY: clean
 
@@ -8,7 +9,7 @@ CFLAGS := -O2 -Wall -W
 	$(CC) $(CFLAGS) -c $< -o $@
 
 $(BIN): $(OBJ)
-	$(CC) $(CFLAGS) $^ -o $@
+	$(CC) $(CFLAGS) $^ -o $@ $(LIBS)
 
 clean:
 	$(RM) $(OBJ)

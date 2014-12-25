@@ -1,7 +1,9 @@
 #include "pudviewer.h"
 
 #define PUD_VERBOSE(pud, msg, ...) \
-   if (pud->verbose) fprintf(stdout, "-- " msg "\n", ## __VA_ARGS__)
+   do { \
+      if (pud->verbose) fprintf(stdout, "-- " msg "\n", ## __VA_ARGS__); \
+   } while (0)
 
 #define PUD_SANITY_CHECK(pud, ...) \
    do { \
@@ -16,6 +18,14 @@
    } while (0)
 
 
+typedef struct _Color Color;
+
+struct _Color
+{
+   unsigned char r;
+   unsigned char g;
+   unsigned char b;
+};
 
 
 struct _Pud
@@ -40,6 +50,31 @@ struct _Pud
       uint32_t neutral;
    } unit_alow, spell_start, spell_alow, spell_acq, up_alow, up_acq;
 
+   struct {
+      uint8_t           time;
+      uint16_t          gold;
+      uint16_t          lumber;
+      uint16_t          oil;
+      uint16_t          icon;
+      uint16_t          group;
+      uint32_t          flags;
+   } upgrade_cost[52];
+
+   int map_x;
+   int map_y;
+
+   uint16_t *map_tiles;
+
+   struct _unit {
+      uint16_t x;
+      uint16_t y;
+      uint8_t  type;
+      uint8_t  owner;
+      uint16_t alter;
+   } *units;
+
+   int units_count;
+
 // XXX Used by UDTA   struct {
 // XXX Used by UDTA
 // XXX Used by UDTA   } unit[110];
@@ -57,6 +92,101 @@ static const char * const _sections[] =
    "SIDE", "SGLD", "SLBR", "SOIL", "AIPL",
    "MTXM", "SQM ", "OILM", "REGM", "UNIT"
 };
+
+static Color
+_color_make(uint8_t r,
+            uint8_t g,
+            uint8_t b)
+{
+   Color c = {
+      .r = r,
+      .g = g,
+      .b = b
+   };
+   return c;
+}
+
+static Color
+_color_for_player(uint8_t player)
+{
+   switch (player)
+     {
+      case 0: return _color_make(0xc0, 0x00, 0x00); // Red
+      case 1: return _color_make(0x00, 0x00, 0xc0); // Blue
+      case 2: return _color_make(0x00, 0xff, 0x00); // Green
+      case 3: return _color_make(0x80, 0x00, 0xc0); // Violet
+      case 4: return _color_make(0xff, 0x80, 0x00); // Orange
+      case 5: return _color_make(0x00, 0x00, 0x00); // Black
+      case 6: return _color_make(0xff, 0xff, 0xff); // White
+      case 7: return _color_make(0xff, 0xff, 0x00); // Yellow
+
+      default:
+              break;
+     }
+
+   return _color_make(0x7f, 0x7f, 0x7f);
+}
+
+static Color
+_pud_tile_to_color(Pud      *pud,
+                   uint16_t  tile)
+{
+   Color c;
+
+   if (tile & 0x0010)
+     {
+        switch (pud->era)
+          {
+           case 0x00:
+           case 0x04 ... 0xff:
+              break;
+
+           case 0x01:
+              break;
+
+           case 0x02:
+              break;
+
+           case 0x03:
+              break;
+          }
+     }
+   else if (tile & 0x0020)
+     {
+     }
+   else if (tile & 0x0030)
+     {
+     }
+   else if (tile & 0x0040)
+     {
+     }
+   else if (tile & 0x0050)
+     {
+     }
+   else if (tile & 0x0060)
+     {
+     }
+   else if (tile & 0x0070)
+     {
+     }
+   else if (tile & 0x0080)
+     {
+     }
+   else if (tile & 0x0090)
+     {
+     }
+   else if (tile & 0x00a0)
+     {
+     }
+   else if (tile & 0x00b0)
+     {
+     }
+   else if (tile & 0x00c0)
+     {
+     }
+
+   return c;
+}
 
 bool
 pud_section_is_optional(Pud_Section sec)
@@ -136,6 +266,8 @@ void
 pud_free(Pud *pud)
 {
    fclose(pud->file);
+   free(pud->units);
+   free(pud->map_tiles);
    free(pud);
 }
 
@@ -161,7 +293,7 @@ pud_print(Pud  *pud,
    fprintf(stream, "Era.............: %x\n", pud->era);
    fprintf(stream, "Dimensions......: %x\n", pud->dims);
 
-//   fprintf(stream, "Units & Building allowed
+   //   fprintf(stream, "Units & Building allowed
 
    fprintf(stream, "Starting Gold...:\n");
    for (i = 0; i < 8; i++)
@@ -186,6 +318,43 @@ pud_print(Pud  *pud,
 
 }
 
+void
+pud_dimensions_to_size(Pud_Dimensions  dim,
+                       int            *x_ret,
+                       int            *y_ret)
+{
+   int x = 0, y = 0;
+
+   switch (dim)
+     {
+      case PUD_DIMENSIONS_32_32:
+         x = 32;
+         y = 32;
+         break;
+
+      case PUD_DIMENSIONS_64_64:
+         x = 64;
+         y = 64;
+         break;
+
+      case PUD_DIMENSIONS_96_96:
+         x = 96;
+         y = 96;
+         break;
+
+      case PUD_DIMENSIONS_128_128:
+         x = 128;
+         y = 128;
+         break;
+
+      default:
+         break;
+     }
+
+   if (x_ret) *x_ret = x;
+   if (y_ret) *y_ret = y;
+}
+
 int
 pud_parse(Pud *pud)
 {
@@ -196,12 +365,16 @@ pud_parse(Pud *pud)
    pud_parse_dim(pud);
    pud_parse_udta(pud);
    pud_parse_alow(pud);
+   pud_parse_ugrd(pud);
    pud_parse_sgld(pud);
    pud_parse_slbr(pud);
    pud_parse_soil(pud);
+   pud_parse_mtxm(pud);
+   pud_parse_oilm(pud);
+   pud_parse_regm(pud);
+   pud_parse_unit(pud);
 
-
-   pud_print(pud, stdout);
+  // pud_print(pud, stdout);
 
 
    return 0;
@@ -337,6 +510,8 @@ pud_parse_dim(Pud *pud)
    else
      return false;
 
+   pud_dimensions_to_size(pud->dims, &pud->map_x, &pud->map_y);
+
    return true;
 }
 
@@ -346,7 +521,7 @@ pud_parse_udta(Pud *pud)
    PUD_SANITY_CHECK(pud, false);
 
    uint32_t chk;
-  // FILE *f = pud->file;
+   // FILE *f = pud->file;
 
    chk = pud_go_to_section(pud, PUD_SECTION_UDTA);
    if (!chk) DIE_RETURN(false, "Failed to reach section UDTA");
@@ -392,6 +567,27 @@ pud_parse_alow(Pud *pud)
         memcpy(&(ptrs[i]->players[0]),  &(buf[0]),  sizeof(uint32_t) * 8);
         memcpy(&(ptrs[i]->unusable[0]), &(buf[8]),  sizeof(uint32_t) * 7);
         memcpy(&(ptrs[i]->neutral),     &(buf[15]), sizeof(uint32_t) * 1);
+     }
+
+   return true;
+}
+
+bool
+pud_parse_ugrd(Pud *pud)
+{
+   PUD_SANITY_CHECK(pud, false);
+
+   uint32_t chk;
+   FILE *f = pud->file;
+   int i;
+   uint8_t buf[208];
+
+   chk = pud_go_to_section(pud, PUD_SECTION_UGRD);
+   if (!chk) DIE_RETURN(false, "Failed to reach section UGRD");
+   PUD_VERBOSE(pud, "At section UGRD (size = %u)", chk);
+
+   for (i = 0; i < 52; i++)
+     {
      }
 
    return true;
@@ -464,5 +660,186 @@ pud_parse_soil(Pud *pud)
    memcpy(&(pud->soil.neutral),     &(buf[15]), sizeof(uint16_t) * 1);
 
    return true;
+}
+
+bool
+pud_parse_mtxm(Pud *pud)
+{
+   PUD_SANITY_CHECK(pud, false);
+
+   uint32_t chk;
+   FILE *f = pud->file;
+   uint16_t w;
+   int i, j, k = 0;
+
+   chk = pud_go_to_section(pud, PUD_SECTION_MTXM);
+   if (!chk) DIE_RETURN(false, "Failed to reach section MTXM");
+   PUD_VERBOSE(pud, "At section MTXM (size = %u)", chk);
+
+   pud->map_tiles = calloc(pud->map_x * pud->map_y, sizeof(uint16_t));
+   if (!pud->map_tiles) DIE_RETURN(false, "Failed to allocate memory");
+
+   for (i = 0; i < pud->map_x; i++)
+     {
+        for (j = 0; j < pud->map_y; j++)
+          {
+             fread(&w, sizeof(uint16_t), 1, f);
+             PUD_CHECK_FERROR(f, false);
+             pud->map_tiles[k++] = w;
+          }
+     }
+
+   return true;
+}
+
+bool
+pud_parse_oilm(Pud *pud)
+{
+   PUD_SANITY_CHECK(pud, false);
+
+   uint32_t chk;
+
+   chk = pud_go_to_section(pud, PUD_SECTION_OILM);
+   if (!chk) PUD_VERBOSE(pud, "Section OILM (obsolete) not present. Skipping...");
+   else PUD_VERBOSE(pud, "Section OILM (obsolete) present. Skipping...");
+
+   return true;
+}
+
+bool
+pud_parse_regm(Pud *pud)
+{
+   PUD_SANITY_CHECK(pud, false);
+
+   uint32_t chk;
+   FILE *f = pud->file;
+   uint16_t w;
+
+   chk = pud_go_to_section(pud, PUD_SECTION_REGM);
+   if (!chk) DIE_RETURN(false, "Failed to reach section REGM");
+   PUD_VERBOSE(pud, "At section REGM (size = %u)", chk);
+
+   //   for (int i = 0; i < 128 * 128; i ++)
+   //     {
+   //   w = file_read_word(f);
+   //   printf("-> %x\n", w);
+   //     }
+   //
+   //   return true;
+
+   return false;
+}
+
+bool
+pud_parse_unit(Pud *pud)
+{
+   PUD_SANITY_CHECK(pud, false);
+
+   uint32_t chk;
+   FILE *f = pud->file;
+   int i, units;
+   struct _unit u;
+
+   chk = pud_go_to_section(pud, PUD_SECTION_UNIT);
+   if (!chk) DIE_RETURN(false, "Failed to reach section UNIT");
+   PUD_VERBOSE(pud, "At section UNIT (size = %u)", chk);
+   units = chk / 8;
+
+   pud->units = calloc(units, sizeof(struct _unit));
+   if (!pud->units) DIE_RETURN(false, "Failed to allocate memory");
+   pud->units_count = units;
+
+   fread(pud->units, sizeof(struct _unit), units, f);
+   PUD_CHECK_FERROR(f, false);
+
+   return true;
+}
+
+bool
+pud_minimap_to_ppm(Pud        *pud,
+                   const char *file,
+                   float       scale)
+{
+   PUD_SANITY_CHECK(pud, false);
+   if (scale < 0.0f) scale = 1.0f;
+
+   bool chk;
+   unsigned char *map;
+   int i;
+   int size;
+   struct _unit *u;
+   Color c;
+   FILE *f;
+   int idx;
+
+
+   // x = (float)x * scale;
+   // y = (float)y * scale;
+
+   size = pud->map_x * pud->map_y * 3;
+   map = calloc(size, sizeof(unsigned char));
+   if (!map) DIE_RETURN(false, "Failed to allocate memory");
+
+   for (i = 0; i < size; i++)
+     {  
+
+     }
+
+ //  memset(map, 0xff, size);
+ //  map[0] = 0xff;
+ //  map[1] = 0x00;
+ //  map[2] = 0xff;
+
+ //  map[3] = 0xff;
+ //  map[4] = 0x00;
+ //  map[5] = 0xff;
+
+     for (i = 0; i < pud->units_count; i++)
+       {
+          u = &(pud->units[i]);
+          c = _color_for_player(u->owner);
+
+          idx = ((u->y * pud->map_x) + u->x) * 3;
+
+          printf("Found unit [%i] at [%i][%i] {%hhx,%hhx,%hhx}\n", u->owner, u->x, u->y,
+                 c.r, c.g, c.b);
+
+          map[idx + 0] = c.r;
+          map[idx + 1] = c.g;
+          map[idx + 2] = c.b;
+          printf("   Setting [%i] => %02hhx ; [%i] => %02hhx ; [%i] => %02hhx\n",
+                 idx+0,c.r, idx+1,c.g, idx+2,c.b);
+       }
+
+   f = fopen(file, "w");
+   if (!f) DIE_RETURN(false, "Failed to open [%s]", file);
+   printf("Size: %i (%i * %i * 3)\n", size, pud->map_x,  pud->map_y);
+
+   /* Write PPM header */
+   fprintf(f,
+           "P3\n"
+           "%i %i\n"
+           "255\n",
+           pud->map_x, pud->map_y);
+
+   int k = 0;
+   for (i = 0; i < size; i += 3)
+     {
+        printf("   Getting [%i] => %02hhx ; [%i] => %02hhx ; [%i] => %02hhx\n",
+                 i+0,map[i+0], i+1,map[i+1],i+2,map[i+2]);
+        fprintf(f, "%i %i %i\n", 
+                map[i + 0],
+                map[i + 1],
+                map[i + 2]);
+        k++;
+     }
+   fprintf(f, "\n"); 
+   fclose(f);
+   printf("-> %i\n", k);
+
+   return true;
+   //   chk = jpeg_write(file, pud->map_x, pud->map_y, map);
+
+//   return chk;
 }
 

@@ -44,6 +44,7 @@ main(int    argc,
 
    pud_verbose_set(pud, 1);
    pud_parse(pud);
+   pud_minimap_to_ppm(pud, "minimap.ppm", 1.0f);
 
    pud_free(pud);
 

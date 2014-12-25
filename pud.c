@@ -77,14 +77,45 @@ struct _Pud
 
    int units_count;
 
-   // XXX Used by UDTA   struct {
-   // XXX Used by UDTA
-   // XXX Used by UDTA   } unit[110];
+
+   struct {
+      uint16_t     overlap_frames;
+      uint32_t     sight;
+      uint16_t     hp;
+      uint8_t      build_time;
+      uint8_t      gold_cost;
+      uint8_t      lumber_cost;
+      uint8_t      oil_cost;
+      uint16_t     size_w;
+      uint16_t     size_h;
+      uint16_t     box_w;
+      uint16_t     box_h;
+      uint8_t      range;
+      uint8_t      computer_react_range;
+      uint8_t      human_react_range;
+      uint8_t      armor;
+      uint8_t      priority;
+      uint8_t      basic_damage;
+      uint8_t      piercing_damage;
+      uint8_t      missile_weapon;
+      uint8_t      type;
+      uint8_t      decay_rate;
+      uint8_t      annoy;
+      uint8_t      mouse_right_btn;
+      uint16_t     point_value;
+      uint8_t      can_target;
+      uint32_t     flags;
+      unsigned int rect_sel           : 1;
+      unsigned int has_magic          : 1;
+      unsigned int weapons_upgradable : 1;
+      unsigned int armor_upgradable   : 1;
+   } unit_data[110];
 
    Pud_Section   current_section;
 
    unsigned int  verbose       : 1;
    unsigned int  default_allow : 1;
+   unsigned int  default_udta  : 1;
 };
 
 static const char * const _sections[] =
@@ -788,13 +819,204 @@ pud_parse_udta(Pud *pud)
    PUD_SANITY_CHECK(pud, false);
 
    uint32_t chk;
-   // FILE *f = pud->file;
+   FILE *f = pud->file;
+   uint16_t wb[512];
+   uint32_t lb[128];
+   uint8_t bb[128];
+   int i;
 
    chk = pud_go_to_section(pud, PUD_SECTION_UDTA);
    if (!chk) DIE_RETURN(false, "Failed to reach section UDTA");
    PUD_VERBOSE(pud, "At section UDTA (size = %u)", chk);
 
-   return false;
+   /* Use default data */
+   fread(wb, sizeof(uint16_t), 1, f);
+   PUD_CHECK_FERROR(f, false);
+   pud->default_udta = !!wb[0];
+
+   /* Overlap frames */
+   fread(wb, sizeof(uint16_t), 110, f);
+   PUD_CHECK_FERROR(f, false);
+   for (i = 0; i < 110; i++)
+     pud->unit_data[i].overlap_frames = wb[i];
+
+   /* Obsolete data */
+   fread(wb, sizeof(uint16_t), 508, f);
+   PUD_CHECK_FERROR(f, false);
+
+   /* Sight (why the hell is it on 32 bits!?) */
+   fread(lb, sizeof(uint32_t), 110, f);
+   PUD_CHECK_FERROR(f, false);
+   for (i = 0; i < 110; i++)
+     pud->unit_data[i].sight = lb[i];
+
+   /* Hit points */
+   fread(wb, sizeof(uint16_t), 110, f);
+   PUD_CHECK_FERROR(f, false);
+   for (i = 0; i < 110; i++)
+     pud->unit_data[i].hp = wb[i];
+
+   /* Magic */
+   fread(bb, sizeof(uint8_t), 110, f);
+   PUD_CHECK_FERROR(f, false);
+   for (i = 0; i < 110; i++)
+     pud->unit_data[i].has_magic = !!bb[i];
+
+   /* Build time */
+   fread(bb, sizeof(uint8_t), 110, f);
+   PUD_CHECK_FERROR(f, false);
+   for (i = 0; i < 110; i++)
+     pud->unit_data[i].build_time = bb[i];
+
+   /* Gold cost */
+   fread(bb, sizeof(uint8_t), 110, f);
+   PUD_CHECK_FERROR(f, false);
+   for (i = 0; i < 110; i++)
+     pud->unit_data[i].gold_cost = bb[i];
+
+   /* Lumber cost */
+   fread(bb, sizeof(uint8_t), 110, f);
+   PUD_CHECK_FERROR(f, false);
+   for (i = 0; i < 110; i++)
+     pud->unit_data[i].lumber_cost = bb[i];
+
+   /* Oil cost */
+   fread(bb, sizeof(uint8_t), 110, f);
+   PUD_CHECK_FERROR(f, false);
+   for (i = 0; i < 110; i++)
+     pud->unit_data[i].oil_cost = bb[i];
+
+   /* Unit size */
+   fread(lb, sizeof(uint32_t), 110, f);
+   PUD_CHECK_FERROR(f, false);
+   for (i = 0; i < 110; i++)
+     {
+        pud->unit_data[i].size_w = (lb[i] >> 16) & 0x0000ffff;
+        pud->unit_data[i].size_h = lb[i] & 0x0000ffff;
+     }
+
+   /* Unit box */
+   fread(lb, sizeof(uint32_t), 110, f);
+   PUD_CHECK_FERROR(f, false);
+   for (i = 0; i < 110; i++)
+     {
+        pud->unit_data[i].box_w = (lb[i] >> 16) & 0x0000ffff;
+        pud->unit_data[i].box_h = lb[i] & 0x0000ffff;
+     }
+
+   /* Attack range */
+   fread(bb, sizeof(uint8_t), 110, f);
+   PUD_CHECK_FERROR(f, false);
+   for (i = 0; i < 110; i++)
+     pud->unit_data[i].range = bb[i];
+
+   /* React range (computer) */
+   fread(bb, sizeof(uint8_t), 110, f);
+   PUD_CHECK_FERROR(f, false);
+   for (i = 0; i < 110; i++)
+     pud->unit_data[i].computer_react_range = bb[i];
+
+   /* React range (human) */
+   fread(bb, sizeof(uint8_t), 110, f);
+   PUD_CHECK_FERROR(f, false);
+   for (i = 0; i < 110; i++)
+     pud->unit_data[i].human_react_range = bb[i];
+
+   /* Armor */
+   fread(bb, sizeof(uint8_t), 110, f);
+   PUD_CHECK_FERROR(f, false);
+   for (i = 0; i < 110; i++)
+     pud->unit_data[i].armor = bb[i];
+
+   /* Selectable via rectangle */
+   fread(bb, sizeof(uint8_t), 110, f);
+   PUD_CHECK_FERROR(f, false);
+   for (i = 0; i < 110; i++)
+     pud->unit_data[i].rect_sel = !!bb[i];
+
+   /* Priority */
+   fread(bb, sizeof(uint8_t), 110, f);
+   PUD_CHECK_FERROR(f, false);
+   for (i = 0; i < 110; i++)
+     pud->unit_data[i].priority = bb[i];
+
+   /* Basic damage */
+   fread(bb, sizeof(uint8_t), 110, f);
+   PUD_CHECK_FERROR(f, false);
+   for (i = 0; i < 110; i++)
+     pud->unit_data[i].basic_damage = bb[i];
+
+   /* Piercing damage */
+   fread(bb, sizeof(uint8_t), 110, f);
+   PUD_CHECK_FERROR(f, false);
+   for (i = 0; i < 110; i++)
+     pud->unit_data[i].piercing_damage = bb[i];
+
+   /* Weapons upgradable */
+   fread(bb, sizeof(uint8_t), 110, f);
+   PUD_CHECK_FERROR(f, false);
+   for (i = 0; i < 110; i++)
+     pud->unit_data[i].weapons_upgradable = !!bb[i];
+
+   /* Armor upgradable */
+   fread(bb, sizeof(uint8_t), 110, f);
+   PUD_CHECK_FERROR(f, false);
+   for (i = 0; i < 110; i++)
+     pud->unit_data[i].armor_upgradable = !!bb[i];
+
+   /* Missile weapon */
+   fread(bb, sizeof(uint8_t), 110, f);
+   PUD_CHECK_FERROR(f, false);
+   for (i = 0; i < 110; i++)
+     pud->unit_data[i].missile_weapon = bb[i];
+
+   /* Unit type */
+   fread(bb, sizeof(uint8_t), 110, f);
+   PUD_CHECK_FERROR(f, false);
+   for (i = 0; i < 110; i++)
+     pud->unit_data[i].type = bb[i];
+
+   /* Decay rate */
+   fread(bb, sizeof(uint8_t), 110, f);
+   PUD_CHECK_FERROR(f, false);
+   for (i = 0; i < 110; i++)
+     pud->unit_data[i].decay_rate = bb[i];
+
+   /* Annoy computer factor */
+   fread(bb, sizeof(uint8_t), 110, f);
+   PUD_CHECK_FERROR(f, false);
+   for (i = 0; i < 110; i++)
+     pud->unit_data[i].annoy = bb[i];
+
+   /* 2nd mouse button action */
+   fread(bb, sizeof(uint8_t), 58, f);
+   PUD_CHECK_FERROR(f, false);
+   for (i = 0; i < 58; i++)
+     pud->unit_data[i].mouse_right_btn = bb[i];
+
+   /* Point value for killing unit */
+   fread(wb, sizeof(uint16_t), 110, f);
+   PUD_CHECK_FERROR(f, false);
+   for (i = 0; i < 110; i++)
+     pud->unit_data[i].point_value = wb[i];
+
+   /* Can target */
+   fread(bb, sizeof(uint8_t), 110, f);
+   PUD_CHECK_FERROR(f, false);
+   for (i = 0; i < 110; i++)
+     pud->unit_data[i].can_target = bb[i];
+
+   /* Flags */
+   fread(lb, sizeof(uint32_t), 110, f);
+   PUD_CHECK_FERROR(f, false);
+   for (i = 0; i < 110; i++)
+     pud->unit_data[i].flags = lb[i];
+
+   /* Obsolete */
+   fread(wb, sizeof(uint16_t), 127, f);
+   PUD_CHECK_FERROR(f, false);
+
+   return true;
 }
 
 bool

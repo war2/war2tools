@@ -1,5 +1,11 @@
 #include "pudviewer.h"
+#include <getopt.h>
 
+static struct option _options[] =
+{
+     {"verbose",  no_argument,    0, 'v'},
+     {"help",     no_argument,    0, 'h'}
+};
 
 static void
 _usage(FILE *stream)
@@ -21,22 +27,36 @@ int
 main(int    argc,
      char **argv)
 {
-   int chk = 0;
+   int chk = 0, c, opt_idx = 0;
    const char *file;
    Pud *pud;
+   int verbose = 0;
 
    /* Getopt */
-   if (argc >= 2)
+   while (1)
      {
-         
+        c = getopt_long(argc, argv, "hv", _options, &opt_idx);
+        if (c == -1) break;
+
+        switch (c)
+          {
+           case 'v':
+              verbose++;
+              break;
+
+           case 'h':
+              _usage(stdout);
+              return 0;
+          }
      }
-   else
+   if (argc - optind != 1)
      {
-        _usage(stderr);
+        ERR("pudviewer requires one argument.");
+        ERR("Relaunch with option --help for hints");
         return 1;
      }
 
-   file = argv[1];
+   file = argv[optind];
 
    /* Open file */
    pud = pud_new(file);

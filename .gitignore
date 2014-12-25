@@ -3,6 +3,8 @@
 *.o
 
 /pudviewer
+/tools/tiles
+/tools/ppm_cmp
 
 /*.ppm
 /*.jpeg

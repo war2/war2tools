@@ -37,13 +37,13 @@ main(int    argc,
    Pud *pud;
    int verbose = 0;
    uint16_t w;
-   
+
    struct  {
       int          x;
       int          y;
       unsigned int enabled : 1;
    } tile_at;
-   
+
    /* Reset all opts */
    tile_at.enabled = 0;
 

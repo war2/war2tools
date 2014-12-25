@@ -823,7 +823,6 @@ pud_minimap_to_ppm(Pud        *pud,
    free(map);
 
    return true;
-//      chk = jpeg_write(file, pud->map_x, pud->map_y, map);
 }
 
 bool

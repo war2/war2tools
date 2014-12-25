@@ -236,6 +236,7 @@ bool pud_parse_unit(Pud *pud);
 bool pud_minimap_to_ppm(Pud *pud, const char *file);
 bool pud_minimap_to_jpeg(Pud *pud, const char *file);
 
+uint16_t pud_tile_at(Pud *pud, int x, int y);
 
 #endif /* ! _PUD_H_ */
 

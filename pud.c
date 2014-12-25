@@ -916,3 +916,16 @@ pud_minimap_to_jpeg(Pud        *pud,
    return chk;
 }
 
+uint16_t
+pud_tile_at(Pud *pud,
+            int  x,
+            int  y)
+{
+   PUD_SANITY_CHECK(pud, 0);
+
+   if (((unsigned int)(x * y)) >= pud->map_tiles_count)
+     DIE_RETURN(0, "Invalid coordinates %i,%i", x, y);
+
+   return pud->map_tiles[y * pud->map_w + x];
+}
+

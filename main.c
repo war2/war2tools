@@ -62,7 +62,7 @@ main(int    argc,
    pud = pud_new(file);
    if (pud == NULL) DIE_GOTO(end, "Aborting pudviewer...");
 
-   pud_verbose_set(pud, 1);
+   pud_verbose_set(pud, verbose);
    pud_parse(pud);
    pud_minimap_to_ppm(pud, "minimap.ppm");
    pud_minimap_to_jpeg(pud, "minimap.jpeg");

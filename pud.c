@@ -144,17 +144,15 @@ _color_for_player(uint8_t player)
 {
    switch (player)
      {
-      case 0: return _color_make(0xc0, 0x00, 0x00); // Red
-      case 1: return _color_make(0x00, 0x00, 0xc0); // Blue
-      case 2: return _color_make(0x00, 0xff, 0x00); // Green
-      case 3: return _color_make(0x80, 0x00, 0xc0); // Violet
-      case 4: return _color_make(0xff, 0x80, 0x00); // Orange
-      case 5: return _color_make(0x00, 0x00, 0x00); // Black
-      case 6: return _color_make(0xff, 0xff, 0xff); // White
-      case 7: return _color_make(0xff, 0xff, 0x00); // Yellow
-
-      default:
-              break;
+      case 0:  return _color_make(0xc0, 0x00, 0x00); // Red
+      case 1:  return _color_make(0x00, 0x00, 0xc0); // Blue
+      case 2:  return _color_make(0x00, 0xff, 0x00); // Green
+      case 3:  return _color_make(0x80, 0x00, 0xc0); // Violet
+      case 4:  return _color_make(0xff, 0x80, 0x00); // Orange
+      case 5:  return _color_make(0x00, 0x00, 0x00); // Black
+      case 6:  return _color_make(0xff, 0xff, 0xff); // White
+      case 7:  return _color_make(0xff, 0xd0, 0x00); // Yellow
+      default: break;
      }
 
    return _color_make(0x7f, 0x7f, 0x7f);
@@ -164,6 +162,8 @@ static Color
 _pud_tile_to_color(Pud      *pud,
                    uint16_t  tile)
 {
+   (void) pud; // XXX Just here to silent warning for now
+
    /* FIXME This is just for SUMMER
     * TODO WINTER
     * TODO WASTELAND
@@ -1064,22 +1064,24 @@ pud_parse_alow(Pud *pud)
 bool
 pud_parse_ugrd(Pud *pud)
 {
-   PUD_SANITY_CHECK(pud, false);
-
-   uint32_t chk;
-   FILE *f = pud->file;
-   int i;
-   uint8_t buf[208];
-
-   chk = pud_go_to_section(pud, PUD_SECTION_UGRD);
-   if (!chk) DIE_RETURN(false, "Failed to reach section UGRD");
-   PUD_VERBOSE(pud, "At section UGRD (size = %u)", chk);
-
-   for (i = 0; i < 52; i++)
-     {
-     }
-
-   return true;
+   (void) pud;
+   return false;
+   //   PUD_SANITY_CHECK(pud, false);
+   //
+   //   uint32_t chk;
+   //   //FILE *f = pud->file;
+   //   int i;
+   //   uint8_t buf[208];
+   //
+   //   chk = pud_go_to_section(pud, PUD_SECTION_UGRD);
+   //   if (!chk) DIE_RETURN(false, "Failed to reach section UGRD");
+   //   PUD_VERBOSE(pud, "At section UGRD (size = %u)", chk);
+   //
+   //   for (i = 0; i < 52; i++)
+   //     {
+   //     }
+   //
+   //   return true;
 }
 
 bool
@@ -1202,24 +1204,25 @@ pud_parse_oilm(Pud *pud)
 bool
 pud_parse_regm(Pud *pud)
 {
-   PUD_SANITY_CHECK(pud, false);
-
-   uint32_t chk;
-   FILE *f = pud->file;
-   uint16_t w;
-
-   chk = pud_go_to_section(pud, PUD_SECTION_REGM);
-   if (!chk) DIE_RETURN(false, "Failed to reach section REGM");
-   PUD_VERBOSE(pud, "At section REGM (size = %u)", chk);
-
-   //   for (int i = 0; i < 128 * 128; i ++)
-   //     {
-   //   w = file_read_word(f);
-   //   printf("-> %x\n", w);
-   //     }
+   //   PUD_SANITY_CHECK(pud, false);
    //
-   //   return true;
-
+   //   uint32_t chk;
+   //   FILE *f = pud->file;
+   //   uint16_t w;
+   //
+   //   chk = pud_go_to_section(pud, PUD_SECTION_REGM);
+   //   if (!chk) DIE_RETURN(false, "Failed to reach section REGM");
+   //   PUD_VERBOSE(pud, "At section REGM (size = %u)", chk);
+   //
+   //   //   for (int i = 0; i < 128 * 128; i ++)
+   //   //     {
+   //   //   w = file_read_word(f);
+   //   //   printf("-> %x\n", w);
+   //   //     }
+   //   //
+   //   //   return true;
+   //
+   (void) pud;
    return false;
 }
 
@@ -1230,8 +1233,7 @@ pud_parse_unit(Pud *pud)
 
    uint32_t chk;
    FILE *f = pud->file;
-   int i, units;
-   struct _unit u;
+   int units;
 
    chk = pud_go_to_section(pud, PUD_SECTION_UNIT);
    if (!chk) DIE_RETURN(false, "Failed to reach section UNIT");
@@ -1263,10 +1265,10 @@ _minimap_bitmap_generate(Pud *pud,
    unsigned char *map;
    struct _unit *u;
    Color c;
-   int i;
+   int i, j, k;
    int idx;
    int size;
-   uint16_t w;
+   uint16_t w, h;
 
    size = pud->map_tiles_count * 3;
    map = calloc(size, sizeof(unsigned char));
@@ -1284,13 +1286,27 @@ _minimap_bitmap_generate(Pud *pud,
    for (i = 0; i < pud->units_count; i++)
      {
         u = &(pud->units[i]);
-        c = _color_for_player(u->owner);
+        if (u->type == PUD_UNIT_GOLD_MINE)
+          c = _color_make(0xff, 0xff, 0x00);
+        else if (u->type == PUD_UNIT_OIL_PATCH)
+          c = _color_make(0x00, 0x00, 0x00);
+        else
+          c = _color_for_player(u->owner);
 
-        idx = ((u->y * pud->map_w) + u->x) * 3;
+        w = pud->unit_data[u->type].size_w;
+        h = pud->unit_data[u->type].size_h;
 
-        map[idx + 0] = c.r;
-        map[idx + 1] = c.g;
-        map[idx + 2] = c.b;
+        for (j = 0; j < w; j++)
+          {
+             for (k = 0; k < h; k++)
+               {
+                  idx = (((u->y + k)* pud->map_w) + (u->x + j)) * 3;
+
+                  map[idx + 0] = c.r;
+                  map[idx + 1] = c.g;
+                  map[idx + 2] = c.b;
+               }
+          }
      }
 
    if (size_ret) *size_ret = size;

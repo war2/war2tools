@@ -7,10 +7,13 @@ include_directories(
    ${ELEMENTARY_INCLUDE_DIRS}
 )
 
+add_definitions(-Wall)
+
 set(
    WAR2EDIT_SRC
    main.c
    editor.c
+   log.c
 )
 add_executable(war2edit ${WAR2EDIT_SRC})
 

@@ -4,6 +4,7 @@
 #include <pud.h>
 #include <Elementary.h>
 
+#include "log.h"
 #include "editor.h"
 
 

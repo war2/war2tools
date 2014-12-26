@@ -22,6 +22,8 @@ If you are new to cmake:
 - create a `build` directory and `cd` in: `mkdir -p build && cd build`
 - run cmake: `cmake ..`
 - compile all: `make`
+- install: `sudo make install`
+- uninstall: `sudo make uninstall`
 
 
 

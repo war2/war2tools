@@ -1,8 +1,10 @@
 #include "pudviewer.h"
 
-#define PUD_VERBOSE(pud, msg, ...) \
+#define PUD_VERBOSE(pud, lvl, msg, ...) \
    do { \
-      if (pud->verbose) fprintf(stdout, "-- " msg "\n", ## __VA_ARGS__); \
+      if (pud->verbose >= lvl) { \
+         fprintf(stdout, "-- " msg "\n", ## __VA_ARGS__); \
+      } \
    } while (0)
 
 #define PUD_SANITY_CHECK(pud, ...) \
@@ -119,7 +121,7 @@ struct _Pud
 
    Pud_Section   current_section;
 
-   unsigned int  verbose       : 1;
+   unsigned int  verbose       : 4;
    unsigned int  default_allow : 1;
    unsigned int  default_udta  : 1;
    unsigned int  default_ugrd  : 1;
@@ -561,10 +563,10 @@ pud_free(Pud *pud)
 
 void
 pud_verbose_set(Pud *pud,
-                int  on)
+                int  lvl)
 {
    if (pud)
-     pud->verbose = !!on;
+     pud->verbose = lvl;
 }
 
 void
@@ -689,7 +691,7 @@ pud_parse_type(Pud *pud)
 
    chk = pud_go_to_section(pud, PUD_SECTION_TYPE);
    if (!chk) DIE_RETURN(false, "Failed to reach section TYPE");
-   PUD_VERBOSE(pud, "At section TYPE (size = %u)", chk);
+   PUD_VERBOSE(pud, 2, "At section TYPE (size = %u)", chk);
 
    /* Read 10bytes + 2 unused */
    fread(buf, sizeof(uint8_t), 12, f);
@@ -717,7 +719,7 @@ pud_parse_ver(Pud *pud)
 
    chk = pud_go_to_section(pud, PUD_SECTION_VER);
    if (!chk) DIE_RETURN(false, "Failed to reach section VER");
-   PUD_VERBOSE(pud, "At section VER (size = %u)", chk);
+   PUD_VERBOSE(pud, 2, "At section VER (size = %u)", chk);
 
    fread(&w, sizeof(uint16_t), 1, f);
    PUD_CHECK_FERROR(f, false);
@@ -737,7 +739,7 @@ pud_parse_desc(Pud *pud)
 
    chk = pud_go_to_section(pud, PUD_SECTION_DESC);
    if (!chk) DIE_RETURN(false, "Failed to reach section DESC");
-   PUD_VERBOSE(pud, "At section DESC (size = %u)", chk);
+   PUD_VERBOSE(pud, 2, "At section DESC (size = %u)", chk);
 
    fread(buf, sizeof(char), 32, f);
    PUD_CHECK_FERROR(f, false);
@@ -762,10 +764,10 @@ pud_parse_era(Pud *pud)
    chk = pud_go_to_section(pud, PUD_SECTION_ERAX);
    if (!chk) // Optional section, use ERA by default
      {
-        PUD_VERBOSE(pud, "Failed to find ERAX. Trying with ERA...");
+        PUD_VERBOSE(pud, 2, "Failed to find ERAX. Trying with ERA...");
         chk = pud_go_to_section(pud, PUD_SECTION_ERA);
         if (!chk) DIE_RETURN(false, "Failed to reach section ERA");
-        PUD_VERBOSE(pud, "At section ERA (size = %u)", chk);
+        PUD_VERBOSE(pud, 2, "At section ERA (size = %u)", chk);
      }
 
    fread(&w, sizeof(uint16_t), 1, f);
@@ -809,7 +811,7 @@ pud_parse_dim(Pud *pud)
 
    chk = pud_go_to_section(pud, PUD_SECTION_DIM);
    if (!chk) DIE_RETURN(false, "Failed to reach section DIM");
-   PUD_VERBOSE(pud, "At section DIM (size = %u)", chk);
+   PUD_VERBOSE(pud, 2, "At section DIM (size = %u)", chk);
 
    fread(&x, sizeof(uint16_t), 1, f);
    fread(&y, sizeof(uint16_t), 1, f);
@@ -845,7 +847,7 @@ pud_parse_udta(Pud *pud)
 
    chk = pud_go_to_section(pud, PUD_SECTION_UDTA);
    if (!chk) DIE_RETURN(false, "Failed to reach section UDTA");
-   PUD_VERBOSE(pud, "At section UDTA (size = %u)", chk);
+   PUD_VERBOSE(pud, 2, "At section UDTA (size = %u)", chk);
 
    /* Use default data */
    fread(wb, sizeof(uint16_t), 1, f);
@@ -1060,11 +1062,11 @@ pud_parse_alow(Pud *pud)
    chk = pud_go_to_section(pud, PUD_SECTION_ALOW);
    if (!chk)
      {
-        PUD_VERBOSE(pud, "Section ALOW (optional) not present. Skipping...");
+        PUD_VERBOSE(pud, 2, "Section ALOW (optional) not present. Skipping...");
         pud->default_allow = 1;
         return true;
      }
-   PUD_VERBOSE(pud, "At section ALOW (size = %u)", chk);
+   PUD_VERBOSE(pud, 2, "At section ALOW (size = %u)", chk);
 
    for (i = 0; i < ptrs_count; i++)
      {
@@ -1093,7 +1095,7 @@ pud_parse_ugrd(Pud *pud)
 
    chk = pud_go_to_section(pud, PUD_SECTION_UGRD);
    if (!chk) DIE_RETURN(false, "Failed to reach section UGRD");
-   PUD_VERBOSE(pud, "At section UGRD (size = %u)", chk);
+   PUD_VERBOSE(pud, 2, "At section UGRD (size = %u)", chk);
 
    /* Use default data */
    fread(wb, sizeof(uint16_t), 1, f);
@@ -1156,7 +1158,7 @@ pud_parse_sgld(Pud *pud)
 
    chk = pud_go_to_section(pud, PUD_SECTION_SGLD);
    if (!chk) DIE_RETURN(false, "Failed to reach section SGLD");
-   PUD_VERBOSE(pud, "At section SGLD (size = %u)", chk);
+   PUD_VERBOSE(pud, 2, "At section SGLD (size = %u)", chk);
 
    fread(buf, sizeof(uint16_t), 16, f);
    PUD_CHECK_FERROR(f, false);
@@ -1179,7 +1181,7 @@ pud_parse_slbr(Pud *pud)
 
    chk = pud_go_to_section(pud, PUD_SECTION_SLBR);
    if (!chk) DIE_RETURN(false, "Failed to reach section SLBR");
-   PUD_VERBOSE(pud, "At section SLBR (size = %u)", chk);
+   PUD_VERBOSE(pud, 2, "At section SLBR (size = %u)", chk);
 
    fread(buf, sizeof(uint16_t), 16, f);
    PUD_CHECK_FERROR(f, false);
@@ -1202,7 +1204,7 @@ pud_parse_soil(Pud *pud)
 
    chk = pud_go_to_section(pud, PUD_SECTION_SOIL);
    if (!chk) DIE_RETURN(false, "Failed to reach section SOIL");
-   PUD_VERBOSE(pud, "At section SOIL (size = %u)", chk);
+   PUD_VERBOSE(pud, 2, "At section SOIL (size = %u)", chk);
 
    fread(buf, sizeof(uint16_t), 16, f);
    PUD_CHECK_FERROR(f, false);
@@ -1225,7 +1227,7 @@ pud_parse_aipl(Pud *pud)
 
    chk = pud_go_to_section(pud, PUD_SECTION_AIPL);
    if (!chk) DIE_RETURN(false, "Failed to reach section AIPL");
-   PUD_VERBOSE(pud, "At section AIPL (size = %u)", chk);
+   PUD_VERBOSE(pud, 2, "At section AIPL (size = %u)", chk);
 
    fread(buf, sizeof(uint8_t), 16, f);
    PUD_CHECK_FERROR(f, false);
@@ -1250,7 +1252,7 @@ pud_parse_mtxm(Pud *pud)
 
    chk = pud_go_to_section(pud, PUD_SECTION_MTXM);
    if (!chk) DIE_RETURN(false, "Failed to reach section MTXM");
-   PUD_VERBOSE(pud, "At section MTXM (size = %u)", chk);
+   PUD_VERBOSE(pud, 2, "At section MTXM (size = %u)", chk);
 
    /* Check for integrity */
    size = pud->map_w * pud->map_h;
@@ -1279,8 +1281,8 @@ pud_parse_oilm(Pud *pud)
    uint32_t chk;
 
    chk = pud_go_to_section(pud, PUD_SECTION_OILM);
-   if (!chk) PUD_VERBOSE(pud, "Section OILM (obsolete) not present. Skipping...");
-   else PUD_VERBOSE(pud, "Section OILM (obsolete) present. Skipping...");
+   if (!chk) PUD_VERBOSE(pud, 2, "Section OILM (obsolete) not present. Skipping...");
+   else PUD_VERBOSE(pud, 2, "Section OILM (obsolete) present. Skipping...");
 
    return true;
 }
@@ -1297,7 +1299,7 @@ pud_parse_regm(Pud *pud)
    //
    //   chk = pud_go_to_section(pud, PUD_SECTION_REGM);
    //   if (!chk) DIE_RETURN(false, "Failed to reach section REGM");
-   //   PUD_VERBOSE(pud, "At section REGM (size = %u)", chk);
+   //   PUD_VERBOSE(pud, 2, "At section REGM (size = %u)", chk);
    //
    //   //   for (int i = 0; i < 128 * 128; i ++)
    //   //     {
@@ -1322,7 +1324,7 @@ pud_parse_unit(Pud *pud)
 
    chk = pud_go_to_section(pud, PUD_SECTION_UNIT);
    if (!chk) DIE_RETURN(false, "Failed to reach section UNIT");
-   PUD_VERBOSE(pud, "At section UNIT (size = %u)", chk);
+   PUD_VERBOSE(pud, 2, "At section UNIT (size = %u)", chk);
    units = chk / 8;
 
    pud->units = calloc(units, sizeof(struct _unit));
@@ -1432,7 +1434,7 @@ pud_minimap_to_ppm(Pud        *pud,
    fclose(f);
    free(map);
 
-   PUD_VERBOSE(pud, "Created [%s]", file);
+   PUD_VERBOSE(pud, 1, "Created [%s]", file);
 
    return true;
 }
@@ -1451,6 +1453,9 @@ pud_minimap_to_jpeg(Pud        *pud,
 
    chk = jpeg_write(file, pud->map_w, pud->map_h, map);
    free(map);
+
+   if (chk)
+     PUD_VERBOSE(pud, 1, "Created [%s]", file);
 
    return chk;
 }

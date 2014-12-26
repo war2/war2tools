@@ -210,7 +210,7 @@ typedef struct _Pud Pud;
 Pud *pud_new(const char *file);
 void pud_free(Pud *pud);
 bool pud_parse(Pud *pud);
-void pud_verbose_set(Pud *pud, int on);
+void pud_verbose_set(Pud *pud, int lvl);
 bool pud_section_is_optional(Pud_Section sec);
 uint32_t pud_go_to_section(Pud *pud, Pud_Section sec);
 void pud_print(Pud *pud, FILE *stream);

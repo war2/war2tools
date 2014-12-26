@@ -27,7 +27,7 @@ _usage(FILE *stream)
            "    -j | --jpeg          Outputs the minimap as a jpeg file. If --out is not specified,\n"
            "                         the output's filename will the the input file plus \".jpeg\"\n"
            "    -t | --tile-at <x,y> Gets the tile ID at x,y\n"
-           "    -v | --verbose       Activate verbose mode\n"
+           "    -v | --verbose       Activate verbose mode. Cumulate flags increase verbosity level.\n"
            "    -h | --help          Shows this message\n"
            "\n",
            PUDVIEWER_VERSION);
@@ -116,8 +116,12 @@ main(int    argc,
    pud = pud_new(file);
    if (pud == NULL) ABORT(3, "Failed to create pud from [%s]", file);
 
+   /* Set verbosity level */
    pud_verbose_set(pud, verbose);
-   pud_parse(pud);
+
+   /* Parse pud */
+   if (!pud_parse(pud))
+     ABORT(5, "Parsing of [%s] failed", file);
 
    /* --tile-at */
    if (tile_at.enabled)

@@ -114,9 +114,10 @@ main(int    argc,
      }
 
    file = argv[optind];
+   if (file == NULL) ABORT(1, "NULL input file");
 
    /* Open file */
-   pud = pud_new(file);
+   pud = pud_open(file);
    if (pud == NULL) ABORT(3, "Failed to create pud from [%s]", file);
 
    /* Set verbosity level */
@@ -178,7 +179,7 @@ main(int    argc,
      }
 
 abort:
-   pud_free(pud);
+   pud_close(pud);
    return chk;
 }
 

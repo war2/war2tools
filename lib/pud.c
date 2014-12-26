@@ -539,17 +539,19 @@ pud_go_to_section(Pud         *pud,
 }
 
 
-
 Pud *
-pud_new(const char *file)
+pud_open(const char *file)
 {
    Pud *pud;
 
    pud = calloc(1, sizeof(Pud));
    if (!pud) DIE_GOTO(err, "Failed to alloc Pud: %s", strerror(errno));
 
-   pud->file = fopen(file, "r");
-   if (!pud->file) DIE_GOTO(err_free, "Failed to open file [%s]", file);
+   if (file != NULL)
+     {
+        pud->file = fopen(file, "rw");
+        if (!pud->file) DIE_GOTO(err_free, "Failed to open file [%s]", file);
+     }
 
    return pud;
 
@@ -560,7 +562,7 @@ err:
 }
 
 void
-pud_free(Pud *pud)
+pud_close(Pud *pud)
 {
    if (!pud) return;
    fclose(pud->file);

@@ -34,7 +34,7 @@ main(int    argc,
      }
 
    /* Parse PUD */
-   pud = pud_new(argv[1]);
+   pud = pud_open(argv[1]);
    if (pud == NULL)
      {
         fprintf(stderr, "*** pud_new() failed\n");
@@ -47,7 +47,7 @@ main(int    argc,
    if (!ppm)
      {
         fprintf(stderr, "*** ppm_parse() failed\n");
-        pud_free(pud);
+        pud_close(pud);
         return 2;
      }
 
@@ -74,7 +74,7 @@ main(int    argc,
                   if (word == 0)
                     {
                        fprintf(stderr, "*** pud_tile_at(%i, %i) failed\n", i, j);
-                       pud_free(pud);
+                       pud_close(pud);
                        free(ppm);
                        return 3;
                     }
@@ -114,7 +114,7 @@ main(int    argc,
         if (word == 0)
           {
              fprintf(stderr, "*** pud_tile_at() failed\n");
-             pud_free(pud);
+             pud_close(pud);
              free(ppm);
              return 3;
           }
@@ -124,7 +124,7 @@ main(int    argc,
                word, ppm[i].r, ppm[i].g, ppm[i].b);
      }
 
-   pud_free(pud);
+   pud_close(pud);
    free(ppm);
 
    return 0;

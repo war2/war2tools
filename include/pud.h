@@ -218,8 +218,8 @@ typedef enum
 typedef struct _Pud Pud;
 
 
-Pud *pud_new(const char *file);
-void pud_free(Pud *pud);
+Pud *pud_open(const char *file);
+void pud_close(Pud *pud);
 bool pud_parse(Pud *pud);
 void pud_verbose_set(Pud *pud, int lvl);
 bool pud_section_is_optional(Pud_Section sec);

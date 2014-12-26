@@ -552,6 +552,7 @@ err:
 void
 pud_free(Pud *pud)
 {
+   if (!pud) return;
    fclose(pud->file);
    free(pud->units);
    free(pud->map_tiles);
@@ -642,30 +643,34 @@ pud_dimensions_to_size(Pud_Dimensions  dim,
    if (y_ret) *y_ret = y;
 }
 
-int
+bool
 pud_parse(Pud *pud)
 {
-   pud_parse_type(pud);
-   pud_parse_ver(pud);
-   pud_parse_desc(pud);
-   pud_parse_era(pud);
-   pud_parse_dim(pud);
-   pud_parse_udta(pud);
-   pud_parse_alow(pud);
-   pud_parse_ugrd(pud);
-   pud_parse_sgld(pud);
-   pud_parse_slbr(pud);
-   pud_parse_soil(pud);
-   pud_parse_aipl(pud);
-   pud_parse_mtxm(pud);
-   pud_parse_oilm(pud);
-   pud_parse_regm(pud);
-   pud_parse_unit(pud);
+#define PARSE_SEC(sec) \
+   if (!pud_parse_ ## sec(pud)) DIE_RETURN(false, "Failed to parse " #sec)
+
+   PARSE_SEC(type);
+   PARSE_SEC(ver);
+   PARSE_SEC(desc);
+   PARSE_SEC(era);
+   PARSE_SEC(dim);
+   PARSE_SEC(udta);
+   PARSE_SEC(alow);
+   PARSE_SEC(ugrd);
+   PARSE_SEC(sgld);
+   PARSE_SEC(slbr);
+   PARSE_SEC(soil);
+   PARSE_SEC(aipl);
+   PARSE_SEC(mtxm);
+   PARSE_SEC(oilm);
+   PARSE_SEC(regm);
+   PARSE_SEC(unit);
+
+#undef PARSE_SEC
 
    // pud_print(pud, stdout);
 
-
-   return 0;
+   return true;
 }
 
 /*============================================================================*
@@ -1283,6 +1288,7 @@ pud_parse_oilm(Pud *pud)
 bool
 pud_parse_regm(Pud *pud)
 {
+   return true;
    //   PUD_SANITY_CHECK(pud, false);
    //
    //   uint32_t chk;
@@ -1425,6 +1431,8 @@ pud_minimap_to_ppm(Pud        *pud,
      }
    fclose(f);
    free(map);
+
+   PUD_VERBOSE(pud, "Created [%s]", file);
 
    return true;
 }

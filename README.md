@@ -26,6 +26,28 @@ If you are new to cmake:
 - uninstall: `sudo make uninstall`
 
 
+TODO
+----
+
+- Winter color tiles (for minimap)
+- Wasteland color tiles (for minimap)
+- Swamp color tiles (for minimap)
+- Parse "OWNR" section
+- Parse "SIDE" section
+- Parse (and undestrand) "SQM " section
+- Parse (and understand) "REGM" section
+- Get all tile sprites
+  - summer
+  - winter
+  - wasteland
+  - swamp
+- Get all sprites
+  - humans (8 colors)
+  - orcs (8 colors)
+  - critters
+  - neutral
+  - ...
+- War2 map editor clone
 
 
 License

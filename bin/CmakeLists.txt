@@ -1,0 +1,24 @@
+find_package(PkgConfig)
+pkg_check_modules(ELEMENTARY REQUIRED elementary)
+
+include_directories(
+   ${CMAKE_CURRENT_SOURCE_DIR}
+   ${CMAKE_CURRENT_SOURCE_DIR}/../include
+   ${ELEMENTARY_INCLUDE_DIRS}
+)
+
+set(
+   WAR2EDIT_SRC
+   main.c
+   editor.c
+)
+add_executable(war2edit ${WAR2EDIT_SRC})
+
+link_directories(${ELEMENTARY_LIBRARY_DIRS})
+target_link_libraries(war2edit libpud ${JPEG_LIBRARIES} ${ELEMENTARY_LIBRARIES})
+
+install(
+   TARGETS war2edit
+   RUNTIME DESTINATION bin
+)
+

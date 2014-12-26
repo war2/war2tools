@@ -249,8 +249,6 @@ bool pud_parse_oilm(Pud *pud);
 bool pud_parse_regm(Pud *pud);
 bool pud_parse_unit(Pud *pud);
 
-bool pud_write_section(Pud *pud, Pud_Section section, const void *data, size_t size);
-
 bool pud_minimap_to_ppm(Pud *pud, const char *file);
 bool pud_minimap_to_jpeg(Pud *pud, const char *file);
 

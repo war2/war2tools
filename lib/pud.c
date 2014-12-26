@@ -595,14 +595,6 @@ pud_close(Pud *pud)
    free(pud);
 }
 
-bool
-pud_write_section(Pud         *pud,
-                  Pud_Section  section,
-                  const void  *data,
-                  size_t       size)
-{
-}
-
 void
 pud_verbose_set(Pud *pud,
                 int  lvl)

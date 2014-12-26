@@ -1,0 +1,17 @@
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../include)
+link_directories(${CMAKE_CURRENT_BINARY_DIR}/../lib)
+
+add_executable(
+   ppm_cmp
+   ppm.c
+   ppm_cmp.c
+)
+
+add_executable(
+   tiles
+   tiles.c
+   ppm.c
+)
+
+target_link_libraries(tiles libpud ${JPEG_LIBRARIES})
+

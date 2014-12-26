@@ -1,5 +1,5 @@
 #include "ppm.h"
-#include "../pudviewer.h"
+#include <pud.h>
 
 typedef struct {
    uint16_t tile;

@@ -117,7 +117,7 @@ main(int    argc,
    if (file == NULL) ABORT(1, "NULL input file");
 
    /* Open file */
-   pud = pud_open(file);
+   pud = pud_open(file, PUD_OPEN_MODE_READ_ONLY);
    if (pud == NULL) ABORT(3, "Failed to create pud from [%s]", file);
 
    /* Set verbosity level */

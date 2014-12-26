@@ -206,6 +206,11 @@ typedef enum
 } Pud_Unit;
 
 
+typedef enum
+{
+   PUD_OPEN_MODE_READ_ONLY              = 0,
+   PUD_OPEN_MODE_WRITE_ONLY             = 1
+} Pud_Open_Mode;
 
 typedef enum
 {
@@ -218,7 +223,7 @@ typedef enum
 typedef struct _Pud Pud;
 
 
-Pud *pud_open(const char *file);
+Pud *pud_open(const char *file, Pud_Open_Mode mode);
 void pud_close(Pud *pud);
 bool pud_parse(Pud *pud);
 void pud_verbose_set(Pud *pud, int lvl);
@@ -244,6 +249,7 @@ bool pud_parse_oilm(Pud *pud);
 bool pud_parse_regm(Pud *pud);
 bool pud_parse_unit(Pud *pud);
 
+bool pud_write_section(Pud *pud, Pud_Section section, const void *data, size_t size);
 
 bool pud_minimap_to_ppm(Pud *pud, const char *file);
 bool pud_minimap_to_jpeg(Pud *pud, const char *file);

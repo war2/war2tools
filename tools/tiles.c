@@ -34,7 +34,7 @@ main(int    argc,
      }
 
    /* Parse PUD */
-   pud = pud_open(argv[1]);
+   pud = pud_open(argv[1], PUD_OPEN_MODE_READ_ONLY);
    if (pud == NULL)
      {
         fprintf(stderr, "*** pud_new() failed\n");

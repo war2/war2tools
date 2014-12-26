@@ -6,6 +6,25 @@ This aims at being the clone of the Warcraft II Map Editor.
 - PUD viewer
 - PUD editor
 
+pud
+---
+
+After building (assuming it is in `build/`):
+- `./build/pud/pud --help`
+
+
+Build
+-----
+
+war2edit uses Cmake.
+If you are new to cmake:
+
+- create a `build` directory and `cd` in: `mkdir -p build && cd build`
+- run cmake: `cmake ..`
+- compile all: `make`
+
+
+
 
 License
 -------

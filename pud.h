@@ -228,6 +228,7 @@ bool pud_parse_ugrd(Pud *pud);
 bool pud_parse_sgld(Pud *pud);
 bool pud_parse_slbr(Pud *pud);
 bool pud_parse_soil(Pud *pud);
+bool pud_parse_aipl(Pud *pud);
 bool pud_parse_mtxm(Pud *pud);
 bool pud_parse_oilm(Pud *pud);
 bool pud_parse_regm(Pud *pud);

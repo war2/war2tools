@@ -44,6 +44,12 @@ struct _Pud
       uint16_t neutral;
    } sgld, slbr, soil;
 
+   struct {
+      uint8_t players[8];
+      uint8_t unusable[7];
+      uint8_t neutral;
+   } ai;
+
    struct _alow {
       uint32_t players[8];
       uint32_t unusable[7];
@@ -644,6 +650,7 @@ pud_parse(Pud *pud)
    pud_parse_sgld(pud);
    pud_parse_slbr(pud);
    pud_parse_soil(pud);
+   pud_parse_aipl(pud);
    pud_parse_mtxm(pud);
    pud_parse_oilm(pud);
    pud_parse_regm(pud);
@@ -1149,6 +1156,29 @@ pud_parse_soil(Pud *pud)
    memcpy(&(pud->soil.players[0]),  &(buf[0]),  sizeof(uint16_t) * 8);
    memcpy(&(pud->soil.unusable[0]), &(buf[8]),  sizeof(uint16_t) * 7);
    memcpy(&(pud->soil.neutral),     &(buf[15]), sizeof(uint16_t) * 1);
+
+   return true;
+}
+
+bool
+pud_parse_aipl(Pud *pud)
+{
+   PUD_SANITY_CHECK(pud, false);
+
+   uint32_t chk;
+   FILE *f = pud->file;
+   uint8_t buf[16];
+
+   chk = pud_go_to_section(pud, PUD_SECTION_AIPL);
+   if (!chk) DIE_RETURN(false, "Failed to reach section AIPL");
+   PUD_VERBOSE(pud, "At section AIPL (size = %u)", chk);
+
+   fread(buf, sizeof(uint8_t), 16, f);
+   PUD_CHECK_FERROR(f, false);
+
+   memcpy(&(pud->ai.players[0]),  &(buf[0]),  sizeof(uint8_t) * 8);
+   memcpy(&(pud->ai.unusable[0]), &(buf[8]),  sizeof(uint8_t) * 7);
+   memcpy(&(pud->ai.neutral),     &(buf[15]), sizeof(uint8_t) * 1);
 
    return true;
 }

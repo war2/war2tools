@@ -64,7 +64,7 @@ struct _Pud
       uint16_t          icon;
       uint16_t          group;
       uint32_t          flags;
-   } upgrade_cost[52];
+   } upgrade[52];
 
    int map_w;
    int map_h;
@@ -122,6 +122,7 @@ struct _Pud
    unsigned int  verbose       : 1;
    unsigned int  default_allow : 1;
    unsigned int  default_udta  : 1;
+   unsigned int  default_ugrd  : 1;
 };
 
 static const char * const _sections[] =
@@ -1071,24 +1072,67 @@ pud_parse_alow(Pud *pud)
 bool
 pud_parse_ugrd(Pud *pud)
 {
-   (void) pud;
-   return false;
-   //   PUD_SANITY_CHECK(pud, false);
-   //
-   //   uint32_t chk;
-   //   //FILE *f = pud->file;
-   //   int i;
-   //   uint8_t buf[208];
-   //
-   //   chk = pud_go_to_section(pud, PUD_SECTION_UGRD);
-   //   if (!chk) DIE_RETURN(false, "Failed to reach section UGRD");
-   //   PUD_VERBOSE(pud, "At section UGRD (size = %u)", chk);
-   //
-   //   for (i = 0; i < 52; i++)
-   //     {
-   //     }
-   //
-   //   return true;
+   PUD_SANITY_CHECK(pud, false);
+
+   uint32_t chk;
+   FILE *f = pud->file;
+   int i;
+   uint8_t bb[64];
+   uint16_t wb[64];
+   uint32_t lb[64];
+
+   chk = pud_go_to_section(pud, PUD_SECTION_UGRD);
+   if (!chk) DIE_RETURN(false, "Failed to reach section UGRD");
+   PUD_VERBOSE(pud, "At section UGRD (size = %u)", chk);
+
+   /* Use default data */
+   fread(wb, sizeof(uint16_t), 1, f);
+   PUD_CHECK_FERROR(f, false);
+   pud->default_ugrd = !!wb[0];
+
+   /* Upgrade time */
+   fread(bb, sizeof(uint8_t), 52, f);
+   PUD_CHECK_FERROR(f, false);
+   for (i = 0; i < 52; i++)
+     pud->upgrade[i].time = bb[i];
+
+   /* Gold cost */
+   fread(wb, sizeof(uint16_t), 52, f);
+   PUD_CHECK_FERROR(f, false);
+   for (i = 0; i < 52; i++)
+     pud->upgrade[i].gold = wb[i];
+
+   /* Lumber cost */
+   fread(wb, sizeof(uint16_t), 52, f);
+   PUD_CHECK_FERROR(f, false);
+   for (i = 0; i < 52; i++)
+     pud->upgrade[i].lumber = wb[i];
+
+   /* Oil cost */
+   fread(wb, sizeof(uint16_t), 52, f);
+   PUD_CHECK_FERROR(f, false);
+   for (i = 0; i < 52; i++)
+     pud->upgrade[i].oil = wb[i];
+
+   /* Icon */
+   fread(wb, sizeof(uint16_t), 52, f);
+   PUD_CHECK_FERROR(f, false);
+   for (i = 0; i < 52; i++)
+     pud->upgrade[i].icon = wb[i];
+
+   /* Group */
+   fread(wb, sizeof(uint16_t), 52, f);
+   PUD_CHECK_FERROR(f, false);
+   for (i = 0; i < 52; i++)
+     pud->upgrade[i].group = wb[i];
+
+   /* Flags */
+   fread(lb, sizeof(uint32_t), 52, f);
+   PUD_CHECK_FERROR(f, false);
+   for (i = 0; i < 52; i++)
+     pud->upgrade[i].flags = lb[i];
+
+   return true;
 }
 
 bool

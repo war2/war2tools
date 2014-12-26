@@ -1,5 +1,16 @@
 #ifndef _PUD_H_
 #define _PUD_H_
+#ifdef __cplusplus
+extern "C" <%
+#endif
+
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#include "bool.h"
+#include "debug.h"
 
 typedef enum
 {
@@ -240,5 +251,8 @@ bool pud_minimap_to_jpeg(Pud *pud, const char *file);
 
 uint16_t pud_tile_at(Pud *pud, int x, int y);
 
+#ifdef __cplusplus
+%>
+#endif
 #endif /* ! _PUD_H_ */
 

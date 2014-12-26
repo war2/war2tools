@@ -1,5 +1,10 @@
-#include "pudviewer.h"
+#include <stdio.h>
+#include <stdlib.h>
 #include <jpeglib.h>
+
+#include "../include/bool.h"
+#include "../include/jpeg.h"
+#include "../include/debug.h"
 
 bool
 jpeg_write(const char    *file,
@@ -32,10 +37,11 @@ jpeg_write(const char    *file,
 
    row_stride = w * 3;
 
-   while (cinfo.next_scanline < cinfo.image_height) {
-      row_pointer[0] = &p[cinfo.next_scanline * row_stride];
-      (void) jpeg_write_scanlines(&cinfo, row_pointer, 1);
-   }
+   while (cinfo.next_scanline < cinfo.image_height)
+     {
+        row_pointer[0] = &p[cinfo.next_scanline * row_stride];
+        (void) jpeg_write_scanlines(&cinfo, row_pointer, 1);
+     }
 
    jpeg_finish_compress(&cinfo);
    fclose(f);

@@ -1,5 +1,8 @@
-#include "pudviewer.h"
+#include <pud.h>
 #include <getopt.h>
+
+#define PROGRAM "pud"
+#define VERSION  1.0
 
 static const struct option _options[] =
 {
@@ -30,7 +33,7 @@ _usage(FILE *stream)
            "    -v | --verbose       Activate verbose mode. Cumulate flags increase verbosity level.\n"
            "    -h | --help          Shows this message\n"
            "\n",
-           PUDVIEWER_VERSION);
+           VERSION);
 }
 
 #define ABORT(errcode_, msg, ...) \

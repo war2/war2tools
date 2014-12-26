@@ -1,0 +1,19 @@
+cmake_minimum_required(VERSION 2.8)
+project(war2edit C)
+
+set(PROJECT_DESCRIPTION "Warcraft II Map Editor Toolkit")
+set(PROJECT_URL "")
+
+set(PUD_VERSION_MAJOR 1)
+set(PUD_VERSION_MINOR 0)
+
+set(CMAKE_COLOR_MAKEFILE   ON)
+set(CMAKE_VERBOSE_MAKEFILE OFF)
+
+find_package(jpeg REQUIRED)
+
+add_subdirectory(lib)
+add_subdirectory(pud)
+add_subdirectory(include)
+#add_subdirectory(tools)
+

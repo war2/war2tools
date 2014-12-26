@@ -1,4 +1,13 @@
-#include "pudviewer.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <errno.h>
+#include <stdint.h>
+
+#include "../include/debug.h"
+#include "../include/bool.h"
+#include "../include/pud.h"
+#include "../include/jpeg.h"
 
 #define PUD_VERBOSE(pud, lvl, msg, ...) \
    do { \
@@ -506,9 +515,8 @@ pud_go_to_section(Pud         *pud,
     * On failure, it will have to rewind itself on next call */
    pud->current_section = PUD_SECTION_UNIT;
 
-   l = file_read_long(f);
-   if (ferror(f)) DIE_RETURN(false, "Error while reading file");
-   memcpy(buf, &l, sizeof(uint32_t));
+   fread(buf, sizeof(uint8_t), 4, f);
+   PUD_CHECK_FERROR(f, 0);
 
    while (!feof(f))
      {
@@ -522,8 +530,8 @@ pud_go_to_section(Pud         *pud,
           }
 
         memmove(buf, &(buf[1]), 3 * sizeof(char));
-        b = file_read_byte(f);
-        if (ferror(f)) DIE_RETURN(false, "Error while reading file");
+        fread(&b, sizeof(uint8_t), 1, f);
+        PUD_CHECK_FERROR(f, 0);
         buf[3] = b;
      }
 
@@ -700,7 +708,7 @@ pud_parse_type(Pud *pud)
      DIE_RETURN(false, "TYPE section has a wrong header");
 
    /* Read ID TAG */
-   l = file_read_long(f);
+   fread(&l, sizeof(uint32_t), 1, f);
    PUD_CHECK_FERROR(f, false);
 
    pud->tag = l;
@@ -1303,7 +1311,7 @@ pud_parse_regm(Pud *pud)
    //
    //   //   for (int i = 0; i < 128 * 128; i ++)
    //   //     {
-   //   //   w = file_read_word(f);
+   //   //  /* w = file_read_word(f); */
    //   //   printf("-> %x\n", w);
    //   //     }
    //   //

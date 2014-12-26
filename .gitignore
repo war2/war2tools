@@ -2,10 +2,9 @@
 *.sw?
 *.o
 
-/pudviewer
-/tools/tiles
-/tools/ppm_cmp
+/build
 
 /*.ppm
+/*.pud
 /*.jpeg
 

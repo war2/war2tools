@@ -498,6 +498,12 @@ pud_go_to_section(Pud         *pud,
    if (sec <= pud->current_section)
      rewind(f);
 
+   /* Tell the PUD we are pointing at the last section.
+    * In case of success the pud will be pointing at the section
+    * it had to go.
+    * On failure, it will have to rewind itself on next call */
+   pud->current_section = PUD_SECTION_UNIT;
+
    l = file_read_long(f);
    if (ferror(f)) DIE_RETURN(false, "Error while reading file");
    memcpy(buf, &l, sizeof(uint32_t));
@@ -518,7 +524,6 @@ pud_go_to_section(Pud         *pud,
         if (ferror(f)) DIE_RETURN(false, "Error while reading file");
         buf[3] = b;
      }
-   pud->current_section = PUD_SECTION_UNIT; // Go to last section
 
    return 0;
 }

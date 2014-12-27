@@ -10,7 +10,7 @@ include_directories(
 
 add_library(libpud SHARED ${LIBPUD_SRC})
 
-target_link_libraries(libpud ${JPEG_LIBRARIES})
+target_link_libraries(${LIBPUD_LIBRARIES})
 
 install(
    TARGETS libpud

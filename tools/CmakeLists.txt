@@ -13,5 +13,5 @@ add_executable(
    ppm.c
 )
 
-target_link_libraries(tiles libpud ${JPEG_LIBRARIES})
+target_link_libraries(tiles ${LIBPUD_LIBRARIES})
 

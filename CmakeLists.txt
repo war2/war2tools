@@ -13,6 +13,8 @@ set(CMAKE_MACOSX_RPATH OFF)
 
 find_package(jpeg REQUIRED)
 
+set(LIBPUD_LIBRARIES libpud ${JPEG_LIBRARIES})
+
 add_subdirectory(lib)
 add_subdirectory(pud)
 add_subdirectory(include)

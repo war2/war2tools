@@ -18,7 +18,7 @@ set(
 add_executable(war2edit ${WAR2EDIT_SRC})
 
 link_directories(${ELEMENTARY_LIBRARY_DIRS})
-target_link_libraries(war2edit libpud ${JPEG_LIBRARIES} ${ELEMENTARY_LIBRARIES})
+target_link_libraries(war2edit ${LIBPUD_LIBRARIES} ${ELEMENTARY_LIBRARIES})
 
 install(
    TARGETS war2edit

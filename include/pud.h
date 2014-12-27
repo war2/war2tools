@@ -365,25 +365,6 @@ Pud_Side pud_side_convert(uint8_t code);
 
 bool pud_defaults_set(Pud *pud);
 
-bool pud_parse_type(Pud *pud);
-bool pud_parse_ver(Pud *pud);
-bool pud_parse_desc(Pud *pud);
-bool pud_parse_ownr(Pud *pud);
-bool pud_parse_side(Pud *pud);
-bool pud_parse_era(Pud *pud);
-bool pud_parse_dim(Pud *pud);
-bool pud_parse_udta(Pud *pud);
-bool pud_parse_alow(Pud *pud);
-bool pud_parse_ugrd(Pud *pud);
-bool pud_parse_sgld(Pud *pud);
-bool pud_parse_slbr(Pud *pud);
-bool pud_parse_soil(Pud *pud);
-bool pud_parse_aipl(Pud *pud);
-bool pud_parse_mtxm(Pud *pud);
-bool pud_parse_sqm(Pud *pud);
-bool pud_parse_oilm(Pud *pud);
-bool pud_parse_regm(Pud *pud);
-bool pud_parse_unit(Pud *pud);
 
 void pud_era_set(Pud *pud, Pud_Era era);
 void pud_dimensions_set(Pud *pud, Pud_Dimensions dims);

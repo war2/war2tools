@@ -1,6 +1,17 @@
 set(BUILD_SHARED_LIBS true)
 
-set(LIBPUD_SRC pud.c jpeg.c)
+set(
+   LIBPUD_SRC
+   pud.c
+   jpeg.c
+   defaults.c
+   img.c
+   parse.c
+   print.c
+   private.c
+   tiles.c
+   utils.c
+)
 
 include_directories(
    ${CMAKE_CURRENT_SOURCE_DIR}

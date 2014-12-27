@@ -342,9 +342,9 @@ struct _Pud
       unsigned int armor_upgradable   : 1;
    } unit_data[110];
 
-   Pud_Section   current_section;
+   uint8_t       current_section;
 
-   unsigned int  verbose       : 4;
+   unsigned int  verbose       : 5;
    unsigned int  default_allow : 1;
    unsigned int  default_udta  : 1;
    unsigned int  default_ugrd  : 1;

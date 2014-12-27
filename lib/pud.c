@@ -575,13 +575,11 @@ pud_verbose_set(Pud *pud,
      pud->verbose = lvl;
 }
 
-
-
 void
 pud_print(Pud  *pud,
           FILE *stream)
 {
-   int i;
+   int i, j;
 
    if (!stream) stream = stdout;
 
@@ -590,6 +588,9 @@ pud_print(Pud  *pud,
    fprintf(stream, "Description..........: %s\n", pud->description);
    fprintf(stream, "Era..................: %s\n", _era2str(pud->era));
    fprintf(stream, "Dimensions...........: %s\n", _dim2str(pud->dims));
+   fprintf(stream, "Default ALOW.........: %i\n", pud->default_allow);
+   fprintf(stream, "Default UDTA.........: %i\n", pud->default_udta);
+   fprintf(stream, "Default UGRD.........: %i\n", pud->default_ugrd);
 
    /* OWNR Section */
    fprintf(stream, "Owners...............:\n");
@@ -701,7 +702,92 @@ pud_print(Pud  *pud,
         fprintf(stream, "      Flags..........: %s\n", _long2bin(pud->upgrade[i].flags));
      }
 
+   /* Units */
+   fprintf(stream, "Units................:\n");
+   for (i = 0; i < pud->units_count; i++)
+     {
+        fprintf(stream, "   Unit %04i.........:\n", i);
+        fprintf(stream, "      X,Y............: %i,%i\n", pud->units[i].x, pud->units[i].y);
+        fprintf(stream, "      Type...........: 0x%x\n", pud->units[i].type);
+        fprintf(stream, "      Owner..........: 0x%x\n", pud->units[i].owner);
+        fprintf(stream, "      Alter..........: %u\n", pud->units[i].alter);
+     }
 
+   /* Unit data */
+   fprintf(stream, "Unit Data............:\n");
+   for (i = 0; i < 110; i++)
+     {
+        fprintf(stream, "   Unit %02x...........:\n", i);
+        fprintf(stream, "      Overlap........: %x\n", pud->unit_data[i].overlap_frames);
+        fprintf(stream, "      Sight..........: %u\n", pud->unit_data[i].sight);
+        fprintf(stream, "      Hit Points.....: %u\n", pud->unit_data[i].hp);
+        fprintf(stream, "      Build Time.....: %u\n", pud->unit_data[i].build_time);
+        fprintf(stream, "      Gold Cost......: %u\n", pud->unit_data[i].gold_cost);
+        fprintf(stream, "      Lumber Cost....: %u\n", pud->unit_data[i].lumber_cost);
+        fprintf(stream, "      Oil Cost.......: %u\n", pud->unit_data[i].oil_cost);
+        fprintf(stream, "      Width..........: %u\n", pud->unit_data[i].size_w);
+        fprintf(stream, "      Height.........: %u\n", pud->unit_data[i].size_h);
+        fprintf(stream, "      Box Width......: %u\n", pud->unit_data[i].box_w);
+        fprintf(stream, "      Box Height.....: %u\n", pud->unit_data[i].box_h);
+        fprintf(stream, "      Range..........: %u\n", pud->unit_data[i].range);
+        fprintf(stream, "      Cptr react rg..: %u\n", pud->unit_data[i].computer_react_range);
+        fprintf(stream, "      Hmn reac rg....: %u\n", pud->unit_data[i].human_react_range);
+        fprintf(stream, "      Armor..........: %u\n", pud->unit_data[i].armor);
+        fprintf(stream, "      Priority.......: %u\n", pud->unit_data[i].priority);
+        fprintf(stream, "      Basic Dmg......: %u\n", pud->unit_data[i].basic_damage);
+        fprintf(stream, "      Piercing Dmg...: %u\n", pud->unit_data[i].piercing_damage);
+        fprintf(stream, "      Missile........: %u\n", pud->unit_data[i].missile_weapon);
+        fprintf(stream, "      Type...........: %u\n", pud->unit_data[i].type);
+        fprintf(stream, "      Decay Rate.....: %u\n", pud->unit_data[i].decay_rate);
+        fprintf(stream, "      Annoy..........: %u\n", pud->unit_data[i].annoy);
+        fprintf(stream, "      Mouse 2 Btn....: %u\n", pud->unit_data[i].mouse_right_btn);
+        fprintf(stream, "      Point Value....: %u\n", pud->unit_data[i].point_value);
+        fprintf(stream, "      Can Target.....: %u\n", pud->unit_data[i].can_target);
+        fprintf(stream, "      Rect Sel.......: %i\n", pud->unit_data[i].rect_sel);
+        fprintf(stream, "      Has Magic......: %i\n", pud->unit_data[i].has_magic);
+        fprintf(stream, "      Weapons Ugrd...: %i\n", pud->unit_data[i].weapons_upgradable);
+        fprintf(stream, "      Armor Ugrd.....: %i\n", pud->unit_data[i].armor_upgradable);
+        fprintf(stream, "      Flags..........: %s\n", _long2bin(pud->unit_data[i].flags));
+     }
+
+   /* Tiles map */
+   fprintf(stream, "Tiles Map (%s)\n", _dim2str(pud->dims));
+   for (i = 0; i < pud->map_h; i++)
+     {
+        for (j = 0; j < pud->map_w; j++)
+          {
+             fprintf(stream, "0x%04x", pud->tiles_map[(i * pud->map_w) + j]);
+             if (j < pud->map_w - 1)
+               fprintf(stream, " ");
+          }
+        fprintf(stream, "\n");
+     }
+
+   /* Action map */
+   fprintf(stream, "Action Map (%s)\n", _dim2str(pud->dims));
+   for (i = 0; i < pud->map_h; i++)
+     {
+        for (j = 0; j < pud->map_w; j++)
+          {
+             fprintf(stream, "0x%04x", pud->action_map[(i * pud->map_w) + j]);
+             if (j < pud->map_w - 1)
+               fprintf(stream, " ");
+          }
+        fprintf(stream, "\n");
+     }
+
+   /* Movement map */
+   fprintf(stream, "Movement Map (%s)\n", _dim2str(pud->dims));
+   for (i = 0; i < pud->map_h; i++)
+     {
+        for (j = 0; j < pud->map_w; j++)
+          {
+             fprintf(stream, "0x%04x", pud->movement_map[(i * pud->map_w) + j]);
+             if (j < pud->map_w - 1)
+               fprintf(stream, " ");
+          }
+        fprintf(stream, "\n");
+     }
 }
 
 void
@@ -1494,9 +1580,9 @@ pud_parse_regm(Pud *pud)
 
    for (i = 0; i < pud->tiles; i++)
      {
-         fread(&w, sizeof(uint16_t), 1, f);
-         PUD_CHECK_FERROR(f, false);
-         pud->action_map[i] = w;
+        fread(&w, sizeof(uint16_t), 1, f);
+        PUD_CHECK_FERROR(f, false);
+        pud->action_map[i] = w;
      }
 
    return true;

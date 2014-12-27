@@ -50,6 +50,73 @@ static const char * const _sections[] =
    "MTXM", "SQM ", "OILM", "REGM", "UNIT"
 };
 
+static const char *
+_dim2str(Pud_Dimensions dim)
+{
+   switch (dim)
+     {
+      case PUD_DIMENSIONS_32_32:   return "32 x 32";
+      case PUD_DIMENSIONS_64_64:   return "64 x 64";
+      case PUD_DIMENSIONS_96_96:   return "96 x 96";
+      case PUD_DIMENSIONS_128_128: return "128 x 128";
+      default: break;
+     }
+   return "<INVALID DIMENSIONS>";
+}
+
+static const char *
+_era2str(Pud_Era era)
+{
+   switch (era)
+     {
+      case PUD_ERA_FOREST:    return "Forest";
+      case PUD_ERA_WINTER:    return "Winter";
+      case PUD_ERA_WASTELAND: return "Wasteland";
+      case PUD_ERA_SWAMP:     return "Swamp";
+     }
+
+   return "<INVALID ERA>";
+}
+
+static const char *
+_long2bin(uint32_t x)
+{
+   static char buf[64];
+   char b[16];
+   int i, k = 0;
+   const char *q;
+
+   snprintf(b, sizeof(b), "%08x", x);
+   for (i = 0; i < 8; i++)
+     {
+         switch (b[i])
+           {
+            case '0': q = "0000"; break;
+            case '1': q = "0001"; break;
+            case '2': q = "0010"; break;
+            case '3': q = "0011"; break;
+            case '4': q = "0100"; break;
+            case '5': q = "0101"; break;
+            case '6': q = "0110"; break;
+            case '7': q = "0111"; break;
+            case '8': q = "1000"; break;
+            case '9': q = "1001"; break;
+            case 'a': q = "1010"; break;
+            case 'b': q = "1011"; break;
+            case 'c': q = "1100"; break;
+            case 'd': q = "1101"; break;
+            case 'e': q = "1110"; break;
+            case 'f': q = "1111"; break;
+            default: return "<ERROR>";
+           }
+        memcpy(buf + k, q, 4);
+        k += 4;
+     }
+   buf[k] = 0;
+
+   return buf;
+}
+
 static Color
 _color_make(uint8_t r,
             uint8_t g,
@@ -504,6 +571,8 @@ pud_verbose_set(Pud *pud,
      pud->verbose = lvl;
 }
 
+
+
 void
 pud_print(Pud  *pud,
           FILE *stream)
@@ -512,34 +581,106 @@ pud_print(Pud  *pud,
 
    if (!stream) stream = stdout;
 
-   fprintf(stream, "Tag ID..........: %x\n", pud->tag);
-   fprintf(stream, "Version.........: %x\n", pud->version);
-   fprintf(stream, "Description.....: %s\n", pud->description);
-   fprintf(stream, "Era.............: %i\n", pud->era);
-   fprintf(stream, "Dimensions......: %x\n", pud->dims);
+   fprintf(stream, "Tag ID...............: 0x%x\n", pud->tag);
+   fprintf(stream, "Version..............: %x\n", pud->version);
+   fprintf(stream, "Description..........: %s\n", pud->description);
+   fprintf(stream, "Era..................: %s\n", _era2str(pud->era));
+   fprintf(stream, "Dimensions...........: %s\n", _dim2str(pud->dims));
 
-   //   fprintf(stream, "Units & Building allowed
-
-   fprintf(stream, "Starting Gold...:\n");
+   /* SGLD Section */
+   fprintf(stream, "Starting Gold........:\n");
    for (i = 0; i < 8; i++)
-     fprintf(stream, "   player %i.....: %u\n", i + 1, pud->sgld.players[i]);
+     fprintf(stream, "   player %i..........: %u\n", i + 1, pud->sgld.players[i]);
    for (i = 0; i < 7; i++)
-     fprintf(stream, "   unusable %i...: %u\n", i + 1, pud->sgld.unusable[i]);
-   fprintf(stream, "   neutral......: %u\n", pud->sgld.neutral);
+     fprintf(stream, "   unusable %i........: %u\n", i + 1, pud->sgld.unusable[i]);
+   fprintf(stream, "   neutral...........: %u\n", pud->sgld.neutral);
 
-   fprintf(stream, "Starting Lumber.:\n");
+   /* SLBR section */
+   fprintf(stream, "Starting Lumber......:\n");
    for (i = 0; i < 8; i++)
-     fprintf(stream, "   player %i.....: %u\n", i + 1, pud->slbr.players[i]);
+     fprintf(stream, "   player %i..........: %u\n", i + 1, pud->slbr.players[i]);
    for (i = 0; i < 7; i++)
-     fprintf(stream, "   unusable %i...: %u\n", i + 1, pud->slbr.unusable[i]);
-   fprintf(stream, "   neutral......: %u\n", pud->slbr.neutral);
+     fprintf(stream, "   unusable %i........: %u\n", i + 1, pud->slbr.unusable[i]);
+   fprintf(stream, "   neutral...........: %u\n", pud->slbr.neutral);
 
-   fprintf(stream, "Starting Oil....:\n");
+   /* SOIL section */
+   fprintf(stream, "Starting Oil.........:\n");
    for (i = 0; i < 8; i++)
-     fprintf(stream, "   player %i.....: %u\n", i + 1, pud->soil.players[i]);
+     fprintf(stream, "   player %i..........: %u\n", i + 1, pud->soil.players[i]);
    for (i = 0; i < 7; i++)
-     fprintf(stream, "   unusable %i...: %u\n", i + 1, pud->soil.unusable[i]);
-   fprintf(stream, "   neutral......: %u\n", pud->soil.neutral);
+     fprintf(stream, "   unusable %i........: %u\n", i + 1, pud->soil.unusable[i]);
+   fprintf(stream, "   neutral...........: %u\n", pud->soil.neutral);
+
+   /* AI section */
+   fprintf(stream, "AI...................:\n");
+   for (i = 0; i < 8; i++)
+     fprintf(stream, "   player %i..........: 0x%02x\n", i + 1, pud->ai.players[i]);
+   for (i = 0; i < 7; i++)
+     fprintf(stream, "   unusable %i........: 0x%02x\n", i + 1, pud->ai.unusable[i]);
+   fprintf(stream, "   neutral...........: 0x%02x\n", pud->ai.neutral);
+
+   /* ALOW section - Units & Buildings */
+   fprintf(stream, "Allow Units..........:\n");
+   for (i = 0; i < 8; i++)
+     fprintf(stream, "   player %i..........: %s\n", i + 1, _long2bin(pud->unit_alow.players[i]));
+   for (i = 0; i < 7; i++)
+     fprintf(stream, "   unusable %i........: %s\n", i + 1, _long2bin(pud->unit_alow.unusable[i]));
+   fprintf(stream, "   neutral...........: %s\n", _long2bin(pud->unit_alow.neutral));
+
+   /* ALOW section - Startup Spells */
+   fprintf(stream, "Startup Spells.......:\n");
+   for (i = 0; i < 8; i++)
+     fprintf(stream, "   player %i..........: %s\n", i + 1, _long2bin(pud->spell_start.players[i]));
+   for (i = 0; i < 7; i++)
+     fprintf(stream, "   unusable %i........: %s\n", i + 1, _long2bin(pud->spell_start.unusable[i]));
+   fprintf(stream, "   neutral...........: %s\n", _long2bin(pud->spell_start.neutral));
+
+   /* ALOW section - Spells Allowed */
+   fprintf(stream, "Allow Spells.........:\n");
+   for (i = 0; i < 8; i++)
+     fprintf(stream, "   player %i..........: %s\n", i + 1, _long2bin(pud->spell_alow.players[i]));
+   for (i = 0; i < 7; i++)
+     fprintf(stream, "   unusable %i........: %s\n", i + 1, _long2bin(pud->spell_alow.unusable[i]));
+   fprintf(stream, "   neutral...........: %s\n", _long2bin(pud->spell_alow.neutral));
+
+   /* ALOW section - Spells Researching */
+   fprintf(stream, "Searching Spells.....:\n");
+   for (i = 0; i < 8; i++)
+     fprintf(stream, "   player %i..........: %s\n", i + 1, _long2bin(pud->spell_alow.players[i]));
+   for (i = 0; i < 7; i++)
+     fprintf(stream, "   unusable %i........: %s\n", i + 1, _long2bin(pud->spell_alow.unusable[i]));
+   fprintf(stream, "   neutral...........: %s\n", _long2bin(pud->spell_alow.neutral));
+
+   /* ALOW section - Upgrades allowed */
+   fprintf(stream, "Upgrades Allowed.....:\n");
+   for (i = 0; i < 8; i++)
+     fprintf(stream, "   player %i..........: %s\n", i + 1, _long2bin(pud->up_alow.players[i]));
+   for (i = 0; i < 7; i++)
+     fprintf(stream, "   unusable %i........: %s\n", i + 1, _long2bin(pud->up_alow.unusable[i]));
+   fprintf(stream, "   neutral...........: %s\n", _long2bin(pud->up_alow.neutral));
+
+   /* ALOW section - Upgrades Researching */
+   fprintf(stream, "Searching Upgrades...:\n");
+   for (i = 0; i < 8; i++)
+     fprintf(stream, "   player %i..........: %s\n", i + 1, _long2bin(pud->up_acq.players[i]));
+   for (i = 0; i < 7; i++)
+     fprintf(stream, "   unusable %i........: %s\n", i + 1, _long2bin(pud->up_acq.unusable[i]));
+   fprintf(stream, "   neutral...........: %s\n", _long2bin(pud->up_acq.neutral));
+
+   /* UGRD Section */
+   fprintf(stream, "Upgrades.............:\n");
+   for (i = 0; i < 52; i++)
+     {
+        fprintf(stream, "   Upgrade 0x%02x......:\n", i);
+        fprintf(stream, "      Time...........: %u\n", pud->upgrade[i].time);
+        fprintf(stream, "      Gold...........: %u\n", pud->upgrade[i].gold);
+        fprintf(stream, "      Lumber.........: %u\n", pud->upgrade[i].lumber);
+        fprintf(stream, "      Oil............: %u\n", pud->upgrade[i].oil);
+        fprintf(stream, "      Icon...........: %u\n", pud->upgrade[i].icon);
+        fprintf(stream, "      Group..........: 0x%02x\n", pud->upgrade[i].group);
+        fprintf(stream, "      Flags..........: %s\n", _long2bin(pud->upgrade[i].flags));
+     }
+
 
 }
 
@@ -1411,7 +1552,25 @@ pud_tile_at(Pud *pud,
 bool
 pud_defaults_set(Pud *pud)
 {
-   PUD_SANITY_CHECK(pud, PUD_OPEN_MODE_W, 0);
+   PUD_SANITY_CHECK(pud, PUD_OPEN_MODE_W, false);
 
-  return false;
+   int i;
+
+   // XXX Currently under heavy construction
+   for (i = 0; i < 8; i++) pud->sgld.players[i] = 2000;
+   for (i = 0; i < 7; i++) pud->sgld.unusable[i] = 2000;
+   pud->sgld.neutral = 2000;
+
+   for (i = 0; i < 8; i++) pud->slbr.players[i] = 1000;
+   for (i = 0; i < 7; i++) pud->slbr.unusable[i] = 1000;
+   pud->slbr.neutral = 1000;
+
+   for (i = 0; i < 8; i++) pud->soil.players[i] = 1000;
+   for (i = 0; i < 7; i++) pud->soil.unusable[i] = 1000;
+   pud->soil.neutral = 1000;
+
+   for (i = 0; i < 8; i++) pud->ai.players[i] = 0x00;
+
+   return false; // XXX Set to true when done with
 }
+

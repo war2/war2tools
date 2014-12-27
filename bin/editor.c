@@ -12,9 +12,7 @@ _win_del_cb(void        *data,
             void        *event EINA_UNUSED)
 {
    Editor *ed = data;
-
-   evas_object_del(ed->win);
-   _windows = eina_list_remove(_windows, ed);
+   editor_close(ed);
 }
 
 static void
@@ -52,6 +50,10 @@ _win_save_as_cb(void        *data  EINA_UNUSED,
                 void        *event EINA_UNUSED)
 {
 }
+
+/*============================================================================*
+ *                                Common Radio                                *
+ *============================================================================*/
 
 static Editor *
 _editor_for_menu(Evas_Object *menu)
@@ -118,6 +120,8 @@ _radio_add(Editor          *editor,
 
 
 
+
+
 /*============================================================================*
  *                                 Public API                                 *
  *============================================================================*/
@@ -140,29 +144,186 @@ editor_shutdown(void)
 }
 
 void
+editor_close(Editor *ed)
+{
+   _windows = eina_list_remove(_windows, ed);
+
+   /* Set the window to NULL as a hint for editor_free() */
+   evas_object_del(ed->win);
+   ed->win = NULL;
+}
+
+void
 editor_free(Editor *ed)
 {
    if (!ed) return;
 
+   if (ed->win != NULL)
+     editor_close(ed);
    pud_close(ed->pud);
    free(ed);
 }
 
+static void
+_mc_cancel_cb(void        *data,
+              Evas_Object *obj  EINA_UNUSED,
+              void        *evt  EINA_UNUSED)
+{
+   Editor *ed = data;
+   editor_close(ed);
+   editor_free(ed);
+}
+
+static void
+_mc_create_cb(void        *data,
+              Evas_Object *obj  EINA_UNUSED,
+              void        *evt  EINA_UNUSED)
+{
+   Editor *ed = data;
+   editor_mainconfig_hide(ed);
+}
+
+
+static Eina_Bool
+_mainconfig_create(Editor *ed)
+{
+   Evas_Object *o, *box, *b2, *b3, *img, *t, *f;
+   Elm_Object_Item *itm;
+
+   /* Create main box (mainconfig) */
+   box = elm_box_add(ed->win);
+   evas_object_size_hint_weight_set(box, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(box, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_box_horizontal_set(box, EINA_FALSE);
+
+   /* Box to hold buttons */
+   b2 = elm_box_add(box);
+   elm_box_horizontal_set(b2, EINA_TRUE);
+   evas_object_size_hint_weight_set(b2, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_box_pack_end(box, b2);
+   evas_object_show(b2);
+
+   /* Cancel button */
+   o = elm_button_add(b2);
+   elm_object_text_set(o, "Cancel");
+   evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_smart_callback_add(o, "clicked", _mc_cancel_cb, ed);
+   elm_box_pack_start(b2, o);
+   evas_object_show(o);
+
+   /* Create button */
+   o = elm_button_add(b2);
+   elm_object_text_set(o, "Create");
+   evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_smart_callback_add(o, "clicked", _mc_create_cb, ed);
+   elm_box_pack_end(b2, o);
+   evas_object_show(o);
+
+   /* Box to hold map and menus */
+   b2 = elm_box_add(box);
+   elm_box_horizontal_set(b2, EINA_TRUE);
+   evas_object_size_hint_weight_set(b2, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_box_pack_start(box, b2);
+
+   /* Image to hold the minimap overview */
+   img = elm_image_add(b2);
+   elm_box_pack_start(b2, img);
+//   elm_image_file_set(img,
+
+   /* Box to put commands */
+   b3 = elm_box_add(b2);
+   elm_box_horizontal_set(b3, EINA_FALSE);
+   evas_object_size_hint_weight_set(b3, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_box_pack_end(b2, b3);
+   evas_object_show(b3);
+   
+   f = elm_frame_add(b3);
+   elm_object_text_set(f, "Map Size");
+   evas_object_size_hint_weight_set(f, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(f, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_box_pack_start(b3, f);
+   evas_object_show(f);
+
+
+//   /* Table to hold commands */
+//   t = elm_table_add(b2);
+//   evas_object_size_hint_weight_set(t, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+//   evas_object_size_hint_align_set(t, EVAS_HINT_FILL, EVAS_HINT_FILL);
+//   elm_box_pack_end(b2, t);
+//   evas_object_show(b2);
+
+//   /* Label for map size  */
+//   o = elm_label_add(t);
+//   elm_object_text_set(o, "Map Size:");
+//   elm_table_pack(t, o, 0, 0, 1, 1);
+//   evas_object_show(o);
+//
+//   /* Label for map era */
+//   o = elm_label_add(t);
+//   elm_object_text_set(o, "Map Era:");
+//   elm_table_pack(t, o, 0, 1, 1, 1);
+//   evas_object_show(o);
+
+ //  /* Menu for map size */
+ //  o = elm_menu_add(t);
+ //  ed->mainconfig.menu_size = o;
+ //  itm = elm_menu_item_add(o, NULL, NULL, "32 x 32", NULL, NULL);
+ //  elm_menu_item_add(o, itm, NULL, "64 x 64", NULL, NULL);
+ //  elm_menu_item_add(o, itm, NULL, "96 x 96", NULL, NULL);
+ //  elm_menu_item_add(o, itm, NULL, "128 x 128", NULL, NULL);
+ //  elm_table_pack(t, o, 1, 0, 1, 1);
+ //  evas_object_show(o);
+
+ //  /* Menu for map era */
+ //  o = elm_menu_add(t);
+ //  ed->mainconfig.menu_era = o;
+ //  itm = elm_menu_item_add(o, NULL, NULL, "Summer", NULL, NULL);
+ //  elm_menu_item_add(o, itm, NULL, "Winter", NULL, NULL);
+ //  elm_menu_item_add(o, itm, NULL, "Wasteland", NULL, NULL);
+ //  elm_menu_item_add(o, itm, NULL, "Swamp", NULL, NULL);
+ //  elm_table_pack(t, o, 1, 1, 1, 1);
+ //  evas_object_show(o);
+
+
+   evas_object_show(t);
+   ed->mainconfig.container = box;
+   ed->mainconfig.img = img;
+
+   return EINA_TRUE;
+}
+
+void
+editor_mainconfig_show(Editor *ed)
+{
+   int i;
+
+   /* Disable main menu */
+   for (i = 0; i < 4; i++)
+     elm_object_item_disabled_set(ed->main_sel[i], EINA_TRUE);
+
+   /* Show inwin */
+   elm_win_inwin_activate(ed->inwin);
+   evas_object_show(ed->inwin);
+}
+
+void
+editor_mainconfig_hide(Editor *ed)
+{
+   int i;
+
+   evas_object_hide(ed->inwin);
+   for (i = 0; i < 4; i++)
+     elm_object_item_disabled_set(ed->main_sel[i], EINA_FALSE);
+}
+
 Editor *
-editor_new(Pud_Era        era,
-           Pud_Dimensions dims)
+editor_new(void)
 {
    Editor *ed;
-   char filename[512], *ptr;
    char title[128], wins[32];
    Evas_Object *o;
    Elm_Object_Item *itm, *i;
    int k = 0;
-
-   /* Get unique filename */
-   snprintf(filename, sizeof(filename), "/tmp/war2dit.XXXXXX");
-   ptr = mktemp(filename);
-   EINA_SAFETY_ON_NULL_GOTO(ptr, err_ret);
 
    ed = calloc(1, sizeof(Editor));
    EINA_SAFETY_ON_NULL_GOTO(ed, err_ret);
@@ -184,21 +345,24 @@ editor_new(Pud_Era        era,
    o = elm_box_add(ed->win);
    EINA_SAFETY_ON_NULL_GOTO(o, err_win_del);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_box_horizontal_set(o, EINA_FALSE);
    elm_win_resize_object_add(ed->win, o);
    evas_object_show(o);
 
    /* Get the main menu */
    ed->menu = elm_win_main_menu_get(ed->win);
    EINA_SAFETY_ON_NULL_GOTO(ed->menu, err_win_del);
-   itm = elm_menu_item_add(ed->menu, NULL, NULL,  "File", NULL, NULL);
+
+   itm = ed->main_sel[0] = elm_menu_item_add(ed->menu, NULL, NULL,  "File", NULL, NULL);
    elm_menu_item_add(ed->menu, itm, NULL, "New...", _win_new_cb, NULL);
    elm_menu_item_add(ed->menu, itm, NULL, "Open...", _win_open_cb, NULL);
    elm_menu_item_add(ed->menu, itm, NULL, "Save", _win_save_cb, ed);
    elm_menu_item_add(ed->menu, itm, NULL, "Save As...", _win_save_as_cb, ed);
    elm_menu_item_separator_add(ed->menu, itm);
-   elm_menu_item_add(ed->menu, itm, NULL, "Quit", _win_del_cb, ed);
+   elm_menu_item_add(ed->menu, itm, NULL, "Close", _win_del_cb, ed);
 
-   itm = elm_menu_item_add(ed->menu, NULL, NULL, "Tools", NULL, NULL);
+   itm = ed->main_sel[1] = elm_menu_item_add(ed->menu, NULL, NULL, "Tools", NULL, NULL);
 
 #define RADIO_ADD(flags, label) _radio_add(ed, k++, i, label, flags)
 
@@ -332,15 +496,34 @@ editor_new(Pud_Era        era,
 
 #undef RADIO_ADD
 
-   itm = elm_menu_item_add(ed->menu, NULL, NULL, "Players", NULL, NULL);
-   itm = elm_menu_item_add(ed->menu, NULL, NULL, "Help", NULL, NULL);
+   itm = ed->main_sel[2] = elm_menu_item_add(ed->menu, NULL, NULL, "Players", NULL, NULL);
+   itm = ed->main_sel[3] = elm_menu_item_add(ed->menu, NULL, NULL, "Help", NULL, NULL);
+
+   Evas_Object *b;
+
+   /* Scroller */
+   ed->scroller = elm_scroller_add(ed->win);
+   EINA_SAFETY_ON_NULL_GOTO(ed->scroller, err_win_del);
+   evas_object_size_hint_weight_set(ed->scroller, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(ed->scroller, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_scroller_policy_set(ed->scroller, ELM_SCROLLER_POLICY_ON, ELM_SCROLLER_POLICY_ON);
+   elm_scroller_propagate_events_set(ed->scroller, EINA_TRUE);
+   elm_box_pack_end(o, ed->scroller);
+   evas_object_show(ed->scroller);
+   elm_scroller_page_relative_set(ed->scroller, 0, 1);
+
+   /* Mainconfig: get user input for various mainstream parameters */
+   _mainconfig_create(ed);
+
+   /* Add inwin */
+   ed->inwin = elm_win_inwin_add(ed->win);
+   EINA_SAFETY_ON_NULL_GOTO(ed->inwin, err_win_del);
+   elm_win_inwin_content_set(ed->inwin, ed->mainconfig.container);
 
    /* Show window */
    evas_object_show(ed->win);
 
-   /* Open PUD */
-   ed->pud = pud_open(ptr, PUD_OPEN_MODE_WRITE_ONLY);
-   EINA_SAFETY_ON_NULL_GOTO(ed->pud, err_win_del);
+   editor_mainconfig_show(ed);
 
    /* Add to list of editor windows */
    _windows = eina_list_append(_windows, ed);

@@ -7,7 +7,7 @@ elm_main(int    argc,
    log_init();
    editor_init();
 
-   editor_new(PUD_ERA_FOREST, PUD_DIMENSIONS_128_128);
+   editor_new();
    elm_run();
    elm_shutdown();
 

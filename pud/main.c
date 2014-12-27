@@ -10,6 +10,7 @@ static const struct option _options[] =
      {"tile-at",  required_argument,    0, 't'},
      {"ppm",      no_argument,          0, 'p'},
      {"jpeg",     no_argument,          0, 'j'},
+     {"print",    no_argument,          0, 'P'},
      {"verbose",  no_argument,          0, 'v'},
      {"help",     no_argument,          0, 'h'}
 };
@@ -24,6 +25,7 @@ _usage(FILE *stream)
            "    pudviewer [options] <file.pud>\n"
            "\n"
            "Options:\n"
+           "    -P | --print         Prints the data in stdout\n"
            "    -o | --output <file> When -p or -j is present outputs the file with the provided filename\n"
            "    -p | --ppm           Outputs the minimap as a ppm file. If --out is not specified,\n"
            "                         the output's filename will the the input file plus \".ppm\"\n"
@@ -64,14 +66,19 @@ main(int    argc,
       unsigned int  enabled : 1;
    } out;
 
+   struct {
+      unsigned int enabled : 1;
+   } print;
+
    /* Reset all opts */
    ZERO(tile_at);
    ZERO(out);
+   ZERO(print);
 
    /* Getopt */
    while (1)
      {
-        c = getopt_long(argc, argv, "o:pjhvt:", _options, &opt_idx);
+        c = getopt_long(argc, argv, "o:pjhPvt:", _options, &opt_idx);
         if (c == -1) break;
 
         switch (c)
@@ -103,6 +110,10 @@ main(int    argc,
               out.enabled = 1;
               out.file = strdup(optarg);
               if (!out.file) ABORT(2, "Failed to strdup [%s]", optarg);
+              break;
+
+           case 'P':
+              print.enabled = 1;
               break;
           }
      }
@@ -177,6 +188,10 @@ main(int    argc,
 
         free(out.file);
      }
+
+   /* -P,--print */
+   if (print.enabled)
+     pud_print(pud, stdout);
 
 abort:
    pud_close(pud);

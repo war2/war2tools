@@ -14,10 +14,16 @@ add_executable(
 )
 
 add_executable(
+   tiler
+   tiler.c
+)
+
+add_executable(
    udta_gen
    udta_gen.c
 )
 
 target_link_libraries(tiles ${LIBPUD_LIBRARIES})
+target_link_libraries(tiler ${LIBPUD_LIBRARIES})
 target_link_libraries(udta_gen ${LIBPUD_LIBRARIES})
 

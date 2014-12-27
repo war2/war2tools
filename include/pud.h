@@ -294,8 +294,9 @@ struct _Pud
    int map_h;
 
    uint16_t *map_tiles;
+   uint16_t *action_map;
 
-   int map_tiles_count;
+   int map_tiles_count; /* pud->map_w * pud->map_h */
 
    struct _unit {
       uint16_t x;

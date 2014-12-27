@@ -747,7 +747,7 @@ pud_parse(Pud *pud)
    PARSE_SEC(ver);
    PARSE_SEC(desc);
    PARSE_SEC(ownr);
-   PARSE_SEC(era);
+   PARSE_SEC(era); // Also parses ERAX
    PARSE_SEC(dim);
    PARSE_SEC(udta);
    PARSE_SEC(alow);
@@ -763,8 +763,6 @@ pud_parse(Pud *pud)
    PARSE_SEC(unit);
 
 #undef PARSE_SEC
-
-   // pud_print(pud, stdout);
 
    return true;
 }
@@ -1405,6 +1403,7 @@ pud_parse_mtxm(Pud *pud)
    if ((size * sizeof(uint16_t)) != chk)
      DIE_RETURN(false, "Mismatch between dims and tiles number");
 
+   if (pud->map_tiles) free(pud->map_tiles);
    pud->map_tiles = calloc(size, sizeof(uint16_t));
    if (!pud->map_tiles) DIE_RETURN(false, "Failed to allocate memory");
    pud->map_tiles_count = size;
@@ -1436,27 +1435,36 @@ pud_parse_oilm(Pud *pud)
 bool
 pud_parse_regm(Pud *pud)
 {
+   PUD_SANITY_CHECK(pud, PUD_OPEN_MODE_R, false);
+
+   uint32_t chk;
+   FILE *f = pud->file;
+   uint16_t w;
+   int i;
+   int size;
+
+   chk = pud_go_to_section(pud, PUD_SECTION_REGM);
+   if (!chk) DIE_RETURN(false, "Failed to reach section REGM");
+   PUD_VERBOSE(pud, 2, "At section REGM (size = %u)", chk);
+
+   /* Check for integrity */
+   size = pud->map_w * pud->map_h;
+   if ((size * sizeof(uint16_t)) != chk)
+     DIE_RETURN(false, "Mismatch between dims and tiles number");
+
+   if (pud->action_map) free(pud->action_map);
+   pud->action_map = calloc(size, sizeof(uint16_t));
+   if (!pud->action_map) DIE_RETURN(false, "Failed to allocate memory");
+   pud->map_tiles_count = size;
+
+   for (i = 0; i < pud->map_tiles_count; i++)
+     {
+         fread(&w, sizeof(uint16_t), 1, f);
+         PUD_CHECK_FERROR(f, false);
+         pud->action_map[i] = w;
+     }
+
    return true;
-   //   PUD_SANITY_CHECK(pud, PUD_OPEN_MODE_R, false);
-   //
-   //   uint32_t chk;
-   //   FILE *f = pud->file;
-   //   uint16_t w;
-   //
-   //   chk = pud_go_to_section(pud, PUD_SECTION_REGM);
-   //   if (!chk) DIE_RETURN(false, "Failed to reach section REGM");
-   //   PUD_VERBOSE(pud, 2, "At section REGM (size = %u)", chk);
-   //
-   //   //   for (int i = 0; i < 128 * 128; i ++)
-   //   //     {
-   //   //  /* w = file_read_word(f); */
-   //   //   printf("-> %x\n", w);
-   //   //     }
-   //   //
-   //   //   return true;
-   //
-   (void) pud;
-   return false;
 }
 
 bool
@@ -1473,6 +1481,7 @@ pud_parse_unit(Pud *pud)
    PUD_VERBOSE(pud, 2, "At section UNIT (size = %u)", chk);
    units = chk / 8;
 
+   if (pud->units) free(pud->units);
    pud->units = calloc(units, sizeof(struct _unit));
    if (!pud->units) DIE_RETURN(false, "Failed to allocate memory");
    pud->units_count = units;

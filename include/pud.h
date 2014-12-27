@@ -309,7 +309,7 @@ struct _Pud
 
    int units_count;
 
-   struct {
+   struct _unit_data {
       uint16_t     overlap_frames;
       uint32_t     sight;
       uint16_t     hp;
@@ -384,6 +384,9 @@ bool pud_parse_sqm(Pud *pud);
 bool pud_parse_oilm(Pud *pud);
 bool pud_parse_regm(Pud *pud);
 bool pud_parse_unit(Pud *pud);
+
+void pud_era_set(Pud *pud, Pud_Era era);
+void pud_dimensions_set(Pud *pud, Pud_Dimensions dims);
 
 bool pud_minimap_to_ppm(Pud *pud, const char *file);
 bool pud_minimap_to_jpeg(Pud *pud, const char *file);

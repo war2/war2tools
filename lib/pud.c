@@ -9,6 +9,9 @@
 #include "../include/pud.h"
 #include "../include/jpeg.h"
 
+/* Visual hint when returning nothing */
+#define VOID
+
 #define PUD_VERBOSE(pud, lvl, msg, ...) \
    do { \
       if (pud->verbose >= lvl) { \
@@ -453,6 +456,7 @@ _pud_tile_to_color(Pud      *pud,
 
    return _color_make(0xff, 0x00, 0xff);
 }
+
 
 bool
 pud_section_is_optional(Pud_Section sec)
@@ -1814,8 +1818,51 @@ pud_defaults_set(Pud *pud)
    for (i = 0; i < 7; i++) pud->soil.unusable[i] = 1000;
    pud->soil.neutral = 1000;
 
+   pud->default_allow = 1;
+   pud->default_udta = 1;
+   pud->default_ugrd = 1;
+
+   struct _unit_data ud[110];
+
+//   pud->unit_data
    for (i = 0; i < 8; i++) pud->ai.players[i] = 0x00;
 
    return false; // XXX Set to true when done with
+}
+
+void
+pud_era_set(Pud     *pud,
+            Pud_Era  era)
+{
+   PUD_SANITY_CHECK(pud, PUD_OPEN_MODE_W, VOID);
+   pud->era = era;
+}
+
+void
+pud_dimensions_set(Pud            *pud,
+                   Pud_Dimensions  dims)
+{
+   PUD_SANITY_CHECK(pud, PUD_OPEN_MODE_W, VOID);
+
+   size_t size;
+
+   pud->dims = dims;
+   pud_dimensions_to_size(dims, &(pud->map_w), &(pud->map_h));
+   pud->tiles = pud->map_w * pud->map_h;
+
+   size = pud->tiles * sizeof(uint16_t);
+
+   /* Set by default light ground */
+   pud->tiles_map = realloc(pud->tiles_map, size);
+   if (!pud->tiles_map) DIE_RETURN(VOID, "Failed to allocate memory");
+   memset(pud->tiles_map, 0x0050, size);
+
+   pud->action_map = realloc(pud->action_map, size);
+   if (!pud->action_map) DIE_RETURN(VOID, "Failed to allocate memory");
+   memset(pud->action_map, 0, size);
+
+   pud->movement_map = realloc(pud->movement_map, size);
+   if (!pud->movement_map) DIE_RETURN(VOID, "Failed to allocate memory");
+   memset(pud->movement_map, 0, size);
 }
 

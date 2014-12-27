@@ -559,7 +559,7 @@ pud_close(Pud *pud)
    if (!pud) return;
    fclose(pud->file);
    free(pud->units);
-   free(pud->map_tiles);
+   free(pud->tiles_map);
    free(pud);
 }
 
@@ -758,6 +758,7 @@ pud_parse(Pud *pud)
    PARSE_SEC(soil);
    PARSE_SEC(aipl);
    PARSE_SEC(mtxm);
+   PARSE_SEC(sqm);
    PARSE_SEC(oilm);
    PARSE_SEC(regm);
    PARSE_SEC(unit);
@@ -970,7 +971,7 @@ pud_parse_dim(Pud *pud)
    else if ((x == 128) && (y == 128))
      pud->dims = PUD_DIMENSIONS_128_128;
    else
-     return false;
+     DIE_RETURN(false, "Invalid dimensions %i x %i", x, y);
 
    pud_dimensions_to_size(pud->dims, &pud->map_w, &pud->map_h);
    pud->tiles = pud->map_w * pud->map_h;
@@ -1403,15 +1404,48 @@ pud_parse_mtxm(Pud *pud)
      DIE_RETURN(false, "Mismatch between dims and tiles number");
 
    /* realloc() to avoid memory leaks when parsing twice */
-   pud->map_tiles = realloc(pud->map_tiles, chk);
-   if (!pud->map_tiles) DIE_RETURN(false, "Failed to allocate memory");
-   memset(pud->map_tiles, 0, chk);
+   pud->tiles_map = realloc(pud->tiles_map, chk);
+   if (!pud->tiles_map) DIE_RETURN(false, "Failed to allocate memory");
+   memset(pud->tiles_map, 0, chk);
 
    for (i = 0; i < pud->tiles; i++)
      {
         fread(&w, sizeof(uint16_t), 1, f);
         PUD_CHECK_FERROR(f, false);
-        pud->map_tiles[i] = w;
+        pud->tiles_map[i] = w;
+     }
+
+   return true;
+}
+
+bool
+pud_parse_sqm(Pud *pud)
+{
+   PUD_SANITY_CHECK(pud, PUD_OPEN_MODE_R, false);
+
+   uint32_t chk;
+   FILE *f = pud->file;
+   uint16_t w;
+   int i;
+
+   chk = pud_go_to_section(pud, PUD_SECTION_SQM);
+   if (!chk) DIE_RETURN(false, "Failed to reach section SQM ");
+   PUD_VERBOSE(pud, 2, "At section SQM  (size = %u)", chk);
+
+   /* Check for integrity */
+   if ((pud->tiles * sizeof(uint16_t)) != chk)
+     DIE_RETURN(false, "Mismatch between dims and tiles number");
+
+   /* realloc() to avoid memory leaks when parsing twice */
+   pud->movement_map = realloc(pud->movement_map, chk);
+   if (!pud->movement_map) DIE_RETURN(false, "Failed to allocate memory");
+   memset(pud->movement_map, 0, chk);
+
+   for (i = 0; i < pud->tiles; i++)
+     {
+        fread(&w, sizeof(uint16_t), 1, f);
+        PUD_CHECK_FERROR(f, false);
+        pud->tiles_map[i] = w;
      }
 
    return true;
@@ -1515,7 +1549,7 @@ _minimap_bitmap_generate(Pud *pud,
 
    for (i = 0, idx = 0; i < pud->tiles; i++, idx += 3)
      {
-        c = _pud_tile_to_color(pud, pud->map_tiles[i]);
+        c = _pud_tile_to_color(pud, pud->tiles_map[i]);
 
         map[idx + 0] = c.r;
         map[idx + 1] = c.g;
@@ -1622,7 +1656,7 @@ pud_tile_at(Pud *pud,
    if (((unsigned int)(x * y)) >= (unsigned int)pud->tiles)
      DIE_RETURN(0, "Invalid coordinates %i,%i", x, y);
 
-   return pud->map_tiles[y * pud->map_w + x];
+   return pud->tiles_map[y * pud->map_w + x];
 }
 
 Pud_Owner

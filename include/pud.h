@@ -293,8 +293,9 @@ struct _Pud
    int map_w;
    int map_h;
 
-   uint16_t *map_tiles;
+   uint16_t *tiles_map;
    uint16_t *action_map;
+   uint16_t *movement_map;
 
    int tiles; /* pud->map_w * pud->map_h */
 
@@ -379,6 +380,7 @@ bool pud_parse_slbr(Pud *pud);
 bool pud_parse_soil(Pud *pud);
 bool pud_parse_aipl(Pud *pud);
 bool pud_parse_mtxm(Pud *pud);
+bool pud_parse_sqm(Pud *pud);
 bool pud_parse_oilm(Pud *pud);
 bool pud_parse_regm(Pud *pud);
 bool pud_parse_unit(Pud *pud);

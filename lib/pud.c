@@ -89,26 +89,26 @@ _long2bin(uint32_t x)
    snprintf(b, sizeof(b), "%08x", x);
    for (i = 0; i < 8; i++)
      {
-         switch (b[i])
-           {
-            case '0': q = "0000"; break;
-            case '1': q = "0001"; break;
-            case '2': q = "0010"; break;
-            case '3': q = "0011"; break;
-            case '4': q = "0100"; break;
-            case '5': q = "0101"; break;
-            case '6': q = "0110"; break;
-            case '7': q = "0111"; break;
-            case '8': q = "1000"; break;
-            case '9': q = "1001"; break;
-            case 'a': q = "1010"; break;
-            case 'b': q = "1011"; break;
-            case 'c': q = "1100"; break;
-            case 'd': q = "1101"; break;
-            case 'e': q = "1110"; break;
-            case 'f': q = "1111"; break;
-            default: return "<ERROR>";
-           }
+        switch (b[i])
+          {
+           case '0': q = "0000"; break;
+           case '1': q = "0001"; break;
+           case '2': q = "0010"; break;
+           case '3': q = "0011"; break;
+           case '4': q = "0100"; break;
+           case '5': q = "0101"; break;
+           case '6': q = "0110"; break;
+           case '7': q = "0111"; break;
+           case '8': q = "1000"; break;
+           case '9': q = "1001"; break;
+           case 'a': q = "1010"; break;
+           case 'b': q = "1011"; break;
+           case 'c': q = "1100"; break;
+           case 'd': q = "1101"; break;
+           case 'e': q = "1110"; break;
+           case 'f': q = "1111"; break;
+           default: return "<ERROR>";
+          }
         memcpy(buf + k, q, 4);
         k += 4;
      }
@@ -587,6 +587,14 @@ pud_print(Pud  *pud,
    fprintf(stream, "Era..................: %s\n", _era2str(pud->era));
    fprintf(stream, "Dimensions...........: %s\n", _dim2str(pud->dims));
 
+   /* OWNR Section */
+   fprintf(stream, "Owners...............:\n");
+   for (i = 0; i < 8; i++)
+     fprintf(stream, "   player %i..........: 0x%02x\n", i + 1, pud->owner.players[i]);
+   for (i = 0; i < 7; i++)
+     fprintf(stream, "   unusable %i........: 0x%02x\n", i + 1, pud->owner.unusable[i]);
+   fprintf(stream, "   neutral...........: 0x%02x\n", pud->owner.neutral);
+
    /* SGLD Section */
    fprintf(stream, "Starting Gold........:\n");
    for (i = 0; i < 8; i++)
@@ -730,6 +738,7 @@ pud_parse(Pud *pud)
    PARSE_SEC(type);
    PARSE_SEC(ver);
    PARSE_SEC(desc);
+   PARSE_SEC(ownr);
    PARSE_SEC(era);
    PARSE_SEC(dim);
    PARSE_SEC(udta);
@@ -819,14 +828,38 @@ pud_parse_desc(Pud *pud)
 
    fread(buf, sizeof(char), 32, f);
    PUD_CHECK_FERROR(f, false);
-
    memcpy(pud->description, buf, 32 * sizeof(char));
+
    return true;
 }
 
-/*
- * TODO pud_parse_ownr()
- */
+bool
+pud_parse_ownr(Pud *pud)
+{
+   PUD_SANITY_CHECK(pud, PUD_OPEN_MODE_R, false);
+
+   uint8_t buf[8];
+   uint32_t len;
+   FILE *f = pud->file;
+
+   len = pud_go_to_section(pud, PUD_SECTION_OWNR);
+   if (!len) DIE_RETURN(false, "Failed to reach section OWNR");
+   PUD_VERBOSE(pud, 2, "At section OWNR (size = %u)", len);
+
+   fread(buf, sizeof(uint8_t), 8, f);
+   PUD_CHECK_FERROR(f, false);
+   memcpy(pud->owner.players, buf, 8 * sizeof(uint8_t));
+
+   fread(buf, sizeof(uint8_t), 7, f);
+   PUD_CHECK_FERROR(f, false);
+   memcpy(pud->owner.unusable, buf, 7 * sizeof(uint8_t));
+
+   fread(buf, sizeof(uint8_t), 1, f);
+   PUD_CHECK_FERROR(f, false);
+   memcpy(&(pud->owner.neutral), buf, 1 * sizeof(uint8_t));
+
+   return true;
+}
 
 bool
 pud_parse_era(Pud *pud)
@@ -1547,6 +1580,35 @@ pud_tile_at(Pud *pud,
      DIE_RETURN(0, "Invalid coordinates %i,%i", x, y);
 
    return pud->map_tiles[y * pud->map_w + x];
+}
+
+Pud_Owner
+pud_owner_convert(uint8_t code)
+{
+   switch (code)
+     {
+      case 0x00:
+      case 0x02:
+      case 0x08 ... 0xff:
+         return PUD_OWNER_PASSIVE_COMPUTER;
+
+      case 0x01:
+      case 0x04:
+         return PUD_OWNER_COMPUTER;
+
+      case 0x05:
+         return PUD_OWNER_HUMAN;
+
+      case 0x06:
+         return PUD_OWNER_RESCUE_PASSIVE;
+
+      case 0x07:
+         return PUD_OWNER_RESCUE_ACTIVE;
+
+      case 0x03:
+      default:
+         return PUD_OWNER_NOBODY;
+     }
 }
 
 bool

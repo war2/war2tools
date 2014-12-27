@@ -205,6 +205,15 @@ typedef enum
    PUD_UNIT_ORC_WALL                    = 0x68
 } Pud_Unit;
 
+typedef enum
+{
+   PUD_OWNER_NOBODY                     = 0x03,
+   PUD_OWNER_PASSIVE_COMPUTER           = 0x02,
+   PUD_OWNER_COMPUTER                   = 0x01,
+   PUD_OWNER_HUMAN                      = 0x05,
+   PUD_OWNER_RESCUE_PASSIVE             = 0x06,
+   PUD_OWNER_RESCUE_ACTIVE              = 0x07
+} Pud_Owner;
 
 typedef enum
 {
@@ -233,6 +242,12 @@ struct _Pud
    char          description[32];
    uint8_t       era;
    Pud_Dimensions dims;
+
+   struct {
+      uint8_t players[8];
+      uint8_t unusable[7];
+      uint8_t neutral;
+   } owner;
 
    struct {
       uint16_t players[8];
@@ -330,12 +345,14 @@ bool pud_section_is_optional(Pud_Section sec);
 uint32_t pud_go_to_section(Pud *pud, Pud_Section sec);
 void pud_print(Pud *pud, FILE *stream);
 void pud_dimensions_to_size(Pud_Dimensions dim, int *x_ret, int *y_ret);
+Pud_Owner pud_owner_convert(uint8_t code);
 
 bool pud_defaults_set(Pud *pud);
 
 bool pud_parse_type(Pud *pud);
 bool pud_parse_ver(Pud *pud);
 bool pud_parse_desc(Pud *pud);
+bool pud_parse_ownr(Pud *pud);
 bool pud_parse_era(Pud *pud);
 bool pud_parse_dim(Pud *pud);
 bool pud_parse_udta(Pud *pud);

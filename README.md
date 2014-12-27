@@ -32,8 +32,6 @@ TODO
 - Winter color tiles (for minimap)
 - Wasteland color tiles (for minimap)
 - Swamp color tiles (for minimap)
-- Parse "OWNR" section
-- Parse "SIDE" section
 - Parse (and undestrand) "SQM " section
 - Parse (and understand) "REGM" section
 - Get all tile sprites

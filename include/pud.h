@@ -364,7 +364,7 @@ Pud_Owner pud_owner_convert(uint8_t code);
 Pud_Side pud_side_convert(uint8_t code);
 
 bool pud_defaults_set(Pud *pud);
-
+bool pud_write(const Pud *pud);
 
 void pud_era_set(Pud *pud, Pud_Era era);
 void pud_dimensions_set(Pud *pud, Pud_Dimensions dims);

@@ -391,6 +391,8 @@ pud_parse_udta(Pud *pud)
    PUD_CHECK_FERROR(f, false);
    for (i = 0; i < 58; i++)
      pud->unit_data[i].mouse_right_btn = bb[i];
+   for (; i < 110; i++)
+     pud->unit_data[i].mouse_right_btn = 0xff;
 
    /* Point value for killing unit */
    fread(wb, sizeof(uint16_t), 110, f);

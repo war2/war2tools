@@ -236,12 +236,14 @@ _mainconfig_create(Editor *ed)
    evas_object_size_hint_weight_set(b3, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_box_pack_end(b2, b3);
    evas_object_show(b3);
-   
-   f = elm_frame_add(b3);
-   elm_object_text_set(f, "Map Size");
-   evas_object_size_hint_weight_set(f, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_size_hint_align_set(f, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   elm_box_pack_start(b3, f);
+
+  // f = elm_frame_add(b3);
+  // elm_object_text_set(f, "Map Size");
+  // evas_object_size_hint_weight_set(f, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+  // evas_object_size_hint_align_set(f, EVAS_HINT_FILL, EVAS_HINT_FILL);
+  // elm_box_pack_start(b3, f);
+
+   o = elm_radio_add(b3);
    evas_object_show(f);
 
 

@@ -222,6 +222,105 @@ typedef enum
 
 typedef struct _Pud Pud;
 
+struct _Pud
+{
+   FILE         *file;
+   Pud_Open_Mode open_mode;
+
+   uint32_t      tag;
+   uint16_t      version;
+   char          description[32];
+   uint8_t       era;
+   Pud_Dimensions dims;
+
+   struct {
+      uint16_t players[8];
+      uint16_t unusable[7];
+      uint16_t neutral;
+   } sgld, slbr, soil;
+
+   struct {
+      uint8_t players[8];
+      uint8_t unusable[7];
+      uint8_t neutral;
+   } ai;
+
+   struct _alow {
+      uint32_t players[8];
+      uint32_t unusable[7];
+      uint32_t neutral;
+   } unit_alow, spell_start, spell_alow, spell_acq, up_alow, up_acq;
+
+   struct {
+      uint8_t           time;
+      uint16_t          gold;
+      uint16_t          lumber;
+      uint16_t          oil;
+      uint16_t          icon;
+      uint16_t          group;
+      uint32_t          flags;
+   } upgrade[52];
+
+   int map_w;
+   int map_h;
+
+   uint16_t *map_tiles;
+
+   int map_tiles_count;
+
+   struct _unit {
+      uint16_t x;
+      uint16_t y;
+      uint8_t  type;
+      uint8_t  owner;
+      uint16_t alter;
+   } *units;
+
+   int units_count;
+
+
+   struct {
+      uint16_t     overlap_frames;
+      uint32_t     sight;
+      uint16_t     hp;
+      uint8_t      build_time;
+      uint8_t      gold_cost;
+      uint8_t      lumber_cost;
+      uint8_t      oil_cost;
+      uint16_t     size_w;
+      uint16_t     size_h;
+      uint16_t     box_w;
+      uint16_t     box_h;
+      uint8_t      range;
+      uint8_t      computer_react_range;
+      uint8_t      human_react_range;
+      uint8_t      armor;
+      uint8_t      priority;
+      uint8_t      basic_damage;
+      uint8_t      piercing_damage;
+      uint8_t      missile_weapon;
+      uint8_t      type;
+      uint8_t      decay_rate;
+      uint8_t      annoy;
+      uint8_t      mouse_right_btn;
+      uint16_t     point_value;
+      uint8_t      can_target;
+      uint32_t     flags;
+      unsigned int rect_sel           : 1;
+      unsigned int has_magic          : 1;
+      unsigned int weapons_upgradable : 1;
+      unsigned int armor_upgradable   : 1;
+   } unit_data[110];
+
+   Pud_Section   current_section;
+
+   unsigned int  verbose       : 4;
+   unsigned int  default_allow : 1;
+   unsigned int  default_udta  : 1;
+   unsigned int  default_ugrd  : 1;
+};
+
+
 
 Pud *pud_open(const char *file, Pud_Open_Mode mode);
 void pud_close(Pud *pud);

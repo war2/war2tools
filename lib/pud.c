@@ -531,6 +531,10 @@ pud_open(const char    *file,
          m = "wb";
          break;
 
+      case PUD_OPEN_MODE_RW:
+         m = "rb+";
+         break;
+
       default:
          DIE_RETURN(NULL, "Wrong open mode [%i]", mode);
          break;

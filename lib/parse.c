@@ -677,7 +677,7 @@ pud_parse_sqm(Pud *pud)
      {
         fread(&w, sizeof(uint16_t), 1, f);
         PUD_CHECK_FERROR(f, false);
-        pud->tiles_map[i] = w;
+        pud->movement_map[i] = w;
      }
 
    return true;

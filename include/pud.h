@@ -217,6 +217,13 @@ typedef enum
 
 typedef enum
 {
+   PUD_SIDE_HUMAN                       = 0x00,
+   PUD_SIDE_ORC                         = 0x01,
+   PUD_SIDE_NEUTRAL                     = 0x02
+} Pud_Side;
+
+typedef enum
+{
    PUD_OPEN_MODE_R   = 1, /* (1 << 0) */
    PUD_OPEN_MODE_W   = 2, /* (1 << 1) */
    PUD_OPEN_MODE_RW  = 3  /* (1 << 0) | (1 << 1) */
@@ -248,6 +255,12 @@ struct _Pud
       uint8_t unusable[7];
       uint8_t neutral;
    } owner;
+
+   struct {
+      uint8_t players[8];
+      uint8_t unusable[7];
+      uint8_t neutral;
+   } side;
 
    struct {
       uint16_t players[8];
@@ -346,6 +359,7 @@ uint32_t pud_go_to_section(Pud *pud, Pud_Section sec);
 void pud_print(Pud *pud, FILE *stream);
 void pud_dimensions_to_size(Pud_Dimensions dim, int *x_ret, int *y_ret);
 Pud_Owner pud_owner_convert(uint8_t code);
+Pud_Side pud_side_convert(uint8_t code);
 
 bool pud_defaults_set(Pud *pud);
 
@@ -353,6 +367,7 @@ bool pud_parse_type(Pud *pud);
 bool pud_parse_ver(Pud *pud);
 bool pud_parse_desc(Pud *pud);
 bool pud_parse_ownr(Pud *pud);
+bool pud_parse_side(Pud *pud);
 bool pud_parse_era(Pud *pud);
 bool pud_parse_dim(Pud *pud);
 bool pud_parse_udta(Pud *pud);

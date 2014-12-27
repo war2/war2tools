@@ -595,6 +595,14 @@ pud_print(Pud  *pud,
      fprintf(stream, "   unusable %i........: 0x%02x\n", i + 1, pud->owner.unusable[i]);
    fprintf(stream, "   neutral...........: 0x%02x\n", pud->owner.neutral);
 
+   /* Side Section */
+   fprintf(stream, "Sides................:\n");
+   for (i = 0; i < 8; i++)
+     fprintf(stream, "   player %i..........: 0x%02x\n", i + 1, pud->side.players[i]);
+   for (i = 0; i < 7; i++)
+     fprintf(stream, "   unusable %i........: 0x%02x\n", i + 1, pud->side.unusable[i]);
+   fprintf(stream, "   neutral...........: 0x%02x\n", pud->side.neutral);
+
    /* SGLD Section */
    fprintf(stream, "Starting Gold........:\n");
    for (i = 0; i < 8; i++)
@@ -744,6 +752,7 @@ pud_parse(Pud *pud)
    PARSE_SEC(udta);
    PARSE_SEC(alow);
    PARSE_SEC(ugrd);
+   PARSE_SEC(side);
    PARSE_SEC(sgld);
    PARSE_SEC(slbr);
    PARSE_SEC(soil);
@@ -857,6 +866,34 @@ pud_parse_ownr(Pud *pud)
    fread(buf, sizeof(uint8_t), 1, f);
    PUD_CHECK_FERROR(f, false);
    memcpy(&(pud->owner.neutral), buf, 1 * sizeof(uint8_t));
+
+   return true;
+}
+
+bool
+pud_parse_side(Pud *pud)
+{
+   PUD_SANITY_CHECK(pud, PUD_OPEN_MODE_R, false);
+
+   uint8_t buf[8];
+   uint32_t len;
+   FILE *f = pud->file;
+
+   len = pud_go_to_section(pud, PUD_SECTION_SIDE);
+   if (!len) DIE_RETURN(false, "Failed to reach section SIDE");
+   PUD_VERBOSE(pud, 2, "At section SIDE (size = %u)", len);
+
+   fread(buf, sizeof(uint8_t), 8, f);
+   PUD_CHECK_FERROR(f, false);
+   memcpy(pud->side.players, buf, 8 * sizeof(uint8_t));
+
+   fread(buf, sizeof(uint8_t), 7, f);
+   PUD_CHECK_FERROR(f, false);
+   memcpy(pud->side.unusable, buf, 7 * sizeof(uint8_t));
+
+   fread(buf, sizeof(uint8_t), 1, f);
+   PUD_CHECK_FERROR(f, false);
+   memcpy(&(pud->side.neutral), buf, 1 * sizeof(uint8_t));
 
    return true;
 }
@@ -1608,6 +1645,22 @@ pud_owner_convert(uint8_t code)
       case 0x03:
       default:
          return PUD_OWNER_NOBODY;
+     }
+}
+
+Pud_Side
+pud_side_convert(uint8_t code)
+{
+   switch (code)
+     {
+      case 0x00:
+         return PUD_SIDE_HUMAN;
+
+      case 0x01:
+         return PUD_SIDE_ORC;
+
+      default:
+         return PUD_SIDE_NEUTRAL;
      }
 }
 

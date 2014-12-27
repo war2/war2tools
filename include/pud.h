@@ -208,8 +208,9 @@ typedef enum
 
 typedef enum
 {
-   PUD_OPEN_MODE_READ_ONLY              = 0,
-   PUD_OPEN_MODE_WRITE_ONLY             = 1
+   PUD_OPEN_MODE_R   = 1, /* (1 << 0) */
+   PUD_OPEN_MODE_W   = 2, /* (1 << 1) */
+   PUD_OPEN_MODE_RW  = 3  /* (1 << 0) | (1 << 1) */
 } Pud_Open_Mode;
 
 typedef enum
@@ -278,7 +279,6 @@ struct _Pud
 
    int units_count;
 
-
    struct {
       uint16_t     overlap_frames;
       uint32_t     sight;
@@ -330,6 +330,8 @@ bool pud_section_is_optional(Pud_Section sec);
 uint32_t pud_go_to_section(Pud *pud, Pud_Section sec);
 void pud_print(Pud *pud, FILE *stream);
 void pud_dimensions_to_size(Pud_Dimensions dim, int *x_ret, int *y_ret);
+
+bool pud_defaults_set(Pud *pud);
 
 bool pud_parse_type(Pud *pud);
 bool pud_parse_ver(Pud *pud);

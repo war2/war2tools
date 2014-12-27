@@ -21,7 +21,7 @@
       if (!(pud) || !((pud)->file)) { \
          DIE_RETURN(__VA_ARGS__, "Invalid PUD input [%p]", pud); \
       } \
-      if (pud->open_mode != mode) { \
+      if (!(pud->open_mode & mode)) { \
          DIE_RETURN(__VA_ARGS__, "PUD open mode is [%i] expected [%i]", \
                     pud->open_mode, mode); \
       } \
@@ -404,7 +404,7 @@ pud_go_to_section(Pud         *pud,
    char buf[4];
    const char *sec_str;
 
-   PUD_SANITY_CHECK(pud, PUD_OPEN_MODE_READ_ONLY, 0);
+   PUD_SANITY_CHECK(pud, PUD_OPEN_MODE_R, 0);
    if (sec > 19) DIE_RETURN(0, "Invalid section ID [%i]", sec);
 
    f = pud->file;
@@ -456,11 +456,11 @@ pud_open(const char    *file,
 
    switch (mode)
      {
-      case PUD_OPEN_MODE_READ_ONLY:
+      case PUD_OPEN_MODE_R:
          m = "rb";
          break;
 
-      case PUD_OPEN_MODE_WRITE_ONLY:
+      case PUD_OPEN_MODE_W:
          m = "wb";
          break;
 
@@ -617,7 +617,7 @@ pud_parse(Pud *pud)
 bool
 pud_parse_type(Pud *pud)
 {
-   PUD_SANITY_CHECK(pud, PUD_OPEN_MODE_READ_ONLY, 0);
+   PUD_SANITY_CHECK(pud, PUD_OPEN_MODE_R, 0);
 
    char buf[16];
    FILE *f = pud->file;
@@ -646,7 +646,7 @@ pud_parse_type(Pud *pud)
 bool
 pud_parse_ver(Pud *pud)
 {
-   PUD_SANITY_CHECK(pud, PUD_OPEN_MODE_READ_ONLY, false);
+   PUD_SANITY_CHECK(pud, PUD_OPEN_MODE_R, false);
 
    FILE *f = pud->file;
    uint16_t w;
@@ -666,7 +666,7 @@ pud_parse_ver(Pud *pud)
 bool
 pud_parse_desc(Pud *pud)
 {
-   PUD_SANITY_CHECK(pud, PUD_OPEN_MODE_READ_ONLY, false);
+   PUD_SANITY_CHECK(pud, PUD_OPEN_MODE_R, false);
 
    uint32_t chk;
    FILE *f = pud->file;
@@ -690,7 +690,7 @@ pud_parse_desc(Pud *pud)
 bool
 pud_parse_era(Pud *pud)
 {
-   PUD_SANITY_CHECK(pud, PUD_OPEN_MODE_READ_ONLY, false);
+   PUD_SANITY_CHECK(pud, PUD_OPEN_MODE_R, false);
 
    uint32_t chk;
    FILE *f = pud->file;
@@ -738,7 +738,7 @@ pud_parse_era(Pud *pud)
 bool
 pud_parse_dim(Pud *pud)
 {
-   PUD_SANITY_CHECK(pud, PUD_OPEN_MODE_READ_ONLY, false);
+   PUD_SANITY_CHECK(pud, PUD_OPEN_MODE_R, false);
 
    uint32_t chk;
    FILE *f = pud->file;
@@ -771,7 +771,7 @@ pud_parse_dim(Pud *pud)
 bool
 pud_parse_udta(Pud *pud)
 {
-   PUD_SANITY_CHECK(pud, PUD_OPEN_MODE_READ_ONLY, false);
+   PUD_SANITY_CHECK(pud, PUD_OPEN_MODE_R, false);
 
    uint32_t chk;
    FILE *f = pud->file;
@@ -977,7 +977,7 @@ pud_parse_udta(Pud *pud)
 bool
 pud_parse_alow(Pud *pud)
 {
-   PUD_SANITY_CHECK(pud, PUD_OPEN_MODE_READ_ONLY, false);
+   PUD_SANITY_CHECK(pud, PUD_OPEN_MODE_R, false);
 
    uint32_t chk;
    FILE *f = pud->file;
@@ -1019,7 +1019,7 @@ pud_parse_alow(Pud *pud)
 bool
 pud_parse_ugrd(Pud *pud)
 {
-   PUD_SANITY_CHECK(pud, PUD_OPEN_MODE_READ_ONLY, false);
+   PUD_SANITY_CHECK(pud, PUD_OPEN_MODE_R, false);
 
    uint32_t chk;
    FILE *f = pud->file;
@@ -1085,7 +1085,7 @@ pud_parse_ugrd(Pud *pud)
 bool
 pud_parse_sgld(Pud *pud)
 {
-   PUD_SANITY_CHECK(pud, PUD_OPEN_MODE_READ_ONLY, false);
+   PUD_SANITY_CHECK(pud, PUD_OPEN_MODE_R, false);
 
    uint32_t chk;
    FILE *f = pud->file;
@@ -1108,7 +1108,7 @@ pud_parse_sgld(Pud *pud)
 bool
 pud_parse_slbr(Pud *pud)
 {
-   PUD_SANITY_CHECK(pud, PUD_OPEN_MODE_READ_ONLY, false);
+   PUD_SANITY_CHECK(pud, PUD_OPEN_MODE_R, false);
 
    uint32_t chk;
    FILE *f = pud->file;
@@ -1131,7 +1131,7 @@ pud_parse_slbr(Pud *pud)
 bool
 pud_parse_soil(Pud *pud)
 {
-   PUD_SANITY_CHECK(pud, PUD_OPEN_MODE_READ_ONLY, false);
+   PUD_SANITY_CHECK(pud, PUD_OPEN_MODE_R, false);
 
    uint32_t chk;
    FILE *f = pud->file;
@@ -1154,7 +1154,7 @@ pud_parse_soil(Pud *pud)
 bool
 pud_parse_aipl(Pud *pud)
 {
-   PUD_SANITY_CHECK(pud, PUD_OPEN_MODE_READ_ONLY, false);
+   PUD_SANITY_CHECK(pud, PUD_OPEN_MODE_R, false);
 
    uint32_t chk;
    FILE *f = pud->file;
@@ -1177,7 +1177,7 @@ pud_parse_aipl(Pud *pud)
 bool
 pud_parse_mtxm(Pud *pud)
 {
-   PUD_SANITY_CHECK(pud, PUD_OPEN_MODE_READ_ONLY, false);
+   PUD_SANITY_CHECK(pud, PUD_OPEN_MODE_R, false);
 
    uint32_t chk;
    FILE *f = pud->file;
@@ -1211,7 +1211,7 @@ pud_parse_mtxm(Pud *pud)
 bool
 pud_parse_oilm(Pud *pud)
 {
-   PUD_SANITY_CHECK(pud, PUD_OPEN_MODE_READ_ONLY, false);
+   PUD_SANITY_CHECK(pud, PUD_OPEN_MODE_R, false);
 
    uint32_t chk;
 
@@ -1226,7 +1226,7 @@ bool
 pud_parse_regm(Pud *pud)
 {
    return true;
-   //   PUD_SANITY_CHECK(pud, PUD_OPEN_MODE_READ_ONLY, false);
+   //   PUD_SANITY_CHECK(pud, PUD_OPEN_MODE_R, false);
    //
    //   uint32_t chk;
    //   FILE *f = pud->file;
@@ -1251,7 +1251,7 @@ pud_parse_regm(Pud *pud)
 bool
 pud_parse_unit(Pud *pud)
 {
-   PUD_SANITY_CHECK(pud, PUD_OPEN_MODE_READ_ONLY, false);
+   PUD_SANITY_CHECK(pud, PUD_OPEN_MODE_R, false);
 
    uint32_t chk;
    FILE *f = pud->file;
@@ -1282,7 +1282,7 @@ static unsigned char *
 _minimap_bitmap_generate(Pud *pud,
                          int *size_ret)
 {
-   PUD_SANITY_CHECK(pud, PUD_OPEN_MODE_READ_ONLY, NULL);
+   PUD_SANITY_CHECK(pud, PUD_OPEN_MODE_R, NULL);
 
    unsigned char *map;
    struct _unit *u;
@@ -1340,7 +1340,7 @@ bool
 pud_minimap_to_ppm(Pud        *pud,
                    const char *file)
 {
-   PUD_SANITY_CHECK(pud, PUD_OPEN_MODE_READ_ONLY, false);
+   PUD_SANITY_CHECK(pud, PUD_OPEN_MODE_R, false);
 
    FILE *f;
    int i, size;
@@ -1378,7 +1378,7 @@ bool
 pud_minimap_to_jpeg(Pud        *pud,
                     const char *file)
 {
-   PUD_SANITY_CHECK(pud, PUD_OPEN_MODE_READ_ONLY, false);
+   PUD_SANITY_CHECK(pud, PUD_OPEN_MODE_R, false);
 
    unsigned char *map;
    bool chk;
@@ -1400,7 +1400,7 @@ pud_tile_at(Pud *pud,
             int  x,
             int  y)
 {
-   PUD_SANITY_CHECK(pud, PUD_OPEN_MODE_READ_ONLY, 0);
+   PUD_SANITY_CHECK(pud, PUD_OPEN_MODE_R, 0);
 
    if (((unsigned int)(x * y)) >= (unsigned int)pud->map_tiles_count)
      DIE_RETURN(0, "Invalid coordinates %i,%i", x, y);
@@ -1408,3 +1408,10 @@ pud_tile_at(Pud *pud,
    return pud->map_tiles[y * pud->map_w + x];
 }
 
+bool
+pud_defaults_set(Pud *pud)
+{
+   PUD_SANITY_CHECK(pud, PUD_OPEN_MODE_W, 0);
+
+  return false;
+}

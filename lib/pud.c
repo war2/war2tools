@@ -320,6 +320,7 @@ pud_write(const Pud *pud)
    for (i = 0; i < 110; i++) W8(p->unit_data[i].gold_cost, 1);
    for (i = 0; i < 110; i++) W8(p->unit_data[i].lumber_cost, 1);
    for (i = 0; i < 110; i++) W8(p->unit_data[i].oil_cost, 1);
+   // FIXME I think the words are switched!
    for (i = 0; i < 110; i++)
      {
         l = ((p->unit_data[i].size_w << 16) & 0xffff0000) | (p->unit_data[i].size_h & 0x0000ffff);
@@ -348,7 +349,7 @@ pud_write(const Pud *pud)
    for (i = 0; i < 110; i++) W16(p->unit_data[i].point_value, 1);
    for (i = 0; i < 110; i++) W8(p->unit_data[i].can_target, 1);
    for (i = 0; i < 110; i++) W32(p->unit_data[i].flags, 1);
-   WI16(0, 127); // Obsolete data
+   // WI16(0, 127); // Obsolete data (do not print!!)
 
    /* Section ALOW */
    if (p->default_allow == 0)

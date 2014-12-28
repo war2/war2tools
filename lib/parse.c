@@ -415,8 +415,12 @@ pud_parse_udta(Pud *pud)
      pud->unit_data[i].flags = lb[i];
 
    /* Obsolete */
-   fread(wb, sizeof(uint16_t), 127, f);
-   PUD_CHECK_FERROR(f, false);
+   if (chk == 5950)
+     {
+        fread(wb, sizeof(uint16_t), 127, f);
+        PUD_CHECK_FERROR(f, false);
+        PUD_VERBOSE(pud, 1, "Obsolete section in UDTA found. Skipping...");
+     }
 
    return true;
 }

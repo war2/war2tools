@@ -29,9 +29,6 @@ If you are new to cmake:
 TODO
 ----
 
-- Winter color tiles (for minimap)
-- Wasteland color tiles (for minimap)
-- Swamp color tiles (for minimap)
 - Get all tile sprites
   - summer
   - winter

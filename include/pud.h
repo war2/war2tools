@@ -354,6 +354,7 @@ struct _Pud
 
 Pud *pud_open(const char *file, Pud_Open_Mode mode);
 void pud_close(Pud *pud);
+bool pud_reopen(Pud *pud, const char *file, Pud_Open_Mode mode);
 bool pud_parse(Pud *pud);
 void pud_verbose_set(Pud *pud, int lvl);
 bool pud_section_is_optional(Pud_Section sec);

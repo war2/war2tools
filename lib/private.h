@@ -35,7 +35,7 @@
 
 #define PUD_CHECK_FERROR(f, ret) \
    do { \
-      if (ferror(f)) DIE_RETURN(ret, "Error while reading file"); \
+      if (ferror(f)) DIE_RETURN(ret, "Error while accessing file: %s", strerror(errno)); \
    } while (0)
 
 
@@ -57,6 +57,7 @@ Color color_make(uint8_t r, uint8_t g, uint8_t b);
 const char *dim2str(Pud_Dimensions dim);
 const char *era2str(Pud_Era era);
 Color color_for_player(uint8_t player);
+const char *mode2str(Pud_Open_Mode mode);
 
 Color pud_tile_to_color(Pud *pud, uint16_t tile);
 

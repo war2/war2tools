@@ -39,6 +39,18 @@ long2bin(uint32_t x)
    return buf;
 }
 
+const char *
+mode2str(Pud_Open_Mode mode)
+{
+   switch (mode)
+     {
+      case PUD_OPEN_MODE_R:  return "rb";
+      case PUD_OPEN_MODE_W:  return "wb";
+      case PUD_OPEN_MODE_RW: return "rb+";
+      default:               return NULL;
+     }
+}
+
 Color
 color_make(uint8_t r,
            uint8_t g,

@@ -76,24 +76,8 @@ pud_open(const char    *file,
 
    if (file == NULL) DIE_RETURN(NULL, "NULL input file");
 
-   switch (mode)
-     {
-      case PUD_OPEN_MODE_R:
-         m = "rb";
-         break;
-
-      case PUD_OPEN_MODE_W:
-         m = "wb";
-         break;
-
-      case PUD_OPEN_MODE_RW:
-         m = "rb+";
-         break;
-
-      default:
-         DIE_RETURN(NULL, "Wrong open mode [%i]", mode);
-         break;
-     }
+   m = mode2str(mode);
+   if (m == NULL) DIE_RETURN(NULL, "Invalid mode [%i]", mode);
 
    pud = calloc(1, sizeof(Pud));
    if (!pud) DIE_GOTO(err, "Failed to alloc Pud: %s", strerror(errno));
@@ -110,6 +94,26 @@ err_free:
    free(pud);
 err:
    return NULL;
+}
+
+bool
+pud_reopen(Pud           *pud,
+           const char    *file,
+           Pud_Open_Mode  mode)
+{
+   const char *m;
+
+   if ((!pud) || (!file)) return false;
+
+   m = mode2str(mode);
+   if (m == NULL) DIE_RETURN(false, "Invalid mode [%i]", mode);
+
+   fclose(pud->file);
+   pud->file = fopen(file, m);
+   if (!pud->file) DIE_RETURN(false, "Failed to open [%s] in [%s]", file, m);
+   pud->open_mode = mode;
+
+   return true;
 }
 
 void
@@ -220,34 +224,70 @@ pud_write(const Pud *pud)
    uint8_t b;
    uint16_t w;
    uint32_t l;
-   int i, map_len, units_len;
+   int i, j, map_len, units_len;
 
    map_len = p->tiles * sizeof(uint16_t);
-   units_len = p->units_count * 8;
+   units_len = p->units_count * sizeof(struct _unit);
 
-#define W8(val, nb)  fwrite(&val, sizeof(uint8_t), nb, f);  PUD_CHECK_FERROR(f, false)
-#define W16(val, nb) fwrite(&val, sizeof(uint16_t), nb, f); PUD_CHECK_FERROR(f, false)
-#define W32(val, nb) fwrite(&val, sizeof(uint32_t), nb, f); PUD_CHECK_FERROR(f, false)
-#define WI8(imm, nb) b = imm; fwrite(&b, sizeof(uint8_t), nb, f);  PUD_CHECK_FERROR(f, false)
-#define WI16(imm, nb) w = imm; fwrite(&w, sizeof(uint16_t), nb, f); PUD_CHECK_FERROR(f, false)
-#define WI32(imm, nb) l = imm; fwrite(&l, sizeof(uint32_t), nb, f); PUD_CHECK_FERROR(f, false)
+   rewind(p->file);
+
+
+#define W8(val, nb) \
+   do { \
+      for (j = 0; j < nb; j++) fwrite(&val, sizeof(uint8_t), 1, f); \
+      PUD_CHECK_FERROR(f, false); \
+   } while (0)
+
+#define W16(val, nb) \
+   do { \
+      for (j = 0; j < nb; j++) fwrite(&val, sizeof(uint16_t), 1, f); \
+      PUD_CHECK_FERROR(f, false); \
+   } while (0)
+
+#define W32(val, nb) \
+   do { \
+      for (j = 0; j < nb; j++) fwrite(&val, sizeof(uint32_t), 1, f); \
+      PUD_CHECK_FERROR(f, false); \
+   } while (0)
+
+#define WI8(imm, nb) \
+   do { \
+      b = imm; \
+      for (j = 0; j < nb; j++) fwrite(&b, sizeof(uint8_t), 1, f); \
+      PUD_CHECK_FERROR(f, false); \
+   } while (0)
+
+#define WI16(imm, nb) \
+   do { \
+      w = imm; \
+      for (j = 0; j < nb; j++) fwrite(&w, sizeof(uint16_t), 1, f); \
+      PUD_CHECK_FERROR(f, false); \
+   } while (0)
+
+#define WI32(imm, nb) \
+   do { \
+      l = imm; \
+      for (j = 0; j < nb; j++) fwrite(&l, sizeof(uint32_t), 1, f); \
+      PUD_CHECK_FERROR(f, false); \
+   } while (0)
+
 #define WSEC(sec, len) fwrite(_sections[sec], sizeof(int8_t), 4, f); PUD_CHECK_FERROR(f, false); W32(len, 1)
 #define WISEC(sec, len) fwrite(_sections[sec], sizeof(int8_t), 4, f); PUD_CHECK_FERROR(f, false); WI32(len, 1)
 #define WSTR(str) fwrite(str, sizeof(int8_t), sizeof(str) - 1, f); PUD_CHECK_FERROR(f, false);
 
    /* Section TYPE */
    WISEC(PUD_SECTION_TYPE, 16);
-   WSTR("WAR2 MAP"); // Header
-   WI8(0, 2);         // Header
-   WI8(0, 2);         // Unused
-   W32(p->tag, 1);   // Tag
+   WSTR("WAR2 MAP");
+   WI8(0, 2);
+   WI8(0, 2);           // Unused
+   W32(p->tag, 1);
 
    /* Section VER */
-   WISEC(PUD_SECTION_TYPE, 2);
+   WISEC(PUD_SECTION_VER, 2);
    WI16(p->version, 1);  // Version
 
    /* Section DESC */
-   WISEC(PUD_SECTION_VER, 32);
+   WISEC(PUD_SECTION_DESC, 32);
    W8(p->description, 32);
 
    /* Section OWNR */
@@ -270,7 +310,7 @@ pud_write(const Pud *pud)
 
    /* Section UDTA */
    WISEC(PUD_SECTION_UDTA, 5696);
-   w = p->default_udta; W8(w, 1); // Bitfield
+   w = p->default_udta; W16(w, 1); // Bitfield
    for (i = 0; i < 110; i++) W16(p->unit_data[i].overlap_frames, 1);
    WI16(0, 508); // Obsolete data
    for (i = 0; i < 110; i++) W32(p->unit_data[i].sight, 1);
@@ -308,16 +348,20 @@ pud_write(const Pud *pud)
    for (i = 0; i < 110; i++) W16(p->unit_data[i].point_value, 1);
    for (i = 0; i < 110; i++) W8(p->unit_data[i].can_target, 1);
    for (i = 0; i < 110; i++) W32(p->unit_data[i].flags, 1);
+   WI16(0, 127); // Obsolete data
 
    /* Section ALOW */
-   WISEC(PUD_SECTION_ALOW, 384);
-   fwrite(&p->unit_alow, sizeof(uint32_t), 16, f);
-   fwrite(&p->spell_start, sizeof(uint32_t), 16, f);
-   fwrite(&p->spell_alow, sizeof(uint32_t), 16, f);
-   fwrite(&p->spell_acq, sizeof(uint32_t), 16, f);
-   fwrite(&p->up_alow, sizeof(uint32_t), 16, f);
-   fwrite(&p->up_acq, sizeof(uint32_t), 16, f);
-   PUD_CHECK_FERROR(f, false);
+   if (p->default_allow == 0)
+     {
+        WISEC(PUD_SECTION_ALOW, 384);
+        fwrite(&p->unit_alow, sizeof(uint32_t), 16, f);
+        fwrite(&p->spell_start, sizeof(uint32_t), 16, f);
+        fwrite(&p->spell_alow, sizeof(uint32_t), 16, f);
+        fwrite(&p->spell_acq, sizeof(uint32_t), 16, f);
+        fwrite(&p->up_alow, sizeof(uint32_t), 16, f);
+        fwrite(&p->up_acq, sizeof(uint32_t), 16, f);
+        PUD_CHECK_FERROR(f, false);
+     }
 
    /* Section UGRD */
    WISEC(PUD_SECTION_UGRD, 782);
@@ -357,30 +401,27 @@ pud_write(const Pud *pud)
 
    /* Section MTMX */
    WSEC(PUD_SECTION_MTXM, map_len);
-   fwrite(&p->tiles_map, sizeof(uint16_t), p->tiles, f);
+   fwrite(p->tiles_map, sizeof(uint16_t), p->tiles, f);
    PUD_CHECK_FERROR(f, false);
 
    /* Section SQM */
-   WSEC(PUD_SECTION_MTXM, map_len);
-   fwrite(&p->movement_map, sizeof(uint16_t), p->tiles, f);
+   WSEC(PUD_SECTION_SQM, map_len);
+   fwrite(p->movement_map, sizeof(uint16_t), p->tiles, f);
    PUD_CHECK_FERROR(f, false);
 
    /* Section OILM */
-   WSEC(PUD_SECTION_OILM, map_len);
-   WI16(0, p->tiles);
+   WSEC(PUD_SECTION_OILM, p->tiles);
+   WI8(0, p->tiles);
 
    /* Section REGM */
-   WSEC(PUD_SECTION_MTXM, map_len);
-   fwrite(&p->action_map, sizeof(uint16_t), p->tiles, f);
+   WSEC(PUD_SECTION_REGM, map_len);
+   fwrite(p->action_map, sizeof(uint16_t), p->tiles, f);
    PUD_CHECK_FERROR(f, false);
 
    /* Section UNIT */
    WSEC(PUD_SECTION_UNIT, units_len);
-   for (i = 0; i < p->units_count; i++)
-     {
-        fwrite(&(p->units[i]), sizeof(p->units[i]), 1, f);
-        PUD_CHECK_FERROR(f, false);
-     }
+   fwrite(p->units, sizeof(struct _unit), p->units_count, f);
+   PUD_CHECK_FERROR(f, false);
 
 #undef WSTR
 #undef WISEC
@@ -393,3 +434,4 @@ pud_write(const Pud *pud)
 
    return true;
 }
+

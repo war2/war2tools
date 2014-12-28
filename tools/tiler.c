@@ -14,6 +14,7 @@ main(int    argc,
    const char *era, *file;
    Pud_Era pud_era;
    Pud *pud;
+   bool chk;
 
    /* Getopt */
    if (argc != 3)
@@ -39,15 +40,31 @@ main(int    argc,
         return 1;
      }
 
-   pud = pud_open(file, PUD_OPEN_MODE_W);
+   pud = pud_open(file, PUD_OPEN_MODE_R);
    if (!pud)
      {
         fprintf(stderr, "*** Failed to open [%s]\n", file);
         return 2;
      }
+   chk = pud_parse(pud);
+   if (!chk)
+     {
+        fprintf(stderr, "*** Fail to parse\n");
+        pud_close(pud);
+     }
 
-   pud_defaults_set(pud);
-   pud_era_set(pud, pud_era);
+   chk = pud_reopen(pud, "out.pud", PUD_OPEN_MODE_W);
+   if (!chk)
+     {
+        fprintf(stderr, "*** Failed to reopen\n");
+        pud_close(pud);
+     }
+
+   chk = pud_write(pud);
+   if (!chk) fprintf(stderr, "*** Fail!\n");
+
+   //   pud_defaults_set(pud);
+   //   pud_era_set(pud, pud_era);
 
    pud_close(pud);
 

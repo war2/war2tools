@@ -146,6 +146,8 @@ pud_parse_era(Pud *pud)
         if (!chk) DIE_RETURN(false, "Failed to reach section ERA");
         PUD_VERBOSE(pud, 2, "At section ERA (size = %u)", chk);
      }
+   else
+     PUD_VERBOSE(pud, 2, "At section ERAX (size = %u)", chk);
 
    fread(&w, sizeof(uint16_t), 1, f);
    PUD_CHECK_FERROR(f, false);
@@ -739,16 +741,17 @@ pud_parse_unit(Pud *pud)
 
    uint32_t chk;
    FILE *f = pud->file;
-   int units;
+   int units, size;
 
    chk = pud_go_to_section(pud, PUD_SECTION_UNIT);
    if (!chk) DIE_RETURN(false, "Failed to reach section UNIT");
    PUD_VERBOSE(pud, 2, "At section UNIT (size = %u)", chk);
    units = chk / 8;
 
-   if (pud->units) free(pud->units);
-   pud->units = calloc(units, sizeof(struct _unit));
+   size = sizeof(struct _unit) * units;
+   pud->units = realloc(pud->units, size);
    if (!pud->units) DIE_RETURN(false, "Failed to allocate memory");
+   memset(pud->units, 0, size);
    pud->units_count = units;
 
    fread(pud->units, sizeof(struct _unit), units, f);

@@ -1,0 +1,3 @@
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/pud.pc.in ${CMAKE_CURRENT_BINARY_DIR}/pud.pc @ONLY)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/pud.pc DESTINATION lib/pkgconfig)
+

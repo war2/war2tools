@@ -397,6 +397,8 @@ bool pud_minimap_to_jpeg(Pud *pud, const char *file);
 
 uint16_t pud_tile_at(Pud *pud, int x, int y);
 
+bool pud_tile_set(Pud *pud, uint16_t x, uint16_t y, uint16_t tile);
+
 #ifdef __cplusplus
 %>
 #endif

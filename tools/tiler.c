@@ -17,6 +17,8 @@ main(int    argc,
    Pud *pud;
    bool chk;
    int idx;
+   uint16_t tile;
+   int i, j, k, x, y;
 
    /* Getopt */
    if (argc != 3)
@@ -56,14 +58,57 @@ main(int    argc,
    pud_description_set(pud, "A description");
    pud_tag_set(pud, 0);
 
-   idx = pud_unit_add(pud, 1, 1, PUD_PLAYER_RED, PUD_UNIT_HUMAN_START, 1);
+   /* Place some units just to make the game playable */
+   idx = pud_unit_add(pud, 0, 127, PUD_PLAYER_RED, PUD_UNIT_HUMAN_START, 1);
    if (idx < 0) DIE_RETURN(1, "Failed to add unit");
-   idx = pud_unit_add(pud, 1, 1, PUD_PLAYER_RED, PUD_UNIT_INFANTRY, 1);
+   idx = pud_unit_add(pud, 0, 127, PUD_PLAYER_RED, PUD_UNIT_INFANTRY, 1);
    if (idx < 0) DIE_RETURN(1, "Failed to add unit");
-   idx = pud_unit_add(pud, 1, 2, PUD_PLAYER_BLUE, PUD_UNIT_ORC_START, 1);
+   idx = pud_unit_add(pud, 127, 127, PUD_PLAYER_BLUE, PUD_UNIT_ORC_START, 1);
    if (idx < 0) DIE_RETURN(1, "Failed to add unit");
-   idx = pud_unit_add(pud, 1, 2, PUD_PLAYER_BLUE, PUD_UNIT_PEON, 1);
+   idx = pud_unit_add(pud, 127, 127, PUD_PLAYER_BLUE, PUD_UNIT_GRUNT, 1);
    if (idx < 0) DIE_RETURN(1, "Failed to add unit");
+
+   x = 0;
+   y = 0;
+   for (j = 0x1; j <= 0xc; j++)
+     {
+        for (i = 0; i <= 0xf; i++)
+          {
+             tile = j * 0x10;
+             tile += i;
+
+             pud_tile_set(pud, x, y, tile);
+             printf("%i %i 0x%04x\n", x, y, tile);
+
+             if (++x > 127)
+               {
+                  x = 0;
+                  y++;
+               }
+          }
+     }
+
+   for (j = 0x1; j <= 0x9; j++)
+     {
+        for (i = 0x0; i <= 0xd; i++)
+          {
+             for (k = 0x0; k <= 0xf; k++)
+               {
+                  tile = j * 0x100;
+                  tile += (i * 0x10);
+                  tile += k;
+
+                  pud_tile_set(pud, x, y, tile);
+                  printf("%i %i 0x%04x\n", x, y, tile);
+
+                  if (++x > 127)
+                    {
+                       x = 0;
+                       y++;
+                    }
+               }
+          }
+     }
 
    chk = pud_write(pud);
    if (!chk) DIE_RETURN(4, "Failed to write pud");

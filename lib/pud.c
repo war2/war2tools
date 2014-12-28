@@ -468,6 +468,7 @@ pud_description_set(Pud  *pud,
 {
    PUD_SANITY_CHECK(pud, PUD_OPEN_MODE_W, VOID);
    strncpy(pud->description, descr, 32);
+   pud->description[31] = 0; // If length is 32, will not be NUL terminated
 }
 
 void
@@ -511,8 +512,10 @@ pud_unit_add(Pud        *pud,
       .alter = alter
    };
 
-   /* TODO Optimise memory allocation because it is not great */
+   if ((x > pud->map_w - 1) || (y > pud->map_h - 1))
+     DIE_RETURN(false, "Invalid indexes [%i][%i]", x, y);
 
+   /* TODO Optimise memory allocation because it is not great */
    nb = pud->units_count + 1;
    size = nb * sizeof(struct _unit);
    ptr = realloc(pud->units, size);
@@ -531,6 +534,21 @@ pud_unit_add(Pud        *pud,
    pud->units_count = nb;
 
    return nb;
+}
+
+bool
+pud_tile_set(Pud      *pud,
+             uint16_t  x,
+             uint16_t  y,
+             uint16_t  tile)
+{
+   PUD_SANITY_CHECK(pud, PUD_OPEN_MODE_W, false);
+
+   if ((x > pud->map_w - 1) || (y > pud->map_h - 1))
+     DIE_RETURN(false, "Invalid indexes [%i][%i]", x, y);
+
+   pud->tiles_map[(y * pud->map_w) + x] = tile;
+   return true;
 }
 
 bool

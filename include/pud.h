@@ -392,6 +392,9 @@ int pud_unit_add(Pud *pud, uint16_t x, uint16_t y, Pud_Player owner, Pud_Unit ty
 void pud_era_set(Pud *pud, Pud_Era era);
 void pud_dimensions_set(Pud *pud, Pud_Dimensions dims);
 
+unsigned char *pud_minimap_bitmap_generate(Pud *pud, int *size_ret);
+
+
 bool pud_minimap_to_ppm(Pud *pud, const char *file);
 bool pud_minimap_to_jpeg(Pud *pud, const char *file);
 

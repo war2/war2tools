@@ -1,8 +1,8 @@
 #include "private.h"
 
-static unsigned char *
-_minimap_bitmap_generate(Pud *pud,
-                         int *size_ret)
+unsigned char *
+pud_minimap_bitmap_generate(Pud *pud,
+                            int *size_ret)
 {
    PUD_SANITY_CHECK(pud, PUD_OPEN_MODE_R, NULL);
 
@@ -68,7 +68,7 @@ pud_minimap_to_ppm(Pud        *pud,
    int i, size;
    unsigned char *map;
 
-   map = _minimap_bitmap_generate(pud, &size);
+   map = pud_minimap_bitmap_generate(pud, &size);
    if (!map) DIE_RETURN(false, "Failed to generate bitmap");
 
    f = fopen(file, "w");
@@ -105,7 +105,7 @@ pud_minimap_to_jpeg(Pud        *pud,
    unsigned char *map;
    bool chk;
 
-   map = _minimap_bitmap_generate(pud, NULL);
+   map = pud_minimap_bitmap_generate(pud, NULL);
    if (!map) DIE_RETURN(false, "Failed to generate bitmap");
 
    chk = jpeg_write(file, pud->map_w, pud->map_h, map);

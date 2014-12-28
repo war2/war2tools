@@ -1,6 +1,8 @@
 #include "private.h"
 
 static void _udta_defaults_set(Pud *pud);
+static void _alow_defaults_set(Pud *pud);
+static void _ugrd_defaults_set(Pud *pud);
 
 bool
 pud_defaults_set(Pud *pud)
@@ -9,15 +11,17 @@ pud_defaults_set(Pud *pud)
 
    int i;
 
-   // XXX Currently under heavy construction
+   /* SGLD */
    for (i = 0; i < 8; i++) pud->sgld.players[i] = 2000;
    for (i = 0; i < 7; i++) pud->sgld.unusable[i] = 2000;
    pud->sgld.neutral = 2000;
 
+   /* SLBR */
    for (i = 0; i < 8; i++) pud->slbr.players[i] = 1000;
    for (i = 0; i < 7; i++) pud->slbr.unusable[i] = 1000;
    pud->slbr.neutral = 1000;
 
+   /* SOIL */
    for (i = 0; i < 8; i++) pud->soil.players[i] = 1000;
    for (i = 0; i < 7; i++) pud->soil.unusable[i] = 1000;
    pud->soil.neutral = 1000;
@@ -26,15 +30,560 @@ pud_defaults_set(Pud *pud)
    pud->default_udta = 1;
    pud->default_ugrd = 1;
 
+   /* AI */
    for (i = 0; i < 8; i++) pud->ai.players[i] = 0x00;
+   for (i = 0; i < 7; i++) pud->ai.unusable[i] = 0x00;
+   pud->ai.neutral = 0x00;
+
+   /* SIDE */
+   for (i = 0; i < 2; i++) pud->side.players[i] = 0x00;
+   for (     ; i < 8; i++) pud->side.players[i] = 0x01;
+   for (i = 0; i < 7; i++) pud->side.unusable[i] = 0x00;
+   pud->side.neutral = 0x00;
+
+   /* OWNR */
+   pud->owner.players[0] = 0x05;
+   pud->owner.players[1] = 0x04;
+   for (i = 2; i < 8; i++) pud->owner.players[i] = 0x03;
+   for (i = 0; i < 7; i++) pud->owner.unusable[i] = 0x03;
+   pud->owner.neutral = 0x02;
+
 
    _udta_defaults_set(pud);
+   _ugrd_defaults_set(pud);
+   _alow_defaults_set(pud);
 
-   return false; // XXX Set to true when done with
+   return true;
 }
 
 
-/* UDTA defaults are generated with tools/udta_gen */
+/* UGRD defaults are generated with tools/defaults_gen */
+
+static void
+_ugrd_defaults_set(Pud *pud)
+{
+   struct _ugrd ugrd[52] = {
+      [0] = {
+         .time = 200,
+         .gold = 800,
+         .lumber = 0,
+         .oil = 0,
+         .icon = 117,
+         .group = 1,
+         .flags = 4
+      },
+      [1] = {
+         .time = 250,
+         .gold = 2400,
+         .lumber = 0,
+         .oil = 0,
+         .icon = 118,
+         .group = 1,
+         .flags = 8
+      },
+      [2] = {
+         .time = 200,
+         .gold = 500,
+         .lumber = 100,
+         .oil = 0,
+         .icon = 120,
+         .group = 1,
+         .flags = 4
+      },
+      [3] = {
+         .time = 250,
+         .gold = 1500,
+         .lumber = 300,
+         .oil = 0,
+         .icon = 121,
+         .group = 1,
+         .flags = 8
+      },
+      [4] = {
+         .time = 200,
+         .gold = 300,
+         .lumber = 300,
+         .oil = 0,
+         .icon = 125,
+         .group = 0,
+         .flags = 1
+      },
+      [5] = {
+         .time = 250,
+         .gold = 900,
+         .lumber = 500,
+         .oil = 0,
+         .icon = 126,
+         .group = 0,
+         .flags = 1
+      },
+      [6] = {
+         .time = 200,
+         .gold = 300,
+         .lumber = 300,
+         .oil = 0,
+         .icon = 128,
+         .group = 0,
+         .flags = 1
+      },
+      [7] = {
+         .time = 250,
+         .gold = 900,
+         .lumber = 500,
+         .oil = 0,
+         .icon = 129,
+         .group = 0,
+         .flags = 2
+      },
+      [8] = {
+         .time = 200,
+         .gold = 300,
+         .lumber = 300,
+         .oil = 0,
+         .icon = 165,
+         .group = 2,
+         .flags = 16
+      },
+      [9] = {
+         .time = 250,
+         .gold = 900,
+         .lumber = 500,
+         .oil = 0,
+         .icon = 166,
+         .group = 2,
+         .flags = 32
+      },
+      [10] = {
+         .time = 200,
+         .gold = 300,
+         .lumber = 300,
+         .oil = 0,
+         .icon = 168,
+         .group = 2,
+         .flags = 16
+      },
+      [11] = {
+         .time = 250,
+         .gold = 900,
+         .lumber = 500,
+         .oil = 0,
+         .icon = 169,
+         .group = 2,
+         .flags = 32
+      },
+      [12] = {
+         .time = 200,
+         .gold = 700,
+         .lumber = 100,
+         .oil = 1000,
+         .icon = 145,
+         .group = 3,
+         .flags = 64
+      },
+      [13] = {
+         .time = 250,
+         .gold = 2000,
+         .lumber = 250,
+         .oil = 3000,
+         .icon = 146,
+         .group = 3,
+         .flags = 128
+      },
+      [14] = {
+         .time = 200,
+         .gold = 700,
+         .lumber = 100,
+         .oil = 1000,
+         .icon = 148,
+         .group = 3,
+         .flags = 64
+      },
+      [15] = {
+         .time = 250,
+         .gold = 2000,
+         .lumber = 250,
+         .oil = 3000,
+         .icon = 149,
+         .group = 3,
+         .flags = 128
+      },
+      [16] = {
+         .time = 200,
+         .gold = 500,
+         .lumber = 500,
+         .oil = 0,
+         .icon = 154,
+         .group = 4,
+         .flags = 256
+      },
+      [17] = {
+         .time = 250,
+         .gold = 1500,
+         .lumber = 900,
+         .oil = 0,
+         .icon = 155,
+         .group = 4,
+         .flags = 512
+      },
+      [18] = {
+         .time = 200,
+         .gold = 500,
+         .lumber = 500,
+         .oil = 0,
+         .icon = 151,
+         .group = 4,
+         .flags = 256
+      },
+      [19] = {
+         .time = 250,
+         .gold = 1500,
+         .lumber = 900,
+         .oil = 0,
+         .icon = 152,
+         .group = 4,
+         .flags = 512
+      },
+      [20] = {
+         .time = 250,
+         .gold = 1500,
+         .lumber = 0,
+         .oil = 0,
+         .icon = 138,
+         .group = 6,
+         .flags = 4096
+      },
+      [21] = {
+         .time = 250,
+         .gold = 4000,
+         .lumber = 0,
+         .oil = 0,
+         .icon = 139,
+         .group = 6,
+         .flags = 8192
+      },
+      [22] = {
+         .time = 250,
+         .gold = 1500,
+         .lumber = 0,
+         .oil = 0,
+         .icon = 140,
+         .group = 6,
+         .flags = 4096
+      },
+      [23] = {
+         .time = 250,
+         .gold = 4000,
+         .lumber = 0,
+         .oil = 0,
+         .icon = 141,
+         .group = 6,
+         .flags = 8192
+      },
+      [24] = {
+         .time = 250,
+         .gold = 1500,
+         .lumber = 0,
+         .oil = 0,
+         .icon = 6,
+         .group = 7,
+         .flags = 65536
+      },
+      [25] = {
+         .time = 250,
+         .gold = 2000,
+         .lumber = 0,
+         .oil = 0,
+         .icon = 132,
+         .group = 8,
+         .flags = 131072
+      },
+      [26] = {
+         .time = 250,
+         .gold = 1500,
+         .lumber = 0,
+         .oil = 0,
+         .icon = 133,
+         .group = 9,
+         .flags = 262144
+      },
+      [27] = {
+         .time = 250,
+         .gold = 2500,
+         .lumber = 0,
+         .oil = 0,
+         .icon = 134,
+         .group = 10,
+         .flags = 524288
+      },
+      [28] = {
+         .time = 250,
+         .gold = 1500,
+         .lumber = 0,
+         .oil = 0,
+         .icon = 7,
+         .group = 7,
+         .flags = 65536
+      },
+      [29] = {
+         .time = 250,
+         .gold = 2000,
+         .lumber = 0,
+         .oil = 0,
+         .icon = 135,
+         .group = 8,
+         .flags = 131072
+      },
+      [30] = {
+         .time = 250,
+         .gold = 1500,
+         .lumber = 0,
+         .oil = 0,
+         .icon = 136,
+         .group = 9,
+         .flags = 262144
+      },
+      [31] = {
+         .time = 250,
+         .gold = 3000,
+         .lumber = 0,
+         .oil = 0,
+         .icon = 137,
+         .group = 10,
+         .flags = 524288
+      },
+      [32] = {
+         .time = 250,
+         .gold = 1000,
+         .lumber = 0,
+         .oil = 0,
+         .icon = 11,
+         .group = 20,
+         .flags = 1048576
+      },
+      [33] = {
+         .time = 250,
+         .gold = 1000,
+         .lumber = 0,
+         .oil = 0,
+         .icon = 10,
+         .group = 20,
+         .flags = 1048576
+      },
+      [34] = {
+         .time = 0,
+         .gold = 0,
+         .lumber = 0,
+         .oil = 0,
+         .icon = 106,
+         .group = 0,
+         .flags = 1
+      },
+      [35] = {
+         .time = 200,
+         .gold = 1000,
+         .lumber = 0,
+         .oil = 0,
+         .icon = 107,
+         .group = 1,
+         .flags = 2
+      },
+      [36] = {
+         .time = 200,
+         .gold = 2000,
+         .lumber = 0,
+         .oil = 0,
+         .icon = 110,
+         .group = 3,
+         .flags = 8
+      },
+      [37] = {
+         .time = 100,
+         .gold = 1000,
+         .lumber = 0,
+         .oil = 0,
+         .icon = 100,
+         .group = 4,
+         .flags = 16
+      },
+      [38] = {
+         .time = 0,
+         .gold = 0,
+         .lumber = 0,
+         .oil = 0,
+         .icon = 101,
+         .group = 5,
+         .flags = 32
+      },
+      [39] = {
+         .time = 100,
+         .gold = 500,
+         .lumber = 0,
+         .oil = 0,
+         .icon = 94,
+         .group = 6,
+         .flags = 64
+      },
+      [40] = {
+         .time = 200,
+         .gold = 2500,
+         .lumber = 0,
+         .oil = 0,
+         .icon = 95,
+         .group = 7,
+         .flags = 128
+      },
+      [41] = {
+         .time = 200,
+         .gold = 2000,
+         .lumber = 0,
+         .oil = 0,
+         .icon = 115,
+         .group = 8,
+         .flags = 256
+      },
+      [42] = {
+         .time = 200,
+         .gold = 2000,
+         .lumber = 0,
+         .oil = 0,
+         .icon = 105,
+         .group = 9,
+         .flags = 512
+      },
+      [43] = {
+         .time = 0,
+         .gold = 0,
+         .lumber = 0,
+         .oil = 0,
+         .icon = 111,
+         .group = 10,
+         .flags = 1024
+      },
+      [44] = {
+         .time = 100,
+         .gold = 1000,
+         .lumber = 0,
+         .oil = 0,
+         .icon = 112,
+         .group = 11,
+         .flags = 2048
+      },
+      [45] = {
+         .time = 100,
+         .gold = 1500,
+         .lumber = 0,
+         .oil = 0,
+         .icon = 114,
+         .group = 13,
+         .flags = 8192
+      },
+      [46] = {
+         .time = 100,
+         .gold = 0,
+         .lumber = 0,
+         .oil = 0,
+         .icon = 103,
+         .group = 14,
+         .flags = 16384
+      },
+      [47] = {
+         .time = 150,
+         .gold = 1500,
+         .lumber = 0,
+         .oil = 0,
+         .icon = 104,
+         .group = 15,
+         .flags = 32768
+      },
+      [48] = {
+         .time = 100,
+         .gold = 500,
+         .lumber = 0,
+         .oil = 0,
+         .icon = 96,
+         .group = 16,
+         .flags = 65536
+      },
+      [49] = {
+         .time = 200,
+         .gold = 2500,
+         .lumber = 0,
+         .oil = 0,
+         .icon = 98,
+         .group = 17,
+         .flags = 131072
+      },
+      [50] = {
+         .time = 150,
+         .gold = 1000,
+         .lumber = 0,
+         .oil = 0,
+         .icon = 97,
+         .group = 18,
+         .flags = 262144
+      },
+      [51] = {
+         .time = 200,
+         .gold = 2000,
+         .lumber = 0,
+         .oil = 0,
+         .icon = 108,
+         .group = 19,
+         .flags = 524288
+      }
+   };
+
+   memcpy(&(pud->upgrade[0]), &(ugrd[0]), sizeof(ugrd));
+}
+
+
+/* ALOW defaults are generated with tools/defaults_gen */
+
+static void
+_alow_defaults_set(Pud *pud)
+{
+   struct _alow alow_unit_alow = {
+        { 0, 0, 0, 0, 0, 0, 0, 0 },
+        { 0, 0, 0, 0, 0, 0, 0 },
+        0
+   };
+   struct _alow alow_spell_start = {
+        { 0, 0, 0, 0, 0, 0, 0, 0 },
+        { 0, 0, 0, 0, 0, 0, 0 },
+        0
+   };
+   struct _alow alow_spell_alow = {
+        { 0, 0, 0, 0, 0, 0, 0, 0 },
+        { 0, 0, 0, 0, 0, 0, 0 },
+        0
+   };
+   struct _alow alow_spell_acq = {
+        { 0, 0, 0, 0, 0, 0, 0, 0 },
+        { 0, 0, 0, 0, 0, 0, 0 },
+        0
+   };
+   struct _alow alow_up_alow = {
+        { 0, 0, 0, 0, 0, 0, 0, 0 },
+        { 0, 0, 0, 0, 0, 0, 0 },
+        0
+   };
+   struct _alow alow_up_acq = {
+        { 0, 0, 0, 0, 0, 0, 0, 0 },
+        { 0, 0, 0, 0, 0, 0, 0 },
+        0
+   };
+
+#define CPY(s) memcpy(&(pud->s), &alow_ ## s, sizeof(struct _alow))
+   CPY(unit_alow);
+   CPY(spell_start);
+   CPY(spell_alow);
+   CPY(spell_acq);
+   CPY(up_alow);
+   CPY(up_acq);
+#undef CPY
+}
+
+/* UDTA defaults are generated with tools/defaults_gen */
 
 static void
 _udta_defaults_set(Pud *pud)

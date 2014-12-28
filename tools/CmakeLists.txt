@@ -19,11 +19,11 @@ add_executable(
 )
 
 add_executable(
-   udta_gen
-   udta_gen.c
+   defaults_gen
+   defaults_gen.c
 )
 
 target_link_libraries(tiles ${LIBPUD_LIBRARIES})
 target_link_libraries(tiler ${LIBPUD_LIBRARIES})
-target_link_libraries(udta_gen ${LIBPUD_LIBRARIES})
+target_link_libraries(defaults_gen ${LIBPUD_LIBRARIES})
 

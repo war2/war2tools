@@ -280,7 +280,7 @@ struct _Pud
       uint32_t neutral;
    } unit_alow, spell_start, spell_alow, spell_acq, up_alow, up_acq;
 
-   struct {
+   struct _ugrd {
       uint8_t           time;
       uint16_t          gold;
       uint16_t          lumber;

@@ -25,6 +25,10 @@ add_definitions(-std=c99)
 
 add_library(libpud SHARED ${LIBPUD_SRC})
 
+# Disable the prefix because it is already in the name
+# The name cannot (?) be changed because there is another target called pud
+SET_TARGET_PROPERTIES(libpud PROPERTIES PREFIX "")
+
 target_link_libraries(${LIBPUD_LIBRARIES})
 
 install(

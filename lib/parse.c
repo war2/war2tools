@@ -187,6 +187,8 @@ pud_parse_dim(Pud *pud)
    uint32_t chk;
    FILE *f = pud->file;
    uint16_t x, y;
+   Pud_Dimensions dim;
+   Pud_Open_Mode mode;
 
    chk = pud_go_to_section(pud, PUD_SECTION_DIM);
    if (!chk) DIE_RETURN(false, "Failed to reach section DIM");
@@ -197,18 +199,22 @@ pud_parse_dim(Pud *pud)
    PUD_CHECK_FERROR(f, false);
 
    if ((x == 32) && (y == 32))
-     pud->dims = PUD_DIMENSIONS_32_32;
+     dim = PUD_DIMENSIONS_32_32;
    else if ((x == 64) && (y == 64))
-     pud->dims = PUD_DIMENSIONS_64_64;
+     dim = PUD_DIMENSIONS_64_64;
    else if ((x == 96) && (y == 96))
-     pud->dims = PUD_DIMENSIONS_96_96;
+     dim = PUD_DIMENSIONS_96_96;
    else if ((x == 128) && (y == 128))
-     pud->dims = PUD_DIMENSIONS_128_128;
+     dim = PUD_DIMENSIONS_128_128;
    else
      DIE_RETURN(false, "Invalid dimensions %i x %i", x, y);
 
-   pud_dimensions_to_size(pud->dims, &pud->map_w, &pud->map_h);
-   pud->tiles = pud->map_w * pud->map_h;
+   /* Override permissions because pud_dimensions_set() is
+    * damn convenient to use */
+   mode = pud->open_mode;
+   pud->open_mode = PUD_OPEN_MODE_W;
+   pud_dimensions_set(pud, dim);
+   pud->open_mode = mode;
 
    return true;
 }
@@ -643,11 +649,6 @@ pud_parse_mtxm(Pud *pud)
    if ((pud->tiles * sizeof(uint16_t)) != chk)
      DIE_RETURN(false, "Mismatch between dims and tiles number");
 
-   /* realloc() to avoid memory leaks when parsing twice */
-   pud->tiles_map = realloc(pud->tiles_map, chk);
-   if (!pud->tiles_map) DIE_RETURN(false, "Failed to allocate memory");
-   memset(pud->tiles_map, 0, chk);
-
    for (i = 0; i < pud->tiles; i++)
      {
         fread(&w, sizeof(uint16_t), 1, f);
@@ -675,11 +676,6 @@ pud_parse_sqm(Pud *pud)
    /* Check for integrity */
    if ((pud->tiles * sizeof(uint16_t)) != chk)
      DIE_RETURN(false, "Mismatch between dims and tiles number");
-
-   /* realloc() to avoid memory leaks when parsing twice */
-   pud->movement_map = realloc(pud->movement_map, chk);
-   if (!pud->movement_map) DIE_RETURN(false, "Failed to allocate memory");
-   memset(pud->movement_map, 0, chk);
 
    for (i = 0; i < pud->tiles; i++)
      {
@@ -722,11 +718,6 @@ pud_parse_regm(Pud *pud)
    /* Check for integrity */
    if ((pud->tiles * sizeof(uint16_t)) != chk)
      DIE_RETURN(false, "Mismatch between dims and tiles number");
-
-   /* realloc() to avoid memory leaks when parsing twice */
-   pud->action_map = realloc(pud->action_map, chk);
-   if (!pud->action_map) DIE_RETURN(false, "Failed to allocate memory");
-   memset(pud->action_map, 0, chk);
 
    for (i = 0; i < pud->tiles; i++)
      {

@@ -97,15 +97,15 @@ color_for_player(uint8_t player)
 {
    switch (player)
      {
-      case 0:  return color_make(0xc0, 0x00, 0x00); // Red
-      case 1:  return color_make(0x00, 0x00, 0xc0); // Blue
-      case 2:  return color_make(0x00, 0xff, 0x00); // Green
-      case 3:  return color_make(0x80, 0x00, 0xc0); // Violet
-      case 4:  return color_make(0xff, 0x80, 0x00); // Orange
-      case 5:  return color_make(0x00, 0x00, 0x00); // Black
-      case 6:  return color_make(0xff, 0xff, 0xff); // White
-      case 7:  return color_make(0xff, 0xd0, 0x00); // Yellow
-      default: break;
+      case PUD_PLAYER_RED:    return color_make(0xc0, 0x00, 0x00); // Red
+      case PUD_PLAYER_BLUE:   return color_make(0x00, 0x00, 0xc0); // Blue
+      case PUD_PLAYER_GREEN:  return color_make(0x00, 0xff, 0x00); // Green
+      case PUD_PLAYER_VIOLET: return color_make(0x80, 0x00, 0xc0); // Violet
+      case PUD_PLAYER_ORANGE: return color_make(0xff, 0x80, 0x00); // Orange
+      case PUD_PLAYER_BLACK:  return color_make(0x00, 0x00, 0x00); // Black
+      case PUD_PLAYER_WHITE:  return color_make(0xff, 0xff, 0xff); // White
+      case PUD_PLAYER_YELLOW: return color_make(0xff, 0xd0, 0x00); // Yellow
+      default: ERR("Invalid player [%i]", player); break;
      }
 
    return color_make(0x7f, 0x7f, 0x7f);

@@ -10,6 +10,19 @@ static const char * const _sections[] =
 
 
 bool
+pud_init(void)
+{
+   srand(time(NULL));
+   return true;
+}
+
+void
+pud_shutdown(void)
+{
+}
+
+
+bool
 pud_section_is_optional(Pud_Section sec)
 {
    return ((sec == PUD_SECTION_ERAX) ||
@@ -162,6 +175,9 @@ pud_parse(Pud *pud)
 
 #undef PARSE_SEC
 
+   /* Is assumed valid */
+   pud->init = 1;
+
    return true;
 }
 
@@ -193,6 +209,7 @@ pud_dimensions_set(Pud            *pud,
    PUD_SANITY_CHECK(pud, PUD_OPEN_MODE_W, VOID);
 
    size_t size;
+   int i;
 
    pud->dims = dims;
    pud_dimensions_to_size(dims, &(pud->map_w), &(pud->map_h));
@@ -203,7 +220,8 @@ pud_dimensions_set(Pud            *pud,
    /* Set by default light ground */
    pud->tiles_map = realloc(pud->tiles_map, size);
    if (!pud->tiles_map) DIE_RETURN(VOID, "Failed to allocate memory");
-   memset(pud->tiles_map, 0x0050, size);
+   for (i = 0; i < pud->tiles; i++)
+     pud->tiles_map[i] = 0x0050;
 
    pud->action_map = realloc(pud->action_map, size);
    if (!pud->action_map) DIE_RETURN(VOID, "Failed to allocate memory");
@@ -434,5 +452,100 @@ pud_write(const Pud *pud)
 #undef W8
 
    return true;
+}
+
+void
+pud_version_set(Pud      *pud,
+                uint16_t  version)
+{
+   PUD_SANITY_CHECK(pud, PUD_OPEN_MODE_W, VOID);
+   pud->version = version;
+}
+
+void
+pud_description_set(Pud  *pud,
+                    char  descr[32])
+{
+   PUD_SANITY_CHECK(pud, PUD_OPEN_MODE_W, VOID);
+   strncpy(pud->description, descr, 32);
+}
+
+void
+pud_tag_set(Pud      *pud,
+            uint32_t  tag)
+{
+   PUD_SANITY_CHECK(pud, PUD_OPEN_MODE_W, VOID);
+   if (tag == 0) tag = rand() % UINT16_MAX;
+   pud->tag = tag;
+}
+
+int
+pud_unit_add(Pud        *pud,
+             uint16_t    x,
+             uint16_t    y,
+             Pud_Player  owner,
+             Pud_Unit    type,
+             uint16_t    alter)
+{
+   PUD_SANITY_CHECK(pud, PUD_OPEN_MODE_W, -1);
+
+   size_t size;
+   int nb;
+   void *ptr;
+
+   /* Override alter value for unspecified cases */
+   if ((type != PUD_UNIT_GOLD_MINE) && (type != PUD_UNIT_OIL_PATCH))
+     {
+//        if ((owner == PUD_OWNER_PASSIVE_COMPUTER) ||
+//            (owner == PUD_OWNER_RESCUE_PASSIVE))
+//          alter = 0;
+//        else
+//          alter = 1;
+     }
+
+   struct _unit u = {
+      .x     = x,
+      .y     = y,
+      .type  = type,
+      .owner = owner,
+      .alter = alter
+   };
+
+   /* TODO Optimise memory allocation because it is not great */
+
+   nb = pud->units_count + 1;
+   size = nb * sizeof(struct _unit);
+   ptr = realloc(pud->units, size);
+   if (ptr == NULL) DIE_RETURN(-1, "Failed to alloc memory");
+   pud->units = ptr;
+   memcpy(&(pud->units[pud->units_count]), &u, sizeof(struct _unit));
+
+   /* Update data about units (for validity checks) */
+   if ((type == PUD_UNIT_HUMAN_START) || (type == PUD_UNIT_ORC_START))
+     pud->starting_points++;
+   if (owner == PUD_OWNER_HUMAN)
+     pud->human_players++;
+   else if (owner == PUD_OWNER_COMPUTER)
+     pud->computer_players++;
+
+   pud->units_count = nb;
+
+   return nb;
+}
+
+bool
+pud_check(Pud *pud)
+{
+   PUD_SANITY_CHECK(pud, PUD_OPEN_MODE_RW, false);
+
+   if (!pud->init)
+     DIE_RETURN(false, "pud->init is false");
+   if ((pud->human_players < 1) || (pud->computer_players < 1))
+     DIE_RETURN(false, "You must have at least 1 human player"
+                " and 1 computer player");
+   if (pud->starting_points < 2)
+     DIE_RETURN(false, "You must have at least 2 starting points");
+
+   return false;
 }
 

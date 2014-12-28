@@ -6,6 +6,7 @@
 #include <string.h>
 #include <errno.h>
 #include <stdint.h>
+#include <time.h>
 
 #include "../include/debug.h"
 #include "../include/bool.h"

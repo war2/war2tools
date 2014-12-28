@@ -48,10 +48,12 @@ pud_defaults_set(Pud *pud)
    for (i = 0; i < 7; i++) pud->owner.unusable[i] = 0x03;
    pud->owner.neutral = 0x02;
 
-
    _udta_defaults_set(pud);
    _ugrd_defaults_set(pud);
    _alow_defaults_set(pud);
+
+   /* Most of the fields are assumed valid */
+   pud->init = 1;
 
    return true;
 }

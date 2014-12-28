@@ -47,6 +47,18 @@ typedef enum
 
 typedef enum
 {
+   PUD_PLAYER_RED       = 0,
+   PUD_PLAYER_BLUE      = 1,
+   PUD_PLAYER_GREEN     = 2,
+   PUD_PLAYER_VIOLET    = 3,
+   PUD_PLAYER_ORANGE    = 4,
+   PUD_PLAYER_BLACK     = 5,
+   PUD_PLAYER_WHITE     = 6,
+   PUD_PLAYER_YELLOW    = 7,
+} Pud_Player;
+
+typedef enum
+{
    PUD_UPGRADE_SWORD_1          = 0,
    PUD_UPGRADE_SWORD_2,
    PUD_UPGRADE_AXE_1,
@@ -290,14 +302,18 @@ struct _Pud
       uint32_t          flags;
    } upgrade[52];
 
+   /* Cache values */
    int map_w;
    int map_h;
+   int8_t starting_points;
+   int8_t human_players;
+   int8_t computer_players;
+   int tiles; /* pud->map_w * pud->map_h */
 
+   /* Number of elements is in 'tiles' */
    uint16_t *tiles_map;
    uint16_t *action_map;
    uint16_t *movement_map;
-
-   int tiles; /* pud->map_w * pud->map_h */
 
    struct _unit {
       uint16_t x;
@@ -342,15 +358,18 @@ struct _Pud
       unsigned int armor_upgradable   : 1;
    } unit_data[110];
 
+   /* Cache */
    uint8_t       current_section;
 
-   unsigned int  verbose       : 5;
+   unsigned int  verbose       : 4;
+   unsigned int  init          : 1;
    unsigned int  default_allow : 1;
    unsigned int  default_udta  : 1;
    unsigned int  default_ugrd  : 1;
 };
 
-
+bool pud_init(void);
+void pud_shutdown(void);
 
 Pud *pud_open(const char *file, Pud_Open_Mode mode);
 void pud_close(Pud *pud);
@@ -363,10 +382,13 @@ void pud_print(Pud *pud, FILE *stream);
 void pud_dimensions_to_size(Pud_Dimensions dim, int *x_ret, int *y_ret);
 Pud_Owner pud_owner_convert(uint8_t code);
 Pud_Side pud_side_convert(uint8_t code);
-
+void pud_version_set(Pud *pud, uint16_t version);
+void pud_description_set(Pud *pud, char descr[32]);
+void pud_tag_set(Pud *pud, uint32_t tag);
+bool pud_check(Pud *pud);
 bool pud_defaults_set(Pud *pud);
 bool pud_write(const Pud *pud);
-
+int pud_unit_add(Pud *pud, uint16_t x, uint16_t y, Pud_Player owner, Pud_Unit type, uint16_t alter);
 void pud_era_set(Pud *pud, Pud_Era era);
 void pud_dimensions_set(Pud *pud, Pud_Dimensions dims);
 

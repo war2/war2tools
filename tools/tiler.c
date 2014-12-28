@@ -1,4 +1,5 @@
 #include <pud.h>
+#include "../include/debug.h"
 
 static void
 _usage(void)
@@ -15,6 +16,7 @@ main(int    argc,
    Pud_Era pud_era;
    Pud *pud;
    bool chk;
+   int idx;
 
    /* Getopt */
    if (argc != 3)
@@ -40,33 +42,35 @@ main(int    argc,
         return 1;
      }
 
-   pud = pud_open(file, PUD_OPEN_MODE_R);
-   if (!pud)
-     {
-        fprintf(stderr, "*** Failed to open [%s]\n", file);
-        return 2;
-     }
-   chk = pud_parse(pud);
-   if (!chk)
-     {
-        fprintf(stderr, "*** Fail to parse\n");
-        pud_close(pud);
-     }
+   pud_init();
 
-   chk = pud_reopen(pud, "out.pud", PUD_OPEN_MODE_W);
-   if (!chk)
-     {
-        fprintf(stderr, "*** Failed to reopen\n");
-        pud_close(pud);
-     }
+   pud = pud_open(file, PUD_OPEN_MODE_W);
+   if (!pud) DIE_RETURN(2, "Failed to open [%s]", file);
+
+   chk = pud_defaults_set(pud);
+   if (!chk) DIE_RETURN(3, "Failed to set defaults");
+
+   pud_era_set(pud, pud_era);
+   pud_dimensions_set(pud, PUD_DIMENSIONS_128_128);
+   pud_version_set(pud, 0x11);
+   pud_description_set(pud, "A description");
+   pud_tag_set(pud, 0);
+
+   idx = pud_unit_add(pud, 1, 1, PUD_PLAYER_RED, PUD_UNIT_HUMAN_START, 1);
+   if (idx < 0) DIE_RETURN(1, "Failed to add unit");
+   idx = pud_unit_add(pud, 1, 1, PUD_PLAYER_RED, PUD_UNIT_INFANTRY, 1);
+   if (idx < 0) DIE_RETURN(1, "Failed to add unit");
+   idx = pud_unit_add(pud, 1, 2, PUD_PLAYER_BLUE, PUD_UNIT_ORC_START, 1);
+   if (idx < 0) DIE_RETURN(1, "Failed to add unit");
+   idx = pud_unit_add(pud, 1, 2, PUD_PLAYER_BLUE, PUD_UNIT_PEON, 1);
+   if (idx < 0) DIE_RETURN(1, "Failed to add unit");
 
    chk = pud_write(pud);
-   if (!chk) fprintf(stderr, "*** Fail!\n");
-
-   //   pud_defaults_set(pud);
-   //   pud_era_set(pud, pud_era);
+   if (!chk) DIE_RETURN(4, "Failed to write pud");
 
    pud_close(pud);
+
+   pud_shutdown();
 
    return 0;
 }

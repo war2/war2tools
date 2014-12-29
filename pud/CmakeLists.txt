@@ -3,7 +3,7 @@ include_directories(
    ${CMAKE_CURRENT_SOURCE_DIR}/../include
 )
 
-set(PUD_SRC main.c)
+set(PUD_SRC main.c sections.c)
 add_executable(pud ${PUD_SRC})
 
 target_link_libraries(pud libpud ${JPEG_LIBRARIES})

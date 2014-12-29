@@ -22,7 +22,7 @@ pud_parse_type(Pud *pud)
    fread(buf, sizeof(uint8_t), 12, f);
    PUD_CHECK_FERROR(f, false);
    if (strncmp(buf, "WAR2 MAP\0\0", 10))
-     DIE_RETURN(false, "TYPE section has a wrong header");
+     DIE_RETURN(false, "TYPE section has a wrong header (not a WAR2 MAP)");
 
    /* Read ID TAG */
    fread(&l, sizeof(uint32_t), 1, f);

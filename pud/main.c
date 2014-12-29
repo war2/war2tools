@@ -1,8 +1,4 @@
-#include <pud.h>
-#include <getopt.h>
-
-#define PROGRAM "pud"
-#define VERSION  1.0
+#include "pudutils.h"
 
 static const struct option _options[] =
 {
@@ -11,6 +7,7 @@ static const struct option _options[] =
      {"ppm",      no_argument,          0, 'p'},
      {"jpeg",     no_argument,          0, 'j'},
      {"print",    no_argument,          0, 'P'},
+     {"list",     no_argument,          0, 'l'},
      {"verbose",  no_argument,          0, 'v'},
      {"help",     no_argument,          0, 'h'}
 };
@@ -32,6 +29,7 @@ _usage(FILE *stream)
            "    -j | --jpeg          Outputs the minimap as a jpeg file. If --out is not specified,\n"
            "                         the output's filename will the the input file plus \".jpeg\"\n"
            "    -t | --tile-at <x,y> Gets the tile ID at x,y\n"
+           "    -l | --list          Prints the list of sections in the PUD file. INACCURATE!!\n"
            "    -v | --verbose       Activate verbose mode. Cumulate flags increase verbosity level.\n"
            "    -h | --help          Shows this message\n"
            "\n",
@@ -70,15 +68,20 @@ main(int    argc,
       unsigned int enabled : 1;
    } print;
 
+   struct {
+      unsigned int enabled : 1;
+   } list;
+
    /* Reset all opts */
    ZERO(tile_at);
    ZERO(out);
    ZERO(print);
+   ZERO(list);
 
    /* Getopt */
    while (1)
      {
-        c = getopt_long(argc, argv, "o:pjhPvt:", _options, &opt_idx);
+        c = getopt_long(argc, argv, "o:pjlhPvt:", _options, &opt_idx);
         if (c == -1) break;
 
         switch (c)
@@ -90,6 +93,10 @@ main(int    argc,
            case 'h':
               _usage(stdout);
               return 0;
+
+           case 'l':
+              list.enabled = 1;
+              break;
 
            case 't':
               tile_at.enabled = 1;
@@ -134,9 +141,19 @@ main(int    argc,
    /* Set verbosity level */
    pud_verbose_set(pud, verbose);
 
-   /* Parse pud */
-   if (!pud_parse(pud))
-     ABORT(5, "Parsing of [%s] failed", file);
+   /* -l,--list */
+   if (list.enabled)
+     {
+        chk = sections_list(pud, stdout);
+        if (!chk) ABORT(2, "Error while reading file");
+     }
+
+   /* Parse pud (don't if --list) */
+   if (!list.enabled)
+     {
+        if (!pud_parse(pud))
+          ABORT(5, "Parsing of [%s] failed", file);
+     }
 
    /* --tile-at */
    if (tile_at.enabled)

@@ -8,6 +8,19 @@ static const char * const _sections[] =
    "MTXM", "SQM ", "OILM", "REGM", "UNIT"
 };
 
+bool
+pud_section_exists(char sec[4])
+{
+   int i;
+
+   for (i = 0; i < 20; i++)
+     {
+        if (!strncmp(sec, _sections[i], 4))
+          return true;
+     }
+
+   return false;
+}
 
 bool
 pud_init(void)

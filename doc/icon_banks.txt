@@ -1,0 +1,125 @@
+Source: http://cade.datamax.bg//war2x/wc2icon.html
+
+
+
+Explanation of the icon banks (unit/building graphics use exactly the same format)
+==================================================================================
+
+
+
+The icons (or "buttons") are stored in maindat.war, entry #356 (summer), #357 (winter), #358 (wasteland) and #471 (swamp).
+(The respective color palettes are #2,#10,#18 and #438.)
+
+Table of contents:
+  1. File header format
+  2. Icon data header
+  3. Icon graphics data
+  4. Example
+
+
+*1* File header format:
+
+The icon file starts with an offset-table, similar to war-archives or string-tables:
+
+(Offs.)		(Len)		(Explanation)				(I'll refer to this as..)
+$0000		1 word		number of entries (icons)		"nument"
+$0002		1 word		maximum width  in pixels (46)		"maxw"
+$0004		1 word		maximum height in pixels (38)		"maxh"
+$0006		8 bytes		infos and offset for icon #0		(see below)
+$000E		8 bytes		infos and offset for icon #1		(see below)
+...
+6+(nument-2)*8	8 bytes		infos and offset for icon #(nument-2)	(see below)
+6+(nument-1)*8	8 bytes		infos and offset for icon #(nument-1)	(see below)
+
+The 8 bytes for each icon are structured like this:
+1 byte X displacement
+1 byte Y displacement
+1 byte width  in pixels
+1 byte height in pixels
+1 long offset from beginning of file to the actual icon data
+
+
+*2* Icon data header:
+
+This starts with an offset table again; these offsets are relative to the start of the icon data, and
+there is one offset (word) for each vertical line. (I'll refer to the start of the icon data as "IStart"):
+
+(Fileoffset)		(Len)	(explanation)
+IStart + $0000		1 word	offset to graphics data for line 0
+IStart + $0002		1 word	offset to graphics data for line 1
+...
+IStart + (height-1)*2	1 word	offset to graphics data for line (height-1)
+
+
+*3* Icon graphics data:
+
+The actual graphics data is compressed with a variation of RLE (Run Length Encoding):
+The first byte is a control byte (I'll call it "count").
+If bit #6 is set in count (count AND $40 <> 0): repeat the next byte (count - $40) times
+If bit #7 is set in count (count AND $80 <> 0): leave (count - $80) pixels transparent
+If neither bit #6 or #7 are set:		take the next (count) bytes as pixel values
+
+     "count"(binary)   action to perform
+       00xxxxxx        take the next xxxxxx bytes as pixel values
+       01xxxxxx        repeat the next byte xxxxxx times
+       1yyyyyyy        leave yyyyyyy pixels transparent
+
+
+After the pixel values there is another control byte, and so on....
+
+Attention: if you write a decoding routine, keep in mind that in some cases the length
+of the "compressed" data is actually longer than uncompressed !
+
+
+
+*4* Example:
+
+Ok, let's extract the icon of a grunt (icon #3); we'll use the summer icons (entry #356).
+First we need to get the information entry for this icon:
+  Go to file position 6+3*8 (= $1E).
+  Read two bytes "X -" and "Y displacement" (both 0)
+  Read one byte "width"  ($2E = dec. 46)
+  Read one byte "height" ($26 = dec. 38)
+  Read one long "IStart" ($000018F6)
+
+Now we know the icon has size 46 x 38. Let's decode the first line (line #0):
+  Go to file position (IStart + line# * 2); for line #0 this is IStart ($18F6)
+  Read one word "dataoffset" ($004C)
+  Go to file position (IStart + dataoffset) ($1942)
+  Read one byte "count" ($82)
+  $82 has bit #7 set and #6 cleared, so this means we have to make the next 2 pixels transparent;
+    Preserve the value of coordinates (0,0);
+    Preserve the value of coordinates (1,0);
+    (or set them both to the background colour; depends on what you use transparent pixels for)
+  Read one byte "count" ($03)
+  $03 has neither bit #6 or #7 set, meaning the following three bytes are pixel values:
+    Read one byte ($EF), put color $EF to coordinates (2,0);
+    Read one byte ($EF), put color $EF to coordinates (3,0);
+    Read one byte ($63), put color $63 to coordinates (4,0);
+  Read one byte "count" ($45)
+  $45 has bit #7 cleared and #6 set, meaning that we have to repeat the next byte 5 times:
+    Read one byte ($65)
+    Put color $65 to coordinates (5,0),(6,0),(7,0),(8,0) and (9,0)
+  Read one byte "count" ($21)
+  $21 has neither bit #6 or #7 set, meaning the following $21 (dec.33) bytes are pixel values:
+    Read one byte ($68), put color $68 to coordinates (10,0);
+    Read one byte ($6B), put color $6B to coordinates (11,0);
+    ......
+    Read one byte ($86), put color $86 to coordinates (42,0);
+  Read one byte "count" ($43)
+  $43 has bit #7 cleared and #6 set, meaning that we have to repeat the next byte 3 times:
+    Read one byte ($87)
+    Put color $87 to coordinates (43,0),(44,0) and (45,0)
+  Since the icon width is 45, we are done with line #0.
+  Now repeat this for lines #1 - #37;
+
+
+
+
+
+If you find that there is something wrong with the above explanation, please let me know.
+
+Alexander Cech 
+
+
+

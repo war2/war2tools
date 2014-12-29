@@ -1,0 +1,90 @@
+Source: http://cade.datamax.bg//war2x/wc2tile.html
+
+
+
+
+How the map tile graphics are stored
+====================================
+
+
+
+In maindat.war there is a section for each terrain-type, consisting of 7 entries.
+I will refer to these entries as "entry A" ... "entry G"
+
+For summer these are entry 2-8, wasteland: 10-16, winter: 18-24 and swamp: 438-444.
+
+I will use the expressions
+   - "minitile" for 8x8 pixel raw graphic data
+   - "megatile" for 32x32 pixel graphics, composed out of 16 minitiles
+   - "map tile" for the values used in the MTXM section in PUDs
+
+Entry A: Color palette for the terrain type (256 * 3 bytes [RGBRGBRGB... and so on])
+Entry B: Information about how to find the "minitiles" (8x8) for "megatiles" (32x32)
+Entry C: Contains 16 masks (32x32) for the fog of war, followed by the minitile-data
+Entry D: Information about how to find the "megatiles" for "map tiles" (the values in MTXM)
+Entry E-G: Still unknown.
+
+Confused by now ? Well, it isn't too complicated:
+Each megatile is composed out of 16 minitiles in this order:
+
+        01 02 03 04
+        05 06 07 08
+        09 10 11 12
+        13 14 15 16
+
+Entry B contains 16 words for each mega-tile; the last two bits of this word are mirror-flags.
+if bit #0 is set you have to flip the minitile about its Y-axis, if bit #1 is set, the X-axis.
+The rest of the word (word AND $FFFC) has to be multiplied by 16 to get an offset into entry C:
+there you find the respective mini-tile data.
+
+Entry D contains a chunk of 42 bytes for each unique map tile ($000x - $09Dx).
+The first 16 words of this chunk contain tile-numbers for the variations of this map tile (the "x" above).
+If one of these words is zero, that means the respective tile-number is not used.
+(to get the correct offset just use this formula: ((map tile >> 4) * 42 + (map tile AND 15) * 2)
+Then come 8 bytes and 1 word; these are still unknown.
+
+Ok, I think an example will make this *much* clearer:
+Suppose we find map tile $0052 (light grass) in MTXM.
+This means we need the third (counting starts with 0) word in the fifth chunk of entry D:
+5 * 42 + 2 * 2 = 214, so we read the word at offset 214 in entry D. (This is 356 for summer)
+Now we have the tile-number. We need to multiply this by 32, because entry B contains 32 bytes (16 words)
+for each tile-number: 356 * 32 = 11392. We go to offset 11392 in entry B; there we find an array of
+16 words: $1288, $10F8, $1104, ...., $114F, $11F8.
+                                         ^__ notice this one ! (see text below)
+
+Each of these (words AND $FFFC) is the file-offset into entry C, divided by 16.
+So to read the data for the first mini-tile we go to offset $12880 (= $1288 * 16) in entry C and read
+64 bytes of data (64, because each minitile is size 8x8). This minitile goes directly (because neither
+bit #0 or #1 is set) into the upper left corner, of the megatile.
+Now the next minitile: go to offset $10F80 (= $10F8 * 16) in entry C, read 64 bytes,
+place it into the second "column" in the first "row" (see illustration above). And so on...
+We eventually reach the word $114F - this has both bit #0 and #1 set, meaning the tile we find at
+offset $114C0 (= ($114F AND $FFFC) * 16) has to be X-flipped AND Y-flipped before copying it into
+position 15 (according to the diagram above).
+Continue, until we have read the last minitile at offset $11F80 and placed it into the lower right corner.
+DONE!
+
+Note that there are a lot of zeroes in entry D, because not all theoretically possible map tiles are used.
+
+
+If you find that there is something wrong with the above explanation, please let me know.
+
+Alexander Cech 
+
+Appendix:
+
+The tilenumbers 0-15 are reserved for the masks; the first "real" tilenumber is 16.
+Entry B contains the following data in its first 16 chunks (each 32 bytes long):
+(Offset) (Data)
+$0000    $0000, 15 x $0000
+$0020    $0004, 15 x $0000
+$0040    $0008, 15 x $0000
+$0060    $000C, 15 x $0000
+     ...
+$01E0    $003C, 15 x $0000
+
+The 8 unknown bytes for each megatile in entry B are used by the map editor to
+set the surroundings of a placed tile.
+
+
+

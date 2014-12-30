@@ -28,7 +28,7 @@ war2_open(const char *file,
    if (!w2->file) DIE_GOTO(err_free, "Failed to open [%s]", file);
 
    /* Read magic */
-   w2->magic = _read32(w2);
+   w2->magic = _READ32(w2);
    switch (w2->magic)
      {
       case 0x00000019: // Handled
@@ -41,7 +41,7 @@ war2_open(const char *file,
      }
 
    /* Get the entries */
-   w2->entries_count = _read16(w2);
+   w2->entries_count = _READ16(w2);
    WAR2_VERBOSE(w2, 1, "File [%s] has [%u] entries", file, w2->entries_count);
 
    return w2;

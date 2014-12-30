@@ -39,6 +39,9 @@
       if (ferror(f)) DIE_RETURN(ret, "Error while accessing file: %s", strerror(errno)); \
    } while (0)
 
+#define _READ8(pud)  _read8(pud->file)
+#define _READ16(pud) _read16(pud->file)
+#define _READ32(pud) _read32(pud->file)
 
 typedef struct _Color Color;
 

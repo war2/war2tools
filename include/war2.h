@@ -18,7 +18,10 @@ struct _War2_Data
    unsigned char *ptr;
 
    uint32_t     magic;
-   uint16_t     entries_count;
+   uint16_t     fid;
+
+   uint16_t        entries_count;
+   unsigned char **entries;
 
    unsigned int verbose;
 };

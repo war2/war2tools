@@ -1,6 +1,6 @@
 #include "private.h"
 
-static const char * const _sections[] =
+static const char * const _pud_sections[] =
 {
    "TYPE", "VER ", "DESC", "OWNR", "ERA ",
    "ERAX", "DIM ", "UDTA", "ALOW", "UGRD",
@@ -15,7 +15,7 @@ pud_section_exists(char sec[4])
 
    for (i = 0; i < 20; i++)
      {
-        if (!strncmp(sec, _sections[i], 4))
+        if (!strncmp(sec, _pud_sections[i], 4))
           return true;
      }
 
@@ -56,7 +56,7 @@ pud_go_to_section(Pud         *pud,
    if (sec > 19) DIE_RETURN(0, "Invalid section ID [%i]", sec);
 
    f = pud->file;
-   sec_str = _sections[sec];
+   sec_str = _pud_sections[sec];
 
    /* If the section to search for is before the current section,
     * rewind the file to catch it. If it is after, do nothing */

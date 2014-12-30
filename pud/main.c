@@ -39,7 +39,7 @@ _usage(FILE *stream)
 }
 
 #define ABORT(errcode_, msg, ...) \
-   do { chk = errcode_;  ERR(msg, ## __VA_ARGS__); goto end; } while (0)
+   do { ret_status = errcode_;  ERR(msg, ## __VA_ARGS__); goto end; } while (0)
 
 #define ZERO(struct_) memset(&struct_, 0, sizeof(struct_))
 
@@ -47,7 +47,7 @@ int
 main(int    argc,
      char **argv)
 {
-   int chk = 0, c, opt_idx = 0;
+   int chk, c, opt_idx = 0, ret_status = EXIT_SUCCESS;
    const char *file;
    Pud *pud = NULL;
    War2_Data *w2 = NULL;
@@ -235,6 +235,6 @@ main(int    argc,
 end:
    pud_close(pud);
    war2_close(w2);
-   return chk;
+   return ret_status;
 }
 

@@ -360,6 +360,9 @@ struct _Pud
       unsigned int armor_upgradable   : 1;
    } unit_data[110];
 
+   /* Bitfield: is section X present? */
+   uint32_t     sections;
+
    /* Cache */
    uint8_t       current_section;
 
@@ -401,6 +404,8 @@ unsigned char *pud_minimap_bitmap_generate(Pud *pud, int *size_ret);
 
 bool pud_minimap_to_ppm(Pud *pud, const char *file);
 bool pud_minimap_to_jpeg(Pud *pud, const char *file);
+
+const char *pud_section_at_index(int idx);
 
 bool pud_section_exists(char sec[4]);
 uint16_t pud_tile_at(Pud *pud, int x, int y);

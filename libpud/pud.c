@@ -22,6 +22,13 @@ pud_section_exists(char sec[4])
    return false;
 }
 
+const char *
+pud_section_at_index(int idx)
+{
+   if ((unsigned int)idx >= 20) return NULL;
+   return _pud_sections[idx];
+}
+
 bool
 pud_init(void)
 {
@@ -188,6 +195,8 @@ pud_verbose_set(Pud *pud,
 bool
 pud_parse(Pud *pud)
 {
+   pud->sections = 0;
+
 #define PARSE_SEC(sec) \
    if (!pud_parse_ ## sec(pud)) DIE_RETURN(false, "Failed to parse " #sec)
 

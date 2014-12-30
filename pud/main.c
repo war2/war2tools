@@ -7,6 +7,7 @@ static const struct option _options[] =
      {"ppm",      no_argument,          0, 'p'},
      {"jpeg",     no_argument,          0, 'j'},
      {"print",    no_argument,          0, 'P'},
+     {"sections", no_argument,          0, 's'},
      {"war",      no_argument,          0, 'W'},
      {"verbose",  no_argument,          0, 'v'},
      {"help",     no_argument,          0, 'h'}
@@ -30,6 +31,7 @@ _usage(FILE *stream)
            "    -j | --jpeg          Outputs the minimap as a jpeg file. If --out is not specified,\n"
            "                         the output's filename will the the input file plus \".jpeg\"\n"
            "    -t | --tile-at <x,y> Gets the tile ID at x,y\n"
+           "    -s | --sections      Gets sections in the file.\n"
            "    -v | --verbose       Activate verbose mode. Cumulate flags increase verbosity level.\n"
            "    -h | --help          Shows this message\n"
            "\n",
@@ -52,6 +54,7 @@ main(int    argc,
    int verbose = 0;
    uint16_t w;
    bool war2 = false;
+   int i;
 
    struct  {
       int          x;
@@ -70,16 +73,21 @@ main(int    argc,
       unsigned int enabled : 1;
    } print;
 
+   struct {
+      unsigned int enabled : 1;
+   } sections;
+
 
    /* Reset all opts */
    ZERO(tile_at);
    ZERO(out);
    ZERO(print);
+   ZERO(sections);
 
    /* Getopt */
    while (1)
      {
-        c = getopt_long(argc, argv, "o:pjhWPvt:", _options, &opt_idx);
+        c = getopt_long(argc, argv, "o:pjshWPvt:", _options, &opt_idx);
         if (c == -1) break;
 
         switch (c)
@@ -91,6 +99,10 @@ main(int    argc,
            case 'h':
               _usage(stdout);
               return 0;
+
+           case 's':
+              sections.enabled = 1;
+              break;
 
            case 'W':
               war2 = true;
@@ -141,6 +153,10 @@ main(int    argc,
 
         w2 = war2_open(file, verbose);
         if (w2 == NULL) ABORT(3, "Failed to create War2_Data from [%s]", file);
+
+        /* -s,--sections */
+        if (sections.enabled)
+          fprintf(stdout, "%i\n", w2->entries_count);
      }
    else
      {
@@ -209,6 +225,16 @@ main(int    argc,
         /* -P,--print */
         if (print.enabled)
           pud_print(pud, stdout);
+
+        /* -s,--sections */
+        if (sections.enabled)
+          {
+             for (i = 0; i < 20; i++)
+               {
+                  if ((pud->sections & (1 << i)))
+                    fprintf(stdout, "%s\n", pud_section_at_index(i));
+               }
+          }
      }
 
 end:

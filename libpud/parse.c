@@ -4,6 +4,8 @@
  * Parsing of individual sections is here
  */
 
+#define HAS_SECTION(sec) pud->sections |= (1 << sec)
+
 bool
 pud_parse_type(Pud *pud)
 {
@@ -16,6 +18,7 @@ pud_parse_type(Pud *pud)
    chk = pud_go_to_section(pud, PUD_SECTION_TYPE);
    if (!chk) DIE_RETURN(false, "Failed to reach section TYPE");
    PUD_VERBOSE(pud, 2, "At section TYPE (size = %u)", chk);
+   HAS_SECTION(PUD_SECTION_TYPE);
 
    /* Read 10bytes + 2 unused */
    READBUF(pud, buf, uint8_t, 12, FAIL(false));
@@ -41,6 +44,7 @@ pud_parse_ver(Pud *pud)
    chk = pud_go_to_section(pud, PUD_SECTION_VER);
    if (!chk) DIE_RETURN(false, "Failed to reach section VER");
    PUD_VERBOSE(pud, 2, "At section VER (size = %u)", chk);
+   HAS_SECTION(PUD_SECTION_VER);
 
    w = READ16(pud, FAIL(false));
 
@@ -59,6 +63,7 @@ pud_parse_desc(Pud *pud)
    chk = pud_go_to_section(pud, PUD_SECTION_DESC);
    if (!chk) DIE_RETURN(false, "Failed to reach section DESC");
    PUD_VERBOSE(pud, 2, "At section DESC (size = %u)", chk);
+   HAS_SECTION(PUD_SECTION_DESC);
 
    READBUF(pud, buf, char, 32, FAIL(false));
    memcpy(pud->description, buf, 32 * sizeof(char));
@@ -77,6 +82,7 @@ pud_parse_ownr(Pud *pud)
    len = pud_go_to_section(pud, PUD_SECTION_OWNR);
    if (!len) DIE_RETURN(false, "Failed to reach section OWNR");
    PUD_VERBOSE(pud, 2, "At section OWNR (size = %u)", len);
+   HAS_SECTION(PUD_SECTION_OWNR);
 
    READBUF(pud, buf, uint8_t, 8, FAIL(false));
    memcpy(pud->owner.players, buf, 8 * sizeof(uint8_t));
@@ -101,6 +107,7 @@ pud_parse_side(Pud *pud)
    len = pud_go_to_section(pud, PUD_SECTION_SIDE);
    if (!len) DIE_RETURN(false, "Failed to reach section SIDE");
    PUD_VERBOSE(pud, 2, "At section SIDE (size = %u)", len);
+   HAS_SECTION(PUD_SECTION_SIDE);
 
    READBUF(pud, buf, uint8_t, 8, FAIL(false));
    memcpy(pud->side.players, buf, 8 * sizeof(uint8_t));
@@ -129,9 +136,13 @@ pud_parse_era(Pud *pud)
         chk = pud_go_to_section(pud, PUD_SECTION_ERA);
         if (!chk) DIE_RETURN(false, "Failed to reach section ERA");
         PUD_VERBOSE(pud, 2, "At section ERA (size = %u)", chk);
+        HAS_SECTION(PUD_SECTION_ERA);
      }
    else
-     PUD_VERBOSE(pud, 2, "At section ERAX (size = %u)", chk);
+     {
+        PUD_VERBOSE(pud, 2, "At section ERAX (size = %u)", chk);
+        HAS_SECTION(PUD_SECTION_ERAX);
+     }
 
    w = READ16(pud, FAIL(false));
    switch (w)
@@ -174,6 +185,7 @@ pud_parse_dim(Pud *pud)
    chk = pud_go_to_section(pud, PUD_SECTION_DIM);
    if (!chk) DIE_RETURN(false, "Failed to reach section DIM");
    PUD_VERBOSE(pud, 2, "At section DIM (size = %u)", chk);
+   HAS_SECTION(PUD_SECTION_DIM);
 
    x = READ16(pud, FAIL(false));
    y = READ16(pud, FAIL(false));
@@ -213,6 +225,7 @@ pud_parse_udta(Pud *pud)
    chk = pud_go_to_section(pud, PUD_SECTION_UDTA);
    if (!chk) DIE_RETURN(false, "Failed to reach section UDTA");
    PUD_VERBOSE(pud, 2, "At section UDTA (size = %u)", chk);
+   HAS_SECTION(PUD_SECTION_UDTA);
 
    /* Use default data */
    READBUF(pud, wb, uint16_t, 1, FAIL(false));
@@ -406,6 +419,7 @@ pud_parse_alow(Pud *pud)
         return true;
      }
    PUD_VERBOSE(pud, 2, "At section ALOW (size = %u)", chk);
+   HAS_SECTION(PUD_SECTION_ALOW);
 
    for (i = 0; i < ptrs_count; i++)
      {
@@ -433,6 +447,7 @@ pud_parse_ugrd(Pud *pud)
    chk = pud_go_to_section(pud, PUD_SECTION_UGRD);
    if (!chk) DIE_RETURN(false, "Failed to reach section UGRD");
    PUD_VERBOSE(pud, 2, "At section UGRD (size = %u)", chk);
+   HAS_SECTION(PUD_SECTION_UGRD);
 
    /* Use default data */
    READBUF(pud, wb, uint16_t, 1, FAIL(false));
@@ -487,6 +502,7 @@ pud_parse_sgld(Pud *pud)
    chk = pud_go_to_section(pud, PUD_SECTION_SGLD);
    if (!chk) DIE_RETURN(false, "Failed to reach section SGLD");
    PUD_VERBOSE(pud, 2, "At section SGLD (size = %u)", chk);
+   HAS_SECTION(PUD_SECTION_SGLD);
 
    READBUF(pud, buf, uint16_t, 16, FAIL(false));
 
@@ -508,6 +524,7 @@ pud_parse_slbr(Pud *pud)
    chk = pud_go_to_section(pud, PUD_SECTION_SLBR);
    if (!chk) DIE_RETURN(false, "Failed to reach section SLBR");
    PUD_VERBOSE(pud, 2, "At section SLBR (size = %u)", chk);
+   HAS_SECTION(PUD_SECTION_SLBR);
 
    READBUF(pud, buf, uint16_t, 16, FAIL(false));
 
@@ -529,6 +546,7 @@ pud_parse_soil(Pud *pud)
    chk = pud_go_to_section(pud, PUD_SECTION_SOIL);
    if (!chk) DIE_RETURN(false, "Failed to reach section SOIL");
    PUD_VERBOSE(pud, 2, "At section SOIL (size = %u)", chk);
+   HAS_SECTION(PUD_SECTION_SOIL);
 
    READBUF(pud, buf, uint16_t, 16, FAIL(false));
 
@@ -550,6 +568,7 @@ pud_parse_aipl(Pud *pud)
    chk = pud_go_to_section(pud, PUD_SECTION_AIPL);
    if (!chk) DIE_RETURN(false, "Failed to reach section AIPL");
    PUD_VERBOSE(pud, 2, "At section AIPL (size = %u)", chk);
+   HAS_SECTION(PUD_SECTION_AIPL);
 
    READBUF(pud, buf, uint8_t, 16, FAIL(false));
 
@@ -572,6 +591,7 @@ pud_parse_mtxm(Pud *pud)
    chk = pud_go_to_section(pud, PUD_SECTION_MTXM);
    if (!chk) DIE_RETURN(false, "Failed to reach section MTXM");
    PUD_VERBOSE(pud, 2, "At section MTXM (size = %u)", chk);
+   HAS_SECTION(PUD_SECTION_MTXM);
 
    /* Check for integrity */
    if ((pud->tiles * sizeof(uint16_t)) != chk)
@@ -598,6 +618,7 @@ pud_parse_sqm(Pud *pud)
    chk = pud_go_to_section(pud, PUD_SECTION_SQM);
    if (!chk) DIE_RETURN(false, "Failed to reach section SQM ");
    PUD_VERBOSE(pud, 2, "At section SQM  (size = %u)", chk);
+   HAS_SECTION(PUD_SECTION_SQM);
 
    /* Check for integrity */
    if ((pud->tiles * sizeof(uint16_t)) != chk)
@@ -638,6 +659,7 @@ pud_parse_regm(Pud *pud)
    chk = pud_go_to_section(pud, PUD_SECTION_REGM);
    if (!chk) DIE_RETURN(false, "Failed to reach section REGM");
    PUD_VERBOSE(pud, 2, "At section REGM (size = %u)", chk);
+   HAS_SECTION(PUD_SECTION_REGM);
 
    /* Check for integrity */
    if ((pud->tiles * sizeof(uint16_t)) != chk)
@@ -665,6 +687,7 @@ pud_parse_unit(Pud *pud)
    chk = pud_go_to_section(pud, PUD_SECTION_UNIT);
    if (!chk) DIE_RETURN(false, "Failed to reach section UNIT");
    PUD_VERBOSE(pud, 2, "At section UNIT (size = %u)", chk);
+   HAS_SECTION(PUD_SECTION_UNIT);
    units = chk / 8;
 
    size = sizeof(struct _unit) * units;

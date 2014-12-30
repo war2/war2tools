@@ -75,7 +75,7 @@ war2_open(const char *file,
              continue;
           }
         w2->entries[i] = w2->mem_map + l;
-        WAR2_VERBOSE(w2, 2, "Entry %i has offset of %u", i, l);
+        WAR2_VERBOSE(w2, 3, "Entry %i has offset of %u", i, l);
      }
 
    return w2;
@@ -88,6 +88,53 @@ err_free:
    free(w2);
 err:
    return NULL;
+}
+
+unsigned char *
+war2_entry_extract(War2_Data    *w2,
+                   unsigned int  entry,
+                   size_t       *size_ret)
+{
+   unsigned char *p = NULL;
+   uint32_t l, ulen;
+   int flags;
+
+   /* Check the entry is in the range */
+   if (entry >= w2->entries_count)
+     DIE_RETURN(NULL, "Invalid entry [%i]. Entries range is: [0 ; %u].",
+                entry, w2->entries_count - 1);
+
+   /* Go at entry */
+   w2->ptr = w2->entries[entry];
+
+   /* Uncompressed length (3 bytes) & Flags (1 byte) */
+   l = READ32(w2, FAIL(NULL));
+   flags = l >> 24;
+   ulen = l & 0x00ffffff;
+   WAR2_VERBOSE(w2, 2, "Entry %i: uncompressed length: %i. Flags: 0x%02x",
+                entry, ulen, flags);
+
+   /* Output entry will always be duplicated */
+   p = malloc(ulen);
+   if (!p) DIE_RETURN(NULL," Failed to allocate memory");
+
+   switch (flags)
+     {
+      case 0x00: // Uncompressed
+         memcpy(p, w2->ptr, ulen);
+         break;
+
+      case 0x20: // Compressed
+
+      default:
+         ERR("Unhandled flags [0x%02x] for entry %i", flags, entry);
+         if (size_ret) *size_ret = 0;
+         free(p); p = NULL;
+         break;
+     }
+   if (size_ret) *size_ret = ulen;
+
+   return p;
 }
 
 void

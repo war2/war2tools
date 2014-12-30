@@ -1,4 +1,4 @@
-#include "private.h"
+#include "pud_private.h"
 
 Color
 pud_tile_to_color(Pud      *pud,

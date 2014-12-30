@@ -1,0 +1,26 @@
+set(BUILD_SHARED_LIBS true)
+
+set(
+   LIBWAR2_SRC
+   war2.c
+)
+
+include_directories(
+   ${CMAKE_CURRENT_SOURCE_DIR}
+   ${CMAKE_CURRENT_SOURCE_DIR}/../include
+)
+
+add_definitions(-Wall)
+add_definitions(-std=c99)
+
+add_library(libwar2 SHARED ${LIBWAR2_SRC})
+SET_TARGET_PROPERTIES(libwar2 PROPERTIES PREFIX "")
+
+target_link_libraries(${LIBWAR2_LIBRARIES})
+
+install(
+   TARGETS libwar2
+   LIBRARY DESTINATION lib
+   ARCHIVE DESTINATION lib/static
+)
+

@@ -4,7 +4,7 @@
 #include <pud.h>
 #include <getopt.h>
 
-#include "../include/private.h"
+#include "../include/pud_private.h"
 
 #define PROGRAM "pud"
 #define VERSION  1.0

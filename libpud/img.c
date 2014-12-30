@@ -1,4 +1,4 @@
-#include "private.h"
+#include "pud_private.h"
 
 unsigned char *
 pud_minimap_bitmap_generate(Pud *pud,

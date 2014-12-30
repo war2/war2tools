@@ -10,7 +10,5 @@
 #define PROGRAM "pud"
 #define VERSION  1.0
 
-bool sections_list(Pud *pud, FILE *stream);
-
 #endif /* ! _PUDUTILS_H_ */
 

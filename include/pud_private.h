@@ -8,10 +8,15 @@
 #include <stdint.h>
 #include <time.h>
 
-#include "../include/debug.h"
-#include "../include/bool.h"
-#include "../include/pud.h"
-#include "../include/jpeg.h"
+#include "debug.h"
+#include "bool.h"
+#include "pud.h"
+#include "jpeg.h"
+
+#include <fcntl.h>
+#include <sys/stat.h>
+#include <sys/mman.h>
+#include <unistd.h>
 
 /* Visual hint when returning nothing */
 #define VOID
@@ -25,7 +30,7 @@
 
 #define PUD_SANITY_CHECK(pud, mode, ...) \
    do { \
-      if (!(pud) || !((pud)->file)) { \
+      if (!(pud)) { \
          DIE_RETURN(__VA_ARGS__, "Invalid PUD input [%p]", pud); \
       } \
       if (!(pud->open_mode & mode)) { \
@@ -39,9 +44,62 @@
       if (ferror(f)) DIE_RETURN(ret, "Error while accessing file: %s", strerror(errno)); \
    } while (0)
 
-#define _READ8(pud)  _read8(pud->file)
-#define _READ16(pud) _read16(pud->file)
-#define _READ32(pud) _read32(pud->file)
+
+
+#define FAIL(ret_) return ret_
+#define ECHAP(lab_) goto lab_
+
+#define READ8(p, ...) \
+   ({ \
+    uint8_t x__[1]; \
+    const size_t size__ = sizeof(x__[0]); \
+    if (!(pud_mem_map_ok(p))) { \
+    ERR("Read outside of memory map!"); \
+    exit(1); \
+    __VA_ARGS__; \
+    } \
+    memcpy(&(x__[0]), p->ptr, size__); \
+    p->ptr += size__; \
+    x__[0]; \
+    })
+
+#define READ16(p, ...) \
+   ({ \
+    uint16_t x__[1]; \
+    const size_t size__ = sizeof(x__[0]); \
+    if (!(pud_mem_map_ok(p))) { \
+    ERR("Read outside of memory map!"); \
+    __VA_ARGS__; \
+    } \
+    memcpy(&(x__[0]), p->ptr, size__); \
+    p->ptr += size__; \
+    x__[0]; \
+    })
+
+#define READ32(p, ...) \
+   ({ \
+    uint32_t x__[1]; \
+    const size_t size__ = sizeof(x__[0]); \
+    if (!(pud_mem_map_ok(p))) { \
+    ERR("Read outside of memory map!"); \
+    __VA_ARGS__; \
+    } \
+    memcpy(&(x__[0]), p->ptr, size__); \
+    p->ptr += size__; \
+    x__[0]; \
+    })
+
+#define READBUF(p, buf, type, count, ...) \
+   do { \
+      void *ptr__ = (buf); \
+      const size_t size__ = sizeof(type) * (count); \
+      if (!(pud_mem_map_ok(p))) { \
+         ERR("Read outside of memory map!"); \
+         __VA_ARGS__; \
+      } \
+      memcpy(ptr__, p->ptr, size__); \
+      p->ptr += size__; \
+   } while (0)
 
 typedef struct _Color Color;
 
@@ -62,6 +120,8 @@ const char *dim2str(Pud_Dimensions dim);
 const char *era2str(Pud_Era era);
 Color color_for_player(uint8_t player);
 const char *mode2str(Pud_Open_Mode mode);
+
+bool pud_mem_map_ok(Pud *pud);
 
 Color pud_tile_to_color(Pud *pud, uint16_t tile);
 

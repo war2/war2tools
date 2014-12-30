@@ -10,15 +10,16 @@ bool
 sections_list(Pud  *pud,
               FILE *stream)
 {
-   FILE *f = pud->file;
    char buf[8], c;
    bool valid[4];
    int vc = 0;
    int i;
    int verified = 0;
 
+
    fread(buf, sizeof(char), 4, f);
    PUD_CHECK_FERROR(f, false);
+   READBUF(pud, buf, 
    buf[4] = 0;
 
    for (i = 0; i < 4; i++)

@@ -253,13 +253,17 @@ typedef struct _Pud Pud;
 
 struct _Pud
 {
-   FILE         *file;
-   Pud_Open_Mode open_mode;
+   int            fd;
+   Pud_Open_Mode  open_mode;
+   unsigned char *mem_map;
+   unsigned char *ptr;
+   size_t         mem_map_size;
+   char          *filename;
 
-   uint32_t      tag;
-   uint16_t      version;
-   char          description[32];
-   uint8_t       era;
+   uint32_t       tag;
+   uint16_t       version;
+   char           description[32];
+   uint8_t        era;
    Pud_Dimensions dims;
 
    struct {

@@ -1,8 +1,16 @@
 #ifndef _WAR2_PRIVATE_H_
 #define _WAR2_PRIVATE_H_
 
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <errno.h>
+#include <stdint.h>
+#include <time.h>
+
+#include "pud.h"
 #include "war2.h"
-#include "pud_private.h"
 
 static inline uint32_t
 _read32(FILE *f)

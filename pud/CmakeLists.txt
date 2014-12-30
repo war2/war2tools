@@ -3,7 +3,7 @@ include_directories(
    ${CMAKE_CURRENT_SOURCE_DIR}/../include
 )
 
-set(PUD_SRC main.c sections.c)
+set(PUD_SRC main.c)
 add_executable(pud ${PUD_SRC})
 
 target_link_libraries(pud ${LIBPUD_LIBRARIES} ${LIBWAR2_LIBRARIES})

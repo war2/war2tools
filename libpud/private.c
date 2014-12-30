@@ -111,3 +111,9 @@ color_for_player(uint8_t player)
    return color_make(0x7f, 0x7f, 0x7f);
 }
 
+bool
+pud_mem_map_ok(Pud *pud)
+{
+   return (pud->ptr < pud->mem_map + pud->mem_map_size);
+}
+

@@ -42,11 +42,14 @@ pud_section_is_optional(Pud_Section sec)
            (sec == PUD_SECTION_ALOW));
 }
 
+/*
+ * TODO FIXME
+ * Bad design (this file should not have been parsed like this)
+ */
 uint32_t
 pud_go_to_section(Pud         *pud,
                   Pud_Section  sec)
 {
-   FILE *f;
    uint8_t b;
    uint32_t l;
    char buf[4];
@@ -55,13 +58,12 @@ pud_go_to_section(Pud         *pud,
    PUD_SANITY_CHECK(pud, PUD_OPEN_MODE_R, 0);
    if (sec > 19) DIE_RETURN(0, "Invalid section ID [%i]", sec);
 
-   f = pud->file;
    sec_str = _pud_sections[sec];
 
    /* If the section to search for is before the current section,
     * rewind the file to catch it. If it is after, do nothing */
    if (sec <= pud->current_section)
-     rewind(f);
+     pud->ptr = pud->mem_map;
 
    /* Tell the PUD we are pointing at the last section.
     * In case of success the pud will be pointing at the section
@@ -69,50 +71,120 @@ pud_go_to_section(Pud         *pud,
     * On failure, it will have to rewind itself on next call */
    pud->current_section = PUD_SECTION_UNIT;
 
-   fread(buf, sizeof(uint8_t), 4, f);
-   PUD_CHECK_FERROR(f, 0);
+   READBUF(pud, buf, char, 4, FAIL(0));
 
-   while (!feof(f))
+   while (pud_mem_map_ok(pud))
      {
         if (!strncmp(buf, sec_str, 4))
           {
              /* Update current section */
              pud->current_section = sec;
-             fread(&l, sizeof(uint32_t), 1, f);
-             PUD_CHECK_FERROR(f, 0);
+
+             l = READ32(pud, FAIL(0));
              return l;
           }
 
         memmove(buf, &(buf[1]), 3 * sizeof(char));
-        fread(&b, sizeof(uint8_t), 1, f);
-        PUD_CHECK_FERROR(f, 0);
+        b = READ8(pud, FAIL(0));
         buf[3] = b;
      }
 
    return 0;
 }
 
+static int
+_mode2flags(Pud_Open_Mode mode)
+{
+   int flags = 0;
+
+   switch (mode)
+     {
+      case PUD_OPEN_MODE_R:
+         flags |= O_RDONLY;
+         break;
+
+      case PUD_OPEN_MODE_W:
+         flags |= O_WRONLY;
+         break;
+
+      case PUD_OPEN_MODE_RW:
+         flags |= O_RDWR;
+         break;
+     }
+
+   return flags;
+}
+
+static bool
+_open(Pud           *pud,
+      const char    *file,
+      Pud_Open_Mode  mode)
+{
+   int oflags, chk;
+   struct stat s;
+
+   /* Close the file if was already open */
+   if (pud->mem_map) { munmap(pud->mem_map, pud->mem_map_size); pud->mem_map = NULL; }
+   if (pud->fd >= 0) { close(pud->fd); pud->fd = -1; }
+   if (pud->filename) free(pud->filename);
+
+   /* Copy the filename */
+   pud->filename = strdup(file);
+   if (!pud->filename) DIE_GOTO(err, "Failed to strdup [%s]", file);
+
+   /* Open */
+   oflags = _mode2flags(mode);
+   pud->fd = open(file, oflags, 0);
+   if (pud->fd == -1) DIE_GOTO(err_ff, "Failed to open [%s]", file);
+
+   if (mode & PUD_OPEN_MODE_R)
+     {
+        /* Mmap */
+        chk = fstat(pud->fd, &s);
+        if (chk < 0) DIE_GOTO(err_close, "Failed to fstat() [%s]", file);
+        pud->mem_map = mmap(NULL, s.st_size, PROT_READ, MAP_FILE | MAP_PRIVATE, pud->fd, 0);
+        if (pud->mem_map == MAP_FAILED)
+          DIE_GOTO(err_close, "Failed to mmap() [%s] %s", file, strerror(errno));
+
+        pud->ptr = pud->mem_map;
+        pud->mem_map_size = s.st_size;
+     }
+   else
+     {
+        pud->mem_map = NULL;
+        pud->ptr = NULL;
+        pud->mem_map_size = 0;
+     }
+
+   pud->open_mode = mode;
+   return true;
+
+err_close:
+   close(pud->fd);
+   pud->fd = -1;
+err_ff:
+   free(pud->filename);
+   pud->filename = NULL;
+err:
+   return false;
+}
 
 Pud *
 pud_open(const char    *file,
          Pud_Open_Mode  mode)
 {
    Pud *pud;
-   const char *m;
 
    if (file == NULL) DIE_RETURN(NULL, "NULL input file");
 
-   m = mode2str(mode);
-   if (m == NULL) DIE_RETURN(NULL, "Invalid mode [%i]", mode);
-
+   /* RST memory */
    pud = calloc(1, sizeof(Pud));
    if (!pud) DIE_GOTO(err, "Failed to alloc Pud: %s", strerror(errno));
+   pud->fd = -1;
 
-   pud->file = fopen(file, m);
-   if (!pud->file) DIE_GOTO(err_free, "Failed to open file [%s] with mode [%s]",
-                            file, m);
-
-   pud->open_mode = mode;
+   /* Open */
+   if (!_open(pud, file, mode))
+     DIE_GOTO(err_free, "Failed to open PUD");
 
    return pud;
 
@@ -127,26 +199,17 @@ pud_reopen(Pud           *pud,
            const char    *file,
            Pud_Open_Mode  mode)
 {
-   const char *m;
-
-   if ((!pud) || (!file)) return false;
-
-   m = mode2str(mode);
-   if (m == NULL) DIE_RETURN(false, "Invalid mode [%i]", mode);
-
-   fclose(pud->file);
-   pud->file = fopen(file, m);
-   if (!pud->file) DIE_RETURN(false, "Failed to open [%s] in [%s]", file, m);
-   pud->open_mode = mode;
-
-   return true;
+   if ((!pud) || (!file)) DIE_RETURN(false, "Invalid inputs");
+   return _open(pud, file, mode);
 }
 
 void
 pud_close(Pud *pud)
 {
    if (!pud) return;
-   fclose(pud->file);
+   close(pud->fd);
+   if (pud->mem_map) munmap(pud->mem_map, pud->mem_map_size);
+   free(pud->filename);
    free(pud->units);
    free(pud->tiles_map);
    free(pud);
@@ -251,7 +314,7 @@ pud_write(const Pud *pud)
    PUD_SANITY_CHECK(pud, PUD_OPEN_MODE_W, false);
 
    const Pud *p = pud; // Shortcut
-   FILE *f = pud->file;
+   FILE *f;
    uint8_t b;
    uint16_t w;
    uint32_t l;
@@ -260,8 +323,15 @@ pud_write(const Pud *pud)
    map_len = p->tiles * sizeof(uint16_t);
    units_len = p->units_count * sizeof(struct _unit);
 
-   rewind(p->file);
-
+   /*
+    * FIXME FIXME FIXME FIXME FIXME FIXME FIXME
+    * This is here to avoid to rewrite the
+    * function.
+    * Must be done one day!!
+    * FIXME FIXME FIXME FIXME FIXME FIXME FIXME
+    */
+   f = fdopen(pud->fd, "wb");
+   if (!f) DIE_RETURN(false, "Failed to fdopen()");
 
 #define W8(val, nb) \
    do { \
@@ -510,11 +580,11 @@ pud_unit_add(Pud        *pud,
    /* Override alter value for unspecified cases */
    if ((type != PUD_UNIT_GOLD_MINE) && (type != PUD_UNIT_OIL_PATCH))
      {
-//        if ((owner == PUD_OWNER_PASSIVE_COMPUTER) ||
-//            (owner == PUD_OWNER_RESCUE_PASSIVE))
-//          alter = 0;
-//        else
-//          alter = 1;
+        //        if ((owner == PUD_OWNER_PASSIVE_COMPUTER) ||
+        //            (owner == PUD_OWNER_RESCUE_PASSIVE))
+        //          alter = 0;
+        //        else
+        //          alter = 1;
      }
 
    struct _unit u = {

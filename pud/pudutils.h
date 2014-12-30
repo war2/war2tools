@@ -2,6 +2,7 @@
 #define _PUDUTILS_H_
 
 #include <pud.h>
+#include <war2.h>
 #include <getopt.h>
 
 #include "../include/pud_private.h"

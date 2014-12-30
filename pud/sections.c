@@ -15,8 +15,7 @@ sections_list(Pud  *pud,
    bool valid[4];
    int vc = 0;
    int i;
-   int verified = 0, unchecked = 0;
-   char check;
+   int verified = 0;
 
    fread(buf, sizeof(char), 4, f);
    PUD_CHECK_FERROR(f, false);
@@ -35,14 +34,8 @@ sections_list(Pud  *pud,
              if (pud_section_exists(buf))
                {
                   verified++;
-                  check = ' ';
+                  fprintf(stream, "%s\n", buf);
                }
-             else
-               {
-                  unchecked++;
-                  check = '~';
-               }
-             fprintf(stream, "%c  %s\n", check, buf);
           }
 
         if (valid[0] == true) vc--;
@@ -56,11 +49,7 @@ sections_list(Pud  *pud,
         buf[3] = c;
      }
 
-   fprintf(stream,
-           "Valid....: %i\n"
-           "Unsure...: %i\n"
-           "Total....: %i\n", verified, unchecked, verified + unchecked);
-
-   return true;
+   fprintf(stream, "Total: %i sections\n", verified);
+   return (verified > 0);
 }
 

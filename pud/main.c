@@ -8,6 +8,7 @@ static const struct option _options[] =
      {"jpeg",     no_argument,          0, 'j'},
      {"print",    no_argument,          0, 'P'},
      {"list",     no_argument,          0, 'l'},
+     {"war",      no_argument,          0, 'W'},
      {"verbose",  no_argument,          0, 'v'},
      {"help",     no_argument,          0, 'h'}
 };
@@ -22,6 +23,7 @@ _usage(FILE *stream)
            "    pudviewer [options] <file.pud>\n"
            "\n"
            "Options:\n"
+           "    -W | --war           The file to parse is a .WAR file instead of a .PUD\n"
            "    -P | --print         Prints the data in stdout\n"
            "    -o | --output <file> When -p or -j is present outputs the file with the provided filename\n"
            "    -p | --ppm           Outputs the minimap as a ppm file. If --out is not specified,\n"
@@ -29,7 +31,7 @@ _usage(FILE *stream)
            "    -j | --jpeg          Outputs the minimap as a jpeg file. If --out is not specified,\n"
            "                         the output's filename will the the input file plus \".jpeg\"\n"
            "    -t | --tile-at <x,y> Gets the tile ID at x,y\n"
-           "    -l | --list          Prints the list of sections in the PUD file. INACCURATE!!\n"
+           "    -l | --list          Prints the list of sections in the PUD file.\n"
            "    -v | --verbose       Activate verbose mode. Cumulate flags increase verbosity level.\n"
            "    -h | --help          Shows this message\n"
            "\n",
@@ -37,7 +39,7 @@ _usage(FILE *stream)
 }
 
 #define ABORT(errcode_, msg, ...) \
-   do { chk = errcode_;  ERR(msg, ## __VA_ARGS__); goto abort; } while (0)
+   do { chk = errcode_;  ERR(msg, ## __VA_ARGS__); goto end; } while (0)
 
 #define ZERO(struct_) memset(&struct_, 0, sizeof(struct_))
 
@@ -48,8 +50,10 @@ main(int    argc,
    int chk = 0, c, opt_idx = 0;
    const char *file;
    Pud *pud = NULL;
+   War2_Data *w2 = NULL;
    int verbose = 0;
    uint16_t w;
+   bool war2 = false;
 
    struct  {
       int          x;
@@ -81,7 +85,7 @@ main(int    argc,
    /* Getopt */
    while (1)
      {
-        c = getopt_long(argc, argv, "o:pjlhPvt:", _options, &opt_idx);
+        c = getopt_long(argc, argv, "o:pjlhWPvt:", _options, &opt_idx);
         if (c == -1) break;
 
         switch (c)
@@ -93,6 +97,10 @@ main(int    argc,
            case 'h':
               _usage(stdout);
               return 0;
+
+           case 'W':
+              war2 = true;
+              break;
 
            case 'l':
               list.enabled = 1;
@@ -134,84 +142,99 @@ main(int    argc,
    file = argv[optind];
    if (file == NULL) ABORT(1, "NULL input file");
 
-   /* Open file */
-   pud = pud_open(file, PUD_OPEN_MODE_R);
-   if (pud == NULL) ABORT(3, "Failed to create pud from [%s]", file);
-
-   /* Set verbosity level */
-   pud_verbose_set(pud, verbose);
-
-   /* -l,--list */
-   if (list.enabled)
+   if (war2 == true)
      {
-        chk = sections_list(pud, stdout);
-        if (!chk) ABORT(2, "Error while reading file");
+        if (tile_at.enabled ||
+            out.enabled     ||
+            print.enabled   ||
+            list.enabled)
+          ABORT(1, "Invalid option when --war,-W is specified");
+
+        w2 = war2_open(file, verbose);
+        if (w2 == NULL) ABORT(3, "Failed to create War2_Data from [%s]", file);
      }
-
-   /* Parse pud (don't if --list) */
-   if (!list.enabled)
+   else
      {
-        if (!pud_parse(pud))
-          ABORT(5, "Parsing of [%s] failed", file);
-     }
+        /* Open file */
+        pud = pud_open(file, PUD_OPEN_MODE_R);
+        if (pud == NULL) ABORT(3, "Failed to create pud from [%s]", file);
 
-   /* --tile-at */
-   if (tile_at.enabled)
-     {
-        w = pud_tile_at(pud, tile_at.x, tile_at.y);
-        if (w == 0) ABORT(3, "Failed to parse tile");
-        fprintf(stdout, "0x%04x\n", w);
-     }
+        /* Set verbosity level */
+        pud_verbose_set(pud, verbose);
 
-   /* --output,--ppm,--jpeg */
-   if (out.enabled)
-     {
-        if (out.jpeg && out.ppm)
-          ABORT(1, "--jpeg and --ppm are both specified. Chose one.");
-
-        if (!out.file)
+        /* -l,--list */
+        if (list.enabled)
           {
-             char buf[4096];
-             int len;
-             const char *ext;
-
-             if (out.ppm) ext = "ppm";
-             else if (out.jpeg) ext = "jpeg";
-             else ABORT(1, "Output is required but no format is specified");
-
-             len = snprintf(buf, sizeof(buf), "%s.%s", file, ext);
-             out.file = strndup(buf, len);
-             if (!out.file) ABORT(2, "Failed to strdup [%s]", buf);
+             chk = sections_list(pud, stdout);
+             if (!chk) ABORT(2, "Error while reading file");
           }
 
-        if (out.ppm)
+        /* Parse pud (don't if --list) */
+        if (!list.enabled)
           {
-             if (!pud_minimap_to_ppm(pud, out.file))
+             if (!pud_parse(pud))
+               ABORT(5, "Parsing of [%s] failed", file);
+          }
+
+        /* --tile-at */
+        if (tile_at.enabled)
+          {
+             w = pud_tile_at(pud, tile_at.x, tile_at.y);
+             if (w == 0) ABORT(3, "Failed to parse tile");
+             fprintf(stdout, "0x%04x\n", w);
+          }
+
+        /* --output,--ppm,--jpeg */
+        if (out.enabled)
+          {
+             if (out.jpeg && out.ppm)
+               ABORT(1, "--jpeg and --ppm are both specified. Chose one.");
+
+             if (!out.file)
                {
-                  free(out.file);
-                  ABORT(4, "Failed to output [%s] to [%s]", file, out.file);
-               }
-          }
-        else if (out.jpeg)
-          {
-             if (!pud_minimap_to_jpeg(pud, out.file))
-               {
-                  free(out.file);
-                  ABORT(4, "Failed to output [%s] to [%s]", file, out.file);
-               }
-          }
-        else
-          ABORT(1, "Output is required no format is specified");
+                  char buf[4096];
+                  int len;
+                  const char *ext;
 
-        free(out.file);
+                  if (out.ppm) ext = "ppm";
+                  else if (out.jpeg) ext = "jpeg";
+                  else ABORT(1, "Output is required but no format is specified");
+
+                  len = snprintf(buf, sizeof(buf), "%s.%s", file, ext);
+                  out.file = strndup(buf, len);
+                  if (!out.file) ABORT(2, "Failed to strdup [%s]", buf);
+               }
+
+             if (out.ppm)
+               {
+                  if (!pud_minimap_to_ppm(pud, out.file))
+                    {
+                       free(out.file);
+                       ABORT(4, "Failed to output [%s] to [%s]", file, out.file);
+                    }
+               }
+             else if (out.jpeg)
+               {
+                  if (!pud_minimap_to_jpeg(pud, out.file))
+                    {
+                       free(out.file);
+                       ABORT(4, "Failed to output [%s] to [%s]", file, out.file);
+                    }
+               }
+             else
+               ABORT(1, "Output is required no format is specified");
+
+             free(out.file);
+          }
+
+        /* -P,--print */
+        if (print.enabled)
+          pud_print(pud, stdout);
      }
 
-   /* -P,--print */
-   if (print.enabled)
-     pud_print(pud, stdout);
-
-abort:
+end:
    pud_close(pud);
+   war2_close(w2);
    return chk;
 }
 

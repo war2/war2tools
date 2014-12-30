@@ -6,7 +6,7 @@ include_directories(
 set(PUD_SRC main.c sections.c)
 add_executable(pud ${PUD_SRC})
 
-target_link_libraries(pud libpud ${JPEG_LIBRARIES})
+target_link_libraries(pud ${LIBPUD_LIBRARIES} ${LIBWAR2_LIBRARIES})
 
 install(
    TARGETS pud

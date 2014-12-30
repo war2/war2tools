@@ -51,7 +51,6 @@
     const size_t size__ = sizeof(x__[0]); \
     if (!(pud_mem_map_ok(p))) { \
     ERR("Read outside of memory map!"); \
-    exit(1); \
     __VA_ARGS__; \
     } \
     memcpy(&(x__[0]), p->ptr, size__); \

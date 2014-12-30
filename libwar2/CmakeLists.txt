@@ -3,6 +3,7 @@ set(BUILD_SHARED_LIBS true)
 set(
    LIBWAR2_SRC
    war2.c
+   private.c
 )
 
 include_directories(

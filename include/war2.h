@@ -29,7 +29,7 @@ struct _War2_Data
 War2_Data *war2_open(const char *file, int verbose);
 void war2_close(War2_Data *w2);
 void war2_verbosity_set(War2_Data *w2, int level);
-
+unsigned char *war2_entry_extract(War2_Data *w2, unsigned int entry, size_t *size_ret);
 
 #ifdef __cplusplus
 %>

@@ -236,9 +236,8 @@ typedef enum
 
 typedef enum
 {
-   PUD_OPEN_MODE_R   = 1, /* (1 << 0) */
-   PUD_OPEN_MODE_W   = 2, /* (1 << 1) */
-   PUD_OPEN_MODE_RW  = 3  /* (1 << 0) | (1 << 1) */
+   PUD_OPEN_MODE_R,
+   PUD_OPEN_MODE_W,
 } Pud_Open_Mode;
 
 typedef enum
@@ -253,7 +252,6 @@ typedef struct _Pud Pud;
 
 struct _Pud
 {
-   int            fd;
    Pud_Open_Mode  open_mode;
    unsigned char *mem_map;
    unsigned char *ptr;
@@ -395,6 +393,9 @@ bool pud_write(const Pud *pud);
 int pud_unit_add(Pud *pud, uint16_t x, uint16_t y, Pud_Player owner, Pud_Unit type, uint16_t alter);
 void pud_era_set(Pud *pud, Pud_Era era);
 void pud_dimensions_set(Pud *pud, Pud_Dimensions dims);
+
+void *pud_mmap(const char *file, size_t *size_ret);
+void pud_munmap(void *map, size_t size);
 
 unsigned char *pud_minimap_bitmap_generate(Pud *pud, int *size_ret);
 

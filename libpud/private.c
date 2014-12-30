@@ -46,7 +46,6 @@ mode2str(Pud_Open_Mode mode)
      {
       case PUD_OPEN_MODE_R:  return "rb";
       case PUD_OPEN_MODE_W:  return "wb";
-      case PUD_OPEN_MODE_RW: return "rb+";
       default:               return NULL;
      }
 }

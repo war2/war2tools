@@ -11,6 +11,7 @@ set(
    private.c
    tiles.c
    utils.c
+   mmap.c
 )
 
 include_directories(

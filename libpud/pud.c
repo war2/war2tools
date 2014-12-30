@@ -92,62 +92,30 @@ pud_go_to_section(Pud         *pud,
    return 0;
 }
 
-static int
-_mode2flags(Pud_Open_Mode mode)
-{
-   int flags = 0;
-
-   switch (mode)
-     {
-      case PUD_OPEN_MODE_R:
-         flags |= O_RDONLY;
-         break;
-
-      case PUD_OPEN_MODE_W:
-         flags |= O_WRONLY;
-         break;
-
-      case PUD_OPEN_MODE_RW:
-         flags |= O_RDWR;
-         break;
-     }
-
-   return flags;
-}
 
 static bool
 _open(Pud           *pud,
       const char    *file,
       Pud_Open_Mode  mode)
 {
-   int oflags, chk;
-   struct stat s;
-
    /* Close the file if was already open */
-   if (pud->mem_map) { munmap(pud->mem_map, pud->mem_map_size); pud->mem_map = NULL; }
-   if (pud->fd >= 0) { close(pud->fd); pud->fd = -1; }
+   if (pud->mem_map) { pud_munmap(pud->mem_map, pud->mem_map_size); pud->mem_map = NULL; }
    if (pud->filename) free(pud->filename);
 
    /* Copy the filename */
    pud->filename = strdup(file);
    if (!pud->filename) DIE_GOTO(err, "Failed to strdup [%s]", file);
 
-   /* Open */
-   oflags = _mode2flags(mode);
-   pud->fd = open(file, oflags, 0);
-   if (pud->fd == -1) DIE_GOTO(err_ff, "Failed to open [%s]", file);
+   pud->open_mode = mode;
 
-   if (mode & PUD_OPEN_MODE_R)
+   /* Open */
+   if (mode == PUD_OPEN_MODE_R)
      {
-        /* Mmap */
-        chk = fstat(pud->fd, &s);
-        if (chk < 0) DIE_GOTO(err_close, "Failed to fstat() [%s]", file);
-        pud->mem_map = mmap(NULL, s.st_size, PROT_READ, MAP_FILE | MAP_PRIVATE, pud->fd, 0);
-        if (pud->mem_map == MAP_FAILED)
-          DIE_GOTO(err_close, "Failed to mmap() [%s] %s", file, strerror(errno));
+        pud->mem_map = pud_mmap(file, &(pud->mem_map_size));
+        if (pud->mem_map == NULL)
+          DIE_GOTO(err_ff, "Failed to mmap() [%s] %s", file, strerror(errno));
 
         pud->ptr = pud->mem_map;
-        pud->mem_map_size = s.st_size;
      }
    else
      {
@@ -156,12 +124,8 @@ _open(Pud           *pud,
         pud->mem_map_size = 0;
      }
 
-   pud->open_mode = mode;
    return true;
 
-err_close:
-   close(pud->fd);
-   pud->fd = -1;
 err_ff:
    free(pud->filename);
    pud->filename = NULL;
@@ -180,7 +144,6 @@ pud_open(const char    *file,
    /* RST memory */
    pud = calloc(1, sizeof(Pud));
    if (!pud) DIE_GOTO(err, "Failed to alloc Pud: %s", strerror(errno));
-   pud->fd = -1;
 
    /* Open */
    if (!_open(pud, file, mode))
@@ -207,8 +170,7 @@ void
 pud_close(Pud *pud)
 {
    if (!pud) return;
-   close(pud->fd);
-   if (pud->mem_map) munmap(pud->mem_map, pud->mem_map_size);
+   if (pud->mem_map) pud_munmap(pud->mem_map, pud->mem_map_size);
    free(pud->filename);
    free(pud->units);
    free(pud->tiles_map);
@@ -311,6 +273,7 @@ pud_dimensions_set(Pud            *pud,
 bool
 pud_write(const Pud *pud)
 {
+   // FIXME f is never fclose()d on error
    PUD_SANITY_CHECK(pud, PUD_OPEN_MODE_W, false);
 
    const Pud *p = pud; // Shortcut
@@ -323,15 +286,8 @@ pud_write(const Pud *pud)
    map_len = p->tiles * sizeof(uint16_t);
    units_len = p->units_count * sizeof(struct _unit);
 
-   /*
-    * FIXME FIXME FIXME FIXME FIXME FIXME FIXME
-    * This is here to avoid to rewrite the
-    * function.
-    * Must be done one day!!
-    * FIXME FIXME FIXME FIXME FIXME FIXME FIXME
-    */
-   f = fdopen(pud->fd, "wb");
-   if (!f) DIE_RETURN(false, "Failed to fdopen()");
+   f = fopen(pud->filename, "wb");
+   if (!f) DIE_RETURN(false, "Failed to open [%s]", pud->filename);
 
 #define W8(val, nb) \
    do { \
@@ -534,6 +490,8 @@ pud_write(const Pud *pud)
 #undef W16
 #undef W8
 
+   fclose(f);
+
    return true;
 }
 
@@ -637,8 +595,6 @@ pud_tile_set(Pud      *pud,
 bool
 pud_check(Pud *pud)
 {
-   PUD_SANITY_CHECK(pud, PUD_OPEN_MODE_RW, false);
-
    if (!pud->init)
      DIE_RETURN(false, "pud->init is false");
    if ((pud->human_players < 1) || (pud->computer_players < 1))

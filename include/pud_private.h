@@ -13,10 +13,6 @@
 #include "pud.h"
 #include "jpeg.h"
 
-#include <fcntl.h>
-#include <sys/stat.h>
-#include <sys/mman.h>
-#include <unistd.h>
 
 /* Visual hint when returning nothing */
 #define VOID
@@ -33,7 +29,7 @@
       if (!(pud)) { \
          DIE_RETURN(__VA_ARGS__, "Invalid PUD input [%p]", pud); \
       } \
-      if (!(pud->open_mode & mode)) { \
+      if (pud->open_mode != mode) { \
          DIE_RETURN(__VA_ARGS__, "PUD open mode is [%i] expected [%i]", \
                     pud->open_mode, mode); \
       } \

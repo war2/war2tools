@@ -576,10 +576,11 @@ pud_unit_add(Pud        *pud,
    /* Update data about units (for validity checks) */
    if ((type == PUD_UNIT_HUMAN_START) || (type == PUD_UNIT_ORC_START))
      pud->starting_points++;
-   if (owner == PUD_OWNER_HUMAN)
-     pud->human_players++;
-   else if (owner == PUD_OWNER_COMPUTER)
-     pud->computer_players++;
+   // FIXME Invalid comparaisons. owner is of type Pud_Player
+   //if (owner == PUD_OWNER_HUMAN)
+   //  pud->human_players++;
+   //else if (owner == PUD_OWNER_COMPUTER)
+   //  pud->computer_players++;
 
    pud->units_count = nb;
 

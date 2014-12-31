@@ -19,6 +19,7 @@ _era2str(Pud_Era era)
       case PUD_ERA_WASTELAND: return "wasteland";
       case PUD_ERA_SWAMP:     return "swamp";
      }
+   return "<ERROR>";
 }
 
 static void

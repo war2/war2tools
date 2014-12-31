@@ -26,6 +26,7 @@ _ts_entries_parse(War2_Data          *w2,
      DIE_RETURN(false, "Invalid size [%zu]. Should be 256*3=768", size);
    memcpy(&(ts->palette[0]), ptr, size);
    free(ptr);
+
    /* I don't know why this is needed (no doc so no explaination) but this
     * gives the right colorspace (thanks wargus) */
    for (i = 0; i < 256; i++)

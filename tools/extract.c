@@ -73,16 +73,22 @@ main(int    argc,
 
    ts = war2_tileset_decode(w2, PUD_ERA_FOREST, _export_tile);
    if (!ts) DIE_RETURN(2, "Failed to decode tileset FOREST");
+   war2_tileset_free(ts);
+
    ts = war2_tileset_decode(w2, PUD_ERA_WINTER, _export_tile);
    if (!ts) DIE_RETURN(2, "Failed to decode tileset WINTER");
+   war2_tileset_free(ts);
+
    ts = war2_tileset_decode(w2, PUD_ERA_WASTELAND, _export_tile);
    if (!ts) DIE_RETURN(2, "Failed to decode tileset WASTELAND");
+   war2_tileset_free(ts);
+
    ts = war2_tileset_decode(w2, PUD_ERA_SWAMP, _export_tile);
    if (!ts) DIE_RETURN(2, "Failed to decode tileset SWAMP");
+   war2_tileset_free(ts);
 
    fclose(_f);
 
-   war2_tileset_free(ts);
    war2_close(w2);
    war2_shutdown();
 

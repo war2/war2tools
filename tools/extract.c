@@ -67,7 +67,7 @@ main(int    argc,
    w2 = war2_open(file, verbose);
    if (!w2) return 1;
 
-   _f = fopen("war2_tiles.dat", "wb");
+   _f = fopen("../data/tiles/tiles.dat", "wb");
    if (!_f) DIE_RETURN(2, "Failed to open file");
 
    ts = war2_tileset_decode(w2, PUD_ERA_FOREST, _export_tile);

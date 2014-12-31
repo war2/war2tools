@@ -29,11 +29,6 @@ If you are new to cmake:
 TODO
 ----
 
-- Get all tile sprites
-  - summer
-  - winter
-  - wasteland
-  - swamp
 - Get all sprites
   - humans (8 colors)
   - orcs (8 colors)

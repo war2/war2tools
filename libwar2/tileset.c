@@ -28,7 +28,7 @@ _ts_entries_parse(War2_Data          *w2,
    free(ptr);
    /* I don't know why this is needed (no doc so no explaination) but this
     * gives the right colorspace (thanks wargus) */
-   for (i = 0; i < size; i++)
+   for (i = 0; i < 256; i++)
      {
         ts->palette[i].r <<= 2;
         ts->palette[i].g <<= 2;

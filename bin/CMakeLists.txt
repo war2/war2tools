@@ -1,5 +1,5 @@
 find_package(PkgConfig)
-pkg_check_modules(ELEMENTARY OPTIONAL elementary)
+pkg_check_modules(ELEMENTARY elementary)
 
 if (ELEMENTARY_FOUND)
 

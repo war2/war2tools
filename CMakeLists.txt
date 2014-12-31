@@ -2,6 +2,8 @@ cmake_minimum_required(VERSION 2.8)
 project(war2edit C)
 
 add_definitions(-g)
+add_definitions(-D_BSD_SOURCE)
+
 set(PROJECT_DESCRIPTION "Warcraft II Map Editor Toolkit")
 set(PROJECT_URL "")
 

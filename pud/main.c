@@ -50,7 +50,7 @@ int
 main(int    argc,
      char **argv)
 {
-   int chk, c, opt_idx = 0, ret_status = EXIT_SUCCESS;
+   int c, opt_idx = 0, ret_status = EXIT_SUCCESS;
    const char *file;
    Pud *pud = NULL;
    War2_Data *w2 = NULL;

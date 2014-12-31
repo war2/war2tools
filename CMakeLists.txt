@@ -17,8 +17,8 @@ set(CMAKE_COLOR_MAKEFILE   ON)
 set(CMAKE_VERBOSE_MAKEFILE OFF)
 set(CMAKE_MACOSX_RPATH OFF)
 
-find_package(jpeg REQUIRED)
-find_package(png REQUIRED)
+find_package(JPEG REQUIRED)
+find_package(PNG REQUIRED)
 
 set(LIBPUD_LIBRARIES  libpud ${JPEG_LIBRARIES} ${PNG_LIBRARIES})
 set(LIBWAR2_LIBRARIES libwar2 libpud)

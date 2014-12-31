@@ -10,6 +10,8 @@ bool war2_init(void);
 void war2_shutdown(void);
 
 typedef struct _War2_Data War2_Data;
+typedef struct _War2_Tileset War2_Tileset;
+typedef struct _War2_Color War2_Color;
 
 struct _War2_Data
 {
@@ -26,10 +28,19 @@ struct _War2_Data
    unsigned int verbose;
 };
 
+struct _War2_Tileset
+{
+   Pud_Era       era;
+   Pud_Color     palette[256];
+   unsigned char *img;
+};
+
 War2_Data *war2_open(const char *file, int verbose);
 void war2_close(War2_Data *w2);
 void war2_verbosity_set(War2_Data *w2, int level);
 unsigned char *war2_entry_extract(War2_Data *w2, unsigned int entry, size_t *size_ret);
+War2_Tileset *war2_tileset_decode(War2_Data *w2, Pud_Era era);
+void war2_tileset_free(War2_Tileset *ts);
 
 #ifdef __cplusplus
 %>

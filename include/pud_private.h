@@ -96,29 +96,22 @@
       p->ptr += size__; \
    } while (0)
 
-typedef struct _Color Color;
 
-struct _Color
-{
-   unsigned char r;
-   unsigned char g;
-   unsigned char b;
-};
 
 //============================================================================//
 //                                 Private API                                //
 //============================================================================//
 
 const char *long2bin(uint32_t x);
-Color color_make(uint8_t r, uint8_t g, uint8_t b);
+Pud_Color color_make(uint8_t r, uint8_t g, uint8_t b);
 const char *dim2str(Pud_Dimensions dim);
 const char *era2str(Pud_Era era);
-Color color_for_player(uint8_t player);
+Pud_Color color_for_player(uint8_t player);
 const char *mode2str(Pud_Open_Mode mode);
 
 bool pud_mem_map_ok(Pud *pud);
 
-Color pud_tile_to_color(Pud *pud, uint16_t tile);
+Pud_Color pud_tile_to_color(Pud *pud, uint16_t tile);
 
 bool pud_parse_type(Pud *pud);
 bool pud_parse_ver(Pud *pud);

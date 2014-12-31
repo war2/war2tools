@@ -8,7 +8,7 @@ pud_minimap_bitmap_generate(Pud *pud,
 
    unsigned char *map;
    struct _unit *u;
-   Color c;
+   Pud_Color c;
    int i, j, k;
    int idx;
    int size;

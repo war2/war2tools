@@ -50,12 +50,12 @@ mode2str(Pud_Open_Mode mode)
      }
 }
 
-Color
+Pud_Color
 color_make(uint8_t r,
            uint8_t g,
            uint8_t b)
 {
-   Color c = {
+   Pud_Color c = {
       .r = r,
       .g = g,
       .b = b
@@ -91,7 +91,7 @@ era2str(Pud_Era era)
    return "<INVALID ERA>";
 }
 
-Color
+Pud_Color
 color_for_player(uint8_t player)
 {
    switch (player)

@@ -95,9 +95,12 @@ war2_entry_extract(War2_Data    *w2,
                    unsigned int  entry,
                    size_t       *size_ret)
 {
-   unsigned char *p = NULL;
+   unsigned char buf[4096];
+   unsigned char *ptr = NULL, *p, *e;
    uint32_t l, ulen;
-   int flags;
+   uint16_t w;
+   uint8_t bits, b;
+   int flags, i, j, bi = 0;
 
    /* Check the entry is in the range */
    if (entry >= w2->entries_count)
@@ -115,26 +118,65 @@ war2_entry_extract(War2_Data    *w2,
                 entry, ulen, flags);
 
    /* Output entry will always be duplicated */
-   p = malloc(ulen);
-   if (!p) DIE_RETURN(NULL," Failed to allocate memory");
+   ptr = malloc(ulen);
+   if (!ptr) DIE_RETURN(NULL," Failed to allocate memory");
 
    switch (flags)
      {
       case 0x00: // Uncompressed
-         memcpy(p, w2->ptr, ulen);
+         memcpy(ptr, w2->ptr, ulen);
          break;
 
       case 0x20: // Compressed
+         memset(&(buf[0]), 0, sizeof(buf));
+         p = ptr;
+         e = ptr + ulen;
+         while (p < e)
+           {
+              bits = READ8(w2, ECHAP(fail));
+              for (i = 0; i < 8; i++)
+                {
+                   /*
+                    * XXX
+                    * I don't know what's the (de)compression method used here.
+                    * I blindly rely on the implementation of Wargus until I exactly
+                    * figure out what's going on (I'm a bit in the hurry right now).
+                    */
+                   if (bits & 1)
+                     {
+                        b = READ8(w2, ECHAP(fail));
+                        *(p++) = b;
+                        buf[bi++ & 0xfff] = b;
+                     }
+                   else
+                     {
+                        w = READ16(w2, ECHAP(fail));
+                        j = (w >> 12) + 3;
+                        w &= 0x0fff;
+                        while (j--)
+                          {
+                             buf[bi++ & 0xfff] = *(p++) = buf[w++ & 0xfff];
+                             if (p == e) break;
+                          }
+                     }
+                   if (p == e) break;
+                   bits >>= 1;
+                }
+           }
+         break;
 
       default:
-         ERR("Unhandled flags [0x%02x] for entry %i", flags, entry);
-         if (size_ret) *size_ret = 0;
-         free(p); p = NULL;
-         break;
+         DIE_GOTO(fail, "Unhandled flags [0x%02x] for entry %i", flags, entry);
      }
-   if (size_ret) *size_ret = ulen;
 
-   return p;
+   WAR2_VERBOSE(w2, 1, "Extracted entry [%i] of size %i bytes", entry, ulen);
+   if (size_ret) *size_ret = ulen;
+   return ptr;
+
+fail:
+   if (size_ret) *size_ret = 0;
+   free(ptr);
+   return NULL;
 }
 
 void
@@ -152,4 +194,5 @@ war2_verbosity_set(War2_Data *w2,
 {
    if (w2) w2->verbose = level;
 }
+
 

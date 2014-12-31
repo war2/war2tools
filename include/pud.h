@@ -373,6 +373,15 @@ struct _Pud
    unsigned int  default_ugrd  : 1;
 };
 
+typedef struct _Pud_Color Pud_Color;
+
+struct _Pud_Color
+{
+   unsigned char r;
+   unsigned char g;
+   unsigned char b;
+};
+
 bool pud_init(void);
 void pud_shutdown(void);
 

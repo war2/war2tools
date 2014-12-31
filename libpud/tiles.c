@@ -1,6 +1,6 @@
 #include "pud_private.h"
 
-Color
+Pud_Color
 pud_tile_to_color(Pud      *pud,
                   uint16_t  tile)
 {

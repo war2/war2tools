@@ -4,6 +4,7 @@ set(
    LIBWAR2_SRC
    war2.c
    private.c
+   tileset.c
 )
 
 include_directories(

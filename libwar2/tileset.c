@@ -38,7 +38,7 @@ _ts_entries_parse(War2_Data          *w2,
    /* If no callback has been specified, do nothing */
    if (!func)
      {
-        WAR2_VERBOSE(w2, 0, "Warning: No callback specified.");
+        WAR2_VERBOSE(w2, 1, "Warning: No callback specified.");
         return true;
      }
 

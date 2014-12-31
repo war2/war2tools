@@ -6,6 +6,7 @@ static const struct option _options[] =
      {"tile-at",  required_argument,    0, 't'},
      {"ppm",      no_argument,          0, 'p'},
      {"jpeg",     no_argument,          0, 'j'},
+     {"png",      no_argument,          0, 'g'},
      {"print",    no_argument,          0, 'P'},
      {"sections", no_argument,          0, 's'},
      {"war",      no_argument,          0, 'W'},
@@ -30,6 +31,8 @@ _usage(FILE *stream)
            "                         the output's filename will the the input file plus \".ppm\"\n"
            "    -j | --jpeg          Outputs the minimap as a jpeg file. If --out is not specified,\n"
            "                         the output's filename will the the input file plus \".jpeg\"\n"
+           "    -g | --png           Outputs the minimap as a png file. If --out is not specified,\n"
+           "                         the output's filename will the the input file plus \".png\"\n"
            "    -t | --tile-at <x,y> Gets the tile ID at x,y\n"
            "    -s | --sections      Gets sections in the file.\n"
            "    -v | --verbose       Activate verbose mode. Cumulate flags increase verbosity level.\n"
@@ -66,6 +69,7 @@ main(int    argc,
       char         *file;
       unsigned int  ppm     : 1;
       unsigned int  jpeg    : 1;
+      unsigned int  png     : 1;
       unsigned int  enabled : 1;
    } out;
 
@@ -87,7 +91,7 @@ main(int    argc,
    /* Getopt */
    while (1)
      {
-        c = getopt_long(argc, argv, "o:pjshWPvt:", _options, &opt_idx);
+        c = getopt_long(argc, argv, "o:pjshgWPvt:", _options, &opt_idx);
         if (c == -1) break;
 
         switch (c)
@@ -115,6 +119,11 @@ main(int    argc,
 
            case 'p':
               out.ppm = 1;
+              out.enabled = 1;
+              break;
+
+           case 'g':
+              out.png = 1;
               out.enabled = 1;
               break;
 
@@ -182,8 +191,8 @@ main(int    argc,
         /* --output,--ppm,--jpeg */
         if (out.enabled)
           {
-             if (out.jpeg && out.ppm)
-               ABORT(1, "--jpeg and --ppm are both specified. Chose one.");
+             if (out.jpeg + out.ppm + out.png != 1)
+               ABORT(1, "--jpeg,--ppm,--png cannot be combined together.");
 
              if (!out.file)
                {
@@ -191,8 +200,9 @@ main(int    argc,
                   int len;
                   const char *ext;
 
-                  if (out.ppm) ext = "ppm";
+                  if (out.ppm)       ext = "ppm";
                   else if (out.jpeg) ext = "jpeg";
+                  else if (out.png)  ext = "png";
                   else ABORT(1, "Output is required but no format is specified");
 
                   len = snprintf(buf, sizeof(buf), "%s.%s", file, ext);
@@ -211,6 +221,14 @@ main(int    argc,
              else if (out.jpeg)
                {
                   if (!pud_minimap_to_jpeg(pud, out.file))
+                    {
+                       free(out.file);
+                       ABORT(4, "Failed to output [%s] to [%s]", file, out.file);
+                    }
+               }
+             else if (out.png)
+               {
+                  if (!pud_minimap_to_png(pud, out.file))
                     {
                        free(out.file);
                        ABORT(4, "Failed to output [%s] to [%s]", file, out.file);

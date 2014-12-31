@@ -1,10 +1,46 @@
 #include <war2.h>
 #include "../include/debug.h"
 
+static FILE *_f = NULL;
+
 static void
 _usage(void)
 {
-   fprintf(stderr, "*** Usage: extract <entry> <file.war> [dbg lvl = 0]\n");
+   fprintf(stderr, "*** Usage: extract <file.war> [dbg lvl = 0]\n");
+}
+
+static const char *
+_era2str(Pud_Era era)
+{
+   switch (era)
+     {
+      case PUD_ERA_FOREST:    return "forest";
+      case PUD_ERA_WINTER:    return "winter";
+      case PUD_ERA_WASTELAND: return "wasteland";
+      case PUD_ERA_SWAMP:     return "swamp";
+     }
+}
+
+static void
+_export_tile(const Pud_Color    *tile,
+             int                 w,
+             int                 h,
+             const War2_Tileset *ts,
+             int                 img_nb)
+{
+   char buf[1024];
+
+   return;
+   /* Fog of war */
+   //if (img_nb <= 16) return;
+
+   /* Write the data files (for my editor) */
+   fwrite(tile, sizeof(Pud_Color), w * h, _f);
+
+   snprintf(buf, sizeof(buf), "../data/tiles/%s/%i.jpg",
+            _era2str(ts->era), img_nb);
+
+   pud_jpeg_write(buf, w, h, (unsigned char *)tile);
 }
 
 int
@@ -14,33 +50,38 @@ main(int    argc,
    War2_Data *w2;
    War2_Tileset *ts;
    const char *file;
-   int entry;
    int verbose;
-   size_t size;
-   unsigned char *ptr;
 
-   /* Getopt */
-   if (argc < 3)
+   if (argc >= 2)
+     {
+        file = argv[1];
+        verbose = (argc == 3) ? strtol(argv[2], NULL, 10) : 0;
+     }
+   else
      {
         _usage();
         return 1;
      }
-   file = argv[2];
-   entry = strtol(argv[1], NULL, 10);
-   verbose = (argc == 4) ? strtol(argv[3], NULL, 10) : 0;
 
    war2_init();
-
    w2 = war2_open(file, verbose);
    if (!w2) return 1;
 
-   ts = war2_tileset_decode(w2, PUD_ERA_FOREST);
-   if (!ts) DIE_RETURN(2, "Failed to decode tileset");
-   war2_tileset_free(ts);
-//   ptr = war2_entry_extract(w2, entry, &size);
-//   printf("Ret: %p (%zu B)\n", ptr, size);
-//   free(ptr);
+   _f = fopen("war2_tiles.dat", "wb");
+   if (!_f) DIE_RETURN(2, "Failed to open file");
 
+   ts = war2_tileset_decode(w2, PUD_ERA_FOREST, _export_tile);
+   if (!ts) DIE_RETURN(2, "Failed to decode tileset FOREST");
+   ts = war2_tileset_decode(w2, PUD_ERA_WINTER, _export_tile);
+   if (!ts) DIE_RETURN(2, "Failed to decode tileset WINTER");
+   ts = war2_tileset_decode(w2, PUD_ERA_WASTELAND, _export_tile);
+   if (!ts) DIE_RETURN(2, "Failed to decode tileset WASTELAND");
+   ts = war2_tileset_decode(w2, PUD_ERA_SWAMP, _export_tile);
+   if (!ts) DIE_RETURN(2, "Failed to decode tileset SWAMP");
+
+   fclose(_f);
+
+   war2_tileset_free(ts);
    war2_close(w2);
    war2_shutdown();
 

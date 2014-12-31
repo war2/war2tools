@@ -32,14 +32,15 @@ struct _War2_Tileset
 {
    Pud_Era       era;
    Pud_Color     palette[256];
-   unsigned char *img;
+   int           tiles;
 };
 
+typedef void (*War2_Decode_Func)(const Pud_Color *tile, int w, int h, const War2_Tileset *ts, int img_nb);
 War2_Data *war2_open(const char *file, int verbose);
 void war2_close(War2_Data *w2);
 void war2_verbosity_set(War2_Data *w2, int level);
 unsigned char *war2_entry_extract(War2_Data *w2, unsigned int entry, size_t *size_ret);
-War2_Tileset *war2_tileset_decode(War2_Data *w2, Pud_Era era);
+War2_Tileset *war2_tileset_decode(War2_Data *w2, Pud_Era era, War2_Decode_Func func);
 void war2_tileset_free(War2_Tileset *ts);
 
 #ifdef __cplusplus

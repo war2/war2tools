@@ -4,6 +4,7 @@ set(
    LIBPUD_SRC
    pud.c
    jpeg.c
+   png.c
    defaults.c
    img.c
    parse.c
@@ -18,6 +19,7 @@ include_directories(
    ${CMAKE_CURRENT_SOURCE_DIR}
    ${CMAKE_CURRENT_SOURCE_DIR}/../include
    ${JPEG_INCLUDES_DIR}
+   ${PNG_INCLUDES_DIR}
 )
 
 

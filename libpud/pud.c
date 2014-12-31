@@ -181,6 +181,8 @@ pud_close(Pud *pud)
    free(pud->filename);
    free(pud->units);
    free(pud->tiles_map);
+   free(pud->action_map);
+   free(pud->movement_map);
    free(pud);
 }
 

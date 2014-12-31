@@ -31,17 +31,16 @@ _export_tile(const Pud_Color    *tile,
 {
    char buf[1024];
 
-   return;
    /* Fog of war */
-   //if (img_nb <= 16) return;
+   if (img_nb <= 16) return;
 
    /* Write the data files (for my editor) */
    fwrite(tile, sizeof(Pud_Color), w * h, _f);
 
-   snprintf(buf, sizeof(buf), "../data/tiles/%s/%i.jpg",
+   snprintf(buf, sizeof(buf), "../data/tiles/%s/%i.png",
             _era2str(ts->era), img_nb);
 
-   pud_jpeg_write(buf, w, h, (unsigned char *)tile);
+   pud_png_write(buf, w, h, (unsigned char *)tile);
 }
 
 int

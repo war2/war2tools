@@ -1,27 +1,33 @@
 find_package(PkgConfig)
-pkg_check_modules(ELEMENTARY REQUIRED elementary)
+pkg_check_modules(ELEMENTARY OPTIONAL elementary)
 
-include_directories(
-   ${CMAKE_CURRENT_SOURCE_DIR}
-   ${CMAKE_CURRENT_SOURCE_DIR}/../include
-   ${ELEMENTARY_INCLUDE_DIRS}
-)
+if (ELEMENTARY_FOUND)
 
-add_definitions(-Wall)
+   include_directories(
+      ${CMAKE_CURRENT_SOURCE_DIR}
+      ${CMAKE_CURRENT_SOURCE_DIR}/../include
+      ${ELEMENTARY_INCLUDE_DIRS}
+   )
 
-set(
-   WAR2EDIT_SRC
-   main.c
-   editor.c
-   log.c
-)
-add_executable(war2edit ${WAR2EDIT_SRC})
+   add_definitions(-Wall)
 
-link_directories(${ELEMENTARY_LIBRARY_DIRS})
-target_link_libraries(war2edit ${LIBPUD_LIBRARIES} ${ELEMENTARY_LIBRARIES})
+   set(
+      WAR2EDIT_SRC
+      main.c
+      editor.c
+      log.c
+   )
+   add_executable(war2edit ${WAR2EDIT_SRC})
 
-install(
-   TARGETS war2edit
-   RUNTIME DESTINATION bin
-)
+   link_directories(${ELEMENTARY_LIBRARY_DIRS})
+   target_link_libraries(war2edit ${LIBPUD_LIBRARIES} ${ELEMENTARY_LIBRARIES})
+
+   install(
+      TARGETS war2edit
+      RUNTIME DESTINATION bin
+   )
+
+else()
+   message(WARNING "Missing dependancies. War2Edit will not be compiled")
+endif()
 

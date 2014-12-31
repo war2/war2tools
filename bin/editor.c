@@ -96,7 +96,7 @@ _radio_add(Editor          *editor,
            unsigned int     idx,
            Elm_Object_Item *parent,
            const char      *label,
-           unsigned int     flags)
+           unsigned int     flags  EINA_UNUSED)
 {
    Evas_Object *o;
    Elm_Object_Item *eoi;
@@ -187,8 +187,7 @@ _mc_create_cb(void        *data,
 static Eina_Bool
 _mainconfig_create(Editor *ed)
 {
-   Evas_Object *o, *box, *b2, *b3, *img, *t, *f;
-   Elm_Object_Item *itm;
+   Evas_Object *o, *box, *b2, *b3, *img/*, *t, *f */;
 
    /* Create main box (mainconfig) */
    box = elm_box_add(ed->win);
@@ -244,7 +243,7 @@ _mainconfig_create(Editor *ed)
   // elm_box_pack_start(b3, f);
 
    o = elm_radio_add(b3);
-   evas_object_show(f);
+   //evas_object_show(f);
 
 
 //   /* Table to hold commands */
@@ -287,7 +286,7 @@ _mainconfig_create(Editor *ed)
  //  evas_object_show(o);
 
 
-   evas_object_show(t);
+   //evas_object_show(t);
    ed->mainconfig.container = box;
    ed->mainconfig.img = img;
 
@@ -500,8 +499,6 @@ editor_new(void)
 
    itm = ed->main_sel[2] = elm_menu_item_add(ed->menu, NULL, NULL, "Players", NULL, NULL);
    itm = ed->main_sel[3] = elm_menu_item_add(ed->menu, NULL, NULL, "Help", NULL, NULL);
-
-   Evas_Object *b;
 
    /* Scroller */
    ed->scroller = elm_scroller_add(ed->win);

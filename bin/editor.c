@@ -118,52 +118,6 @@ _radio_add(Editor          *editor,
    return eoi;
 }
 
-
-
-
-
-/*============================================================================*
- *                                 Public API                                 *
- *============================================================================*/
-
-Eina_Bool
-editor_init(void)
-{
-   elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_CLOSED);
-   return EINA_TRUE;
-}
-
-void
-editor_shutdown(void)
-{
-   Editor *ed;
-
-   EINA_LIST_FREE(_windows, ed)
-      editor_free(ed);
-   _windows = NULL;
-}
-
-void
-editor_close(Editor *ed)
-{
-   _windows = eina_list_remove(_windows, ed);
-
-   /* Set the window to NULL as a hint for editor_free() */
-   evas_object_del(ed->win);
-   ed->win = NULL;
-}
-
-void
-editor_free(Editor *ed)
-{
-   if (!ed) return;
-
-   if (ed->win != NULL)
-     editor_close(ed);
-   pud_close(ed->pud);
-   free(ed);
-}
-
 static void
 _mc_cancel_cb(void        *data,
               Evas_Object *obj  EINA_UNUSED,
@@ -405,6 +359,49 @@ _mainconfig_create(Editor *ed)
    ed->mainconfig.img = img;
 
    return EINA_TRUE;
+}
+
+
+/*============================================================================*
+ *                                 Public API                                 *
+ *============================================================================*/
+
+Eina_Bool
+editor_init(void)
+{
+   elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_CLOSED);
+   return EINA_TRUE;
+}
+
+void
+editor_shutdown(void)
+{
+   Editor *ed;
+
+   EINA_LIST_FREE(_windows, ed)
+      editor_free(ed);
+   _windows = NULL;
+}
+
+void
+editor_close(Editor *ed)
+{
+   _windows = eina_list_remove(_windows, ed);
+
+   /* Set the window to NULL as a hint for editor_free() */
+   evas_object_del(ed->win);
+   ed->win = NULL;
+}
+
+void
+editor_free(Editor *ed)
+{
+   if (!ed) return;
+
+   if (ed->win != NULL)
+     editor_close(ed);
+   pud_close(ed->pud);
+   free(ed);
 }
 
 void

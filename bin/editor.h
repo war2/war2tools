@@ -33,6 +33,9 @@ struct _Editor
       unsigned char    active_for : 2;
    } tools_items[110], *tools_item_active;
 
+   Pud_Dimensions size;
+   Pud_Era era;
+   Eina_Bool has_extension;
 };
 
 Eina_Bool editor_init(void);

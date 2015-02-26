@@ -183,11 +183,71 @@ _mc_create_cb(void        *data,
    editor_mainconfig_hide(ed);
 }
 
+static void
+_size_changed_cb(void        *data,
+                 Evas_Object *obj,
+                 void        *event_info EINA_UNUSED)
+{
+   Editor *ed = data;
+   int id;
+
+   id = elm_radio_value_get(obj);
+   switch (id)
+     {
+      case 1: ed->size = PUD_DIMENSIONS_32_32;   break;
+      case 2: ed->size = PUD_DIMENSIONS_64_64;   break;
+      case 3: ed->size = PUD_DIMENSIONS_96_96;   break;
+      case 4: ed->size = PUD_DIMENSIONS_128_128; break;
+
+      default:
+         CRI("Invalid ID for size radio group [%i]", id);
+         break;
+     }
+}
+
+static void
+_era_changed_cb(void        *data,
+                Evas_Object *obj,
+                void        *event_info EINA_UNUSED)
+{
+   Editor *ed = data;
+   int id;
+
+   id = elm_radio_value_get(obj);
+   switch (id)
+     {
+      case 1: ed->era = PUD_ERA_FOREST;    break;
+      case 2: ed->era = PUD_ERA_WINTER;    break;
+      case 3: ed->era = PUD_ERA_WASTELAND; break;
+      case 4: ed->era = PUD_ERA_SWAMP;     break;
+
+      default:
+         CRI("Invalid ID for era radio group [%i]", id);
+         break;
+     }
+}
+
+static void
+_has_extension_cb(void        *data,
+                  Evas_Object *obj,
+                  void        *event_info EINA_UNUSED)
+{
+   Editor *ed = data;
+   Eina_Bool state;
+
+   state = elm_check_state_get(obj);
+
+   // TODO Disable/Enable menu
+   if (state == EINA_FALSE) {}
+   else {}
+
+   ed->has_extension = state;
+}
 
 static Eina_Bool
 _mainconfig_create(Editor *ed)
 {
-   Evas_Object *o, *box, *b2, *b3, *img/*, *t, *f */;
+   Evas_Object *o, *box, *b2, *b3, *img, *f, *b, *grp/*, *t, *f */;
 
    /* Create main box (mainconfig) */
    box = elm_box_add(ed->win);
@@ -223,11 +283,22 @@ _mainconfig_create(Editor *ed)
    elm_box_horizontal_set(b2, EINA_TRUE);
    evas_object_size_hint_weight_set(b2, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_box_pack_start(box, b2);
+   evas_object_show(b2);
+
+   /* Extension checker */
+   o = elm_check_add(box);
+   elm_object_text_set(o, "Use Warcraft II extension - Beyond the Dark Portal");
+   // FIXME Remove the disabled when cb will be implemented
+   elm_check_state_set(o, EINA_TRUE);
+   elm_object_disabled_set(o, EINA_TRUE);
+   evas_object_smart_callback_add(o, "changed", _has_extension_cb, ed);
+   elm_box_pack_start(box, o);
+   evas_object_show(o);
 
    /* Image to hold the minimap overview */
    img = elm_image_add(b2);
    elm_box_pack_start(b2, img);
-//   elm_image_file_set(img,
+   //   elm_image_file_set(img,
 
    /* Box to put commands */
    b3 = elm_box_add(b2);
@@ -236,57 +307,100 @@ _mainconfig_create(Editor *ed)
    elm_box_pack_end(b2, b3);
    evas_object_show(b3);
 
-  // f = elm_frame_add(b3);
-  // elm_object_text_set(f, "Map Size");
-  // evas_object_size_hint_weight_set(f, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-  // evas_object_size_hint_align_set(f, EVAS_HINT_FILL, EVAS_HINT_FILL);
-  // elm_box_pack_start(b3, f);
+   /* Frame for map size */
+   f = elm_frame_add(b3);
+   elm_object_text_set(f, "Map Size");
+   evas_object_size_hint_weight_set(f, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(f, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_box_pack_start(b3, f);
+   evas_object_show(f);
+   b = elm_box_add(f); /* Box */
+   elm_object_content_set(f, b);
+   elm_box_align_set(b, 0.0f, 0.0f);
+   evas_object_show(b);
+   o = elm_radio_add(b); /* Size item 1 */
+   elm_radio_state_value_set(o, 1);
+   evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.5);
+   elm_object_text_set(o, "32 x 32");
+   elm_box_pack_end(b, o);
+   evas_object_show(o);
+   grp = o;
+   evas_object_smart_callback_add(grp, "changed", _size_changed_cb, ed);
+   o = elm_radio_add(b); /* Size item 2 */
+   elm_radio_state_value_set(o, 2);
+   evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.5);
+   elm_object_text_set(o, "64 x 64");
+   elm_box_pack_end(b, o);
+   evas_object_show(o);
+   elm_radio_group_add(o, grp);
+   o = elm_radio_add(b); /* Size item 3 */
+   elm_radio_state_value_set(o, 3);
+   evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.5);
+   elm_object_text_set(o, "96 x 96");
+   elm_box_pack_end(b, o);
+   evas_object_show(o);
+   elm_radio_group_add(o, grp);
+   o = elm_radio_add(b); /* Size item 4 */
+   elm_radio_state_value_set(o, 4);
+   evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.5);
+   elm_object_text_set(o, "128 x 128");
+   elm_box_pack_end(b, o);
+   evas_object_show(o);
+   elm_radio_group_add(o, grp);
+   elm_radio_value_set(grp, 1);
+   ed->mainconfig.menu_size = grp;
 
-   o = elm_radio_add(b3);
-   //evas_object_show(f);
+   /* Frame for map era */
+   f = elm_frame_add(b3);
+   elm_object_text_set(f, "Tileset");
+   evas_object_size_hint_weight_set(f, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(f, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_box_pack_end(b3, f);
+   evas_object_show(f);
+   b = elm_box_add(f); /* Box */
+   elm_object_content_set(f, b);
+   elm_box_align_set(b, 0.0f, 0.0f);
+   evas_object_show(b);
+   o = elm_radio_add(b); /* Tileset item 1 */
+   elm_radio_state_value_set(o, 1);
+   evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.5);
+   elm_object_text_set(o, "Forest");
+   elm_box_pack_end(b, o);
+   evas_object_show(o);
+   grp = o;
+   evas_object_smart_callback_add(grp, "changed", _era_changed_cb, ed);
+   o = elm_radio_add(b); /* Tileset item 2 */
+   elm_radio_state_value_set(o, 2);
+   evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.5);
+   elm_object_text_set(o, "Winter");
+   elm_box_pack_end(b, o);
+   evas_object_show(o);
+   elm_radio_group_add(o, grp);
+   o = elm_radio_add(b); /* Tileset item 3 */
+   elm_radio_state_value_set(o, 3);
+   evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.5);
+   elm_object_text_set(o, "Wasteland");
+   elm_box_pack_end(b, o);
+   evas_object_show(o);
+   elm_radio_group_add(o, grp);
+   o = elm_radio_add(b); /* Tileset item 4 */
+   elm_radio_state_value_set(o, 4);
+   evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.5);
+   elm_object_text_set(o, "Swamp");
+   elm_box_pack_end(b, o);
+   evas_object_show(o);
+   elm_radio_group_add(o, grp);
+   elm_radio_value_set(grp, 1);
+   ed->mainconfig.menu_era = grp;
 
-
-//   /* Table to hold commands */
-//   t = elm_table_add(b2);
-//   evas_object_size_hint_weight_set(t, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-//   evas_object_size_hint_align_set(t, EVAS_HINT_FILL, EVAS_HINT_FILL);
-//   elm_box_pack_end(b2, t);
-//   evas_object_show(b2);
-
-//   /* Label for map size  */
-//   o = elm_label_add(t);
-//   elm_object_text_set(o, "Map Size:");
-//   elm_table_pack(t, o, 0, 0, 1, 1);
-//   evas_object_show(o);
-//
-//   /* Label for map era */
-//   o = elm_label_add(t);
-//   elm_object_text_set(o, "Map Era:");
-//   elm_table_pack(t, o, 0, 1, 1, 1);
-//   evas_object_show(o);
-
- //  /* Menu for map size */
- //  o = elm_menu_add(t);
- //  ed->mainconfig.menu_size = o;
- //  itm = elm_menu_item_add(o, NULL, NULL, "32 x 32", NULL, NULL);
- //  elm_menu_item_add(o, itm, NULL, "64 x 64", NULL, NULL);
- //  elm_menu_item_add(o, itm, NULL, "96 x 96", NULL, NULL);
- //  elm_menu_item_add(o, itm, NULL, "128 x 128", NULL, NULL);
- //  elm_table_pack(t, o, 1, 0, 1, 1);
- //  evas_object_show(o);
-
- //  /* Menu for map era */
- //  o = elm_menu_add(t);
- //  ed->mainconfig.menu_era = o;
- //  itm = elm_menu_item_add(o, NULL, NULL, "Summer", NULL, NULL);
- //  elm_menu_item_add(o, itm, NULL, "Winter", NULL, NULL);
- //  elm_menu_item_add(o, itm, NULL, "Wasteland", NULL, NULL);
- //  elm_menu_item_add(o, itm, NULL, "Swamp", NULL, NULL);
- //  elm_table_pack(t, o, 1, 1, 1, 1);
- //  evas_object_show(o);
-
-
-   //evas_object_show(t);
    ed->mainconfig.container = box;
    ed->mainconfig.img = img;
 
@@ -337,7 +451,7 @@ editor_new(void)
    /* Create window and set callbacks */
    ed->win = elm_win_util_standard_add("win-editor", title);
    EINA_SAFETY_ON_NULL_GOTO(ed->win, err_free);
-   elm_win_focus_highlight_enabled_set(ed->win, EINA_TRUE);
+   elm_win_focus_highlight_enabled_set(ed->win, EINA_FALSE);
    evas_object_smart_callback_add(ed->win, "focus,in", _win_focused_cb, ed);
    evas_object_smart_callback_add(ed->win, "delete,request", _win_del_cb, ed);
    evas_object_resize(ed->win, 640, 480);

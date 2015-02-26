@@ -217,6 +217,7 @@ _era_changed_cb(void        *data,
    int id;
 
    id = elm_radio_value_get(obj);
+   printf("ERA CHANGED: %i\n", id);
    switch (id)
      {
       case 1: ed->era = PUD_ERA_FOREST;    break;
@@ -329,7 +330,7 @@ _mainconfig_create(Editor *ed)
    elm_box_pack_end(b, o);
    evas_object_show(o);
    grp = o;
-   evas_object_smart_callback_add(grp, "changed", _size_changed_cb, ed);
+   evas_object_smart_callback_add(o, "changed", _size_changed_cb, ed);
    o = elm_radio_add(b); /* Size item 2 */
    elm_radio_state_value_set(o, 2);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
@@ -338,6 +339,7 @@ _mainconfig_create(Editor *ed)
    elm_box_pack_end(b, o);
    evas_object_show(o);
    elm_radio_group_add(o, grp);
+   evas_object_smart_callback_add(o, "changed", _size_changed_cb, ed);
    o = elm_radio_add(b); /* Size item 3 */
    elm_radio_state_value_set(o, 3);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
@@ -346,6 +348,7 @@ _mainconfig_create(Editor *ed)
    elm_box_pack_end(b, o);
    evas_object_show(o);
    elm_radio_group_add(o, grp);
+   evas_object_smart_callback_add(o, "changed", _size_changed_cb, ed);
    o = elm_radio_add(b); /* Size item 4 */
    elm_radio_state_value_set(o, 4);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
@@ -354,6 +357,7 @@ _mainconfig_create(Editor *ed)
    elm_box_pack_end(b, o);
    evas_object_show(o);
    elm_radio_group_add(o, grp);
+   evas_object_smart_callback_add(o, "changed", _size_changed_cb, ed);
    elm_radio_value_set(grp, 1);
    ed->size = PUD_DIMENSIONS_32_32;
    ed->mainconfig.menu_size = grp;
@@ -377,7 +381,7 @@ _mainconfig_create(Editor *ed)
    elm_box_pack_end(b, o);
    evas_object_show(o);
    grp = o;
-   evas_object_smart_callback_add(grp, "changed", _era_changed_cb, ed);
+   evas_object_smart_callback_add(o, "changed", _era_changed_cb, ed);
    o = elm_radio_add(b); /* Tileset item 2 */
    elm_radio_state_value_set(o, 2);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
@@ -386,6 +390,7 @@ _mainconfig_create(Editor *ed)
    elm_box_pack_end(b, o);
    evas_object_show(o);
    elm_radio_group_add(o, grp);
+   evas_object_smart_callback_add(o, "changed", _era_changed_cb, ed);
    o = elm_radio_add(b); /* Tileset item 3 */
    elm_radio_state_value_set(o, 3);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
@@ -394,6 +399,7 @@ _mainconfig_create(Editor *ed)
    elm_box_pack_end(b, o);
    evas_object_show(o);
    elm_radio_group_add(o, grp);
+   evas_object_smart_callback_add(o, "changed", _era_changed_cb, ed);
    o = elm_radio_add(b); /* Tileset item 4 */
    elm_radio_state_value_set(o, 4);
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0.0);
@@ -401,6 +407,7 @@ _mainconfig_create(Editor *ed)
    elm_object_text_set(o, "Swamp");
    elm_box_pack_end(b, o);
    evas_object_show(o);
+   evas_object_smart_callback_add(o, "changed", _era_changed_cb, ed);
    elm_radio_group_add(o, grp);
    elm_radio_value_set(grp, 1);
    ed->era = PUD_ERA_FOREST;

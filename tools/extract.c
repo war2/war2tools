@@ -1,4 +1,5 @@
 #include <war2.h>
+#include <Eet.h>
 #include "../include/debug.h"
 
 #define DAT_PATH "../data/tiles/dat"
@@ -40,8 +41,10 @@ _export_tile(const Pud_Color    *tile,
              int                 img_nb)
 {
    char buf[1024];
-   FILE *f;
+   Eet_File *ef;
    const char *file;
+   char entry[32];
+   int chk;
 
    /* Fog of war */
    if (img_nb <= 16) return;
@@ -54,12 +57,15 @@ _export_tile(const Pud_Color    *tile,
       case PUD_ERA_SWAMP:     file = DAT_PATH"/swamp.dat"; break;
      }
 
-   f = fopen(file, "ab+");
-   if (!f) return;
+   ef = eet_open(file, EET_FILE_MODE_READ_WRITE);
+   if (!ef) return;
 
-   /* Write the data files (for my editor) */
-   fwrite(tile, sizeof(Pud_Color), w * h, f);
-   fclose(f);
+   snprintf(entry, sizeof(entry), "/tile/%i", img_nb);
+   chk = eet_data_image_write(ef, entry, tile, w, h, 0,
+                              EET_COMPRESSION_DEFAULT, 100, EET_IMAGE_LOSSLESS);
+   if (!chk)
+     fprintf(stderr, "*** Failed to register EET image %i\n", img_nb);
+   eet_close(ef);
 
    snprintf(buf, sizeof(buf), "../data/tiles/png/%s/%i.png",
             _era2str(ts->era), img_nb);
@@ -87,6 +93,7 @@ main(int    argc,
         return 1;
      }
 
+   eet_init();
    war2_init();
    w2 = war2_open(file, verbose);
    if (!w2) return 1;
@@ -116,6 +123,7 @@ main(int    argc,
 
    war2_close(w2);
    war2_shutdown();
+   eet_shutdown();
 
    return 0;
 }

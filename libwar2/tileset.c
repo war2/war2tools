@@ -19,7 +19,6 @@ _ts_entries_parse(War2_Data          *w2,
    uint16_t w;
    int img_ctr = 0;
    unsigned char col;
-   int *offsets;
 
    /* Extract palette - 256x3 */
    ptr = war2_entry_extract(w2, entries[0], &size);

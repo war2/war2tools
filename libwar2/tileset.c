@@ -10,13 +10,16 @@ _ts_entries_parse(War2_Data          *w2,
     * Thanks wargus for the tip. */
    const int ft[8] = { 7, 6, 5, 4, 3, 2, 1, 0 };
 
-   unsigned char *ptr, *data;
-   size_t size, i;
+   unsigned char *ptr, *data, *map;
+   size_t size, i, map_size;
    bool flip_x, flip_y;
    int o, x, y, j, i_img;
    Pud_Color img[1024];
+   uint8_t chunk[32];
+   uint16_t w;
    int img_ctr = 0;
    unsigned char col;
+   int *offsets;
 
    /* Extract palette - 256x3 */
    ptr = war2_entry_extract(w2, entries[0], &size);
@@ -53,7 +56,37 @@ _ts_entries_parse(War2_Data          *w2,
         free(ptr);
         DIE_RETURN(false, "Failed to extract entry minitile data [%i]", entries[2]);
      }
+   map = war2_entry_extract(w2, entries[3], &map_size);
+   if (!map)
+     {
+        free(ptr);
+        free(data);
+        DIE_RETURN(false, "Failed to extract entry map [%i]", entries[3]);
+     }
    ts->tiles = size / 32;
+
+   /* This entry contains the offsets for a given tile 0x????
+    * Each chunk is 42 bytes: 32 used and 10 unused */
+   for (i = 0; i < map_size; i += 42)
+     {
+        bool tile_is_unused = false;
+
+        /* Read the first 16 words (32 bytes) */
+        memcpy(&(chunk[0]), &(map[i]), 32);
+        for (j = 0; j < 32; j += 2)
+          {
+             memcpy(&w, &(chunk[j]), sizeof(uint16_t));
+             //printf("Chunk [0x%04lx]: 0x%04x\n", i / 42, w);
+
+             /* If one of the words is 0, the tile is unused */
+             if (w == 0x0000)
+               {
+                  tile_is_unused = true;
+                  break;
+               }
+
+          }
+     }
 
    // FIXME Fog of war (16 first tiles) */
 
@@ -95,6 +128,7 @@ _ts_entries_parse(War2_Data          *w2,
 
    free(ptr);
    free(data);
+   free(map);
 
    return true;
 }

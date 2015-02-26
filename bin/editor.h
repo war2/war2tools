@@ -15,6 +15,7 @@ struct _Editor
    Evas_Object  *inwin;
    Evas_Object  *scroller;
    Evas_Object  *table;
+   Eet_File     *tiles;
 
    Elm_Object_Item *main_sel[4];
    Elm_Object_Item *hmn_sel[4];
@@ -34,6 +35,8 @@ struct _Editor
    } tools_items[110], *tools_item_active;
 
    Pud_Dimensions size;
+   int map_w;
+   int map_h;
    Pud_Era era;
    Eina_Bool has_extension;
 };

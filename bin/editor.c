@@ -135,6 +135,55 @@ _mc_create_cb(void        *data,
 {
    Editor *ed = data;
    editor_mainconfig_hide(ed);
+   int w, h;
+   Evas_Object *o;
+   char buf[1024];
+   char entry[128];
+   const char *era;
+
+   /* Create table to handle tiles */
+   ed->table = elm_table_add(ed->win);
+   elm_table_homogeneous_set(ed->table, EINA_TRUE);
+   elm_table_padding_set(ed->table, 0, 0);
+   evas_object_size_hint_weight_set(ed->table, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+
+   switch (ed->era)
+     {
+      case PUD_ERA_FOREST:    era = "forest";    break;
+      case PUD_ERA_WINTER:    era = "winter";    break;
+      case PUD_ERA_WASTELAND: era = "wasteland"; break;
+      case PUD_ERA_SWAMP:     era = "swamp";     break;
+     }
+
+   /* Cache table dimensions */
+   pud_dimensions_to_size(ed->size, &(ed->map_w), &(ed->map_h));
+
+   DBG("Creating map with era [%s] and size %ix%i", era, ed->map_w, ed->map_h);
+   for (w = 0; w < ed->map_w; w++)
+     {
+        for (h = 0; h < ed->map_h; h++)
+          {
+             o = elm_bg_add(ed->win);
+
+             // FIXME Do not hard-code the paths!!!
+             snprintf(buf, sizeof(buf), "../data/tiles/edj/%s.edj", era);
+             snprintf(entry, sizeof(entry), "/%s/tile/%i", era, 263);
+             if (!elm_bg_file_set(o, buf, entry))
+               {
+                  CRI("Failed to load entry [%s] in [%s]", entry, buf);
+                  abort(); // FIXME Crash gracefully
+               }
+
+             evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+             evas_object_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
+             evas_object_size_hint_min_set(o, 32, 32);
+             elm_table_pack(ed->table, o, w, h, 1, 1);
+             evas_object_show(o);
+          }
+     }
+
+   elm_object_content_set(ed->scroller, ed->table);
+   evas_object_show(ed->table);
 }
 
 static void
@@ -306,6 +355,7 @@ _mainconfig_create(Editor *ed)
    evas_object_show(o);
    elm_radio_group_add(o, grp);
    elm_radio_value_set(grp, 1);
+   ed->size = PUD_DIMENSIONS_32_32;
    ed->mainconfig.menu_size = grp;
 
    /* Frame for map era */
@@ -353,6 +403,7 @@ _mainconfig_create(Editor *ed)
    evas_object_show(o);
    elm_radio_group_add(o, grp);
    elm_radio_value_set(grp, 1);
+   ed->era = PUD_ERA_FOREST;
    ed->mainconfig.menu_era = grp;
 
    ed->mainconfig.container = box;

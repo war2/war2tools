@@ -22,6 +22,7 @@ set(CMAKE_COLOR_MAKEFILE   ON)
 set(CMAKE_VERBOSE_MAKEFILE OFF)
 set(CMAKE_MACOSX_RPATH OFF)
 
+find_package(PkgConfig)
 find_package(JPEG REQUIRED)
 find_package(PNG REQUIRED)
 

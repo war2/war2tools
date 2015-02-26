@@ -37,7 +37,7 @@ _export_tile(const Pud_Color    *tile,
    /* Write the data files (for my editor) */
    fwrite(tile, sizeof(Pud_Color), w * h, _f);
 
-   snprintf(buf, sizeof(buf), "../data/tiles/%s/%i.png",
+   snprintf(buf, sizeof(buf), "../data/tiles/png/%s/%i.png",
             _era2str(ts->era), img_nb);
 
    pud_png_write(buf, w, h, (unsigned char *)tile);

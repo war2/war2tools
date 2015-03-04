@@ -4,7 +4,11 @@
 #include <pud.h>
 #include <Elementary.h>
 
+typedef struct _Grid_Cell Grid_Cell;
+typedef struct _Editor Editor;
+
 #include "log.h"
+#include "grid.h"
 #include "editor.h"
 
 

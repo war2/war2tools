@@ -134,56 +134,15 @@ _mc_create_cb(void        *data,
               void        *evt  EINA_UNUSED)
 {
    Editor *ed = data;
+   Eina_Bool chk;
+
    editor_mainconfig_hide(ed);
-   int w, h;
-   Evas_Object *o;
-   char buf[1024];
-   char entry[128];
-   const char *era;
-
-   /* Create table to handle tiles */
-   ed->table = elm_table_add(ed->win);
-   elm_table_homogeneous_set(ed->table, EINA_TRUE);
-   elm_table_padding_set(ed->table, 0, 0);
-   evas_object_size_hint_weight_set(ed->table, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-
-   switch (ed->era)
-     {
-      case PUD_ERA_FOREST:    era = "forest";    break;
-      case PUD_ERA_WINTER:    era = "winter";    break;
-      case PUD_ERA_WASTELAND: era = "wasteland"; break;
-      case PUD_ERA_SWAMP:     era = "swamp";     break;
-     }
-
-   /* Cache table dimensions */
    pud_dimensions_to_size(ed->size, &(ed->map_w), &(ed->map_h));
 
-   DBG("Creating map with era [%s] and size %ix%i", era, ed->map_w, ed->map_h);
-   for (w = 0; w < ed->map_w; w++)
-     {
-        for (h = 0; h < ed->map_h; h++)
-          {
-             o = elm_bg_add(ed->win);
-
-             // FIXME Do not hard-code the paths!!!
-             snprintf(buf, sizeof(buf), "../data/tiles/edj/%s.edj", era);
-             snprintf(entry, sizeof(entry), "/%s/tile/%i", era, 263);
-             if (!elm_bg_file_set(o, buf, entry))
-               {
-                  CRI("Failed to load entry [%s] in [%s]", entry, buf);
-                  abort(); // FIXME Crash gracefully
-               }
-
-             evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-             evas_object_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
-             evas_object_size_hint_min_set(o, 32, 32);
-             elm_table_pack(ed->table, o, w, h, 1, 1);
-             evas_object_show(o);
-          }
-     }
-
-   elm_object_content_set(ed->scroller, ed->table);
-   evas_object_show(ed->table);
+   chk = grid_add(ed);
+   EINA_SAFETY_ON_FALSE_RETURN(chk);
+   elm_box_pack_end(ed->mainbox, ed->glview);
+   evas_object_show(ed->glview);
 }
 
 static void
@@ -514,6 +473,7 @@ editor_new(void)
    /* Add a box to put widgets in it */
    o = elm_box_add(ed->win);
    EINA_SAFETY_ON_NULL_GOTO(o, err_win_del);
+   ed->mainbox = o;
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_box_horizontal_set(o, EINA_FALSE);
@@ -669,16 +629,18 @@ editor_new(void)
    itm = ed->main_sel[2] = elm_menu_item_add(ed->menu, NULL, NULL, "Players", NULL, NULL);
    itm = ed->main_sel[3] = elm_menu_item_add(ed->menu, NULL, NULL, "Help", NULL, NULL);
 
+#if 0
    /* Scroller */
    ed->scroller = elm_scroller_add(ed->win);
    EINA_SAFETY_ON_NULL_GOTO(ed->scroller, err_win_del);
    evas_object_size_hint_weight_set(ed->scroller, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(ed->scroller, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_scroller_policy_set(ed->scroller, ELM_SCROLLER_POLICY_ON, ELM_SCROLLER_POLICY_ON);
-   elm_scroller_propagate_events_set(ed->scroller, EINA_TRUE);
+   elm_scroller_propagate_events_set(ed->scroller, EINA_FALSE);
    elm_box_pack_end(o, ed->scroller);
    evas_object_show(ed->scroller);
    elm_scroller_page_relative_set(ed->scroller, 0, 1);
+#endif
 
    /* Mainconfig: get user input for various mainstream parameters */
    _mainconfig_create(ed);

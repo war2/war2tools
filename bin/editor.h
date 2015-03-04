@@ -1,7 +1,6 @@
 #ifndef _EDITOR_H_
 #define _EDITOR_H_
 
-typedef struct _Editor Editor;
 
 #define EDITOR_ITEM_HUMAN       (1 << 0)
 #define EDITOR_ITEM_ORC         (1 << 1)
@@ -13,9 +12,12 @@ struct _Editor
    Evas_Object  *menu;
    Evas_Object  *hover;
    Evas_Object  *inwin;
-   Evas_Object  *scroller;
-   Evas_Object  *table;
-   Eet_File     *tiles;
+   Evas_Object  *mainbox;
+   /*Evas_Object  *scroller;*/
+   Grid_Cell   **cells;
+
+   Evas_Object  *glview;
+   Evas_GL_API  *gl;
 
    Elm_Object_Item *main_sel[4];
    Elm_Object_Item *hmn_sel[4];

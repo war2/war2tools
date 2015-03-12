@@ -10,14 +10,30 @@ struct _Editor
    Pud          *pud;
    Evas_Object  *win;
    Evas_Object  *menu;
-   Evas_Object  *hover;
    Evas_Object  *inwin;
    Evas_Object  *mainbox;
    /*Evas_Object  *scroller;*/
    Grid_Cell   **cells;
 
    Evas_Object  *glview;
-   Evas_GL_API  *gl;
+
+   /* This part is managed by grid.c */
+   struct {
+      Evas_GL_API *api;
+      GLuint       vbo;
+      GLuint       vao;
+      GLuint       vshader;
+      GLuint       fshader;
+      GLuint       prog;
+      GLuint       vid;
+      GLuint       tid;
+
+      GLfloat     *vertices;
+      int          vertices_count;  /* How many vertices */
+      int          vertices_size;   /* Allocated size */
+
+      Eina_Bool    init_done;
+   } gl;
 
    Elm_Object_Item *main_sel[4];
    Elm_Object_Item *hmn_sel[4];
@@ -50,6 +66,21 @@ void editor_close(Editor *ed);
 Editor *editor_new(void);
 void editor_mainconfig_show(Editor *ed);
 void editor_mainconfig_hide(Editor *ed);
+void editor_error(Editor *ed, const char *msg);
+
+#define EDITOR_ERROR_RET(ed_, msg_, ...) \
+   do { \
+      CRI(msg_); \
+      editor_error(ed_, msg_); \
+      return __VA_ARGS__; \
+   } while (0)
+
+#define EDITOR_ERROR_GOTO(ed_, msg_, label_) \
+   do { \
+      CRI(msg_); \
+      editor_error(ed_, msg_); \
+      goto label_; \
+   } while (0)
 
 #endif /* ! _EDITOR_H_ */
 

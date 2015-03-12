@@ -27,6 +27,8 @@ _usage(void)
    fprintf(stderr, "*** Usage: extract <file.war> [dbg lvl = 0]\n");
 }
 
+#if EXPORT == EXPORT_PNG
+
 static const char *
 _era2str(Pud_Era era)
 {
@@ -40,7 +42,6 @@ _era2str(Pud_Era era)
    return "<ERROR>";
 }
 
-#if EXPORT == EXPORT_PNG
 static void
 _export_tile(const Pud_Color    *tile,
              int                 w,
@@ -58,12 +59,14 @@ _export_tile(const Pud_Color    *tile,
 
    pud_png_write(buf, w, h, (unsigned char *)tile);
 }
+
 #elif EXPORT == EXPORT_EET
+
 static void
 _export_tile(const Pud_Color    *tile,
              int                 w,
              int                 h,
-             const War2_Tileset *ts,
+             const War2_Tileset *ts EINA_UNUSED,
              int                 img_nb)
 {
    char key[8];

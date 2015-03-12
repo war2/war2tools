@@ -5,6 +5,7 @@ elm_main(int    argc EINA_UNUSED,
          char **argv EINA_UNUSED)
 {
    log_init();
+   texture_init();
    editor_init();
 
    editor_new();
@@ -12,6 +13,7 @@ elm_main(int    argc EINA_UNUSED,
    elm_shutdown();
 
    editor_shutdown();
+   texture_shutdown();
    log_shutdown();
 
    return 0;

@@ -378,6 +378,15 @@ _mainconfig_create(Editor *ed)
    return EINA_TRUE;
 }
 
+static void
+_error_close_cb(void        *data,
+                Evas_Object *obj  EINA_UNUSED,
+                void        *info EINA_UNUSED)
+{
+   Editor *ed = data;
+   DBG("Closing Editor %p after error...", ed);
+   editor_free(ed);
+}
 
 /*============================================================================*
  *                                 Public API                                 *
@@ -419,6 +428,54 @@ editor_free(Editor *ed)
      editor_close(ed);
    pud_close(ed->pud);
    free(ed);
+}
+
+void
+editor_error(Editor     *ed,
+             const char *msg)
+{
+   Evas_Object *box, *o, *e;
+
+   /* Confirm button */
+   o = elm_button_add(ed->win);
+   EINA_SAFETY_ON_NULL_GOTO(o, end);
+   elm_object_text_set(o, "Ok");
+   evas_object_smart_callback_add(o, "clicked", _error_close_cb, ed);
+
+   /* Info label */
+   e = elm_label_add(ed->win);
+   EINA_SAFETY_ON_NULL_GOTO(e, end);
+   elm_object_text_set(e, msg);
+   eo_do(
+      e,
+      evas_obj_size_hint_weight_set(EVAS_HINT_EXPAND, EVAS_HINT_EXPAND),
+      evas_obj_size_hint_align_set(EVAS_HINT_FILL, EVAS_HINT_FILL)
+   );
+
+   /* Box to content the UI */
+   box = elm_box_add(ed->win);
+   EINA_SAFETY_ON_NULL_GOTO(box, end);
+   eo_do(
+      box,
+      evas_obj_size_hint_weight_set(EVAS_HINT_EXPAND, EVAS_HINT_EXPAND),
+      evas_obj_size_hint_align_set(EVAS_HINT_FILL, EVAS_HINT_FILL),
+      elm_obj_box_horizontal_set(EINA_FALSE),
+      elm_obj_box_homogeneous_set(EINA_FALSE),
+      elm_obj_box_pack_start(e),
+      elm_obj_box_pack_end(o)
+   );
+
+   elm_win_inwin_content_set(ed->inwin, box);
+   elm_win_inwin_activate(ed->inwin);
+   evas_object_show(ed->inwin);
+   evas_object_show(box);
+   evas_object_show(o);
+   evas_object_show(e);
+
+   return;
+end:
+   CRI("Failed to generate error UI with message [%s]", msg);
+   editor_free(ed);
 }
 
 void

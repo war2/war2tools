@@ -24,7 +24,7 @@ pud_png_write(const char          *file,
 
    png_init_io(png_ptr, f);
 
-   png_set_IHDR(png_ptr, info_ptr, w, h, 8, PNG_COLOR_TYPE_RGB,
+   png_set_IHDR(png_ptr, info_ptr, w, h, 8, PNG_COLOR_TYPE_RGBA,
                 PNG_INTERLACE_NONE, PNG_COMPRESSION_TYPE_BASE,
                 PNG_FILTER_TYPE_BASE);
    png_write_info(png_ptr, info_ptr);
@@ -32,7 +32,7 @@ pud_png_write(const char          *file,
    row_pointers = malloc(h * sizeof(unsigned char *));
    if (!row_pointers) DIE_GOTO(errf, "Failed to allocate memory");
    for (i = 0; i < h; i++)
-     row_pointers[i] = (png_bytep)(&(data[i * w * 3]));
+     row_pointers[i] = (png_bytep)(&(data[i * w * 4]));
 
    png_write_image(png_ptr, row_pointers);
    png_write_end(png_ptr, NULL);

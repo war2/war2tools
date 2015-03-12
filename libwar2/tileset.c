@@ -10,7 +10,7 @@ _ts_entries_parse(War2_Data          *w2,
     * Thanks wargus for the tip. */
    const int ft[8] = { 7, 6, 5, 4, 3, 2, 1, 0 };
 
-   unsigned char *ptr, *data, *map;
+   unsigned char *ptr, *data, *map, *p;
    size_t size, i, map_size;
    bool flip_x, flip_y;
    int o, x, y, j, i_img;
@@ -26,17 +26,18 @@ _ts_entries_parse(War2_Data          *w2,
      DIE_RETURN(false, "Failed to extract entry palette [%i]", entries[0]);
    if (size != 768)
      DIE_RETURN(false, "Invalid size [%zu]. Should be 256*3=768", size);
-   memcpy(&(ts->palette[0]), ptr, size);
-   free(ptr);
 
-   /* I don't know why this is needed (no doc so no explaination) but this
-    * gives the right colorspace (thanks wargus) */
+   /* I don't know why this is the bitshift needed (no doc so no explaination)
+    * but this gives the right colorspace (thanks wargus) */
    for (i = 0; i < 256; i++)
      {
-        ts->palette[i].r <<= 2;
-        ts->palette[i].g <<= 2;
-        ts->palette[i].b <<= 2;
+        p = &(ptr[i * 3]);
+        ts->palette[i].r = p[0] << 2;
+        ts->palette[i].g = p[1] << 2;
+        ts->palette[i].b = p[2] << 2;
+        ts->palette[i].a = 0xff;
      }
+   free(ptr);
 
    /* If no callback has been specified, do nothing */
    if (!func)

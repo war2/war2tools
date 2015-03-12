@@ -103,7 +103,7 @@
 //============================================================================//
 
 const char *long2bin(uint32_t x);
-Pud_Color color_make(uint8_t r, uint8_t g, uint8_t b);
+Pud_Color color_make(uint8_t r, uint8_t g, uint8_t b, uint8_t a);
 const char *dim2str(Pud_Dimensions dim);
 const char *era2str(Pud_Era era);
 Pud_Color color_for_player(uint8_t player);

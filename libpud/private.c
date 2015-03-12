@@ -53,12 +53,14 @@ mode2str(Pud_Open_Mode mode)
 Pud_Color
 color_make(uint8_t r,
            uint8_t g,
-           uint8_t b)
+           uint8_t b,
+           uint8_t a)
 {
    Pud_Color c = {
       .r = r,
       .g = g,
-      .b = b
+      .b = b,
+      .a = a
    };
    return c;
 }
@@ -96,18 +98,18 @@ color_for_player(uint8_t player)
 {
    switch (player)
      {
-      case PUD_PLAYER_RED:    return color_make(0xc0, 0x00, 0x00); // Red
-      case PUD_PLAYER_BLUE:   return color_make(0x00, 0x00, 0xc0); // Blue
-      case PUD_PLAYER_GREEN:  return color_make(0x00, 0xff, 0x00); // Green
-      case PUD_PLAYER_VIOLET: return color_make(0x80, 0x00, 0xc0); // Violet
-      case PUD_PLAYER_ORANGE: return color_make(0xff, 0x80, 0x00); // Orange
-      case PUD_PLAYER_BLACK:  return color_make(0x00, 0x00, 0x00); // Black
-      case PUD_PLAYER_WHITE:  return color_make(0xff, 0xff, 0xff); // White
-      case PUD_PLAYER_YELLOW: return color_make(0xff, 0xd0, 0x00); // Yellow
+      case PUD_PLAYER_RED:    return color_make(0xc0, 0x00, 0x00, 0xff); // Red
+      case PUD_PLAYER_BLUE:   return color_make(0x00, 0x00, 0xc0, 0xff); // Blue
+      case PUD_PLAYER_GREEN:  return color_make(0x00, 0xff, 0x00, 0xff); // Green
+      case PUD_PLAYER_VIOLET: return color_make(0x80, 0x00, 0xc0, 0xff); // Violet
+      case PUD_PLAYER_ORANGE: return color_make(0xff, 0x80, 0x00, 0xff); // Orange
+      case PUD_PLAYER_BLACK:  return color_make(0x00, 0x00, 0x00, 0xff); // Black
+      case PUD_PLAYER_WHITE:  return color_make(0xff, 0xff, 0xff, 0xff); // White
+      case PUD_PLAYER_YELLOW: return color_make(0xff, 0xd0, 0x00, 0xff); // Yellow
       default: ERR("Invalid player [%i]", player); break;
      }
 
-   return color_make(0x7f, 0x7f, 0x7f);
+   return color_make(0x7f, 0x7f, 0x7f, 0xff);
 }
 
 bool

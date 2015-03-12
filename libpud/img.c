@@ -31,9 +31,9 @@ pud_minimap_bitmap_generate(Pud *pud,
      {
         u = &(pud->units[i]);
         if (u->type == PUD_UNIT_GOLD_MINE)
-          c = color_make(0xff, 0xff, 0x00);
+          c = color_make(0xff, 0xff, 0x00, 0xff);
         else if (u->type == PUD_UNIT_OIL_PATCH)
-          c = color_make(0x00, 0x00, 0x00);
+          c = color_make(0x00, 0x00, 0x00, 0xff);
         else
           c = color_for_player(u->owner);
 

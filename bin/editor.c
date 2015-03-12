@@ -139,6 +139,8 @@ _mc_create_cb(void        *data,
    editor_mainconfig_hide(ed);
    pud_dimensions_to_size(ed->size, &(ed->map_w), &(ed->map_h));
 
+   texture_tileset_select(ed->era);
+
    chk = grid_add(ed);
    EINA_SAFETY_ON_FALSE_RETURN(chk);
    elm_box_pack_end(ed->mainbox, ed->glview);

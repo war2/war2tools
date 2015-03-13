@@ -9,11 +9,12 @@
 
 typedef struct _Grid_Cell Grid_Cell;
 typedef struct _Editor Editor;
+typedef struct _Texture_Dictionary Texture_Dictionary;
 
 #include "log.h"
+#include "texture.h"
 #include "grid.h"
 #include "editor.h"
-#include "texture.h"
 
 #endif /* ! _WAR2EDIT_H_ */
 

@@ -3,8 +3,8 @@
 static Eet_File *_ef = NULL;
 
 GLuint
-texture_load(Evas_GL_API    *api,
-             unsigned short  key)
+texture_load(Evas_GL_API  *api,
+             unsigned int  key)
 {
    /* 4 channels (rgba) of 1 byte each */
    const int expected_size = TEXTURE_WIDTH * TEXTURE_HEIGHT * 4 * sizeof(unsigned char);
@@ -136,4 +136,91 @@ texture_dictionary_init(Texture_Dictionary *td,
 }
 
 #undef TD_FILL
+
+static void
+_hash_free_cb(void *data)
+{
+   GLuint *tid = data;
+   // FIXME call glDeleteTextures()
+   free(tid);
+}
+
+Eina_Hash *
+texture_hash_new(void)
+{
+   return eina_hash_int32_new(_hash_free_cb);
+}
+
+void
+texture_hash_del(Editor *ed)
+{
+   EINA_SAFETY_ON_NULL_RETURN(ed);
+   eina_hash_free(ed->tex.hash);
+}
+
+GLuint
+texture_get(Editor       *ed,
+            unsigned int  key)
+{
+   EINA_SAFETY_ON_TRUE_RETURN_VAL((key < (unsigned int )texture_dictionary_min(ed)) ||
+                                  (key > (unsigned int )texture_dictionary_max(ed)), 0);
+
+   GLuint tid;
+   GLuint *tid_ptr;
+   Eina_Bool chk;
+
+   tid_ptr = eina_hash_find(ed->tex.hash, &key);
+   if (tid_ptr == NULL)
+     {
+        tid_ptr = malloc(sizeof(GLuint));
+        EINA_SAFETY_ON_NULL_RETURN_VAL(tid_ptr, 0);
+
+        tid = texture_load(ed->gl.api, key);
+        if (EINA_UNLIKELY(tid == 0))
+          {
+             ERR("Failed to load texture for key [%u]", key);
+             free(tid_ptr);
+             return 0;
+          }
+        *tid_ptr = tid;
+        chk = eina_hash_add(ed->tex.hash, &key, tid_ptr);
+        if (chk == EINA_FALSE)
+          {
+             ERR("Failed to add texture id [%u] to hash", tid);
+             free(tid_ptr);
+             return 0;
+          }
+        DBG("Access key: [%u] (not yet registered). TID = %u", key, tid);
+        return tid;
+     }
+   else
+     {
+        tid = *tid_ptr;
+        DBG("Access key: [%u] (already registered). TID = %u", key, tid);
+        return tid;
+     }
+}
+
+GLuint
+texture_tile_access(Editor       *ed,
+                    unsigned int  x,
+                    unsigned int  y)
+{
+   unsigned int key;
+
+   key = ed->cells[y][x].tile;
+   return texture_get(ed, key);
+}
+
+int
+texture_dictionary_min(Editor *ed)
+{
+   return ed->tex.dict.hwalls.begin;
+}
+
+int
+texture_dictionary_max(Editor *ed)
+{
+   return ed->tex.dict.constr_x.end;
+}
 

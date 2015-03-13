@@ -24,7 +24,7 @@ static Eet_File *_ef = NULL;
 static void
 _usage(void)
 {
-   fprintf(stderr, "*** Usage: extract <file.war> [dbg lvl = 0]\n");
+   fprintf(stderr, "*** Usage: extract <maindat.war> [dbg lvl = 0]\n");
 }
 
 #if EXPORT == EXPORT_PNG
@@ -70,12 +70,33 @@ _export_tile(const Pud_Color    *tile,
              int                 img_nb)
 {
    char key[8];
-   int bytes;
+   Pud_Color *data, *dst;
+   const Pud_Color *src;
+   int bytes, y;
+   const int size = sizeof(Pud_Color) * w * h;
+
+   data = malloc(size);
+   if (!data)
+     {
+        fprintf(stderr, "*** Failed to allocate data of size %i\n", size);
+        return;
+     }
+
+   /* Flip the tile vertically, because opengl flips vertically the texture
+    * while loading it. Flipping it twice will make it "normal". */
+   for (y = 0; y < h; ++y)
+     {
+        dst = &(data[y * w]);
+        src = &(tile[(h - y - 1) * w]);
+        memcpy(dst, src, sizeof(Pud_Color) * w);
+     }
 
    snprintf(key, sizeof(key), "%i", img_nb);
-   bytes = eet_write(_ef, key, tile, w * h * sizeof(unsigned char) * 4, 1);
+   bytes = eet_write(_ef, key, data, size, 1);
    if (bytes <= 0)
-    fprintf(stderr, "*** Failed to save key [%s]", key);
+     fprintf(stderr, "*** Failed to save key [%s]", key);
+
+   free(data);
 }
 #endif
 

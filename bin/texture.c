@@ -12,7 +12,7 @@ texture_load(Evas_GL_API *api,
    void *mem;
    int size;
 
-   /* Get raw data (uncompressed) */
+   /* Get raw data (uncompressed). The image is pre-flipped vertically. */
    mem = eet_read(_ef, key, &size);
    EINA_SAFETY_ON_NULL_RETURN_VAL(mem, 0);
 

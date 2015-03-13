@@ -21,12 +21,9 @@ struct _Editor
    struct {
       Evas_GL_API *api;
       GLuint       vbo;
-      GLuint       vao;
       GLuint       vshader;
       GLuint       fshader;
       GLuint       prog;
-      GLuint       vid;
-      GLuint       tid;
 
       GLfloat     *vertices;
       int          vertices_count;  /* How many vertices */
@@ -34,6 +31,11 @@ struct _Editor
 
       Eina_Bool    init_done;
    } gl;
+
+   struct {
+      Texture_Dictionary  dict;
+      Eina_Hash          *hash;
+   } tex;
 
    Elm_Object_Item *main_sel[4];
    Elm_Object_Item *hmn_sel[4];
@@ -53,7 +55,6 @@ struct _Editor
    } tools_items[110], *tools_item_active;
 
    Pud_Dimensions size;
-   Texture_Dictionary tdict;
    int map_w;
    int map_h;
    Pud_Era era;

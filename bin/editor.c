@@ -140,7 +140,8 @@ _mc_create_cb(void        *data,
    pud_dimensions_to_size(ed->size, &(ed->map_w), &(ed->map_h));
 
    texture_tileset_select(ed->era);
-   texture_dictionary_init(&ed->tdict, ed->era);
+   texture_dictionary_init(&(ed->tex.dict), ed->era);
+   ed->tex.hash = texture_hash_new();
 
    chk = grid_add(ed);
    EINA_SAFETY_ON_FALSE_RETURN(chk);
@@ -179,7 +180,6 @@ _era_changed_cb(void        *data,
    int id;
 
    id = elm_radio_value_get(obj);
-   printf("ERA CHANGED: %i\n", id);
    switch (id)
      {
       case 1: ed->era = PUD_ERA_FOREST;    break;

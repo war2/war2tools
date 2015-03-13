@@ -215,9 +215,6 @@ _init_gl(Evas_Object *glv)
    api->glAttachShader(ed->gl.prog, ed->gl.vshader);
    api->glAttachShader(ed->gl.prog, ed->gl.fshader);
 
-   /* Get handle for the 2D sampler */
-   // ed->gl.tid = api->glGetUniformLocation(ed->gl.prog, "s_2D");
-
    /* Link program */
    api->glLinkProgram(ed->gl.prog);
    api->glGetProgramiv(ed->gl.prog, GL_LINK_STATUS, &status);
@@ -253,7 +250,6 @@ _init_gl(Evas_Object *glv)
    api->glVertexAttribPointer(status, 3, GL_FLOAT, GL_FALSE,
                               5 * sizeof(GLfloat), (void *)(3 * sizeof(GLfloat)));
 
-   ed->gl.tid = texture_load(api, ed->tdict.hwalls.begin);
    ed->gl.init_done = EINA_TRUE;
 }
 
@@ -288,7 +284,9 @@ _render_gl(Evas_Object *glv)
 {
    Editor *ed;
    Evas_GL_API *api;
+   GLuint tid;
    int w, h;
+   int x, y, k = 0;
 
    ed = _editor_get(glv);
    EINA_SAFETY_ON_NULL_RETURN(ed);
@@ -301,10 +299,20 @@ _render_gl(Evas_Object *glv)
 
    api->glUseProgram(ed->gl.prog);
    api->glActiveTexture(GL_TEXTURE0);
-   api->glBindTexture(GL_TEXTURE_2D, ed->gl.tid);
-
    api->glBindBuffer(GL_ARRAY_BUFFER, ed->gl.vbo);
-   api->glDrawArrays(GL_TRIANGLES, 0, ed->gl.vertices_count);
+
+   for (y = 0; y < ed->map_h; ++y)
+     {
+        for (x = 0; x < ed->map_w; ++x)
+          {
+             tid = texture_tile_access(ed, x, y);
+             api->glBindTexture(GL_TEXTURE_2D, tid);
+             api->glDrawArrays(GL_TRIANGLES, k, 6);
+             k += 6;
+          }
+     }
+
+
 
    api->glUseProgram(0);
 
@@ -320,6 +328,9 @@ Eina_Bool
 grid_add(Editor *ed)
 {
    Evas_Object *glv;
+   int x, y;
+   const int min = texture_dictionary_min(ed);
+   const int max = texture_dictionary_max(ed);
 
    glv = elm_glview_add(ed->win);
    EINA_SAFETY_ON_NULL_RETURN_VAL(glv, EINA_FALSE);
@@ -340,9 +351,18 @@ grid_add(Editor *ed)
    ed->cells = _grid_cells_new(ed);
    EINA_SAFETY_ON_NULL_RETURN_VAL(ed->cells, EINA_FALSE);
 
+   for (y = 0; y < ed->map_h; ++y)
+     {
+        for (x = 0; x < ed->map_w; ++x)
+          {
+             ed->cells[y][x].tile = (rand() % (max - min + 1)) + min;
+          }
+     }
+
    ed->glview = glv;
    ed->gl.api = elm_glview_gl_api_get(glv);
 
    return EINA_TRUE;
 }
+
 

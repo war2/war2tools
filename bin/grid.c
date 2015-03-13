@@ -92,6 +92,7 @@ _init_gl(Evas_Object *glv)
    Evas_GL_API *api;
    GLint status;
    int i, j, x, y;
+   GLfloat *v;
 
    /*
     * Use version 120 (OpenGL 2.1, GLSL 1.20) because dear OSX (with X11)
@@ -134,36 +135,12 @@ _init_gl(Evas_Object *glv)
 
    api = ed->gl.api;
 
-
-   ed->gl.vertices_count = 3;
+   /* 6 vertices (1 vertex = 3 GLfloats) per tile (= 2 triangles) (count = map_w * map_h) */
+   ed->gl.vertices_count = (ed->map_w * ed->map_h) * 6;
    ed->gl.vertices_size = ed->gl.vertices_count * 5 * sizeof(GLfloat);
    ed->gl.vertices = malloc(ed->gl.vertices_size);
    EINA_SAFETY_ON_NULL_RETURN(ed->gl.vertices);
-
-   ed->gl.vertices[ 0] = -0.5f;  // x
-   ed->gl.vertices[ 1] = -0.5f;  // y
-   ed->gl.vertices[ 2] =  0.0f;  // z
-   ed->gl.vertices[ 3] =  0.0f;  // u
-   ed->gl.vertices[ 4] =  1.0f;  // v
-
-   ed->gl.vertices[ 5] =  0.5f;  // x
-   ed->gl.vertices[ 6] = -0.5f;  // y
-   ed->gl.vertices[ 7] =  0.0f;  // z
-   ed->gl.vertices[ 8] =  1.0f;  // u
-   ed->gl.vertices[ 9] =  1.0f;  // v
-
-   ed->gl.vertices[10] =  0.0f;  // x
-   ed->gl.vertices[11] =  0.5f;  // y
-   ed->gl.vertices[12] =  0.0f;  // z
-   ed->gl.vertices[13] =  0.5f;  // u
-   ed->gl.vertices[14] =  0.0f;  // v
-
-#if 0
-   /* 6 vertices (1 vertex = 3 GLfloats) per tile (= 2 triangles) (count = map_w * map_h) */
-   ed->gl.vertices_count = (ed->map_w * ed->map_h) * 6;
-   ed->gl.vertices_size = ed->gl.vertices_count * 3 * sizeof(GLfloat);
-   ed->gl.vertices = malloc(ed->gl.vertices_size);
-   EINA_SAFETY_ON_NULL_RETURN(ed->gl.vertices);
+   v = ed->gl.vertices; /* Shortcut + saves a lot of indirections */
 
    /* Fraction of screen per tile (map_w == map_h) */
    const GLfloat step = 1.0f / (GLfloat)(ed->map_w);
@@ -178,41 +155,52 @@ _init_gl(Evas_Object *glv)
     */
    for (i = 0; i < ed->map_h; ++i)
      {
-        y = i * ed->map_w * 3 * 6;
+        y = i * ed->map_w * 5 * 6;
         const GLfloat yf = (GLfloat)i;
 
-        for (j = 0, x = 0; x < ed->map_w; j += (3 * 6), ++x)
+        for (j = 0, x = 0; x < ed->map_w; j += (5 * 6), ++x)
           {
              const GLfloat xf = (GLfloat)x;
 
-             /* Top-left vertex (x,y,z) */
-             ed->gl.vertices[j + y +  0] = xf * step;
-             ed->gl.vertices[j + y +  1] = -1.0f * yf * step;
-             ed->gl.vertices[j + y +  2] = 0.0f;
-             /* Top-right vertex (x,y,z) */
-             ed->gl.vertices[j + y +  3] = (xf + 1.0f) * step;
-             ed->gl.vertices[j + y +  4] = -1.0f * yf * step;
-             ed->gl.vertices[j + y +  5] = 0.0f;
-             /* Bottom-left vertex (x,y,z) */
-             ed->gl.vertices[j + y +  6] = xf * step;
-             ed->gl.vertices[j + y +  7] = -1.0f * (yf + 1.0f) * step;
-             ed->gl.vertices[j + y +  8] = 0.0f;
+             /* Top-left vertex (x,y,z,u,v) */
+             v[j + y +  0] = xf * step;                 // X
+             v[j + y +  1] = -1.0f * yf * step;         // Y
+             v[j + y +  2] = 0.0f;                      // Z
+             v[j + y +  3] = 0.0f;                      // U
+             v[j + y +  4] = 1.0f;                      // V
+             /* Top-right vertex (x,y,z,u,v) */
+             v[j + y +  5] = (xf + 1.0f) * step;        // X
+             v[j + y +  6] = -1.0f * yf * step;         // Y
+             v[j + y +  7] = 0.0f;                      // Z
+             v[j + y +  8] = 1.0f;                      // U
+             v[j + y +  9] = 1.0f;                      // V
+             /* Bottom-left vertex (x,y,z,u,v) */
+             v[j + y + 10] = xf * step;                 // X
+             v[j + y + 11] = -1.0f * (yf + 1.0f) * step;// Y
+             v[j + y + 12] = 0.0f;                      // Z
+             v[j + y + 13] = 0.0f;                      // U
+             v[j + y + 14] = 0.0f;                      // V
 
-             /* Top-right vertex (x,y,z) */
-             ed->gl.vertices[j + y +  9] = (xf + 1.0f) * step;
-             ed->gl.vertices[j + y + 10] = -1.0f * yf * step;
-             ed->gl.vertices[j + y + 11] = 0.0f;
-             /* Bottom-right vertex (x,y,z) */
-             ed->gl.vertices[j + y + 12] = (xf + 1.0f) * step;
-             ed->gl.vertices[j + y + 13] = -1.0f * (yf + 1.0f) * step;
-             ed->gl.vertices[j + y + 14] = 0.0f;
-             /* Bottom-left vertex (x,y,z) */
-             ed->gl.vertices[j + y + 15] = xf * step;
-             ed->gl.vertices[j + y + 16] = -1.0f * (yf + 1.0f) * step;
-             ed->gl.vertices[j + y + 17] = 0.0f;
+             /* Top-right vertex (x,y,z,u,v) */
+             v[j + y + 15] = (xf + 1.0f) * step;        // X
+             v[j + y + 16] = -1.0f * yf * step;         // Y
+             v[j + y + 17] = 0.0f;                      // Z
+             v[j + y + 18] = 1.0f;                      // U
+             v[j + y + 19] = 1.0f;                      // V
+             /* Bottom-right vertex (x,y,z,u,v) */
+             v[j + y + 20] = (xf + 1.0f) * step;        // X
+             v[j + y + 21] = -1.0f * (yf + 1.0f) * step;// Y
+             v[j + y + 22] = 0.0f;                      // Z
+             v[j + y + 23] = 0.0f;                      // U
+             v[j + y + 24] = 1.0f;                      // V
+             /* Bottom-left vertex (x,y,z,u,v) */
+             v[j + y + 25] = xf * step;                 // X
+             v[j + y + 26] = -1.0f * (yf + 1.0f) * step;// Y
+             v[j + y + 27] = 0.0f;                      // Z
+             v[j + y + 28] = 0.0f;                      // U
+             v[j + y + 29] = 0.0f;                      // V
           }
      }
-#endif
 
    /* Enable 2D texturing */
    api->glEnable(GL_TEXTURE_2D);
@@ -265,7 +253,7 @@ _init_gl(Evas_Object *glv)
    api->glVertexAttribPointer(status, 3, GL_FLOAT, GL_FALSE,
                               5 * sizeof(GLfloat), (void *)(3 * sizeof(GLfloat)));
 
-   ed->gl.tid = texture_load(api, "122");
+   ed->gl.tid = texture_load(api, ed->tdict.hwalls.begin);
    ed->gl.init_done = EINA_TRUE;
 }
 
@@ -298,7 +286,6 @@ _resize_gl(Evas_Object *glv EINA_UNUSED)
 static void
 _render_gl(Evas_Object *glv)
 {
-   DBG("Rendering....");
    Editor *ed;
    Evas_GL_API *api;
    int w, h;

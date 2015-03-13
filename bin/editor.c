@@ -140,6 +140,7 @@ _mc_create_cb(void        *data,
    pud_dimensions_to_size(ed->size, &(ed->map_w), &(ed->map_h));
 
    texture_tileset_select(ed->era);
+   texture_dictionary_init(&ed->tdict, ed->era);
 
    chk = grid_add(ed);
    EINA_SAFETY_ON_FALSE_RETURN(chk);

@@ -53,6 +53,7 @@ struct _Editor
    } tools_items[110], *tools_item_active;
 
    Pud_Dimensions size;
+   Texture_Dictionary tdict;
    int map_w;
    int map_h;
    Pud_Era era;

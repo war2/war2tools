@@ -14,17 +14,18 @@ pud_minimap_bitmap_generate(Pud *pud,
    int size;
    uint16_t w, h;
 
-   size = pud->tiles * 3;
+   size = pud->tiles * 4;
    map = calloc(size, sizeof(unsigned char));
    if (!map) DIE_RETURN(NULL, "Failed to allocate memory");
 
-   for (i = 0, idx = 0; i < pud->tiles; i++, idx += 3)
+   for (i = 0, idx = 0; i < pud->tiles; i++, idx += 4)
      {
         c = pud_tile_to_color(pud, pud->tiles_map[i]);
 
         map[idx + 0] = c.r;
         map[idx + 1] = c.g;
         map[idx + 2] = c.b;
+        map[idx + 3] = c.a;
      }
 
    for (i = 0; i < pud->units_count; i++)
@@ -44,11 +45,12 @@ pud_minimap_bitmap_generate(Pud *pud,
           {
              for (k = 0; k < h; k++)
                {
-                  idx = (((u->y + k)* pud->map_w) + (u->x + j)) * 3;
+                  idx = (((u->y + k)* pud->map_w) + (u->x + j)) * 4;
 
                   map[idx + 0] = c.r;
                   map[idx + 1] = c.g;
                   map[idx + 2] = c.b;
+                  map[idx + 3] = c.a;
                }
           }
      }
@@ -81,7 +83,7 @@ pud_minimap_to_ppm(Pud        *pud,
            "255\n",
            pud->map_w, pud->map_h);
 
-   for (i = 0; i < size; i += 3)
+   for (i = 0; i < size; i += 4)
      {
         fprintf(f, "%i %i %i\n",
                 map[i + 0],

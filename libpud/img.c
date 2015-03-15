@@ -15,7 +15,7 @@ pud_minimap_bitmap_generate(Pud *pud,
    uint16_t w, h;
 
    size = pud->tiles * 4;
-   map = calloc(size, sizeof(unsigned char));
+   map = malloc(size * sizeof(unsigned char));
    if (!map) DIE_RETURN(NULL, "Failed to allocate memory");
 
    for (i = 0, idx = 0; i < pud->tiles; i++, idx += 4)

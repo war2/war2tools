@@ -4,10 +4,10 @@ static void _udta_defaults_set(Pud *pud);
 static void _alow_defaults_set(Pud *pud);
 static void _ugrd_defaults_set(Pud *pud);
 
-bool
+Pud_Bool
 pud_defaults_set(Pud *pud)
 {
-   PUD_SANITY_CHECK(pud, PUD_OPEN_MODE_W, false);
+   PUD_SANITY_CHECK(pud, PUD_OPEN_MODE_W, PUD_FALSE);
 
    int i;
 
@@ -55,7 +55,7 @@ pud_defaults_set(Pud *pud)
    /* Most of the fields are assumed valid */
    pud->init = 1;
 
-   return true;
+   return PUD_TRUE;
 }
 
 

@@ -6,7 +6,7 @@
  * and hexdump.
  */
 
-bool
+Pud_Bool
 war2_init(void)
 {
    return pud_init();

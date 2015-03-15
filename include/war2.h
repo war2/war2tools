@@ -6,7 +6,7 @@ extern "C" <%
 
 #include "pud.h"
 
-bool war2_init(void);
+Pud_Bool war2_init(void);
 void war2_shutdown(void);
 
 typedef struct _War2_Data War2_Data;

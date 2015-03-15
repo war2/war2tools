@@ -8,7 +8,7 @@ static const char * const _pud_sections[] =
    "MTXM", "SQM ", "OILM", "REGM", "UNIT"
 };
 
-bool
+Pud_Bool
 pud_section_exists(char sec[4])
 {
    int i;
@@ -16,10 +16,10 @@ pud_section_exists(char sec[4])
    for (i = 0; i < 20; i++)
      {
         if (!strncmp(sec, _pud_sections[i], 4))
-          return true;
+          return PUD_TRUE;
      }
 
-   return false;
+   return PUD_FALSE;
 }
 
 const char *
@@ -29,11 +29,11 @@ pud_section_at_index(int idx)
    return _pud_sections[idx];
 }
 
-bool
+Pud_Bool
 pud_init(void)
 {
    srand(time(NULL));
-   return true;
+   return PUD_TRUE;
 }
 
 void
@@ -42,7 +42,7 @@ pud_shutdown(void)
 }
 
 
-bool
+Pud_Bool
 pud_section_is_optional(Pud_Section sec)
 {
    return ((sec == PUD_SECTION_ERAX) ||
@@ -100,7 +100,7 @@ pud_go_to_section(Pud         *pud,
 }
 
 
-static bool
+static Pud_Bool
 _open(Pud           *pud,
       const char    *file,
       Pud_Open_Mode  mode)
@@ -131,13 +131,13 @@ _open(Pud           *pud,
         pud->mem_map_size = 0;
      }
 
-   return true;
+   return PUD_TRUE;
 
 err_ff:
    free(pud->filename);
    pud->filename = NULL;
 err:
-   return false;
+   return PUD_FALSE;
 }
 
 Pud *
@@ -164,12 +164,12 @@ err:
    return NULL;
 }
 
-bool
+Pud_Bool
 pud_reopen(Pud           *pud,
            const char    *file,
            Pud_Open_Mode  mode)
 {
-   if ((!pud) || (!file)) DIE_RETURN(false, "Invalid inputs");
+   if ((!pud) || (!file)) DIE_RETURN(PUD_FALSE, "Invalid inputs");
    return _open(pud, file, mode);
 }
 
@@ -194,13 +194,13 @@ pud_verbose_set(Pud *pud,
      pud->verbose = lvl;
 }
 
-bool
+Pud_Bool
 pud_parse(Pud *pud)
 {
    pud->sections = 0;
 
 #define PARSE_SEC(sec) \
-   if (!pud_parse_ ## sec(pud)) DIE_RETURN(false, "Failed to parse " #sec)
+   if (!pud_parse_ ## sec(pud)) DIE_RETURN(PUD_FALSE, "Failed to parse " #sec)
 
    PARSE_SEC(type);
    PARSE_SEC(ver);
@@ -227,7 +227,7 @@ pud_parse(Pud *pud)
    /* Is assumed valid */
    pud->init = 1;
 
-   return true;
+   return PUD_TRUE;
 }
 
 uint16_t
@@ -281,11 +281,11 @@ pud_dimensions_set(Pud            *pud,
    memset(pud->movement_map, 0, size);
 }
 
-bool
+Pud_Bool
 pud_write(const Pud *pud)
 {
    // FIXME f is never fclose()d on error
-   PUD_SANITY_CHECK(pud, PUD_OPEN_MODE_W, false);
+   PUD_SANITY_CHECK(pud, PUD_OPEN_MODE_W, PUD_FALSE);
 
    const Pud *p = pud; // Shortcut
    FILE *f;
@@ -298,50 +298,50 @@ pud_write(const Pud *pud)
    units_len = p->units_count * sizeof(struct _unit);
 
    f = fopen(pud->filename, "wb");
-   if (!f) DIE_RETURN(false, "Failed to open [%s]", pud->filename);
+   if (!f) DIE_RETURN(PUD_FALSE, "Failed to open [%s]", pud->filename);
 
 #define W8(val, nb) \
    do { \
       for (j = 0; j < nb; j++) fwrite(&val, sizeof(uint8_t), 1, f); \
-      PUD_CHECK_FERROR(f, false); \
+      PUD_CHECK_FERROR(f, PUD_FALSE); \
    } while (0)
 
 #define W16(val, nb) \
    do { \
       for (j = 0; j < nb; j++) fwrite(&val, sizeof(uint16_t), 1, f); \
-      PUD_CHECK_FERROR(f, false); \
+      PUD_CHECK_FERROR(f, PUD_FALSE); \
    } while (0)
 
 #define W32(val, nb) \
    do { \
       for (j = 0; j < nb; j++) fwrite(&val, sizeof(uint32_t), 1, f); \
-      PUD_CHECK_FERROR(f, false); \
+      PUD_CHECK_FERROR(f, PUD_FALSE); \
    } while (0)
 
 #define WI8(imm, nb) \
    do { \
       b = imm; \
       for (j = 0; j < nb; j++) fwrite(&b, sizeof(uint8_t), 1, f); \
-      PUD_CHECK_FERROR(f, false); \
+      PUD_CHECK_FERROR(f, PUD_FALSE); \
    } while (0)
 
 #define WI16(imm, nb) \
    do { \
       w = imm; \
       for (j = 0; j < nb; j++) fwrite(&w, sizeof(uint16_t), 1, f); \
-      PUD_CHECK_FERROR(f, false); \
+      PUD_CHECK_FERROR(f, PUD_FALSE); \
    } while (0)
 
 #define WI32(imm, nb) \
    do { \
       l = imm; \
       for (j = 0; j < nb; j++) fwrite(&l, sizeof(uint32_t), 1, f); \
-      PUD_CHECK_FERROR(f, false); \
+      PUD_CHECK_FERROR(f, PUD_FALSE); \
    } while (0)
 
-#define WSEC(sec, len) fwrite(_pud_sections[sec], sizeof(int8_t), 4, f); PUD_CHECK_FERROR(f, false); W32(len, 1)
-#define WISEC(sec, len) fwrite(_pud_sections[sec], sizeof(int8_t), 4, f); PUD_CHECK_FERROR(f, false); WI32(len, 1)
-#define WSTR(str) fwrite(str, sizeof(int8_t), sizeof(str) - 1, f); PUD_CHECK_FERROR(f, false);
+#define WSEC(sec, len) fwrite(_pud_sections[sec], sizeof(int8_t), 4, f); PUD_CHECK_FERROR(f, PUD_FALSE); W32(len, 1)
+#define WISEC(sec, len) fwrite(_pud_sections[sec], sizeof(int8_t), 4, f); PUD_CHECK_FERROR(f, PUD_FALSE); WI32(len, 1)
+#define WSTR(str) fwrite(str, sizeof(int8_t), sizeof(str) - 1, f); PUD_CHECK_FERROR(f, PUD_FALSE);
 
    /* Section TYPE */
    WISEC(PUD_SECTION_TYPE, 16);
@@ -361,7 +361,7 @@ pud_write(const Pud *pud)
    /* Section OWNR */
    WISEC(PUD_SECTION_OWNR, 16);
    fwrite(&p->owner, sizeof(uint8_t), 16, f);
-   PUD_CHECK_FERROR(f, false);
+   PUD_CHECK_FERROR(f, PUD_FALSE);
 
    /* Section ERA */
    WISEC(PUD_SECTION_ERA, 2);
@@ -429,7 +429,7 @@ pud_write(const Pud *pud)
         fwrite(&p->spell_acq, sizeof(uint32_t), 16, f);
         fwrite(&p->up_alow, sizeof(uint32_t), 16, f);
         fwrite(&p->up_acq, sizeof(uint32_t), 16, f);
-        PUD_CHECK_FERROR(f, false);
+        PUD_CHECK_FERROR(f, PUD_FALSE);
      }
 
    /* Section UGRD */
@@ -446,37 +446,37 @@ pud_write(const Pud *pud)
    /* Section SIDE */
    WISEC(PUD_SECTION_SIDE, 16);
    fwrite(&p->side, sizeof(uint8_t), 16, f);
-   PUD_CHECK_FERROR(f, false);
+   PUD_CHECK_FERROR(f, PUD_FALSE);
 
    /* Section SGLD */
    WISEC(PUD_SECTION_SGLD, 32);
    fwrite(&p->sgld, sizeof(uint16_t), 16, f);
-   PUD_CHECK_FERROR(f, false);
+   PUD_CHECK_FERROR(f, PUD_FALSE);
 
    /* Section SLBR */
    WISEC(PUD_SECTION_SLBR, 32);
    fwrite(&p->slbr, sizeof(uint16_t), 16, f);
-   PUD_CHECK_FERROR(f, false);
+   PUD_CHECK_FERROR(f, PUD_FALSE);
 
    /* Section SOIL */
    WISEC(PUD_SECTION_SOIL, 32);
    fwrite(&p->soil, sizeof(uint16_t), 16, f);
-   PUD_CHECK_FERROR(f, false);
+   PUD_CHECK_FERROR(f, PUD_FALSE);
 
    /* Section AIPL */
    WISEC(PUD_SECTION_AIPL, 16);
    fwrite(&p->ai, sizeof(uint8_t), 16, f);
-   PUD_CHECK_FERROR(f, false);
+   PUD_CHECK_FERROR(f, PUD_FALSE);
 
    /* Section MTMX */
    WSEC(PUD_SECTION_MTXM, map_len);
    fwrite(p->tiles_map, sizeof(uint16_t), p->tiles, f);
-   PUD_CHECK_FERROR(f, false);
+   PUD_CHECK_FERROR(f, PUD_FALSE);
 
    /* Section SQM */
    WSEC(PUD_SECTION_SQM, map_len);
    fwrite(p->movement_map, sizeof(uint16_t), p->tiles, f);
-   PUD_CHECK_FERROR(f, false);
+   PUD_CHECK_FERROR(f, PUD_FALSE);
 
    /* Section OILM */
    WSEC(PUD_SECTION_OILM, p->tiles);
@@ -485,12 +485,12 @@ pud_write(const Pud *pud)
    /* Section REGM */
    WSEC(PUD_SECTION_REGM, map_len);
    fwrite(p->action_map, sizeof(uint16_t), p->tiles, f);
-   PUD_CHECK_FERROR(f, false);
+   PUD_CHECK_FERROR(f, PUD_FALSE);
 
    /* Section UNIT */
    WSEC(PUD_SECTION_UNIT, units_len);
    fwrite(p->units, sizeof(struct _unit), p->units_count, f);
-   PUD_CHECK_FERROR(f, false);
+   PUD_CHECK_FERROR(f, PUD_FALSE);
 
 #undef WSTR
 #undef WISEC
@@ -503,7 +503,7 @@ pud_write(const Pud *pud)
 
    fclose(f);
 
-   return true;
+   return PUD_TRUE;
 }
 
 void
@@ -565,7 +565,7 @@ pud_unit_add(Pud        *pud,
    };
 
    if ((x > pud->map_w - 1) || (y > pud->map_h - 1))
-     DIE_RETURN(false, "Invalid indexes [%i][%i]", x, y);
+     DIE_RETURN(PUD_FALSE, "Invalid indexes [%i][%i]", x, y);
 
    /* TODO Optimise memory allocation because it is not great */
    nb = pud->units_count + 1;
@@ -589,32 +589,32 @@ pud_unit_add(Pud        *pud,
    return nb;
 }
 
-bool
+Pud_Bool
 pud_tile_set(Pud      *pud,
              uint16_t  x,
              uint16_t  y,
              uint16_t  tile)
 {
-   PUD_SANITY_CHECK(pud, PUD_OPEN_MODE_W, false);
+   PUD_SANITY_CHECK(pud, PUD_OPEN_MODE_W, PUD_FALSE);
 
    if ((x > pud->map_w - 1) || (y > pud->map_h - 1))
-     DIE_RETURN(false, "Invalid indexes [%i][%i]", x, y);
+     DIE_RETURN(PUD_FALSE, "Invalid indexes [%i][%i]", x, y);
 
    pud->tiles_map[(y * pud->map_w) + x] = tile;
-   return true;
+   return PUD_TRUE;
 }
 
-bool
+Pud_Bool
 pud_check(Pud *pud)
 {
    if (!pud->init)
-     DIE_RETURN(false, "pud->init is false");
+     DIE_RETURN(PUD_FALSE, "pud->init is PUD_FALSE");
    if ((pud->human_players < 1) || (pud->computer_players < 1))
-     DIE_RETURN(false, "You must have at least 1 human player"
+     DIE_RETURN(PUD_FALSE, "You must have at least 1 human player"
                 " and 1 computer player");
    if (pud->starting_points < 2)
-     DIE_RETURN(false, "You must have at least 2 starting points");
+     DIE_RETURN(PUD_FALSE, "You must have at least 2 starting points");
 
-   return false;
+   return PUD_FALSE;
 }
 

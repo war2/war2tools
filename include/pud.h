@@ -9,8 +9,9 @@ extern "C" <%
 #include <stdlib.h>
 #include <string.h>
 
-#include "bool.h"
-#include "debug.h"
+typedef unsigned char Pud_Bool;
+#define PUD_TRUE  ((Pud_Bool)(1))
+#define PUD_FALSE ((Pud_Bool)(0))
 
 typedef enum
 {
@@ -383,15 +384,15 @@ struct _Pud_Color
    unsigned char a;
 };
 
-bool pud_init(void);
+Pud_Bool pud_init(void);
 void pud_shutdown(void);
 
 Pud *pud_open(const char *file, Pud_Open_Mode mode);
 void pud_close(Pud *pud);
-bool pud_reopen(Pud *pud, const char *file, Pud_Open_Mode mode);
-bool pud_parse(Pud *pud);
+Pud_Bool pud_reopen(Pud *pud, const char *file, Pud_Open_Mode mode);
+Pud_Bool pud_parse(Pud *pud);
 void pud_verbose_set(Pud *pud, int lvl);
-bool pud_section_is_optional(Pud_Section sec);
+Pud_Bool pud_section_is_optional(Pud_Section sec);
 uint32_t pud_go_to_section(Pud *pud, Pud_Section sec);
 void pud_print(Pud *pud, FILE *stream);
 void pud_dimensions_to_size(Pud_Dimensions dim, int *x_ret, int *y_ret);
@@ -400,9 +401,9 @@ Pud_Side pud_side_convert(uint8_t code);
 void pud_version_set(Pud *pud, uint16_t version);
 void pud_description_set(Pud *pud, char descr[32]);
 void pud_tag_set(Pud *pud, uint32_t tag);
-bool pud_check(Pud *pud);
-bool pud_defaults_set(Pud *pud);
-bool pud_write(const Pud *pud);
+Pud_Bool pud_check(Pud *pud);
+Pud_Bool pud_defaults_set(Pud *pud);
+Pud_Bool pud_write(const Pud *pud);
 int pud_unit_add(Pud *pud, uint16_t x, uint16_t y, Pud_Player owner, Pud_Unit type, uint16_t alter);
 void pud_era_set(Pud *pud, Pud_Era era);
 void pud_dimensions_set(Pud *pud, Pud_Dimensions dims);
@@ -412,14 +413,14 @@ void pud_munmap(void *map, size_t size);
 
 unsigned char *pud_minimap_bitmap_generate(Pud *pud, int *size_ret);
 
-bool pud_minimap_to_ppm(Pud *pud, const char *file);
+Pud_Bool pud_minimap_to_ppm(Pud *pud, const char *file);
 
 const char *pud_section_at_index(int idx);
 
-bool pud_section_exists(char sec[4]);
+Pud_Bool pud_section_exists(char sec[4]);
 uint16_t pud_tile_at(Pud *pud, int x, int y);
 
-bool pud_tile_set(Pud *pud, uint16_t x, uint16_t y, uint16_t tile);
+Pud_Bool pud_tile_set(Pud *pud, uint16_t x, uint16_t y, uint16_t tile);
 
 #ifdef __cplusplus
 %>

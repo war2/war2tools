@@ -1,6 +1,6 @@
 #include "war2_private.h"
 
-static bool
+static Pud_Bool
 _ts_entries_parse(War2_Data          *w2,
                   War2_Tileset       *ts,
                   const unsigned int *entries,
@@ -12,7 +12,7 @@ _ts_entries_parse(War2_Data          *w2,
 
    unsigned char *ptr, *data, *map, *p;
    size_t size, i, map_size;
-   bool flip_x, flip_y;
+   Pud_Bool flip_x, flip_y;
    int o, x, y, j, i_img;
    Pud_Color img[1024];
    uint8_t chunk[32];
@@ -23,9 +23,9 @@ _ts_entries_parse(War2_Data          *w2,
    /* Extract palette - 256x3 */
    ptr = war2_entry_extract(w2, entries[0], &size);
    if (!ptr)
-     DIE_RETURN(false, "Failed to extract entry palette [%i]", entries[0]);
+     DIE_RETURN(PUD_FALSE, "Failed to extract entry palette [%i]", entries[0]);
    if (size != 768)
-     DIE_RETURN(false, "Invalid size [%zu]. Should be 256*3=768", size);
+     DIE_RETURN(PUD_FALSE, "Invalid size [%zu]. Should be 256*3=768", size);
 
    /* I don't know why this is the bitshift needed (no doc so no explaination)
     * but this gives the right colorspace (thanks wargus) */
@@ -43,25 +43,25 @@ _ts_entries_parse(War2_Data          *w2,
    if (!func)
      {
         WAR2_VERBOSE(w2, 1, "Warning: No callback specified.");
-        return true;
+        return PUD_TRUE;
      }
 
    /* Get minitiles info */
    ptr = war2_entry_extract(w2, entries[1], &size);
    if (!ptr)
-     DIE_RETURN(false, "Failed to extract entry minitile info [%i]", entries[1]);
+     DIE_RETURN(PUD_FALSE, "Failed to extract entry minitile info [%i]", entries[1]);
    data = war2_entry_extract(w2, entries[2], NULL);
    if (!data)
      {
         free(ptr);
-        DIE_RETURN(false, "Failed to extract entry minitile data [%i]", entries[2]);
+        DIE_RETURN(PUD_FALSE, "Failed to extract entry minitile data [%i]", entries[2]);
      }
    map = war2_entry_extract(w2, entries[3], &map_size);
    if (!map)
      {
         free(ptr);
         free(data);
-        DIE_RETURN(false, "Failed to extract entry map [%i]", entries[3]);
+        DIE_RETURN(PUD_FALSE, "Failed to extract entry map [%i]", entries[3]);
      }
    ts->tiles = size / 32;
 
@@ -69,7 +69,7 @@ _ts_entries_parse(War2_Data          *w2,
     * Each chunk is 42 bytes: 32 used and 10 unused */
    for (i = 0; i < map_size; i += 42)
      {
-        bool tile_is_unused = false;
+        Pud_Bool tile_is_unused = PUD_FALSE;
 
         /* Read the first 16 words (32 bytes) */
         memcpy(&(chunk[0]), &(map[i]), 32);
@@ -81,7 +81,7 @@ _ts_entries_parse(War2_Data          *w2,
              /* If one of the words is 0, the tile is unused */
              if (w == 0x0000)
                {
-                  tile_is_unused = true;
+                  tile_is_unused = PUD_TRUE;
                   break;
                }
 
@@ -107,7 +107,7 @@ _ts_entries_parse(War2_Data          *w2,
                {
                   for (x = 0; x < 8; x++)
                     {
-                       /* If flip_x/flip_y are true, the minitile must be flipped on
+                       /* If flip_x/flip_y are PUD_TRUE, the minitile must be flipped on
                         * its x/y axis. We use a flip table which avoids calculations
                         * to do so. */
                        col = data[o + ((flip_x ? ft[x] : x) + (flip_y ? ft[y] : y) * 8)];
@@ -130,7 +130,7 @@ _ts_entries_parse(War2_Data          *w2,
    free(data);
    free(map);
 
-   return true;
+   return PUD_TRUE;
 }
 
 War2_Tileset *

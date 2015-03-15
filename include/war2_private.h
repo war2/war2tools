@@ -10,6 +10,7 @@
 #include <time.h>
 
 #include "pud.h"
+#include "debug.h"
 #include "war2.h"
 
 
@@ -76,7 +77,7 @@
    } while (0)
 
 
-bool war2_mem_map_ok(War2_Data *w2);
+Pud_Bool war2_mem_map_ok(War2_Data *w2);
 
 #endif /* ! _WAR2_PRIVATE_H_ */
 

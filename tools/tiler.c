@@ -15,7 +15,7 @@ main(int    argc,
    const char *era, *file;
    Pud_Era pud_era;
    Pud *pud;
-   bool chk;
+   Pud_Bool chk;
    int idx;
    uint16_t tile;
    int i, j, k, x, y;

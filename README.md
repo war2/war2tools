@@ -1,45 +1,93 @@
 war2edit
 ========
 
-This aims at being the clone of the Warcraft II Map Editor.
+This repository contains tools to manipulate PUD files. PUDs are Warcraft II map files.
+The build system used is `cmake`:
 
-- PUD viewer
-- PUD editor
+- `mkdir -p build && cd build`
+- `make`
+
+To install:
+- `sudo make install`
+- Possibly `sudo ldconfig` on GNU/Linux
+
+To uninstall:
+- `sudo make uninstall`
+
+
+libpud
+------
+
+A C library to manipulate a PUD file:
+- extract all data from it;
+- generate a custom PUD file;
+- generate a bitmap of the minimap.
+
+
+TODO:
+[ ] `pud_mmap()` is not implemented on systems which do not provide `mmap()`
+[ ] `pud_munmap()` is not implemented on systems which do not provide `munmap()`
+
+
+libwar2
+-------
+
+A C library which aims at extracting data from Warcraft II data files to get:
+- tilesets;
+- units and buildings' sprites;
+- musics and sounds;
+- cinematics.
+
+TODO:
+[ ] Units' sprites
+[ ] Building' sprites
+[ ] Musics
+[ ] Sounds
+[ ] Cinematics
+
+
+quicklook
+---------
+
+Quicklook plugin for OSX. Allows to preview minimaps of PUD files in the Finder.
+Installation steps:
+- `make quicklook`
+- `sudo cp -r build/quicklook/Pud.qlgenerator /Library/QuickLook`
+
 
 pud
 ---
 
-After building (assuming it is in `build/`):
-- `./build/pud/pud --help`
+A small tool that allows to interact with `libpud`.
+It allows to export the minimap of a PUD to an image. Supported formats:
+- jpg
+- png
+- ppm
+
+war2edit
+--------
+
+A clone of Warcraft II World Map Editor.
+It relies on the EFL and Elementary. The game engine is coded using OpenGL (2.1 compliant).
+
+TODO:
+Basically, everything.
 
 
-Build
+tools
 -----
 
-war2edit uses Cmake.
-If you are new to cmake:
-
-- create a `build` directory and `cd` in: `mkdir -p build && cd build`
-- run cmake: `cmake ..`
-- compile all: `make`
-- install: `sudo make install`
-- uninstall: `sudo make uninstall`
-
-
-TODO
-----
-
-- Get all sprites
-  - humans (8 colors)
-  - orcs (8 colors)
-  - critters
-  - neutral
-  - ...
-- War2 map editor clone
+Those binaries are mostly helpers to create the libraries.
+- `defaults_gen`: used to generate parts of `libpud/defaults.c`
+- `extract`: used to extract tiles from maindat.war (in `data/tiles`)
+- `ppm_cmp`: makes a `diff` between 2 ppm files
+- `tilemap`: used to generate parts of `libpud/tiles.c`
+- `tiler`: generates a map with all possible tiles
+- `tiles`: used to generate parts of `libpud/tiles.c`
 
 
 License
--------
+=======
 
 The MIT License (MIT)
 

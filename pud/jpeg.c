@@ -15,7 +15,22 @@ pud_jpeg_write(const char          *file,
    JSAMPROW row_pointer[1];
    int row_stride;
    FILE *f;
-   const JSAMPLE *p = data;
+   unsigned char *data_rgb;
+   int i, k, size;
+   const JSAMPLE *p;
+
+   data_rgb = malloc(sizeof(unsigned char) * 3 * w * h);
+   if (!data_rgb) DIE_RETURN(false, "Failed to allocate rgb buffer");
+
+   /* data is RGBA. JPEG does not like alpha */
+   size = w * h * 4;
+   for (i = 0, k = 0; i < size; i += 4, k += 3)
+     {
+        data_rgb[k + 0] = data[i + 0];
+        data_rgb[k + 1] = data[i + 1];
+        data_rgb[k + 2] = data[i + 2];
+     }
+   p = data_rgb;
 
    f = fopen(file, "wb");
    if (!f) DIE_RETURN(false, "Failed to open file [%s]", file);
@@ -44,6 +59,7 @@ pud_jpeg_write(const char          *file,
    jpeg_finish_compress(&cinfo);
    fclose(f);
    jpeg_destroy_compress(&cinfo);
+   free(data_rgb);
 
    return true;
 }

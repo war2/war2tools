@@ -8,3 +8,19 @@
 /*.pud
 /*.jpeg
 
+/quicklook/build/
+/quicklook/*.pbxuser
+/quicklook/!default.pbxuser
+/quicklook/*.mode1v3
+/quicklook/!default.mode1v3
+/quicklook/*.mode2v3
+/quicklook/!default.mode2v3
+/quicklook/*.perspectivev3
+/quicklook/!default.perspectivev3
+/quicklook/xcuserdata
+/quicklook/*.xccheckout
+/quicklook/*.moved-aside
+/quicklook/DerivedData
+/quicklook/*.hmap
+/quicklook/*.ipa
+/quicklook/*.xcuserstate

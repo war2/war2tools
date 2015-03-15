@@ -1,11 +1,16 @@
-include_directories(
-   ${CMAKE_CURRENT_SOURCE_DIR}
-   ${CMAKE_CURRENT_SOURCE_DIR}/../include
-   ${PUD_INCLUDES_DIR}
+add_executable(pud
+   main.c
+   ppm.c
+   jpeg.c
+   png.c
 )
 
-set(PUD_SRC main.c ppm.c jpeg.c png.c)
-add_executable(pud ${PUD_SRC})
+target_include_directories(
+   pud
+   PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}
+   PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/../include
+   PUBLIC ${PUD_INCLUDES_DIR}
+)
 
 target_link_libraries(pud ${PUD_LIBRARIES} ${LIBWAR2_LIBRARIES})
 

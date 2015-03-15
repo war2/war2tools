@@ -1,22 +1,20 @@
 set(BUILD_SHARED_LIBS true)
 
-set(
-   LIBWAR2_SRC
+add_definitions(-Wall)
+add_definitions(-std=c99)
+
+add_library(libwar2 SHARED
    war2.c
    private.c
    tileset.c
 )
-
-include_directories(
-   ${CMAKE_CURRENT_SOURCE_DIR}
-   ${CMAKE_CURRENT_SOURCE_DIR}/../include
-)
-
-add_definitions(-Wall)
-add_definitions(-std=c99)
-
-add_library(libwar2 SHARED ${LIBWAR2_SRC})
 SET_TARGET_PROPERTIES(libwar2 PROPERTIES PREFIX "")
+
+target_include_directories(
+   libwar2
+   PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}
+   PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/../include
+)
 
 target_link_libraries(${LIBWAR2_LIBRARIES})
 

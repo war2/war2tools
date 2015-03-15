@@ -33,6 +33,5 @@ SET_TARGET_PROPERTIES(libpud_static PROPERTIES OUTPUT_NAME libpud PREFIX "")
 install(
    TARGETS libpud
    LIBRARY DESTINATION lib
-   ARCHIVE DESTINATION lib/static
 )
 

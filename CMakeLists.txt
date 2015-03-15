@@ -23,10 +23,22 @@ set(CMAKE_VERBOSE_MAKEFILE OFF)
 set(CMAKE_MACOSX_RPATH OFF)
 
 find_package(PkgConfig)
-find_package(JPEG REQUIRED)
-find_package(PNG REQUIRED)
+find_package(JPEG)
+find_package(PNG)
 
-set(LIBPUD_LIBRARIES  libpud ${JPEG_LIBRARIES} ${PNG_LIBRARIES})
+set(PUD_LIBRARIES libpud)
+set(PUD_INCLUDES_DIRS "")
+
+if (JPEG_FOUND)
+   set(PUD_INCLUDES_DIRS ${PUD_INCLUDES_DIRS} ${JPEG_INCLUDES_DIR})
+   set(PUD_LIBRARIES ${PUD_LIBRARIES} ${JPEG_LIBRARIES})
+endif ()
+if (PNG_FOUND)
+   set(PUD_INCLUDES_DIRS ${PUD_INCLUDES_DIRS} ${PNG_INCLUDES_DIR})
+   set(PUD_LIBRARIES ${PUD_LIBRARIES} ${PNG_LIBRARIES})
+endif ()
+
+set(LIBPUD_LIBRARIES libpud)
 set(LIBWAR2_LIBRARIES libwar2 libpud)
 
 add_subdirectory(libpud)

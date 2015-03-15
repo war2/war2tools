@@ -49,3 +49,24 @@ err:
    return false;
 }
 
+bool
+pud_minimap_to_png(Pud        *pud,
+                   const char *file)
+{
+   PUD_SANITY_CHECK(pud, PUD_OPEN_MODE_R, false);
+
+   unsigned char *map;
+   bool chk;
+
+   map = pud_minimap_bitmap_generate(pud, NULL);
+   if (!map) DIE_RETURN(false, "Failed to generate bitmap");
+
+   chk = pud_png_write(file, pud->map_w, pud->map_h, map);
+   free(map);
+
+   if (chk)
+     PUD_VERBOSE(pud, 1, "Created [%s]", file);
+
+   return chk;
+}
+

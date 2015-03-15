@@ -3,8 +3,6 @@ set(BUILD_SHARED_LIBS true)
 set(
    LIBPUD_SRC
    pud.c
-   jpeg.c
-   png.c
    defaults.c
    img.c
    parse.c
@@ -18,8 +16,6 @@ set(
 include_directories(
    ${CMAKE_CURRENT_SOURCE_DIR}
    ${CMAKE_CURRENT_SOURCE_DIR}/../include
-   ${JPEG_INCLUDES_DIR}
-   ${PNG_INCLUDES_DIR}
 )
 
 
@@ -27,12 +23,12 @@ add_definitions(-Wall)
 add_definitions(-std=c99)
 
 add_library(libpud SHARED ${LIBPUD_SRC})
+add_library(libpud_static STATIC ${LIBPUD_SRC})
 
 # Disable the prefix because it is already in the name
 # The name cannot (?) be changed because there is another target called pud
 SET_TARGET_PROPERTIES(libpud PROPERTIES PREFIX "")
-
-target_link_libraries(${LIBPUD_LIBRARIES})
+SET_TARGET_PROPERTIES(libpud_static PROPERTIES OUTPUT_NAME libpud PREFIX "")
 
 install(
    TARGETS libpud

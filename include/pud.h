@@ -412,11 +412,7 @@ void pud_munmap(void *map, size_t size);
 
 unsigned char *pud_minimap_bitmap_generate(Pud *pud, int *size_ret);
 
-bool pud_jpeg_write(const char *file, int w, int h, const unsigned char *data);
-bool pud_png_write(const char *file, int w, int h, const unsigned char *data);
 bool pud_minimap_to_ppm(Pud *pud, const char *file);
-bool pud_minimap_to_jpeg(Pud *pud, const char *file);
-bool pud_minimap_to_png(Pud *pud, const char *file);
 
 const char *pud_section_at_index(int idx);
 

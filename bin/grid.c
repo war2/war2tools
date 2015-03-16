@@ -103,6 +103,22 @@ _translate(Editor  *ed,
    ed->gl.api->glUniformMatrix4fv(ed->gl.translation_mtx, 1, GL_FALSE, mat);
 }
 
+static void
+_scale(Editor  *ed,
+       GLfloat  x,
+       GLfloat  y,
+       GLfloat  z)
+{
+   const GLfloat mat[16] = {
+         x, 0.0f, 0.0f, 0.0f,
+      0.0f,    y, 0.0f, 0.0f,
+      0.0f, 0.0f,    z, 1.0f,
+      0.0f, 0.0f, 0.0f, 1.0f
+   };
+   ed->gl.api->glUniformMatrix4fv(ed->gl.scaling_mtx, 1, GL_FALSE, mat);
+}
+
+
 /*============================================================================*
  *                              OpenGL Callbacks                              *
  *============================================================================*/
@@ -133,10 +149,11 @@ _init_gl(Evas_Object *glv)
       "attribute vec2 vertTexCoord;\n"
       "\n"
       "uniform mat4 translation_mtx;\n"
+      "uniform mat4 scaling_mtx;\n"
       "\n"
       "void main()\n"
       "{\n"
-      "   mat4 transform = translation_mtx;\n"
+      "   mat4 transform = scaling_mtx * translation_mtx;\n"
       "   vec4 pos = vec4(vert, 1);\n"
       "   gl_Position = transform * pos;\n"
       "   gl_TexCoord[0].st = vertTexCoord;\n"
@@ -277,6 +294,12 @@ _init_gl(Evas_Object *glv)
                               5 * sizeof(GLfloat), (void *)(3 * sizeof(GLfloat)));
 
    ed->gl.translation_mtx = _prog_uniform_get(ed, "translation_mtx");
+   ed->gl.scaling_mtx = _prog_uniform_get(ed, "scaling_mtx");
+
+   ed->gl.x = -0.5f;
+   ed->gl.y =  0.5f;
+   ed->gl.z = -0.5f;
+
    api->glActiveTexture(GL_TEXTURE0);
 
    ed->gl.init_done = EINA_TRUE;
@@ -306,6 +329,16 @@ _del_gl(Evas_Object *glv)
 static void
 _resize_gl(Evas_Object *glv EINA_UNUSED)
 {
+//   Editor *ed;
+//   int w, h;
+//   Evas_GL_API *api;
+//
+//   ed = _editor_get(glv);
+//   if (EINA_UNLIKELY(ed->gl.init_done == EINA_FALSE)) return;
+//
+//   elm_glview_size_get(glv, &w, &h);
+//   api = ed->gl.api;
+//   api->glViewport(0, 0, w, h);
 }
 
 static void
@@ -316,19 +349,35 @@ _render_gl(Evas_Object *glv)
    GLuint tid;
    int w, h;
    int x, y, k = 0;
+   GLfloat wf, hf;
+   GLfloat scale_x, scale_y;
 
    ed = _editor_get(glv);
    if (EINA_UNLIKELY(ed->gl.init_done == EINA_FALSE)) return;
 
+   /* Determine zooming factor */
    elm_glview_size_get(glv, &w, &h);
+   wf = (GLfloat)w;
+   hf = (GLfloat)h;
+   if (w < h)
+     {
+        scale_x = 1.0f;
+        scale_y = wf / hf;
+     }
+   else
+     {
+        scale_x = hf / wf;
+        scale_y = 1.0f;
+     }
 
    api = ed->gl.api;
-   api->glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
+   api->glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
    api->glClear(GL_COLOR_BUFFER_BIT);
 
    api->glUseProgram(ed->gl.prog);
 
-   _translate(ed, -0.5f, 0.5f, 0.0f);
+   _translate(ed, ed->gl.x, ed->gl.y, ed->gl.z);
+   _scale(ed, scale_x, scale_y, 1.0f);
 
    api->glBindBuffer(GL_ARRAY_BUFFER, ed->gl.vbo);
 

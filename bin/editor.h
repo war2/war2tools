@@ -25,10 +25,15 @@ struct _Editor
       GLuint       fshader;
       GLuint       prog;
       GLint        translation_mtx;
+      GLint        scaling_mtx;
 
       GLfloat     *vertices;
       int          vertices_count;  /* How many vertices */
       int          vertices_size;   /* Allocated size */
+
+      GLfloat      x;
+      GLfloat      y;
+      GLfloat      z;
 
       Eina_Bool    init_done;
    } gl;

@@ -97,7 +97,7 @@ _translate(Editor  *ed,
    const GLfloat mat[16] = {
       1.0f, 0.0f, 0.0f, 0.0f,
       0.0f, 1.0f, 0.0f, 0.0f,
-      0.0f, 0.0f, 1.0f, 1.0f,
+      0.0f, 0.0f, 1.0f, 0.0f,
          x,    y,    z, 1.0f
    };
    ed->gl.api->glUniformMatrix4fv(ed->gl.translation_mtx, 1, GL_FALSE, mat);
@@ -112,7 +112,7 @@ _scale(Editor  *ed,
    const GLfloat mat[16] = {
          x, 0.0f, 0.0f, 0.0f,
       0.0f,    y, 0.0f, 0.0f,
-      0.0f, 0.0f,    z, 1.0f,
+      0.0f, 0.0f,    z, 0.0f,
       0.0f, 0.0f, 0.0f, 1.0f
    };
    ed->gl.api->glUniformMatrix4fv(ed->gl.scaling_mtx, 1, GL_FALSE, mat);
@@ -248,6 +248,7 @@ _init_gl(Evas_Object *glv)
    /* Enable 2D texturing */
    api->glEnable(GL_TEXTURE_2D);
    api->glEnable(GL_BLEND);
+   api->glEnable(GL_DEPTH_TEST);
 
    /* Shaders */
    ed->gl.vshader = _shader_load(api, GL_VERTEX_SHADER, vshader_code);
@@ -298,7 +299,7 @@ _init_gl(Evas_Object *glv)
 
    ed->gl.x = -0.5f;
    ed->gl.y =  0.5f;
-   ed->gl.z = -0.5f;
+   ed->gl.zoom = 1.0f;
 
    api->glActiveTexture(GL_TEXTURE0);
 
@@ -369,14 +370,16 @@ _render_gl(Evas_Object *glv)
         scale_x = hf / wf;
         scale_y = 1.0f;
      }
+   scale_x *= ed->gl.zoom;
+   scale_y *= ed->gl.zoom;
 
    api = ed->gl.api;
    api->glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-   api->glClear(GL_COLOR_BUFFER_BIT);
+   api->glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
    api->glUseProgram(ed->gl.prog);
 
-   _translate(ed, ed->gl.x, ed->gl.y, ed->gl.z);
+   _translate(ed, ed->gl.x, ed->gl.y, 0.0f);
    _scale(ed, scale_x, scale_y, 1.0f);
 
    api->glBindBuffer(GL_ARRAY_BUFFER, ed->gl.vbo);
@@ -395,6 +398,67 @@ _render_gl(Evas_Object *glv)
    api->glUseProgram(0);
    api->glFinish();
 }
+
+/*============================================================================*
+ *                               Event Callbacks                              *
+ *============================================================================*/
+
+#define IS_KEY(keystr) strncmp(ev->key, keystr, sizeof(keystr) - 1) == 0
+static void
+_key_down_cb(void        *data,
+             Evas        *evas  EINA_UNUSED,
+             Evas_Object *glv,
+             void        *event)
+{
+   Evas_Event_Key_Down *ev = event;
+   Editor *ed = data;
+   Eina_Bool refresh = EINA_FALSE;
+
+   if (evas_key_modifier_is_set(ev->modifiers, "Alt"))
+     return;
+
+   if (evas_key_modifier_is_set(ev->modifiers, "Control"))
+     {
+        if (IS_KEY("plus"))
+          {
+             ed->gl.zoom += 0.1f;
+             refresh = EINA_TRUE;
+          }
+        else if (IS_KEY("minus"))
+          {
+             if (ed->gl.zoom > 0.1f)
+               ed->gl.zoom -= 0.1f;
+             refresh = EINA_TRUE;
+          }
+     }
+   else
+     {
+        if (IS_KEY("Up"))
+          {
+             ed->gl.y += 0.01f;
+             refresh = EINA_TRUE;
+          }
+        else if (IS_KEY("Down"))
+          {
+             ed->gl.y -= 0.01f;
+             refresh = EINA_TRUE;
+          }
+        else if (IS_KEY("Left"))
+          {
+             ed->gl.x -= 0.01f;
+             refresh = EINA_TRUE;
+          }
+        else if (IS_KEY("Right"))
+          {
+             ed->gl.x += 0.01f;
+             refresh = EINA_TRUE;
+          }
+     }
+
+   if (refresh)
+     elm_glview_changed_set(glv);
+}
+#undef IS_KEY
 
 
 /*============================================================================*
@@ -438,6 +502,8 @@ grid_add(Editor *ed)
 
    ed->glview = glv;
    ed->gl.api = elm_glview_gl_api_get(glv);
+
+   evas_object_event_callback_add(glv, EVAS_CALLBACK_KEY_DOWN, _key_down_cb, ed);
 
    return EINA_TRUE;
 }

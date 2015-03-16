@@ -33,7 +33,7 @@ struct _Editor
 
       GLfloat      x;
       GLfloat      y;
-      GLfloat      z;
+      GLfloat      zoom;
 
       Eina_Bool    init_done;
    } gl;

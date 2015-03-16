@@ -24,3 +24,5 @@
 /quicklook/*.hmap
 /quicklook/*.ipa
 /quicklook/*.xcuserstate
+/quicklook/Pud.xcodeproj/project.xcworkspace/xcuserdata/
+

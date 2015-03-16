@@ -49,6 +49,7 @@ add_subdirectory(include)
 add_subdirectory(tools)
 add_subdirectory(bin)
 add_subdirectory(quicklook)
+add_subdirectory(data)
 
 add_custom_target(uninstall COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_SOURCE_DIR}/cmake/uninstall.cmake)
 

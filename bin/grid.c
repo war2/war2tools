@@ -81,6 +81,28 @@ _prog_attrib_get(Editor     *ed,
     return ed->gl.api->glGetAttribLocation(ed->gl.prog, var);
 }
 
+static inline GLint
+_prog_uniform_get(Editor     *ed,
+                  const char *var)
+{
+   return ed->gl.api->glGetUniformLocation(ed->gl.prog, var);
+}
+
+static void
+_translate(Editor  *ed,
+           GLfloat  x,
+           GLfloat  y,
+           GLfloat  z)
+{
+   const GLfloat mat[16] = {
+      1.0f, 0.0f, 0.0f, 0.0f,
+      0.0f, 1.0f, 0.0f, 0.0f,
+      0.0f, 0.0f, 1.0f, 1.0f,
+         x,    y,    z, 1.0f
+   };
+   ed->gl.api->glUniformMatrix4fv(ed->gl.translation_mtx, 1, GL_FALSE, mat);
+}
+
 /*============================================================================*
  *                              OpenGL Callbacks                              *
  *============================================================================*/
@@ -110,9 +132,13 @@ _init_gl(Evas_Object *glv)
       "attribute vec3 vert;\n"
       "attribute vec2 vertTexCoord;\n"
       "\n"
+      "uniform mat4 translation_mtx;\n"
+      "\n"
       "void main()\n"
       "{\n"
-      "   gl_Position = vec4(vert, 1);\n"
+      "   mat4 transform = translation_mtx;\n"
+      "   vec4 pos = vec4(vert, 1);\n"
+      "   gl_Position = transform * pos;\n"
       "   gl_TexCoord[0].st = vertTexCoord;\n"
       "}\n";
 
@@ -250,6 +276,9 @@ _init_gl(Evas_Object *glv)
    api->glVertexAttribPointer(status, 3, GL_FLOAT, GL_FALSE,
                               5 * sizeof(GLfloat), (void *)(3 * sizeof(GLfloat)));
 
+   ed->gl.translation_mtx = _prog_uniform_get(ed, "translation_mtx");
+   api->glActiveTexture(GL_TEXTURE0);
+
    ed->gl.init_done = EINA_TRUE;
 }
 
@@ -261,7 +290,7 @@ _del_gl(Evas_Object *glv)
 
    ed = _editor_get(glv);
    EINA_SAFETY_ON_NULL_RETURN(ed);
-   if (ed->gl.init_done == EINA_FALSE) return;
+   if (EINA_UNLIKELY(ed->gl.init_done == EINA_FALSE)) return;
 
    api = ed->gl.api;
 
@@ -289,16 +318,18 @@ _render_gl(Evas_Object *glv)
    int x, y, k = 0;
 
    ed = _editor_get(glv);
-   EINA_SAFETY_ON_NULL_RETURN(ed);
-   api = ed->gl.api;
+   if (EINA_UNLIKELY(ed->gl.init_done == EINA_FALSE)) return;
 
    elm_glview_size_get(glv, &w, &h);
 
+   api = ed->gl.api;
    api->glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
    api->glClear(GL_COLOR_BUFFER_BIT);
 
    api->glUseProgram(ed->gl.prog);
-   api->glActiveTexture(GL_TEXTURE0);
+
+   _translate(ed, -0.5f, 0.5f, 0.0f);
+
    api->glBindBuffer(GL_ARRAY_BUFFER, ed->gl.vbo);
 
    for (y = 0; y < ed->map_h; ++y)
@@ -312,10 +343,7 @@ _render_gl(Evas_Object *glv)
           }
      }
 
-
-
    api->glUseProgram(0);
-
    api->glFinish();
 }
 

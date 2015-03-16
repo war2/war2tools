@@ -24,6 +24,7 @@ struct _Editor
       GLuint       vshader;
       GLuint       fshader;
       GLuint       prog;
+      GLint        translation_mtx;
 
       GLfloat     *vertices;
       int          vertices_count;  /* How many vertices */

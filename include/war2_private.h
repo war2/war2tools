@@ -1,3 +1,10 @@
+/*
+ * war2_private.h
+ * libwar2
+ *
+ * Copyright (c) 2014 Jean Guyomarc'h
+ */
+
 #ifndef _WAR2_PRIVATE_H_
 #define _WAR2_PRIVATE_H_
 

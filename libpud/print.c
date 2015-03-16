@@ -1,3 +1,10 @@
+/*
+ * print.c
+ * libpud
+ *
+ * Copyright (c) 2014 Jean Guyomarc'h
+ */
+
 #include "pud_private.h"
 
 /* It is such a heavy function I put it in a single file */

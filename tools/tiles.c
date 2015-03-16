@@ -1,3 +1,10 @@
+/*
+ * tiles.c
+ * tiles
+ *
+ * Copyright (c) 2014 Jean Guyomarc'h
+ */
+
 #include "ppm.h"
 #include <pud.h>
 

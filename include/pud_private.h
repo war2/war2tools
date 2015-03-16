@@ -1,3 +1,10 @@
+/*
+ * pud_private.h
+ * libpud
+ *
+ * Copyright (c) 2014 Jean Guyomarc'h
+ */
+
 #ifndef _PRIVATE_H_
 #define _PRIVATE_H_
 

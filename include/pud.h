@@ -1,3 +1,10 @@
+/*
+ * pud.h
+ * libpud
+ *
+ * Copyright (c) 2014 -2015 Jean Guyomarc'h
+ */
+
 #ifndef _PUD_H_
 #define _PUD_H_
 #ifdef __cplusplus

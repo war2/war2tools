@@ -1,3 +1,10 @@
+/*
+ * pud.c
+ * libpud
+ *
+ * Copyright (c) 2014 Jean Guyomarc'h
+ */
+
 #include "pud_private.h"
 
 static const char * const _pud_sections[] =

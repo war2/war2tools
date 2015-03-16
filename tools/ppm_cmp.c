@@ -1,3 +1,10 @@
+/*
+ * ppm_cmp.c
+ * ppm_cmp
+ *
+ * Copyright (c) 2014 Jean Guyomarc'h
+ */
+
 #include "ppm.h"
 
 static void

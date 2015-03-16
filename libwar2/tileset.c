@@ -1,3 +1,10 @@
+/*
+ * tileset.c
+ * libwar2
+ *
+ * Copyright (c) 2014 Jean Guyomarc'h
+ */
+
 #include "war2_private.h"
 
 static Pud_Bool

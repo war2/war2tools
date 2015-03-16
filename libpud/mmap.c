@@ -1,3 +1,10 @@
+/*
+ * mmap.c
+ * libpud
+ *
+ * Copyright (c) 2014 Jean Guyomarc'h
+ */
+
 #include "pud_private.h"
 
 #if defined(__linux__) || (defined(__APPLE__) && defined(__MACH__))

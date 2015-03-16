@@ -1,3 +1,9 @@
+/*
+ * ppm.h
+ *
+ * Copyright (c) 2014 Jean Guyomarc'h
+ */
+
 #ifndef _PPM_H_
 #define _PPM_H_
 

@@ -1,3 +1,10 @@
+/*
+ * tilemap.c
+ * tilemap
+ *
+ * Copyright (c) 2014 Jean Guyomarc'h
+ */
+
 #include <pud.h>
 #include "ppm.h"
 #include "../include/debug.h"

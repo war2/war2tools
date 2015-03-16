@@ -1,3 +1,10 @@
+/*
+ * defaults_gen.c
+ * defaults_gen
+ *
+ * Copyright (c) 2014 Jean Guyomarc'h
+ */
+
 #include <pud.h>
 
 #define W(m, ...) fprintf(stdout, m "\n", ## __VA_ARGS__)

@@ -1,3 +1,10 @@
+/*
+ * pudutils.h
+ * pud
+ *
+ * Copyright (c) 2014 Jean Guyomarc'h
+ */
+
 #ifndef _PUDUTILS_H_
 #define _PUDUTILS_H_
 

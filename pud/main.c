@@ -1,3 +1,10 @@
+/*
+ * main.c
+ * pud
+ *
+ * Copyright (c) 2014 Jean Guyomarc'h
+ */
+
 #include "pudutils.h"
 
 static const struct option _options[] =

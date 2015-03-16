@@ -1,3 +1,9 @@
+/*
+ * ppm.c
+ *
+ * Copyright (c) 2014 Jean Guyomarc'h
+ */
+
 #include "ppm.h"
 
 static inline int

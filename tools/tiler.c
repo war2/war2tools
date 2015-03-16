@@ -1,3 +1,10 @@
+/*
+ * tiler.c
+ * tiler
+ *
+ * Copyright (c) 2014 Jean Guyomarc'h
+ */
+
 #include <pud.h>
 #include "../include/debug.h"
 

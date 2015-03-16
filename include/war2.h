@@ -1,3 +1,10 @@
+/*
+ * war2.h
+ * libwar2
+ *
+ * Copyright (c) 2014 - 2015 Jean Guyomarc'h
+ */
+
 #ifndef _WAR2_H_
 #define _WAR2_H_
 #ifdef __cplusplus

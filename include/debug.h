@@ -1,3 +1,9 @@
+/*
+ * debug.h
+ *
+ * Copyright (c) 2014 Jean Guyomarc'h
+ */
+
 #ifndef _DEBUG_H_
 #define _DEBUG_H_
 

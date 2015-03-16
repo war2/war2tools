@@ -1,3 +1,10 @@
+/*
+ * defaults.c
+ * libpud
+ *
+ * Copyright (c) 2014 Jean Guyomarc'h
+ */
+
 #include "pud_private.h"
 
 static void _udta_defaults_set(Pud *pud);

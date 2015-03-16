@@ -1,3 +1,10 @@
+/*
+ * jpeg.c
+ * pud
+ *
+ * Copyright (c) 2014 Jean Guyomarc'h
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <jpeglib.h>

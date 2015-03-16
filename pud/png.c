@@ -1,3 +1,10 @@
+/*
+ * png.c
+ * pud
+ *
+ * Copyright (c) 2014 Jean Guyomarc'h
+ */
+
 #include "pud_private.h"
 #include <png.h>
 

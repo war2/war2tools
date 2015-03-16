@@ -1,3 +1,10 @@
+/*
+ * extract.c
+ * extract
+ *
+ * Copyright (c) 2014 Jean Guyomarc'h
+ */
+
 #include <war2.h>
 #include "../include/debug.h"
 

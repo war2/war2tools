@@ -89,6 +89,10 @@ Those binaries are mostly helpers to create the libraries.
 License
 =======
 
+All resources (sprites, tiles, .PUD, .war) are property of Blizzard Entertainment.
+The following license applies only to all source files.
+
+
 The MIT License (MIT)
 
 Copyright (c) 2014 - 2015 Jean Guyomarc'h

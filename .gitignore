@@ -25,4 +25,4 @@
 /quicklook/*.ipa
 /quicklook/*.xcuserstate
 /quicklook/Pud.xcodeproj/project.xcworkspace/xcuserdata/
-
+/quicklook/Pud.qlgenerator

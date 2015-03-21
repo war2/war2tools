@@ -12,38 +12,15 @@ struct _Editor
    Evas_Object  *menu;
    Evas_Object  *inwin;
    Evas_Object  *mainbox;
-   /*Evas_Object  *scroller;*/
+   Evas_Object  *scroller;
    Grid_Cell   **cells;
 
-   Evas_Object  *glview;
+   Evas_Object   *bitmap;
+   unsigned char *pixels;
 
-   /* This part is managed by grid.c */
-   struct {
-      Evas_GL_API *api;
-      GLuint       vbo;
-      GLuint       vshader;
-      GLuint       fshader;
-      GLuint       prog;
-      GLint        translation_mtx;
-      GLint        scaling_mtx;
-
-      GLfloat     *vertices;
-      int          vertices_count;  /* How many vertices */
-      int          vertices_size;   /* Allocated size */
-
-      GLfloat      x;
-      GLfloat      y;
-      GLfloat      zoom;
-
-      GLfloat      zoom_step;
-
-      Eina_Bool    init_done;
-   } gl;
-
-   struct {
-      Texture_Dictionary  dict;
-      Eina_Hash          *hash;
-   } tex;
+   Eet_File     *textures_src;
+   Eina_Hash    *textures;
+   Texture_Dictionary tex_dict;
 
    Elm_Object_Item *main_sel[4];
    Elm_Object_Item *hmn_sel[4];

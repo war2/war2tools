@@ -1,23 +1,20 @@
 #include "war2edit.h"
 
-static Eet_File *_ef = NULL;
-
-GLuint
-texture_load(Evas_GL_API  *api,
+void *
+texture_load(Eet_File     *src,
              unsigned int  key)
 {
    /* 4 channels (rgba) of 1 byte each */
    const int expected_size = TEXTURE_WIDTH * TEXTURE_HEIGHT * 4 * sizeof(unsigned char);
-   GLuint tid;
    void *mem;
-   int size;
    char key_str[8];
+   int size;
 
    snprintf(key_str, sizeof(key_str), "%u", key);
 
    /* Get raw data (uncompressed). The image is pre-flipped vertically. */
-   mem = eet_read(_ef, key_str, &size);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(mem, 0);
+   mem = eet_read(src, key_str, &size);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(mem, NULL);
 
    /* Check the size */
    if (EINA_UNLIKELY(size != expected_size))
@@ -25,27 +22,18 @@ texture_load(Evas_GL_API  *api,
         CRI("Image raw data was loaded with size [%i], expected [%i].",
             size, expected_size);
         free(mem);
-        return 0;
+        return NULL;
      }
 
-   /* Configure texture */
-   api->glGenTextures(1, &tid);
-   api->glBindTexture(GL_TEXTURE_2D, tid);
-   api->glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-   api->glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-   api->glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-   api->glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-   api->glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, TEXTURE_WIDTH, TEXTURE_HEIGHT,
-                     0, GL_RGBA, GL_UNSIGNED_BYTE, mem);
-   api->glBindTexture(GL_TEXTURE_2D, 0);
-   DBG("Loaded texture [%s] with ID [%i]", key_str, tid);
+   DBG("Loaded texture [%s] at <%p>", key_str, mem);
 
-   return tid;
+   return mem;
 }
 
-Eina_Bool
-texture_tileset_select(Pud_Era era)
+Eet_File *
+texture_tileset_open(Pud_Era era)
 {
+   Eet_File *ef;
    const char *file;
 
    switch (era)
@@ -56,11 +44,14 @@ texture_tileset_select(Pud_Era era)
       case PUD_ERA_SWAMP:     file = "../data/tiles/eet/swamp.eet";     break;
      }
 
-   if (_ef) eet_close(_ef);
-   _ef = eet_open(file, EET_FILE_MODE_READ);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(_ef, EINA_FALSE);
+   ef = eet_open(file, EET_FILE_MODE_READ);
+   return ef;
+}
 
-   return EINA_TRUE;
+void
+texture_tileset_close(Eet_File *ef)
+{
+   eet_close(ef);
 }
 
 Eina_Bool
@@ -72,11 +63,6 @@ texture_init(void)
 void
 texture_shutdown(void)
 {
-   if (_ef)
-     {
-        eet_close(_ef);
-        _ef = NULL;
-     }
 }
 
 #define TD_FILL(td,d2,d3,d4,d5,d6,d7,d8,d9,d10,d11,d12,d13,d14,d15,d16,d17,d18,d19,d20,d21,d22,d23) \
@@ -140,9 +126,7 @@ texture_dictionary_init(Texture_Dictionary *td,
 static void
 _hash_free_cb(void *data)
 {
-   GLuint *tid = data;
-   // FIXME call glDeleteTextures()
-   free(tid);
+   free(data);
 }
 
 Eina_Hash *
@@ -155,53 +139,47 @@ void
 texture_hash_del(Editor *ed)
 {
    EINA_SAFETY_ON_NULL_RETURN(ed);
-   eina_hash_free(ed->tex.hash);
+   eina_hash_free(ed->textures);
 }
 
-GLuint
+unsigned char *
 texture_get(Editor       *ed,
             unsigned int  key)
 {
-   EINA_SAFETY_ON_TRUE_RETURN_VAL((key < (unsigned int )texture_dictionary_min(ed)) ||
-                                  (key > (unsigned int )texture_dictionary_max(ed)), 0);
+   EINA_SAFETY_ON_TRUE_RETURN_VAL(((int)key < texture_dictionary_min(ed)) ||
+                                  ((int)key > texture_dictionary_max(ed)),
+                                  NULL);
 
-   GLuint tid;
-   GLuint *tid_ptr;
    Eina_Bool chk;
+   unsigned char *tex;
 
-   tid_ptr = eina_hash_find(ed->tex.hash, &key);
-   if (tid_ptr == NULL)
+   tex = eina_hash_find(ed->textures, &key);
+   if (tex == NULL)
      {
-        tid_ptr = malloc(sizeof(GLuint));
-        EINA_SAFETY_ON_NULL_RETURN_VAL(tid_ptr, 0);
-
-        tid = texture_load(ed->gl.api, key);
-        if (EINA_UNLIKELY(tid == 0))
+        tex = texture_load(ed->textures_src, key);
+        if (EINA_UNLIKELY(tex == NULL))
           {
              ERR("Failed to load texture for key [%u]", key);
-             free(tid_ptr);
-             return 0;
+             return NULL;
           }
-        *tid_ptr = tid;
-        chk = eina_hash_add(ed->tex.hash, &key, tid_ptr);
+        chk = eina_hash_add(ed->textures, &key, tex);
         if (chk == EINA_FALSE)
           {
-             ERR("Failed to add texture id [%u] to hash", tid);
-             free(tid_ptr);
-             return 0;
+             ERR("Failed to add texture <%p> to hash", tex);
+             free(tex);
+             return NULL;
           }
-        DBG("Access key: [%u] (not yet registered). TID = %u", key, tid);
-        return tid;
+        DBG("Access key: [%u] (not yet registered). TEX = <%p>", key, tex);
+        return tex;
      }
    else
      {
-        tid = *tid_ptr;
-        DBG("Access key: [%u] (already registered). TID = %u", key, tid);
-        return tid;
+        DBG("Access key: [%u] (already registered). TEX = <%p>", key, tex);
+        return tex;
      }
 }
 
-GLuint
+unsigned char *
 texture_tile_access(Editor       *ed,
                     unsigned int  x,
                     unsigned int  y)
@@ -215,12 +193,12 @@ texture_tile_access(Editor       *ed,
 int
 texture_dictionary_min(Editor *ed)
 {
-   return ed->tex.dict.hwalls.begin;
+   return ed->tex_dict.hwalls.begin;
 }
 
 int
 texture_dictionary_max(Editor *ed)
 {
-   return ed->tex.dict.constr_x.end;
+   return ed->tex_dict.constr_x.end;
 }
 

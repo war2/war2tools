@@ -12,8 +12,7 @@ struct _Grid_Cell
 };
 
 
-Eina_Bool grid_add(Editor *ed);
-void grid_del(Editor *ed);
+Eina_Bool bitmap_add(Editor *ed);
 
 #endif /* ! _GRID_H_ */
 

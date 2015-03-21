@@ -13,7 +13,7 @@ typedef struct _Texture_Dictionary Texture_Dictionary;
 
 #include "log.h"
 #include "texture.h"
-#include "grid.h"
+#include "bitmap.h"
 #include "editor.h"
 
 #endif /* ! _WAR2EDIT_H_ */

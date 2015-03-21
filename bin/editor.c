@@ -139,14 +139,14 @@ _mc_create_cb(void        *data,
    editor_mainconfig_hide(ed);
    pud_dimensions_to_size(ed->size, &(ed->map_w), &(ed->map_h));
 
-   texture_tileset_select(ed->era);
-   texture_dictionary_init(&(ed->tex.dict), ed->era);
-   ed->tex.hash = texture_hash_new();
+   ed->textures_src = texture_tileset_open(ed->era);
+   texture_dictionary_init(&(ed->tex_dict), ed->era);
+   ed->textures = texture_hash_new();
 
-   chk = grid_add(ed);
+   chk = bitmap_add(ed);
    EINA_SAFETY_ON_FALSE_RETURN(chk);
-   elm_box_pack_end(ed->mainbox, ed->glview);
-   evas_object_show(ed->glview);
+   elm_object_content_set(ed->scroller, ed->bitmap);
+   evas_object_show(ed->bitmap);
 }
 
 static void
@@ -689,7 +689,6 @@ editor_new(void)
    itm = ed->main_sel[2] = elm_menu_item_add(ed->menu, NULL, NULL, "Players", NULL, NULL);
    itm = ed->main_sel[3] = elm_menu_item_add(ed->menu, NULL, NULL, "Help", NULL, NULL);
 
-#if 0
    /* Scroller */
    ed->scroller = elm_scroller_add(ed->win);
    EINA_SAFETY_ON_NULL_GOTO(ed->scroller, err_win_del);
@@ -700,7 +699,6 @@ editor_new(void)
    elm_box_pack_end(o, ed->scroller);
    evas_object_show(ed->scroller);
    elm_scroller_page_relative_set(ed->scroller, 0, 1);
-#endif
 
    /* Mainconfig: get user input for various mainstream parameters */
    _mainconfig_create(ed);

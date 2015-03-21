@@ -26,6 +26,8 @@ find_package(PkgConfig)
 find_package(JPEG)
 find_package(PNG)
 
+include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/eolian_include_flags.cmake)
+
 set(PUD_LIBRARIES libpud)
 set(PUD_INCLUDES_DIRS "")
 

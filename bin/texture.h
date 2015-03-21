@@ -26,7 +26,6 @@ Eina_Bool texture_init(void);
 void texture_shutdown(void);
 
 Eet_File *texture_tileset_open(Pud_Era era);
-void texture_tileset_close(Eet_File *ef);
 
 void *texture_load(Eet_File *src, unsigned int key);
 unsigned char *texture_tile_access(Editor *ed, unsigned int x, unsigned int y);
@@ -37,7 +36,6 @@ int texture_dictionary_min(Editor *ed);
 int texture_dictionary_max(Editor *ed);
 
 Eina_Hash *texture_hash_new(void);
-void texture_hash_del(Editor *ed);
 
 #endif /* ! _TEXTURE_H_ */
 

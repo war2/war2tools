@@ -1,16 +1,5 @@
 #include "war2edit.h"
 
-static const unsigned char _1x1_png[] =
-{
-   0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a, 0x00, 0x00, 0x00, 0x0d,
-   0x49, 0x48, 0x44, 0x52, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x01,
-   0x08, 0x02, 0x00, 0x00, 0x00, 0x90, 0x77, 0x53, 0xde, 0x00, 0x00, 0x00,
-   0x0f, 0x49, 0x44, 0x41, 0x54, 0x08, 0x1d, 0x01, 0x04, 0x00, 0xfb, 0xff,
-   0x00, 0xff, 0xff, 0xff, 0x05, 0xfe, 0x02, 0xfe, 0x03, 0x7d, 0x19, 0xc6,
-   0x00, 0x00, 0x00, 0x00, 0x49, 0x45, 0x4e, 0x44, 0xae, 0x42, 0x60, 0x82
-};
-
-
 /*============================================================================*
  *                                 Private API                                *
  *============================================================================*/
@@ -101,6 +90,7 @@ fail:
 //}
 #undef IS_KEY
 
+#if 0
 static void
 _bitmap_image_push(unsigned char * restrict bmp,
                    unsigned char * restrict img,
@@ -161,6 +151,7 @@ _bitmap_tile_set(Editor       *ed,
 
    ed->cells[y][x].tile = key;
 }
+#endif
 
 /*============================================================================*
  *                                 Public API                                 *
@@ -169,73 +160,42 @@ _bitmap_tile_set(Editor       *ed,
 Eina_Bool
 bitmap_add(Editor *ed)
 {
+   EINA_SAFETY_ON_NULL_RETURN_VAL(ed, EINA_FALSE);
+
    const int width = ed->map_w * 32;
    const int height = ed->map_h * 32;
-#if 0
-   const int min = texture_dictionary_min(ed);
-   const int max = texture_dictionary_max(ed);
-   Evas_Object *bmp;
-   Evas_Object *img;
-   void *data;
-   int x, y;
+   const int size = width * height * 4 * sizeof(unsigned char);
+   Evas *e;
+   Evas_Object *obj;
+   unsigned char *mem;
 
-   img = elm_image_add(ed->win);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(img, EINA_FALSE);
+   e = evas_object_evas_get(ed->win);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(e, EINA_FALSE);
+
+   obj = evas_object_image_filled_add(e);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(obj, EINA_FALSE);
+
+   mem = calloc(size, sizeof(unsigned char));
+   EINA_SAFETY_ON_NULL_RETURN_VAL(mem, EINA_FALSE);
+
    eo_do(
-      img,
-      evas_obj_size_hint_align_set(EVAS_HINT_FILL, EVAS_HINT_FILL),
+      obj,
+      evas_obj_image_size_set(width, height),
       evas_obj_size_hint_weight_set(EVAS_HINT_EXPAND, EVAS_HINT_EXPAND),
-      elm_obj_image_aspect_fixed_set(EINA_TRUE),
+      evas_obj_size_hint_align_set(0.0, 0.0),
       evas_obj_size_hint_min_set(width, height),
       evas_obj_size_hint_max_set(width, height),
-      elm_obj_image_memfile_set(_1x1_png, sizeof(_1x1_png), "png", NULL)
+      evas_obj_image_data_set(mem)
    );
-   ed->bitmap = img;
 
-   bmp = elm_image_object_get(img);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(bmp, EINA_FALSE);
+   memset(mem, 255, size);
 
-   ed->pixels = evas_object_image_data_get(bmp, EINA_TRUE);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(ed->pixels, EINA_FALSE);
-
-//   memset(ed->pixels, 0, 1);
-
-
-
+   ed->bitmap = obj;
+   ed->pixels = mem;
 
    ed->cells = _grid_cells_new(ed);
    EINA_SAFETY_ON_NULL_RETURN_VAL(ed->cells, EINA_FALSE);
 
-   for (y = 0; y < ed->map_h; ++y)
-     {
-        for (x = 0; x < ed->map_w; ++x)
-          {
-         //    _bitmap_tile_set(ed, x, y, (rand() % (max - min + 1)) + min);
-          }
-     }
-
-#else
-
-   Evas_Object *img;
-   Evas *e;
-
-   e = evas_object_evas_get(ed->win);
-   img = evas_object_image_add(e);
-   eo_do(
-      img,
-      evas_obj_size_hint_align_set(EVAS_HINT_FILL, EVAS_HINT_FILL),
-      evas_obj_size_hint_weight_set(EVAS_HINT_EXPAND, EVAS_HINT_EXPAND),
-      evas_obj_size_hint_min_set(width, height),
-      evas_obj_size_hint_max_set(width, height)
-   );
-//   evas_object_image_memfile_set(img, (void *)_1x1_png, sizeof(_1x1_png), "png", NULL);
-   evas_object_image_file_set(img, "/Users/Jean/Desktop/efl.png", NULL);
-   ed->bitmap = img;
-
-#endif
-
-
    return EINA_TRUE;
 }
-
 

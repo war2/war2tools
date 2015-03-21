@@ -49,7 +49,6 @@ struct _Editor
 Eina_Bool editor_init(void);
 void editor_shutdown(void);
 void editor_free(Editor *ed);
-void editor_close(Editor *ed);
 Editor *editor_new(void);
 void editor_mainconfig_show(Editor *ed);
 void editor_mainconfig_hide(Editor *ed);

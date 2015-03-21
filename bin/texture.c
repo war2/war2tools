@@ -48,12 +48,6 @@ texture_tileset_open(Pud_Era era)
    return ef;
 }
 
-void
-texture_tileset_close(Eet_File *ef)
-{
-   eet_close(ef);
-}
-
 Eina_Bool
 texture_init(void)
 {
@@ -133,13 +127,6 @@ Eina_Hash *
 texture_hash_new(void)
 {
    return eina_hash_int32_new(_hash_free_cb);
-}
-
-void
-texture_hash_del(Editor *ed)
-{
-   EINA_SAFETY_ON_NULL_RETURN(ed);
-   eina_hash_free(ed->textures);
 }
 
 unsigned char *

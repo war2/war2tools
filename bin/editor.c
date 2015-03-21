@@ -1,6 +1,6 @@
 #include "war2edit.h"
 
-static Eina_List *_windows;
+static Eina_List *_editors = NULL;
 
 /*============================================================================*
  *                                  Callbacks                                 *
@@ -12,7 +12,7 @@ _win_del_cb(void        *data,
             void        *event EINA_UNUSED)
 {
    Editor *ed = data;
-   editor_close(ed);
+   editor_free(ed);
 }
 
 static void
@@ -61,7 +61,7 @@ _editor_for_menu(Evas_Object *menu)
    Eina_List *l;
    Editor *e;
 
-   EINA_LIST_FOREACH(_windows, l, e)
+   EINA_LIST_FOREACH(_editors, l, e)
       if (e->menu == menu)
         return e;
 
@@ -76,6 +76,7 @@ _radio_cb(void        *data,
    struct _menu_item *mi = data;
    Editor *ed;
 
+   // FIXME use radio_group instead of this hidious thing
    ed = _editor_for_menu(obj);
    EINA_SAFETY_ON_NULL_RETURN(ed);
 
@@ -124,7 +125,6 @@ _mc_cancel_cb(void        *data,
               void        *evt  EINA_UNUSED)
 {
    Editor *ed = data;
-   editor_close(ed);
    editor_free(ed);
 }
 
@@ -407,29 +407,23 @@ editor_shutdown(void)
 {
    Editor *ed;
 
-   EINA_LIST_FREE(_windows, ed)
+   EINA_LIST_FREE(_editors, ed)
       editor_free(ed);
-   _windows = NULL;
-}
-
-void
-editor_close(Editor *ed)
-{
-   _windows = eina_list_remove(_windows, ed);
-
-   /* Set the window to NULL as a hint for editor_free() */
-   evas_object_del(ed->win);
-   ed->win = NULL;
 }
 
 void
 editor_free(Editor *ed)
 {
-   if (!ed) return;
+   EINA_SAFETY_ON_NULL_RETURN(ed);
 
-   if (ed->win != NULL)
-     editor_close(ed);
+   _editors = eina_list_remove(_editors, ed);
+   if (ed->textures) eina_hash_free(ed->textures);
+   if (ed->textures_src) eet_close(ed->textures_src);
+   free(ed->pixels);
+   if (ed->cells) free(ed->cells[0]);
+   free(ed->cells);
    pud_close(ed->pud);
+   evas_object_del(ed->win);
    free(ed);
 }
 
@@ -518,9 +512,9 @@ editor_new(void)
    EINA_SAFETY_ON_NULL_GOTO(ed, err_ret);
 
    /* Create window's title */
-   snprintf(wins, sizeof(wins), " - %i", eina_list_count(_windows));
+   snprintf(wins, sizeof(wins), " - %i", eina_list_count(_editors));
    snprintf(title, sizeof(title), "Untitled%s",
-            (eina_list_count(_windows) == 0) ? "" : wins);
+            (eina_list_count(_editors) == 0) ? "" : wins);
 
    /* Create window and set callbacks */
    ed->win = elm_win_util_standard_add("win-editor", title);
@@ -714,7 +708,7 @@ editor_new(void)
    editor_mainconfig_show(ed);
 
    /* Add to list of editor windows */
-   _windows = eina_list_append(_windows, ed);
+   _editors = eina_list_append(_editors, ed);
 
    return ed;
 

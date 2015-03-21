@@ -42,6 +42,8 @@ struct _Editor
    Pud_Dimensions size;
    int map_w;
    int map_h;
+   int bitmap_w;
+   int bitmap_h;
    Pud_Era era;
    Eina_Bool has_extension;
 };

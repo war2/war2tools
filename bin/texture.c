@@ -45,6 +45,9 @@ texture_tileset_open(Pud_Era era)
      }
 
    ef = eet_open(file, EET_FILE_MODE_READ);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(ef, NULL);
+   DBG("Open tileset file [%s]", file);
+
    return ef;
 }
 

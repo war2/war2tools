@@ -90,68 +90,46 @@ fail:
 //}
 #undef IS_KEY
 
-#if 0
 static void
-_bitmap_image_push(unsigned char * restrict bmp,
+_bitmap_image_push(Editor        *          ed,
                    unsigned char * restrict img,
                    int                      at_x,
                    int                      at_y,
                    int                      img_w,
-                   int                      img_h,
-                   int                      bmp_w,
-                   int                      bmp_h)
+                   int                      img_h)
 {
-   int y_img, y_bmp;
+   const int bmp_w = ed->bitmap_w * 4 * sizeof(unsigned char);
+   const int bmp_h = ed->bitmap_h * 4 * sizeof(unsigned char);
+   const int bytes_w = img_w * 4 * sizeof(unsigned char);
+   int img_y, bmp_y;
+   unsigned char *restrict bmp = ed->pixels;
 
-   for (y_img = 0, y_bmp = at_y; (y_img < img_h) || (y_bmp < bmp_h); ++y_img, ++y_bmp)
-     memcpy(&(bmp[(y_bmp * bmp_w) + at_x]), &(img[y_img * img_w]), img_w);
+   for (img_y = 0, bmp_y = at_y;
+        (img_y < img_h) && (bmp_y < bmp_h);
+        ++img_y, ++bmp_y)
+     {
+        memcpy(&(bmp[(bmp_y * bmp_w) + at_x]),
+               &(img[img_y * bytes_w]),
+               bytes_w);
+     }
+   evas_object_image_data_update_add(ed->bitmap, at_x, at_y, img_w, img_h);
 }
 
-static inline unsigned char *
-_bitmap_data_get(Editor *ed)
+void
+bitmap_tile_set(Editor * restrict ed,
+                int               x,
+                int               y,
+                unsigned int      key)
 {
-   return evas_object_image_data_get(ed->bitmap, EINA_TRUE);
-}
-
-static inline void
-_bitmap_image_update(Editor *ed,
-                     int     x,
-                     int     y,
-                     int     w,
-                     int     h)
-{
-   evas_object_image_data_update_add(ed->bitmap, x, y, w, h);
-}
-
-static inline void
-_bitmap_tile_update(Editor *ed,
-                    int     x,
-                    int     y)
-{
-   _bitmap_image_update(ed, x, y, 32, 32);
-}
-
-static inline void
-_bitmap_tile_set(Editor       *ed,
-                 int           x,
-                 int           y,
-                 unsigned int  key)
-{
-   unsigned char *tex, *bmp;
-   const int size = ed->map_w * 32;
+   unsigned char *tex;
 
    tex = texture_get(ed, key);
    EINA_SAFETY_ON_NULL_RETURN(tex);
 
-   bmp = _bitmap_data_get(ed);
-   EINA_SAFETY_ON_NULL_RETURN(bmp);
-
-   _bitmap_image_push(bmp, tex, x, y, 32, 32, size, size);
-   _bitmap_tile_update(ed, x, y);
-
+   _bitmap_image_push(ed, tex, x, y, TEXTURE_WIDTH, TEXTURE_HEIGHT);
    ed->cells[y][x].tile = key;
 }
-#endif
+
 
 /*============================================================================*
  *                                 Public API                                 *
@@ -162,8 +140,8 @@ bitmap_add(Editor *ed)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(ed, EINA_FALSE);
 
-   const int width = ed->map_w * 32;
-   const int height = ed->map_h * 32;
+   const int width = ed->map_w * TEXTURE_WIDTH;
+   const int height = ed->map_h * TEXTURE_HEIGHT;
    const int size = width * height * 4 * sizeof(unsigned char);
    Evas *e;
    Evas_Object *obj;
@@ -188,13 +166,15 @@ bitmap_add(Editor *ed)
       evas_obj_image_data_set(mem)
    );
 
-   memset(mem, 255, size);
-
    ed->bitmap = obj;
    ed->pixels = mem;
+   ed->bitmap_w = width;
+   ed->bitmap_h = height;
 
    ed->cells = _grid_cells_new(ed);
    EINA_SAFETY_ON_NULL_RETURN_VAL(ed->cells, EINA_FALSE);
+
+   bitmap_tile_set(ed, 2, 5, 165);
 
    return EINA_TRUE;
 }

@@ -118,6 +118,19 @@ _scale(Editor  *ed,
    ed->gl.api->glUniformMatrix4fv(ed->gl.scaling_mtx, 1, GL_FALSE, mat);
 }
 
+static void
+_matrix_init(Evas_GL_API *api,
+             GLint        mat)
+{
+   const GLfloat eye[16] = {
+      1.0f, 0.0f, 0.0f, 0.0f,
+      0.0f, 1.0f, 0.0f, 0.0f,
+      0.0f, 0.0f, 1.0f, 0.0f,
+      0.0f, 0.0f, 0.0f, 1.0f
+   };
+   api->glUniformMatrix4fv(mat, 1, GL_FALSE, eye);
+}
+
 
 /*============================================================================*
  *                              OpenGL Callbacks                              *
@@ -297,9 +310,17 @@ _init_gl(Evas_Object *glv)
    ed->gl.translation_mtx = _prog_uniform_get(ed, "translation_mtx");
    ed->gl.scaling_mtx = _prog_uniform_get(ed, "scaling_mtx");
 
+   /* Init matrices */
+   api->glUseProgram(ed->gl.prog);
+   _matrix_init(api, ed->gl.translation_mtx);
+   _matrix_init(api, ed->gl.scaling_mtx);
+
+   /* Start by centering the map */
    ed->gl.x = -0.5f;
-   ed->gl.y =  0.5f;
-   ed->gl.zoom = 1.0f;
+   ed->gl.y = +0.5f;
+
+   ed->gl.zoom_step = (GLfloat)(ed->map_w) / 320.0f;
+   ed->gl.zoom = 1.0f;//ed->gl.zoom_step;
 
    api->glActiveTexture(GL_TEXTURE0);
 
@@ -328,18 +349,18 @@ _del_gl(Evas_Object *glv)
 }
 
 static void
-_resize_gl(Evas_Object *glv EINA_UNUSED)
+_resize_gl(Evas_Object *glv)
 {
-//   Editor *ed;
-//   int w, h;
-//   Evas_GL_API *api;
-//
-//   ed = _editor_get(glv);
-//   if (EINA_UNLIKELY(ed->gl.init_done == EINA_FALSE)) return;
-//
-//   elm_glview_size_get(glv, &w, &h);
-//   api = ed->gl.api;
-//   api->glViewport(0, 0, w, h);
+   Editor *ed;
+   int w, h;
+   Evas_GL_API *api;
+
+   ed = _editor_get(glv);
+   if (EINA_UNLIKELY(ed->gl.init_done == EINA_FALSE)) return;
+
+   elm_glview_size_get(glv, &w, &h);
+   api = ed->gl.api;
+
 }
 
 static void
@@ -360,12 +381,12 @@ _render_gl(Evas_Object *glv)
    elm_glview_size_get(glv, &w, &h);
    wf = (GLfloat)w;
    hf = (GLfloat)h;
-   if (w < h)
+   if (w < h) /* Portrait */
      {
         scale_x = 1.0f;
         scale_y = wf / hf;
      }
-   else
+   else /* Landscape */
      {
         scale_x = hf / wf;
         scale_y = 1.0f;
@@ -376,8 +397,6 @@ _render_gl(Evas_Object *glv)
    api = ed->gl.api;
    api->glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
    api->glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-   api->glUseProgram(ed->gl.prog);
 
    _translate(ed, ed->gl.x, ed->gl.y, 0.0f);
    _scale(ed, scale_x, scale_y, 1.0f);
@@ -395,7 +414,6 @@ _render_gl(Evas_Object *glv)
           }
      }
 
-   api->glUseProgram(0);
    api->glFinish();
 }
 
@@ -421,13 +439,13 @@ _key_down_cb(void        *data,
      {
         if (IS_KEY("plus"))
           {
-             ed->gl.zoom += 0.1f;
+             ed->gl.zoom += ed->gl.zoom_step;
              refresh = EINA_TRUE;
           }
         else if (IS_KEY("minus"))
           {
-             if (ed->gl.zoom > 0.1f)
-               ed->gl.zoom -= 0.1f;
+             if (ed->gl.zoom > ed->gl.zoom_step)
+               ed->gl.zoom -= ed->gl.zoom_step;
              refresh = EINA_TRUE;
           }
      }

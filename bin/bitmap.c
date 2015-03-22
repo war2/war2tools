@@ -98,21 +98,25 @@ _bitmap_image_push(Editor        *          ed,
                    int                      img_w,
                    int                      img_h)
 {
-   const int bmp_w = ed->bitmap_w * 4 * sizeof(unsigned char);
-   const int bmp_h = ed->bitmap_h * 4 * sizeof(unsigned char);
-   const int bytes_w = img_w * 4 * sizeof(unsigned char);
+   const int bmp_w = ed->bitmap_w * 4;
+   const int bmp_h = ed->bitmap_h;
+   const int x = at_x;
+   const int w = img_w;
    int img_y, bmp_y;
    unsigned char *restrict bmp = ed->pixels;
+
+   img_w *= 4;
+   at_x *= 4;
 
    for (img_y = 0, bmp_y = at_y;
         (img_y < img_h) && (bmp_y < bmp_h);
         ++img_y, ++bmp_y)
      {
         memcpy(&(bmp[(bmp_y * bmp_w) + at_x]),
-               &(img[img_y * bytes_w]),
-               bytes_w);
+               &(img[img_y * img_w]),
+               img_w);
      }
-   evas_object_image_data_update_add(ed->bitmap, at_x, at_y, img_w, img_h);
+   evas_object_image_data_update_add(ed->bitmap, x, at_y, w, img_h);
 }
 
 void
@@ -126,7 +130,8 @@ bitmap_tile_set(Editor * restrict ed,
    tex = texture_get(ed, key);
    EINA_SAFETY_ON_NULL_RETURN(tex);
 
-   _bitmap_image_push(ed, tex, x, y, TEXTURE_WIDTH, TEXTURE_HEIGHT);
+   _bitmap_image_push(ed, tex, x * TEXTURE_WIDTH, y * TEXTURE_HEIGHT,
+                      TEXTURE_WIDTH, TEXTURE_HEIGHT);
    ed->cells[y][x].tile = key;
 }
 
@@ -158,6 +163,7 @@ bitmap_add(Editor *ed)
 
    eo_do(
       obj,
+      evas_obj_image_colorspace_set(EVAS_COLORSPACE_ARGB8888),
       evas_obj_image_size_set(width, height),
       evas_obj_size_hint_weight_set(EVAS_HINT_EXPAND, EVAS_HINT_EXPAND),
       evas_obj_size_hint_align_set(0.0, 0.0),
@@ -174,7 +180,7 @@ bitmap_add(Editor *ed)
    ed->cells = _grid_cells_new(ed);
    EINA_SAFETY_ON_NULL_RETURN_VAL(ed->cells, EINA_FALSE);
 
-   bitmap_tile_set(ed, 2, 5, 165);
+   bitmap_tile_set(ed, 5, 2, 165);
 
    return EINA_TRUE;
 }

@@ -85,6 +85,7 @@
 
 
 Pud_Bool war2_mem_map_ok(War2_Data *w2);
+void war2_palette_convert(unsigned char *ptr, Pud_Color palette[256]);
 
 #endif /* ! _WAR2_PRIVATE_H_ */
 

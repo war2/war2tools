@@ -53,7 +53,7 @@ static void
 _export_tile(const Pud_Color    *tile,
              int                 w,
              int                 h,
-             const War2_Tileset *ts,
+             const War2_Tileset_Descriptor *ts,
              int                 img_nb)
 {
    char buf[1024];
@@ -73,7 +73,7 @@ static void
 _export_tile(const Pud_Color    *tile,
              int                 w,
              int                 h,
-             const War2_Tileset *ts EINA_UNUSED,
+             const War2_Tileset_Descriptor *ts EINA_UNUSED,
              int                 img_nb)
 {
    char key[8];
@@ -113,7 +113,7 @@ main(int    argc,
      char **argv)
 {
    War2_Data *w2;
-   War2_Tileset *ts;
+   War2_Tileset_Descriptor *ts;
    const char *file;
    int verbose;
 

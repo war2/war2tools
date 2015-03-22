@@ -98,6 +98,25 @@ err:
 }
 
 unsigned char *
+war2_palette_extract(War2_Data    *w2,
+                     unsigned int  entry)
+{
+   unsigned char *ptr;
+   size_t size;
+
+   ptr = war2_entry_extract(w2, entry, &size);
+   if (!ptr)
+     DIE_RETURN(NULL, "Failed to extract entry palette [%u]", entry);
+   if (size != 768)
+     {
+        free(ptr);
+        DIE_RETURN(NULL, "Invalid size [%zu]. Should be 256*3=768", size);
+     }
+   return ptr;
+}
+
+
+unsigned char *
 war2_entry_extract(War2_Data    *w2,
                    unsigned int  entry,
                    size_t       *size_ret)

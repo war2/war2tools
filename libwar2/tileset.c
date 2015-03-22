@@ -8,16 +8,16 @@
 #include "war2_private.h"
 
 static Pud_Bool
-_ts_entries_parse(War2_Data          *w2,
-                  War2_Tileset       *ts,
-                  const unsigned int *entries,
-                  War2_Decode_Func    func)
+_ts_entries_parse(War2_Data                *w2,
+                  War2_Tileset_Descriptor  *ts,
+                  const unsigned int       *entries,
+                  War2_Tileset_Decode_Func  func)
 {
    /* Lookup table (flip table): 0=>7, 1=>6, 2=>5, ... 7=>0
     * Thanks wargus for the tip. */
    const int ft[8] = { 7, 6, 5, 4, 3, 2, 1, 0 };
 
-   unsigned char *ptr, *data, *map, *p;
+   unsigned char *ptr, *data, *map;
    size_t size, i, map_size;
    Pud_Bool flip_x, flip_y;
    int o, x, y, j, i_img;
@@ -27,31 +27,18 @@ _ts_entries_parse(War2_Data          *w2,
    int img_ctr = 0;
    unsigned char col;
 
-   /* Extract palette - 256x3 */
-   ptr = war2_entry_extract(w2, entries[0], &size);
-   if (!ptr)
-     DIE_RETURN(PUD_FALSE, "Failed to extract entry palette [%i]", entries[0]);
-   if (size != 768)
-     DIE_RETURN(PUD_FALSE, "Invalid size [%zu]. Should be 256*3=768", size);
-
-   /* I don't know why this is the bitshift needed (no doc so no explaination)
-    * but this gives the right colorspace (thanks wargus) */
-   for (i = 0; i < 256; i++)
-     {
-        p = &(ptr[i * 3]);
-        ts->palette[i].r = p[0] << 2;
-        ts->palette[i].g = p[1] << 2;
-        ts->palette[i].b = p[2] << 2;
-        ts->palette[i].a = 0xff;
-     }
-   free(ptr);
-
    /* If no callback has been specified, do nothing */
    if (!func)
      {
         WAR2_VERBOSE(w2, 1, "Warning: No callback specified.");
         return PUD_TRUE;
      }
+
+   /* Extract palette - 256x3 */
+   ptr = war2_palette_extract(w2, entries[0]);
+   if (!ptr) DIE_RETURN(PUD_FALSE, "Failed to get palette");
+   war2_palette_convert(ptr, ts->palette);
+   free(ptr);
 
    /* Get minitiles info */
    ptr = war2_entry_extract(w2, entries[1], &size);
@@ -140,20 +127,20 @@ _ts_entries_parse(War2_Data          *w2,
    return PUD_TRUE;
 }
 
-War2_Tileset *
-war2_tileset_decode(War2_Data        *w2,
-                    Pud_Era           era,
-                    War2_Decode_Func  func)
+War2_Tileset_Descriptor *
+war2_tileset_decode(War2_Data                *w2,
+                    Pud_Era                   era,
+                    War2_Tileset_Decode_Func  func)
 {
    const unsigned int forest[] = { 2, 3, 4, 5, 6, 7, 8 };
    const unsigned int wasteland[] = { 10, 11, 12, 13, 14, 15, 16 };
    const unsigned int winter[] = { 18, 19, 20, 21, 22, 23, 24 };
    const unsigned int swamp[] = { 438, 439, 440, 441, 442, 443, 444 };
    const unsigned int *entries;
-   War2_Tileset *ts;
+   War2_Tileset_Descriptor *ts;
 
    /* Alloc */
-   ts = calloc(1, sizeof(War2_Tileset));
+   ts = calloc(1, sizeof(War2_Tileset_Descriptor));
    if (!ts) DIE_RETURN(NULL, "Failed to allocate memory");
    ts->era = era;
 
@@ -171,7 +158,7 @@ war2_tileset_decode(War2_Data        *w2,
 }
 
 void
-war2_tileset_free(War2_Tileset *ts)
+war2_tileset_free(War2_Tileset_Descriptor *ts)
 {
    free(ts);
 }

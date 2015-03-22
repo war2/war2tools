@@ -77,9 +77,9 @@ _export_tile(const Pud_Color    *tile,
              int                 img_nb)
 {
    char key[8];
-   Pud_Color *data, *dst;
-   const Pud_Color *src;
-   int bytes, y;
+   unsigned char *data;
+   int bytes, i;
+   unsigned char tmp;
    const int size = sizeof(Pud_Color) * w * h;
 
    data = malloc(size);
@@ -88,14 +88,15 @@ _export_tile(const Pud_Color    *tile,
         fprintf(stderr, "*** Failed to allocate data of size %i\n", size);
         return;
      }
+   memcpy(data, tile, size);
 
-   /* Flip the tile vertically, because opengl flips vertically the texture
-    * while loading it. Flipping it twice will make it "normal". */
-   for (y = 0; y < h; ++y)
+   /* Set ALPHA as the highest bit to fit the ARGB8888 colorspace
+    * (Store as BGRA) for decoding */
+   for (i = 0; i < size; i += 4)
      {
-        dst = &(data[y * w]);
-        src = &(tile[(h - y - 1) * w]);
-        memcpy(dst, src, sizeof(Pud_Color) * w);
+        tmp = data[i + 2];
+        data[i + 2] = data[i + 0];
+        data[i + 0] = tmp;
      }
 
    snprintf(key, sizeof(key), "%i", img_nb);

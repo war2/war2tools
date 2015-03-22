@@ -123,3 +123,26 @@ end:
 
 }
 
+int
+ppm_save(const char *file,
+         const Col  *data,
+         int         w,
+         int         h)
+{
+   const int size = w * h;
+   FILE *f;
+   int i;
+
+   f = fopen(file, "w+");
+   if (f == NULL) return -1;
+
+   fprintf(f, "P3\n%i %i\n255\n", w, h);
+
+   for (i = 0; i < size; ++i)
+     fprintf(f, "%i %i %i\n", data[i].r, data[i].g, data[i].b);
+
+   fclose(f);
+
+   return 0;
+}
+

@@ -2,7 +2,7 @@
  * extract.c
  * extract
  *
- * Copyright (c) 2014 Jean Guyomarc'h
+ * Copyright (c) 2014 -2015 Jean Guyomarc'h
  */
 
 #include <war2.h>

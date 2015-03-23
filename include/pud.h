@@ -222,7 +222,10 @@ typedef enum
    PUD_UNIT_DARK_PORTAL                 = 0x65,
    PUD_UNIT_RUNESTONE                   = 0x66,
    PUD_UNIT_HUMAN_WALL                  = 0x67,
-   PUD_UNIT_ORC_WALL                    = 0x68
+   PUD_UNIT_ORC_WALL                    = 0x68,
+   PUD_UNIT_CRITTER_SHEEP               = 0x80,
+   PUD_UNIT_CRITTER_PIG                 = 0x81,
+   PUD_UNIT_CRITTER_SEAL                = 0x82
 } Pud_Unit;
 
 typedef enum

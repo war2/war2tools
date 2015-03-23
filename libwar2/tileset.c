@@ -158,7 +158,7 @@ war2_tileset_decode(War2_Data                *w2,
 }
 
 void
-war2_tileset_free(War2_Tileset_Descriptor *ts)
+war2_tileset_descriptor_free(War2_Tileset_Descriptor *ts)
 {
    free(ts);
 }

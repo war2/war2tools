@@ -102,7 +102,7 @@ _export_tile(const Pud_Color    *tile,
    snprintf(key, sizeof(key), "%i", img_nb);
    bytes = eet_write(_ef, key, data, size, 1);
    if (bytes <= 0)
-     fprintf(stderr, "*** Failed to save key [%s]", key);
+     fprintf(stderr, "*** Failed to save key [%s]\n", key);
 
    free(data);
 }
@@ -139,25 +139,25 @@ main(int    argc,
    OPEN_EET("forest");
    ts = war2_tileset_decode(w2, PUD_ERA_FOREST, _export_tile);
    if (!ts) DIE_RETURN(2, "Failed to decode tileset FOREST");
-   war2_tileset_free(ts);
+   war2_tileset_descriptor_free(ts);
    CLOSE_EET();
 
    OPEN_EET("winter");
    ts = war2_tileset_decode(w2, PUD_ERA_WINTER, _export_tile);
    if (!ts) DIE_RETURN(2, "Failed to decode tileset WINTER");
-   war2_tileset_free(ts);
+   war2_tileset_descriptor_free(ts);
    CLOSE_EET();
 
    OPEN_EET("wasteland");
    ts = war2_tileset_decode(w2, PUD_ERA_WASTELAND, _export_tile);
    if (!ts) DIE_RETURN(2, "Failed to decode tileset WASTELAND");
-   war2_tileset_free(ts);
+   war2_tileset_descriptor_free(ts);
    CLOSE_EET();
 
    OPEN_EET("swamp");
    ts = war2_tileset_decode(w2, PUD_ERA_SWAMP, _export_tile);
    if (!ts) DIE_RETURN(2, "Failed to decode tileset SWAMP");
-   war2_tileset_free(ts);
+   war2_tileset_descriptor_free(ts);
    CLOSE_EET();
 
    war2_close(w2);

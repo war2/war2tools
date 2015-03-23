@@ -23,9 +23,10 @@ typedef struct _War2_Color War2_Color;
 
 typedef enum
 {
-   WAR2_SPRITES_UNITS,
-   WAR2_SPRITES_BUILDINGS,
-   WAR2_SPRITES_ICONS
+   WAR2_SPRITES_UNITS     = 0x100,
+   WAR2_SPRITES_BUILDINGS = 0x101,
+   WAR2_SPRITES_ICONS     = 0x102,
+   WAR2_SPRITES_SYSTEM    = 0x103
 } War2_Sprites;
 
 struct _War2_Data
@@ -56,6 +57,7 @@ struct _War2_Sprites_Descriptor
 
    Pud_Player   color;
    Pud_Era      era;
+   Pud_Side     side;
    unsigned int object;
    War2_Sprites sprite_type;
 
@@ -74,15 +76,16 @@ unsigned char *war2_entry_extract(War2_Data *w2, unsigned int entry, size_t *siz
 unsigned char *war2_palette_extract(War2_Data *w2, unsigned int entry);
 
 War2_Tileset_Descriptor *war2_tileset_decode(War2_Data *w2, Pud_Era era, War2_Tileset_Decode_Func func);
-void war2_tileset_free(War2_Tileset_Descriptor *ts);
+void war2_tileset_descriptor_free(War2_Tileset_Descriptor *ts);
 
 War2_Sprites_Descriptor *
 war2_sprites_decode(War2_Data                *w2,
                     Pud_Player                player_color,
                     Pud_Era                   era,
-                    War2_Sprites              type,
                     unsigned int              object,
                     War2_Sprites_Decode_Func  func);
+
+void war2_sprites_descriptor_free(War2_Sprites_Descriptor *ud);
 
 Pud_Bool war2_png_write(const char          *file,
                         int                  w,

@@ -84,7 +84,8 @@ tools
 
 Those binaries are mostly helpers to create the libraries.
 - `defaults_gen`: used to generate parts of `libpud/defaults.c`
-- `extract`: used to extract tiles from maindat.war (in `data/tiles`)
+- `extract_tiles`: used to extract tiles from maindat.war (in `data/tiles`)
+- `extract_sprites`: used to extract units and buildings' sprites from maindat.war (in `data/sprites`)
 - `ppm_cmp`: makes a `diff` between 2 ppm files
 - `tilemap`: used to generate parts of `libpud/tiles.c`
 - `tiler`: generates a map with all possible tiles

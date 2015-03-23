@@ -12,7 +12,7 @@ target_include_directories(
    PUBLIC ${PUD_INCLUDES_DIR}
 )
 
-target_link_libraries(pud ${PUD_LIBRARIES} ${LIBWAR2_LIBRARIES})
+target_link_libraries(pud ${PUD_LIBRARIES})
 
 install(
    TARGETS pud

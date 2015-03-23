@@ -10,7 +10,7 @@
 
 #define EXPORT_PNG 0
 #define EXPORT_EET 1
-#define EXPORT EXPORT_EET
+#define EXPORT EXPORT_PNG
 
 #if !HAVE_EET && EXPORT == EXPORT_EET
 # warning Cannot export as EET. Defaults to PNG.
@@ -64,7 +64,7 @@ _export_tile(const Pud_Color    *tile,
    snprintf(buf, sizeof(buf), "../data/tiles/png/%s/%i.png",
             _era2str(ts->era), img_nb);
 
-   pud_png_write(buf, w, h, (unsigned char *)tile);
+   war2_png_write(buf, w, h, (unsigned char *)tile);
 }
 
 #elif EXPORT == EXPORT_EET

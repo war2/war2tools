@@ -182,7 +182,7 @@ _sprites_entries_parse(War2_Data                *w2,
         for (k = 0; k < size; ++k)
           img_rgba[k] = ud->palette[img[k]];
 
-        _sprites_colorize(img_rgba, size, PUD_PLAYER_YELLOW);
+        _sprites_colorize(img_rgba, size, ud->color);
         func(img_rgba, w, h, ud, i);
      }
 
@@ -201,7 +201,7 @@ war2_sprites_decode(War2_Data                *w2,
                     War2_Sprites_Decode_Func  func)
 {
    War2_Sprites_Descriptor *ud;
-   const unsigned int entries[] = { 2, 35 };
+   const unsigned int entries[] = { 2, 33 };
 
    /* Alloc */
    ud = calloc(1, sizeof(*ud));

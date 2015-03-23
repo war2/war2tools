@@ -70,6 +70,17 @@ war2_sprites_decode(War2_Data              *w2,
                     Pud_Side                race,
                     War2_Sprites_Decode_Func  func);
 
+Pud_Bool war2_png_write(const char          *file,
+                        int                  w,
+                        int                  h,
+                        const unsigned char *data);
+
+Pud_Bool
+war2_jpeg_write(const char          *file,
+                int                  w,
+                int                  h,
+                const unsigned char *data);
+
 #ifdef __cplusplus
 %>
 #endif

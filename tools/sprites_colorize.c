@@ -43,7 +43,7 @@ main(void)
    War2_Sprites_Descriptor *ud;
 
    war2_init();
-   w2 = war2_open("../data/war2/maindat.war", 3);
+   w2 = war2_open("../data/war2/maindat.war", 1);
    ud = war2_sprites_decode(w2, PUD_PLAYER_VIOLET, PUD_SIDE_ORC, _func);
    war2_close(w2);
    war2_shutdown();

@@ -28,6 +28,9 @@ struct _Editor
    Eina_Hash    *textures;
    Texture_Dictionary tex_dict;
 
+   Evas_Object *cursor;
+   Eina_Bool cursor_is_enabled;
+
    Elm_Object_Item *main_sel[4];
    Elm_Object_Item *hmn_sel[4];
    Elm_Object_Item *orc_sel[4];
@@ -45,13 +48,20 @@ struct _Editor
       unsigned char    active_for : 2;
    } tools_items[110], *tools_item_active;
 
+   Evas_Point bitmap_origin;
+
    Pud_Dimensions size;
    int map_w;
    int map_h;
    int bitmap_w;
    int bitmap_h;
+
+   int bmp_step_w;
+   int bmp_step_h;
+
    Pud_Era era;
    Eina_Bool has_extension;
+
 };
 
 Eina_Bool editor_init(void);

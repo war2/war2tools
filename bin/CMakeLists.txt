@@ -18,8 +18,10 @@ if (ELEMENTARY_FOUND)
       bitmap.c
       texture.c
       sprite.c
+      cursor.c
    )
    add_executable(war2edit ${WAR2EDIT_SRC})
+   add_dependencies(war2edit edje_themes)
 
    link_directories(${ELEMENTARY_LIBRARY_DIRS})
    target_link_libraries(war2edit ${LIBPUD_LIBRARIES} ${ELEMENTARY_LIBRARIES})

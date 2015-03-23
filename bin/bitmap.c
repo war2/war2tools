@@ -90,6 +90,46 @@ fail:
 //}
 #undef IS_KEY
 
+/*============================================================================*
+ *                                   Events                                   *
+ *============================================================================*/
+
+static void
+_mouse_move_cb(void        *data,
+               Evas        *evas EINA_UNUSED,
+               Evas_Object *bmp  EINA_UNUSED,
+               void        *info)
+{
+   Editor *ed = data;
+   Evas_Event_Mouse_Move *ev = info;
+   Evas_Point scr_view;
+   int cell_x, cell_y;
+
+   /* Which cell in the grid are we pointing at? */
+   elm_scroller_region_get(ed->scroller, &scr_view.x, &scr_view.y, NULL, NULL);
+   cell_x = (ev->cur.canvas.x + scr_view.x - ed->bitmap_origin.x) / TEXTURE_WIDTH;
+   cell_y = (ev->cur.canvas.y + scr_view.y - ed->bitmap_origin.y) / TEXTURE_HEIGHT;
+
+   cursor_move(ed, cell_x, cell_y);
+}
+
+static void
+_mouse_down_cb(void        *data,
+               Evas        *evas EINA_UNUSED,
+               Evas_Object *bmp  EINA_UNUSED,
+               void        *info)
+{
+   Editor *ed = data;
+   Evas_Event_Mouse_Down *ev = info;
+
+   if (!ed->cursor_is_enabled) return;
+}
+
+
+/*============================================================================*
+ *                                 Private API                                *
+ *============================================================================*/
+
 static void
 _bitmap_image_push(Editor        *          ed,
                    unsigned char * restrict img,
@@ -119,6 +159,12 @@ _bitmap_image_push(Editor        *          ed,
    evas_object_image_data_update_add(ed->bitmap, x, at_y, w, img_h);
 }
 
+
+
+/*============================================================================*
+ *                                 Public API                                 *
+ *============================================================================*/
+
 void
 bitmap_tile_set(Editor * restrict ed,
                 int               x,
@@ -134,11 +180,6 @@ bitmap_tile_set(Editor * restrict ed,
                       TEXTURE_WIDTH, TEXTURE_HEIGHT);
    ed->cells[y][x].tile = key;
 }
-
-
-/*============================================================================*
- *                                 Public API                                 *
- *============================================================================*/
 
 Eina_Bool
 bitmap_add(Editor *ed)
@@ -179,6 +220,9 @@ bitmap_add(Editor *ed)
 
    ed->cells = _grid_cells_new(ed);
    EINA_SAFETY_ON_NULL_RETURN_VAL(ed->cells, EINA_FALSE);
+
+   evas_object_event_callback_add(obj, EVAS_CALLBACK_MOUSE_MOVE, _mouse_move_cb, ed);
+   evas_object_event_callback_add(obj, EVAS_CALLBACK_MOUSE_DOWN, _mouse_down_cb, ed);
 
    bitmap_tile_set(ed, 5, 2, 165);
 

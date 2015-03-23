@@ -134,6 +134,7 @@ _mc_create_cb(void        *data,
               void        *evt  EINA_UNUSED)
 {
    Editor *ed = data;
+   int x, y;
    Eina_Bool chk;
 
    editor_mainconfig_hide(ed);
@@ -154,6 +155,13 @@ _mc_create_cb(void        *data,
    EINA_SAFETY_ON_FALSE_RETURN(chk);
    elm_object_content_set(ed->scroller, ed->bitmap);
    evas_object_show(ed->bitmap);
+
+   evas_object_geometry_get(ed->bitmap, &x, &y, NULL, NULL);
+   ed->bitmap_origin.x = x;
+   ed->bitmap_origin.y = y;
+
+   cursor_add(ed);
+   evas_object_move(ed->cursor, 100, 100);
 }
 
 static void
@@ -699,7 +707,7 @@ editor_new(void)
    evas_object_size_hint_weight_set(ed->scroller, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(ed->scroller, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_scroller_policy_set(ed->scroller, ELM_SCROLLER_POLICY_ON, ELM_SCROLLER_POLICY_ON);
-   elm_scroller_propagate_events_set(ed->scroller, EINA_FALSE);
+  /* elm_scroller_propagate_events_set(ed->scroller, EINA_FALSE); */
    elm_box_pack_end(o, ed->scroller);
    evas_object_show(ed->scroller);
    elm_scroller_page_relative_set(ed->scroller, 0, 1);

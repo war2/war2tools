@@ -14,6 +14,7 @@ typedef struct _Texture_Dictionary Texture_Dictionary;
 #include "log.h"
 #include "texture.h"
 #include "sprite.h"
+#include "cursor.h"
 #include "bitmap.h"
 #include "editor.h"
 

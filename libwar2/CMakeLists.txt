@@ -7,7 +7,7 @@ add_library(libwar2 SHARED
    war2.c
    private.c
    tileset.c
-   units.c
+   sprites.c
 )
 SET_TARGET_PROPERTIES(libwar2 PROPERTIES PREFIX "")
 

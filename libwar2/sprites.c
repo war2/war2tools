@@ -12,18 +12,18 @@
 #define PALETTE_ALPHA 0
 
 static Pud_Bool
-_units_entries_parse(War2_Data              *w2,
-                     War2_Units_Descriptor  *ud,
-                     const unsigned int     *entries,
-                     War2_Units_Decode_Func  func)
+_sprites_entries_parse(War2_Data                *w2,
+                       War2_Sprites_Descriptor  *ud,
+                       const unsigned int       *entries,
+                       War2_Sprites_Decode_Func  func)
 {
    unsigned char *ptr;
    uint16_t count, i, oline, max_w, max_h;
    uint8_t x, y, w, h, c;
    uint32_t dstart;
    size_t size, max_size;
-   unsigned int offset, l, o, pcount, k, pc;
-   unsigned char *img = NULL, *pimg;
+   unsigned int offset, l, pcount, k;
+   unsigned char *img = NULL, *pimg, *rows, *o;
    Pud_Color *img_rgba = NULL;
 
    /* If no callback has been specified, do nothing */
@@ -58,20 +58,22 @@ _units_entries_parse(War2_Data              *w2,
         memcpy(&h, &(ptr[offset + 3]), sizeof(uint8_t));
         memcpy(&dstart, &(ptr[offset + 4]), sizeof(uint32_t));
 
+        rows = ptr + dstart;
         pimg = img;
+
         for (l = 0; l < h; ++l)
           {
-             memcpy(&oline, &(ptr[dstart + (l * sizeof(uint16_t))]), sizeof(uint16_t));
-             o = dstart + oline;
+             memcpy(&oline, rows + (l * sizeof(uint16_t)), sizeof(uint16_t));
+             o = rows + oline;
 
              for (pcount = 0; pcount < w;)
                {
-                  c = ptr[o++];
+                  c = *(o++);
                   if (c & RLE_REPEAT)
                     {
                        /* Repeat the next byte (c \ RLE_REPEAT) times as pixel value */
                        c &= 0x3f;
-                       memset(&(pimg[pcount]), ptr[o++], c);
+                       memset(&(pimg[pcount]), *(o++), c);
                        pcount += c;
                     }
                   else if (c & RLE_LEAVE)
@@ -84,12 +86,12 @@ _units_entries_parse(War2_Data              *w2,
                   else
                     {
                        /* Take the next (c) bytes as pixel values */
-                       memcpy(&(pimg[pcount]), &(ptr[o]), c);
+                       memcpy(&(pimg[pcount]), o, c);
                        pcount += c;
                        o += c;
                     }
                }
-             pimg += w;
+             pimg += pcount;
           }
 
         size = w * h;
@@ -107,14 +109,14 @@ _units_entries_parse(War2_Data              *w2,
 }
 
 
-War2_Units_Descriptor *
-war2_units_decode(War2_Data              *w2,
-                  Pud_Player              player_color,
-                  Pud_Side                race,
-                  War2_Units_Decode_Func  func)
+War2_Sprites_Descriptor *
+war2_sprites_decode(War2_Data                *w2,
+                    Pud_Player                player_color,
+                    Pud_Side                  race,
+                    War2_Sprites_Decode_Func  func)
 {
-   War2_Units_Descriptor *ud;
-   const unsigned int entries[] = { 2, 35 };
+   War2_Sprites_Descriptor *ud;
+   const unsigned int entries[] = { 2, 356 };
 
    /* Alloc */
    ud = calloc(1, sizeof(*ud));
@@ -122,7 +124,7 @@ war2_units_decode(War2_Data              *w2,
    ud->race = race;
    ud->color = player_color;
 
-   _units_entries_parse(w2, ud, entries, func);
+   _sprites_entries_parse(w2, ud, entries, func);
 
    return ud;
 }

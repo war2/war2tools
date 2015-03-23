@@ -25,8 +25,8 @@ A C library to manipulate a PUD file:
 
 
 TODO:
-[ ] `pud_mmap()` is not implemented on systems which do not provide `mmap()`
-[ ] `pud_munmap()` is not implemented on systems which do not provide `munmap()`
+- [ ] `pud_mmap()` is not implemented on systems which do not provide `mmap()`
+- [ ] `pud_munmap()` is not implemented on systems which do not provide `munmap()`
 
 
 libwar2
@@ -38,12 +38,19 @@ A C library which aims at extracting data from Warcraft II data files to get:
 - musics and sounds;
 - cinematics.
 
+
+Graphical modules (optionals):
+- libpng
+- jpeglib
+
+
 TODO:
-[ ] Units' sprites
-[ ] Building' sprites
-[ ] Musics
-[ ] Sounds
-[ ] Cinematics
+- [ ] Units' sprites
+- [ ] Building' sprites
+- [ ] Icons' sprites
+- [ ] Musics
+- [ ] Sounds
+- [ ] Cinematics
 
 
 quicklook

@@ -45,8 +45,6 @@ Graphical modules (optionals):
 
 
 TODO:
-- [ ] Units' sprites
-- [ ] Building' sprites
 - [ ] Icons' sprites
 - [ ] Musics
 - [ ] Sounds

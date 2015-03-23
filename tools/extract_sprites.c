@@ -13,41 +13,6 @@
 
 static Eet_File *_ef = NULL;
 
-#if 0
-static void
-_func(const Pud_Color               *sprite,
-      int                            w,
-      int                            h,
-      const War2_Sprites_Descriptor *ud,
-      int                            img_nb)
-{
-   char path[1024];
-   char suffix[32];
-   const char *name;
-
-   if (ud->sprite_type == WAR2_SPRITES_UNITS)
-     {
-        suffix[0] = 0;
-        if ((ud->object == PUD_UNIT_GNOMISH_SUBMARINE) ||
-            (ud->object == PUD_UNIT_GIANT_TURTLE))
-          {
-             snprintf(suffix, sizeof(suffix), "_%s", era2str(ud->era));
-             suffix[1] += 32; /* Lowercase, b*tch */
-          }
-        name = unit2str(ud->object);
-
-        snprintf(path, sizeof(path), "mkdir -p ../data/units/png/%s/%s", unit2str(ud->object),
-                 color2str(ud->color));
-        system(path);
-
-        snprintf(path, sizeof(path), "../data/units/png/%s/%s/%i%s.png",
-                 unit2str(ud->object), color2str(ud->color), img_nb, suffix);
-        printf("Path: [%s]\n", path);
-        war2_png_write(path, w, h, (unsigned char *)sprite);
-     }
-}
-#endif
-
 static void *
 _convert(const Pud_Color *sprite,
          int              w,
@@ -164,6 +129,7 @@ _building_cb(const Pud_Color               *sprite,
    if (bytes <= 0)
      fprintf(stderr, "*** Failed to save key [%s]\n", key);
 
+#if 0
    /* Quick and dirty debug */
    char nopath[128];
    char era[16];
@@ -173,6 +139,7 @@ _building_cb(const Pud_Color               *sprite,
    for (int i = 0; i < (int)strlen(nopath); i++)
      if (nopath[i] == '/') nopath[i] = '_';
    war2_png_write(nopath, w, h, (unsigned char *)sprite);
+#endif
 
    free(data);
 }

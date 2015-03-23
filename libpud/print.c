@@ -20,7 +20,7 @@ pud_print(Pud  *pud,
    fprintf(stream, "Tag ID...............: 0x%x\n", pud->tag);
    fprintf(stream, "Version..............: %x\n", pud->version);
    fprintf(stream, "Description..........: %s\n", pud->description);
-   fprintf(stream, "Era..................: %s\n", era2str(pud->era));
+   fprintf(stream, "Era..................: %s\n", pud_era2str(pud->era));
    fprintf(stream, "Dimensions...........: %s\n", dim2str(pud->dims));
    fprintf(stream, "Default ALOW.........: %i\n", pud->default_allow);
    fprintf(stream, "Default UDTA.........: %i\n", pud->default_udta);

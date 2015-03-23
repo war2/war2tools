@@ -427,6 +427,10 @@ Pud_Bool pud_minimap_to_ppm(Pud *pud, const char *file);
 
 const char *pud_section_at_index(int idx);
 
+const char *pud_unit2str(Pud_Unit unit);
+const char *pud_era2str(Pud_Era era);
+const char *pud_color2str(Pud_Player color);
+
 Pud_Bool pud_section_exists(char sec[4]);
 uint16_t pud_tile_at(Pud *pud, int x, int y);
 

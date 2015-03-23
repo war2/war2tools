@@ -78,7 +78,7 @@ _unit_cb(const Pud_Color               *sprite,
      }
 
    /* Get tileset */
-   snprintf(era, sizeof(era), "%s", era2str(ud->era));
+   snprintf(era, sizeof(era), "%s", pud_era2str(ud->era));
    era[0] += 32; /* Lowercase, b*tch */
 
    data = _convert(sprite, w, h, &size);
@@ -87,9 +87,9 @@ _unit_cb(const Pud_Color               *sprite,
    /* Generate key */
    if ((u == PUD_UNIT_GNOMISH_SUBMARINE) ||
        (u == PUD_UNIT_GIANT_TURTLE))
-     snprintf(key, sizeof(key), "%s/%s/%i", unit2str(ud->object), era, img_nb);
+     snprintf(key, sizeof(key), "%s/%s/%i", pud_unit2str(ud->object), era, img_nb);
    else
-     snprintf(key, sizeof(key), "%s/%i", unit2str(ud->object), img_nb);
+     snprintf(key, sizeof(key), "%s/%i", pud_unit2str(ud->object), img_nb);
 
    bytes = eet_write(_ef, key, data, size, 1);
    if (bytes <= 0)
@@ -124,7 +124,7 @@ _building_cb(const Pud_Color               *sprite,
    data = _convert(sprite, w, h, &size);
    if (!data) return;
 
-   snprintf(key, sizeof(key), "%s", unit2str(ud->object));
+   snprintf(key, sizeof(key), "%s", pud_unit2str(ud->object));
    bytes = eet_write(_ef, key, data, size, 1);
    if (bytes <= 0)
      fprintf(stderr, "*** Failed to save key [%s]\n", key);
@@ -133,7 +133,7 @@ _building_cb(const Pud_Color               *sprite,
    /* Quick and dirty debug */
    char nopath[128];
    char era[16];
-   snprintf(era, sizeof(era), "%s", era2str(ud->era));
+   snprintf(era, sizeof(era), "%s", pud_era2str(ud->era));
    era[0] += 32; /* Lowercase, b*tch */
    snprintf(nopath, 128, "%s_%s.png", key, era);
    for (int i = 0; i < (int)strlen(nopath); i++)

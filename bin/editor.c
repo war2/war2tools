@@ -139,6 +139,13 @@ _mc_create_cb(void        *data,
    editor_mainconfig_hide(ed);
    pud_dimensions_to_size(ed->size, &(ed->map_w), &(ed->map_h));
 
+   snprintf(ed->era_str, sizeof(ed->era_str), "%s", pud_era2str(ed->era));
+   ed->era_str[0] += 32; /* Lowercase */
+
+   ed->units = sprite_units_open();
+   ed->buildings = sprite_buildings_open(ed->era);
+   ed->sprites = sprite_hash_new();
+
    ed->textures_src = texture_tileset_open(ed->era);
    texture_dictionary_init(&(ed->tex_dict), ed->era);
    ed->textures = texture_hash_new();
@@ -419,6 +426,9 @@ editor_free(Editor *ed)
    _editors = eina_list_remove(_editors, ed);
    if (ed->textures) eina_hash_free(ed->textures);
    if (ed->textures_src) eet_close(ed->textures_src);
+   if (ed->units) eet_close(ed->units);
+   if (ed->buildings) eet_close(ed->buildings);
+   if (ed->sprites) eina_hash_free(ed->sprites);
    free(ed->pixels);
    if (ed->cells) free(ed->cells[0]);
    free(ed->cells);

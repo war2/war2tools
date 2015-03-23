@@ -17,6 +17,7 @@ if (ELEMENTARY_FOUND)
       log.c
       bitmap.c
       texture.c
+      sprite.c
    )
    add_executable(war2edit ${WAR2EDIT_SRC})
 

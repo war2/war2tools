@@ -6,6 +6,7 @@
  */
 
 #include "pud_private.h"
+#include "pud.h"
 
 Pud_Color
 pud_tile_to_color(Pud      *pud,
@@ -1599,7 +1600,7 @@ pud_tile_to_color(Pud      *pud,
 
      }
 
-   ERR("Unhandled tile [0x%04x] for era %s", tile, era2str(pud->era));
+   ERR("Unhandled tile [0x%04x] for era %s", tile, pud_era2str(pud->era));
    return color_make(0xff, 0x00, 0xff, 0xff); // Flashy to be seen (debug)
 }
 

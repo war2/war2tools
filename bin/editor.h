@@ -18,6 +18,12 @@ struct _Editor
    Evas_Object   *bitmap;
    unsigned char *pixels;
 
+   Eet_File     *units;
+   Eet_File     *buildings;
+   Eina_Hash    *sprites;
+
+   char era_str[16];
+
    Eet_File     *textures_src;
    Eina_Hash    *textures;
    Texture_Dictionary tex_dict;

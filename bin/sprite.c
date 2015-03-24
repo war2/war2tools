@@ -75,11 +75,11 @@ sprite_buildings_open(Pud_Era era)
 }
 
 unsigned char *
-sprite_get(Editor      *ed,
-           Pud_Unit     unit,
-           Sprite_Info  info,
-           int         *w,
-           int         *h)
+sprite_get(Editor        *ed,
+           Pud_Unit       unit,
+           Sprite_Orient  info,
+           int           *w,
+           int           *h)
 {
    unsigned char *data;
    char key[64];
@@ -87,7 +87,8 @@ sprite_get(Editor      *ed,
    Eina_Bool chk;
    int len;
 
-   if (info == SPRITE_INFO_BUILDING)
+
+   if (pud_unit_building_is(unit))
      {
         ef = ed->buildings;
         len = snprintf(key, sizeof(key), "%s", pud_unit2str(unit));
@@ -148,5 +149,12 @@ Eina_Hash *
 sprite_hash_new(void)
 {
    return eina_hash_string_superfast_new(_free_cb);
+}
+
+Sprite_Orient
+sprite_orient_random_get(void)
+{
+   /* Does not return 4 */
+   return rand() % (SPRITE_ORIENT_SOUTH - SPRITE_ORIENT_NORTH) + SPRITE_ORIENT_NORTH;
 }
 

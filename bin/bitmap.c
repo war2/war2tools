@@ -143,7 +143,12 @@ bitmap_sprite_draw(Editor *restrict ed,
                    int              x,
                    int              y)
 {
+   unsigned char *sprite;
+   Sprite_Orient info;
+   int w, h;
 
+   info = sprite_orient_random_get();
+   sprite = sprite_get(ed, unit, info, &w, &h);
 }
 
 void

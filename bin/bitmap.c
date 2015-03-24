@@ -30,67 +30,6 @@ fail:
 
 
 /*============================================================================*
- *                               Event Callbacks                              *
- *============================================================================*/
-
-//#define IS_KEY(keystr) strncmp(ev->key, keystr, sizeof(keystr) - 1) == 0
-//static void
-//_key_down_cb(void        *data,
-//             Evas        *evas  EINA_UNUSED,
-//             Evas_Object *bm,
-//             void        *event)
-//{
-//   Evas_Event_Key_Down *ev = event;
-//   Editor *ed = data;
-//   Eina_Bool refresh = EINA_FALSE;
-//
-//   if (evas_key_modifier_is_set(ev->modifiers, "Alt"))
-//     return;
-//
-//   if (evas_key_modifier_is_set(ev->modifiers, "Control"))
-//     {
-//        if (IS_KEY("plus"))
-//          {
-//   //          ed->gl.zoom += ed->gl.zoom_step;
-//             refresh = EINA_TRUE;
-//          }
-//        else if (IS_KEY("minus"))
-//          {
-//       //      if (ed->gl.zoom > ed->gl.zoom_step)
-//     //          ed->gl.zoom -= ed->gl.zoom_step;
-//             refresh = EINA_TRUE;
-//          }
-//     }
-//   else
-//     {
-//        if (IS_KEY("Up"))
-//          {
-////             ed->gl.y += 0.01f;
-//             refresh = EINA_TRUE;
-//          }
-//        else if (IS_KEY("Down"))
-//          {
-//  //           ed->gl.y -= 0.01f;
-//             refresh = EINA_TRUE;
-//          }
-//        else if (IS_KEY("Left"))
-//          {
-//    //         ed->gl.x -= 0.01f;
-//             refresh = EINA_TRUE;
-//          }
-//        else if (IS_KEY("Right"))
-//          {
-//      //       ed->gl.x += 0.01f;
-//             refresh = EINA_TRUE;
-//          }
-//     }
-//
-////   if (refresh)
-////     elm_glview_changed_set(glv);
-//}
-#undef IS_KEY
-
-/*============================================================================*
  *                                   Events                                   *
  *============================================================================*/
 

@@ -193,6 +193,7 @@ editor_new(void)
    );
 
    elm_toolbar_transverse_expanded_set(ed->toolbar, EINA_TRUE);
+   toolbar_fill(ed, ed->toolbar, ed->win);
    elm_box_pack_end(o, ed->toolbar);
 
    /* Scroller */
@@ -252,8 +253,6 @@ editor_finalize(Editor *ed)
    ed->textures_src = texture_tileset_open(ed->era);
    texture_dictionary_init(&(ed->tex_dict), ed->era);
    ed->textures = texture_hash_new();
-
-   toolbar_fill(ed, ed->toolbar, ed->win);
 
    chk = bitmap_add(ed);
    EINA_SAFETY_ON_FALSE_RETURN(chk);

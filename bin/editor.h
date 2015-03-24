@@ -5,6 +5,38 @@
 #define EDITOR_ITEM_HUMAN       (1 << 0)
 #define EDITOR_ITEM_ORC         (1 << 1)
 
+typedef enum
+{
+   EDITOR_SPREAD_NORMAL,
+   EDITOR_SPREAD_CIRCLE,
+   EDITOR_SPREAD_RANDOM
+} Editor_Spread;
+
+typedef enum
+{
+   EDITOR_RADIUS_SMALL,
+   EDITOR_RADIUS_MEDIUM,
+   EDITOR_RADIUS_BIG
+} Editor_Radius;
+
+typedef enum
+{
+   EDITOR_ACTION_SELECTION,
+   EDITOR_ACTION_WATER,
+   EDITOR_ACTION_NON_CONSTRUCTIBLE,
+   EDITOR_ACTION_CONSTRUCTIBLE,
+   EDITOR_ACTION_TREES,
+   EDITOR_ACTION_ROCKS,
+   EDITOR_ACTION_HUMAN_WALLS,
+   EDITOR_ACTION_ORCS_WALLS
+} Editor_Action;
+
+typedef enum
+{
+   EDITOR_TINT_LIGHT,
+   EDITOR_TINT_DARK
+} Editor_Tint;
+
 struct _Editor
 {
    Pud          *pud;
@@ -30,6 +62,11 @@ struct _Editor
 
    /* Toolbar */
    Evas_Object *toolbar;
+   Evas_Object *segments[4];
+   Editor_Action action;
+   Editor_Spread spread;
+   Editor_Radius radius;
+   Editor_Tint   tint;
 
    /* Cursor */
    Evas_Object *cursor;

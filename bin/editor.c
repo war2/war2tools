@@ -245,6 +245,8 @@ editor_finalize(Editor *ed)
    snprintf(ed->era_str, sizeof(ed->era_str), "%s", pud_era2str(ed->era));
    ed->era_str[0] += 32; /* Lowercase */
 
+   menu_unit_selection_reset(ed);
+
    ed->units = sprite_units_open();
    ed->buildings = sprite_buildings_open(ed->era);
    ed->sprites = sprite_hash_new();

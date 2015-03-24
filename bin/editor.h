@@ -1,6 +1,7 @@
 #ifndef _EDITOR_H_
 #define _EDITOR_H_
 
+#define EDITOR_NO_UNIT_SELECTED 0x100
 
 typedef enum
 {
@@ -77,6 +78,8 @@ struct _Editor
       Evas_Object *menu_size;
       Evas_Object *menu_era;
    } mainconfig;
+
+   Evas_Object *radio_units_reset;
 
    Evas_Point bitmap_origin;
 

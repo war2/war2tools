@@ -112,12 +112,15 @@ _radio_add(Editor          *ed,
       elm_obj_radio_state_value_set(object),
       elm_obj_radio_value_pointer_set((int *)bind)
    );
-   elm_object_text_set(o, label);
    if (group != NULL)
      eo_do(o, elm_obj_radio_group_add(group));
 
-   eoi = elm_menu_item_add(ed->menu, parent, NULL, NULL, _radio_changed_cb, o);
-   elm_object_item_content_set(eoi, o);
+   if (label) elm_object_text_set(o, label);
+   if (parent)
+     {
+        eoi = elm_menu_item_add(ed->menu, parent, NULL, NULL, _radio_changed_cb, o);
+        elm_object_item_content_set(eoi, o);
+     }
 
    return o;
 }
@@ -279,6 +282,9 @@ menu_add(Editor *ed)
    RADIO_ADD(PUD_UNIT_SKELETON, "Skeleton");
    RADIO_ADD(PUD_UNIT_DAEMON, "Daemon");
 
+   /* Add a fictive radio which will be used to reset the units selection */
+   _radio_add(ed, rd, EDITOR_NO_UNIT_SELECTED, NULL, NULL, &(ed->sel_unit));
+
 #undef RADIO_ADD
 
 
@@ -326,5 +332,11 @@ menu_enabled_set(Editor    *ed,
    mi = (Eina_List *)elm_menu_items_get(ed->menu);
    EINA_LIST_FOREACH(mi, l, eoi)
       elm_object_item_disabled_set(eoi, set);
+}
+
+void
+menu_unit_selection_reset(Editor *ed)
+{
+   elm_radio_value_set(ed->radio_units_reset, EDITOR_NO_UNIT_SELECTED);
 }
 

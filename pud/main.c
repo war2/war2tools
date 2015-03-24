@@ -146,11 +146,19 @@ _war2_entry_cb(const Pud_Color               *img,
                const War2_Sprites_Descriptor *ud,
                int                            img_nb)
 {
+   char file[4096];
    Pud_Bool chk = PUD_FALSE;
+
    if (out.png)
-     chk = war2_png_write(out.file, w, h, (const unsigned char *)img);
+     {
+        snprintf(file, sizeof(file), "%s_%i.png", out.file, img_nb);
+        chk = war2_png_write(file, w, h, (const unsigned char *)img);
+     }
    else if (out.jpeg)
-     chk = war2_jpeg_write(out.file, w, h, (const unsigned char *)img);
+     {
+        snprintf(file, sizeof(file), "%s_%i.jpg", out.file, img_nb);
+        chk = war2_jpeg_write(out.file, w, h, (const unsigned char *)img);
+     }
    else if (out.ppm)
      {
         fprintf(stderr, "*** Unimplemented PPM\n");
@@ -158,12 +166,12 @@ _war2_entry_cb(const Pud_Color               *img,
      }
    if (!chk)
      {
-        fprintf(stderr, "*** Failed to save to [%s]", out.file);
+        fprintf(stderr, "*** Failed to save to [%s]", file);
         exit(2);
      }
+   printf("Saving sprite %i at \"%s\"\n", img_nb, file);
 
    (void) ud;
-   (void) img_nb;
 }
 
 
@@ -200,7 +208,6 @@ main(int    argc,
 
            case 'S':
               sprite.enabled = 1;
-              printf("-> %s\n", optarg);
               sprite.entry = strtol(optarg, &ptr, 10);
               sprite.color = _str2color(ptr + 1);
               break;

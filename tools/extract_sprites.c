@@ -259,7 +259,7 @@ main(int    argc,
 
    war2_init();
    eet_init();
-   w2 = war2_open(argv[1], 1);
+   w2 = war2_open(argv[1], 2);
    if (!w2) return 2;
 
 

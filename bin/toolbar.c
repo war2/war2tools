@@ -50,7 +50,7 @@ _segment_changed_cb(void        *data,
    /* Safely unset the unit selection */
    menu_unit_selection_reset(ed);
 
-   DBG("Clicked on segment %p: %i\n", obj, sd->val);
+   DBG("Clicked on segment %p: %i", obj, sd->val);
 }
 
 

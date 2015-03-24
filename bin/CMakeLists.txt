@@ -22,6 +22,7 @@ if (ELEMENTARY_FOUND)
       sprite.c
       cursor.c
       mainconfig.c
+      menu.c
    )
    add_executable(war2edit ${WAR2EDIT_SRC})
    add_dependencies(war2edit edje_themes)

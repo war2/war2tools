@@ -263,11 +263,8 @@ mainconfig_add(Editor *ed)
 void
 mainconfig_show(Editor *ed)
 {
-   int i;
-
    /* Disable main menu */
-   for (i = 0; i < 4; i++)
-     elm_object_item_disabled_set(ed->main_sel[i], EINA_TRUE);
+   menu_enabled_set(ed, EINA_FALSE);
 
    /* Show inwin */
    elm_win_inwin_activate(ed->inwin);
@@ -277,10 +274,7 @@ mainconfig_show(Editor *ed)
 void
 mainconfig_hide(Editor *ed)
 {
-   int i;
-
    evas_object_hide(ed->inwin);
-   for (i = 0; i < 4; i++)
-     elm_object_item_disabled_set(ed->main_sel[i], EINA_FALSE);
+   menu_enabled_set(ed, EINA_TRUE);
 }
 

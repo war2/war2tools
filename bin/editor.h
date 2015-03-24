@@ -2,9 +2,6 @@
 #define _EDITOR_H_
 
 
-#define EDITOR_ITEM_HUMAN       (1 << 0)
-#define EDITOR_ITEM_ORC         (1 << 1)
-
 typedef enum
 {
    EDITOR_SPREAD_NORMAL,
@@ -67,14 +64,11 @@ struct _Editor
    Editor_Spread spread;
    Editor_Radius radius;
    Editor_Tint   tint;
+   Pud_Unit      sel_unit;
 
    /* Cursor */
    Evas_Object *cursor;
    Eina_Bool cursor_is_enabled;
-
-   Elm_Object_Item *main_sel[4];
-   Elm_Object_Item *hmn_sel[4];
-   Elm_Object_Item *orc_sel[4];
 
    struct _mainconfig {
       Evas_Object *container;
@@ -82,12 +76,6 @@ struct _Editor
       Evas_Object *menu_size;
       Evas_Object *menu_era;
    } mainconfig;
-
-   struct _menu_item {
-      Elm_Object_Item *item;
-      Evas_Object     *radio;
-      unsigned char    active_for : 2;
-   } tools_items[110], *tools_item_active;
 
    Evas_Point bitmap_origin;
 

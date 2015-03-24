@@ -137,8 +137,6 @@ menu_add(Editor *ed)
    ed->menu = elm_win_main_menu_get(ed->win);
    EINA_SAFETY_ON_NULL_RETURN_VAL(ed->menu, EINA_FALSE);
 
-   evas_object_data_set(ed->menu, "editor", ed);
-
    itm = elm_menu_item_add(ed->menu, NULL, NULL,  "File", NULL, NULL);
    elm_menu_item_add(ed->menu, itm, NULL, "New...", _win_new_cb, NULL);
    elm_menu_item_add(ed->menu, itm, NULL, "Open...", _win_open_cb, NULL);

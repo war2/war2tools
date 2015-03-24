@@ -63,8 +63,6 @@ _ts_entries_parse(War2_Data                *w2,
     * Each chunk is 42 bytes: 32 used and 10 unused */
    for (i = 0; i < map_size; i += 42)
      {
-        Pud_Bool tile_is_unused = PUD_FALSE;
-
         /* Read the first 16 words (32 bytes) */
         memcpy(&(chunk[0]), &(map[i]), 32);
         for (j = 0; j < 32; j += 2)
@@ -75,10 +73,8 @@ _ts_entries_parse(War2_Data                *w2,
              /* If one of the words is 0, the tile is unused */
              if (w == 0x0000)
                {
-                  tile_is_unused = PUD_TRUE;
                   break;
                }
-
           }
      }
 

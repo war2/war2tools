@@ -65,6 +65,7 @@ struct _Editor
    Editor_Radius radius;
    Editor_Tint   tint;
    Pud_Unit      sel_unit;
+   Pud_Player    sel_player;
 
    /* Cursor */
    Evas_Object *cursor;

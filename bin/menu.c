@@ -42,19 +42,52 @@ _win_save_as_cb(void        *data  EINA_UNUSED,
 }
 
 static void
-_menu_clicked_cb(void *data,
-                 Evas_Object *obj,
-                 void *event)
+_map_properties_cb(void        *data  EINA_UNUSED,
+                   Evas_Object *obj   EINA_UNUSED,
+                   void        *event EINA_UNUSED)
+{
+}
+
+static void
+_player_properties_cb(void        *data  EINA_UNUSED,
+                      Evas_Object *obj   EINA_UNUSED,
+                      void        *event EINA_UNUSED)
+{
+}
+
+static void
+_starting_properties_cb(void        *data  EINA_UNUSED,
+                        Evas_Object *obj   EINA_UNUSED,
+                        void        *event EINA_UNUSED)
+{
+}
+
+static void
+_units_properties_cb(void        *data  EINA_UNUSED,
+                     Evas_Object *obj   EINA_UNUSED,
+                     void        *event EINA_UNUSED)
+{
+}
+
+static void
+_upgrades_properties_cb(void        *data  EINA_UNUSED,
+                        Evas_Object *obj   EINA_UNUSED,
+                        void        *event EINA_UNUSED)
+{
+}
+
+static void
+_radio_changed_cb(void        *data,
+                  Evas_Object *obj   EINA_UNUSED,
+                  void        *event EINA_UNUSED)
 {
    Evas_Object *radio = data;
-   Editor *ed;
    int val;
 
+   /* Just set the radio. Under the hood elementary will set the
+    * right value in the Editor structure */
    val = elm_radio_state_value_get(radio);
    elm_radio_value_set(radio, val);
-
-   ed = evas_object_data_get(obj, "editor");
-   ed->sel_unit = val;
 }
 
 
@@ -65,25 +98,25 @@ _menu_clicked_cb(void *data,
 static Evas_Object *
 _radio_add(Editor          *ed,
            Evas_Object     *group,
-           Pud_Unit         unit,
+           unsigned int     object,
            Elm_Object_Item *parent,
-           const char      *label)
+           const char      *label,
+           unsigned int    *bind)
 {
    Evas_Object *o;
    Elm_Object_Item *eoi;
-   int val = 0;
 
    o = elm_radio_add(ed->menu);
    eo_do(
       o,
-      elm_obj_radio_state_value_set(unit),
-      elm_obj_radio_value_pointer_set((int *)(&(ed->sel_unit)))
+      elm_obj_radio_state_value_set(object),
+      elm_obj_radio_value_pointer_set((int *)bind)
    );
    elm_object_text_set(o, label);
    if (group != NULL)
      eo_do(o, elm_obj_radio_group_add(group));
 
-   eoi = elm_menu_item_add(ed->menu, parent, NULL, NULL, _menu_clicked_cb, o);
+   eoi = elm_menu_item_add(ed->menu, parent, NULL, NULL, _radio_changed_cb, o);
    elm_object_item_content_set(eoi, o);
 
    return o;
@@ -98,8 +131,8 @@ Eina_Bool
 menu_add(Editor *ed)
 {
    Elm_Object_Item *itm, *i;
-   Evas_Object *rd = NULL;
-   int k = 1;
+   Evas_Object *rd;
+   unsigned int *bind;
 
    ed->menu = elm_win_main_menu_get(ed->win);
    EINA_SAFETY_ON_NULL_RETURN_VAL(ed->menu, EINA_FALSE);
@@ -116,8 +149,11 @@ menu_add(Editor *ed)
 
    i = itm = elm_menu_item_add(ed->menu, NULL, NULL, "Tools", NULL, NULL);
 
-#define RADIO_ADD(unit_, label_) _radio_add(ed, rd, unit_, i, label_)
+#define RADIO_ADD(unit_, label_) \
+   _radio_add(ed, rd, unit_, i, label_, bind)
 
+   rd = NULL; /* Unset radio group */
+   bind = &(ed->sel_unit); /* Bind the changed value */
    rd = RADIO_ADD(PUD_UNIT_HUMAN_START, "Human Start Location");
 
    i = elm_menu_item_add(ed->menu, itm, NULL, "Human Air", NULL, NULL);
@@ -247,7 +283,31 @@ menu_add(Editor *ed)
 
 #undef RADIO_ADD
 
+
    itm = elm_menu_item_add(ed->menu, NULL, NULL, "Players", NULL, NULL);
+
+#define RADIO_ADD(unit_, label_) \
+   _radio_add(ed, rd, unit_, itm, label_, bind)
+
+   rd = NULL; /* Reset the radio group */
+   bind = &(ed->sel_player); /* Bind */
+   rd = RADIO_ADD(PUD_PLAYER_RED, "Player 1 (Red)");
+   RADIO_ADD(PUD_PLAYER_BLUE,     "Player 2 (Blue)");
+   RADIO_ADD(PUD_PLAYER_GREEN,    "Player 3 (Green)");
+   RADIO_ADD(PUD_PLAYER_VIOLET,   "Player 4 (Violet)");
+   RADIO_ADD(PUD_PLAYER_ORANGE,   "Player 5 (Orange)");
+   RADIO_ADD(PUD_PLAYER_BLACK,    "Player 6 (Black)");
+   RADIO_ADD(PUD_PLAYER_WHITE,    "Player 7 (White)");
+   RADIO_ADD(PUD_PLAYER_YELLOW,   "Player 8 (Yellow)");
+
+#undef RADIO_ADD
+
+   elm_menu_item_separator_add(ed->menu, itm);
+   elm_menu_item_add(ed->menu, itm, NULL, "Map Properties...", _map_properties_cb, ed);
+   elm_menu_item_add(ed->menu, itm, NULL, "Player Properties...", _player_properties_cb, ed);
+   elm_menu_item_add(ed->menu, itm, NULL, "Starting Properties...", _starting_properties_cb, ed);
+   elm_menu_item_add(ed->menu, itm, NULL, "Units Properties...", _units_properties_cb, ed);
+   elm_menu_item_add(ed->menu, itm, NULL, "Upgrades Properties...", _upgrades_properties_cb, ed);
 
    itm = elm_menu_item_add(ed->menu, NULL, NULL, "Help", NULL, NULL);
 

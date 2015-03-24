@@ -149,8 +149,6 @@ editor_new(void)
    Editor *ed;
    char title[128], wins[32];
    Evas_Object *o;
-   Elm_Object_Item *itm, *i;
-   int k = 0;
 
    ed = calloc(1, sizeof(Editor));
    EINA_SAFETY_ON_NULL_GOTO(ed, err_ret);

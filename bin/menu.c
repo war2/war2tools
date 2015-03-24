@@ -1,5 +1,48 @@
 #include "war2edit.h"
 
+
+/*============================================================================*
+ *                                 Private API                                *
+ *============================================================================*/
+
+static Evas_Object *
+_radio_add(Editor          *ed,
+           Evas_Object     *group,
+           unsigned int     object,
+           Elm_Object_Item *parent,
+           const char      *label,
+           Evas_Smart_Cb    func)
+{
+   Evas_Object *o;
+   Elm_Object_Item *eoi;
+
+   o = elm_radio_add(ed->menu);
+   eo_do(o, elm_obj_radio_state_value_set(object));
+   if (group != NULL)
+     eo_do(o, elm_obj_radio_group_add(group));
+
+   if (label) elm_object_text_set(o, label);
+   if (parent)
+     {
+        eoi = elm_menu_item_add(ed->menu, parent, NULL, NULL, func, o);
+        elm_object_item_content_set(eoi, o);
+     }
+
+   return o;
+}
+
+static void
+_radio_changed_common_do(Evas_Object *radio,
+                         int         *bind)
+{
+   int val;
+
+   val = elm_radio_state_value_get(radio);
+   elm_radio_value_set(radio, val);
+   *bind = val;
+}
+
+
 /*============================================================================*
  *                                  Callbacks                                 *
  *============================================================================*/
@@ -77,52 +120,24 @@ _upgrades_properties_cb(void        *data  EINA_UNUSED,
 }
 
 static void
-_radio_changed_cb(void        *data,
-                  Evas_Object *obj   EINA_UNUSED,
-                  void        *event EINA_UNUSED)
+_radio_units_changed_cb(void        *data,
+                        Evas_Object *obj,
+                        void        *event EINA_UNUSED)
 {
-   Evas_Object *radio = data;
-   int val;
-
-   /* Just set the radio. Under the hood elementary will set the
-    * right value in the Editor structure */
-   val = elm_radio_state_value_get(radio);
-   elm_radio_value_set(radio, val);
+   Editor *ed = evas_object_data_get(obj, "editor");
+   _radio_changed_common_do(data, (int *)(&(ed->sel_unit)));
+   DBG("Units selection changed: <%s>", pud_unit2str(ed->sel_unit));
+   // TODO Change cursor size in function of unit type
 }
 
-
-/*============================================================================*
- *                                 Private API                                *
- *============================================================================*/
-
-static Evas_Object *
-_radio_add(Editor          *ed,
-           Evas_Object     *group,
-           unsigned int     object,
-           Elm_Object_Item *parent,
-           const char      *label,
-           unsigned int    *bind)
+static void
+_radio_players_changed_cb(void *data,
+                          Evas_Object *obj,
+                          void        *event EINA_UNUSED)
 {
-   Evas_Object *o;
-   Elm_Object_Item *eoi;
-
-   o = elm_radio_add(ed->menu);
-   eo_do(
-      o,
-      elm_obj_radio_state_value_set(object),
-      elm_obj_radio_value_pointer_set((int *)bind)
-   );
-   if (group != NULL)
-     eo_do(o, elm_obj_radio_group_add(group));
-
-   if (label) elm_object_text_set(o, label);
-   if (parent)
-     {
-        eoi = elm_menu_item_add(ed->menu, parent, NULL, NULL, _radio_changed_cb, o);
-        elm_object_item_content_set(eoi, o);
-     }
-
-   return o;
+   Editor *ed = evas_object_data_get(obj, "editor");
+   _radio_changed_common_do(data, (int *)(&(ed->sel_player)));
+   DBG("Player selection changed: <%s>", pud_color2str(ed->sel_player));
 }
 
 
@@ -135,10 +150,11 @@ menu_add(Editor *ed)
 {
    Elm_Object_Item *itm, *i;
    Evas_Object *rd;
-   unsigned int *bind;
 
    ed->menu = elm_win_main_menu_get(ed->win);
    EINA_SAFETY_ON_NULL_RETURN_VAL(ed->menu, EINA_FALSE);
+
+   evas_object_data_set(ed->menu, "editor", ed);
 
    itm = elm_menu_item_add(ed->menu, NULL, NULL,  "File", NULL, NULL);
    elm_menu_item_add(ed->menu, itm, NULL, "New...", _win_new_cb, NULL);
@@ -151,10 +167,9 @@ menu_add(Editor *ed)
    i = itm = elm_menu_item_add(ed->menu, NULL, NULL, "Tools", NULL, NULL);
 
 #define RADIO_ADD(unit_, label_) \
-   _radio_add(ed, rd, unit_, i, label_, bind)
+   _radio_add(ed, rd, unit_, i, label_, _radio_units_changed_cb)
 
    rd = NULL; /* Unset radio group */
-   bind = &(ed->sel_unit); /* Bind the changed value */
    rd = RADIO_ADD(PUD_UNIT_HUMAN_START, "Human Start Location");
 
    i = elm_menu_item_add(ed->menu, itm, NULL, "Human Air", NULL, NULL);
@@ -283,7 +298,7 @@ menu_add(Editor *ed)
    RADIO_ADD(PUD_UNIT_DAEMON, "Daemon");
 
    /* Add a fictive radio which will be used to reset the units selection */
-   _radio_add(ed, rd, EDITOR_NO_UNIT_SELECTED, NULL, NULL, &(ed->sel_unit));
+   _radio_add(ed, rd, EDITOR_NO_UNIT_SELECTED, NULL, NULL, _radio_units_changed_cb);
 
 #undef RADIO_ADD
 
@@ -291,10 +306,9 @@ menu_add(Editor *ed)
    itm = elm_menu_item_add(ed->menu, NULL, NULL, "Players", NULL, NULL);
 
 #define RADIO_ADD(unit_, label_) \
-   _radio_add(ed, rd, unit_, itm, label_, bind)
+   _radio_add(ed, rd, unit_, itm, label_, _radio_players_changed_cb)
 
    rd = NULL; /* Reset the radio group */
-   bind = &(ed->sel_player); /* Bind */
    rd = RADIO_ADD(PUD_PLAYER_RED, "Player 1 (Red)");
    RADIO_ADD(PUD_PLAYER_BLUE,     "Player 2 (Blue)");
    RADIO_ADD(PUD_PLAYER_GREEN,    "Player 3 (Green)");

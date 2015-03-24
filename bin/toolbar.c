@@ -34,10 +34,11 @@ _segment_free_cb(void        *data EINA_UNUSED,
 }
 
 static void
-_segment_changed_cb(void        *data EINA_UNUSED,
+_segment_changed_cb(void        *data,
                     Evas_Object *obj,
                     void        *info EINA_UNUSED)
 {
+   Editor *ed = data;
    Segment_Data *sd;
    Elm_Object_Item *eoi;
 
@@ -45,6 +46,9 @@ _segment_changed_cb(void        *data EINA_UNUSED,
    sd = elm_object_item_data_get(eoi);
 
    *(sd->bind) = sd->val;
+
+   /* Safely unset the unit selection */
+   menu_unit_selection_reset(ed);
 
    DBG("Clicked on segment %p: %i\n", obj, sd->val);
 }
@@ -171,7 +175,7 @@ toolbar_fill(Editor      *ed,
      {
         seg = ed->segments[i];
         _object_set(tb, seg);
-        evas_object_smart_callback_add(seg, "changed", _segment_changed_cb, NULL);
+        evas_object_smart_callback_add(seg, "changed", _segment_changed_cb, ed);
         eoi = elm_segment_control_item_get(seg, 0);
         elm_segment_control_item_selected_set(eoi, EINA_TRUE);
      }

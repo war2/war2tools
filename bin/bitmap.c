@@ -28,47 +28,6 @@ fail:
    return NULL;
 }
 
-
-/*============================================================================*
- *                                   Events                                   *
- *============================================================================*/
-
-static void
-_mouse_move_cb(void        *data,
-               Evas        *evas EINA_UNUSED,
-               Evas_Object *bmp  EINA_UNUSED,
-               void        *info)
-{
-   Editor *ed = data;
-   Evas_Event_Mouse_Move *ev = info;
-   Evas_Point scr_view;
-   int cell_x, cell_y;
-
-   /* Which cell in the grid are we pointing at? */
-   elm_scroller_region_get(ed->scroller, &scr_view.x, &scr_view.y, NULL, NULL);
-   cell_x = (ev->cur.canvas.x + scr_view.x - ed->bitmap_origin.x) / TEXTURE_WIDTH;
-   cell_y = (ev->cur.canvas.y + scr_view.y - ed->bitmap_origin.y) / TEXTURE_HEIGHT;
-
-   cursor_move(ed, cell_x, cell_y);
-}
-
-static void
-_mouse_down_cb(void        *data,
-               Evas        *evas EINA_UNUSED,
-               Evas_Object *bmp  EINA_UNUSED,
-               void        *info)
-{
-   Editor *ed = data;
-   Evas_Event_Mouse_Down *ev = info;
-
-   if (!ed->cursor_is_enabled) return;
-}
-
-
-/*============================================================================*
- *                                 Private API                                *
- *============================================================================*/
-
 static void
 _bitmap_image_push(Editor        *          ed,
                    unsigned char * restrict img,
@@ -115,10 +74,77 @@ _bitmap_init(Editor *restrict ed)
      }
 }
 
+static void
+_coords_to_grid(Editor *restrict  ed,
+                Evas_Coord_Point  cur,
+                int              *x,
+                int              *y)
+{
+   Evas_Point scr_view;
+   int cell_x, cell_y;
+
+   /* Which cell in the grid are we pointing at? */
+   elm_scroller_region_get(ed->scroller, &scr_view.x, &scr_view.y, NULL, NULL);
+   cell_x = (cur.x + scr_view.x - ed->bitmap_origin.x) / TEXTURE_WIDTH;
+   cell_y = (cur.y + scr_view.y - ed->bitmap_origin.y) / TEXTURE_HEIGHT;
+
+   *x = cell_x;
+   *y = cell_y;
+}
+
+
+/*============================================================================*
+ *                                   Events                                   *
+ *============================================================================*/
+
+static void
+_mouse_move_cb(void        *data,
+               Evas        *evas EINA_UNUSED,
+               Evas_Object *bmp  EINA_UNUSED,
+               void        *info)
+{
+   Editor *ed = data;
+   Evas_Event_Mouse_Move *ev = info;
+   int x, y;
+
+   _coords_to_grid(ed, ev->cur.canvas, &x, &y);
+   cursor_move(ed, x, y);
+}
+
+static void
+_mouse_down_cb(void        *data,
+               Evas        *evas EINA_UNUSED,
+               Evas_Object *bmp  EINA_UNUSED,
+               void        *info)
+{
+   Editor *ed = data;
+   Evas_Event_Mouse_Down *ev = info;
+   int x, y;
+
+   if (!ed->cursor_is_enabled) return;
+
+   _coords_to_grid(ed, ev->canvas, &x, &y);
+
+   if (ed->sel_unit != EDITOR_NO_UNIT_SELECTED)
+     {
+        bitmap_sprite_draw(ed, ed->sel_unit, ed->sel_player, x, y);
+     }
+}
+
 
 /*============================================================================*
  *                                 Public API                                 *
  *============================================================================*/
+
+void
+bitmap_sprite_draw(Editor *restrict ed,
+                   Pud_Unit         unit,
+                   Pud_Player       color,
+                   int              x,
+                   int              y)
+{
+
+}
 
 void
 bitmap_tile_set(Editor * restrict ed,

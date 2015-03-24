@@ -41,35 +41,6 @@ _win_save_as_cb(void        *data  EINA_UNUSED,
 {
 }
 
-#if 0
-static Elm_Object_Item *
-_radio_add(Editor          *editor,
-           unsigned int     idx,
-           Elm_Object_Item *parent,
-           const char      *label,
-           unsigned int     flags  EINA_UNUSED)
-{
-   Evas_Object *o;
-   Elm_Object_Item *eoi;
-   struct _menu_item *mi;
-
-   mi = &(editor->tools_items[idx]);
-
-   o = elm_radio_add(editor->menu);
-   elm_radio_state_value_set(o, 1);
-   elm_radio_value_set(o, 0);
-   elm_object_text_set(o, label);
-
-   eoi = elm_menu_item_add(editor->menu, parent, NULL, NULL, _radio_cb, mi);
-   elm_object_item_content_set(eoi, o);
-
-   mi->radio = o;
-   mi->item = eoi;
-
-   return eoi;
-}
-#endif
-
 static void
 _menu_clicked_cb(void *data,
                  Evas_Object *obj,
@@ -85,6 +56,7 @@ _menu_clicked_cb(void *data,
    ed = evas_object_data_get(obj, "editor");
    ed->sel_unit = val;
 }
+
 
 /*============================================================================*
  *                                 Private API                                *

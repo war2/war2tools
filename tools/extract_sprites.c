@@ -299,7 +299,7 @@ main(int    argc,
         return -1;
      }
    for (i = 0; i < SIZEOF_ARRAY(buildings); i++)
-     GEN_BUILDING(units[i], PUD_ERA_FOREST);
+     GEN_BUILDING(buildings[i], PUD_ERA_FOREST);
    eet_close(_ef);
 
    /*=========================*
@@ -314,7 +314,7 @@ main(int    argc,
         return -1;
      }
    for (i = 0; i < SIZEOF_ARRAY(buildings); i++)
-     GEN_BUILDING(units[i], PUD_ERA_WINTER);
+     GEN_BUILDING(buildings[i], PUD_ERA_WINTER);
    eet_close(_ef);
 
    /*=========================*
@@ -329,7 +329,7 @@ main(int    argc,
         return -1;
      }
    for (i = 0; i < SIZEOF_ARRAY(buildings); i++)
-     GEN_BUILDING(units[i], PUD_ERA_WASTELAND);
+     GEN_BUILDING(buildings[i], PUD_ERA_WASTELAND);
    eet_close(_ef);
 
    /*=========================*
@@ -344,7 +344,7 @@ main(int    argc,
         return -1;
      }
    for (i = 0; i < SIZEOF_ARRAY(buildings); i++)
-     GEN_BUILDING(units[i], PUD_ERA_SWAMP);
+     GEN_BUILDING(buildings[i], PUD_ERA_SWAMP);
    eet_close(_ef);
 
    war2_close(w2);

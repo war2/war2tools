@@ -375,6 +375,7 @@ main(int    argc,
      }
 
 end:
+   free(out.file);
    pud_close(pud);
    war2_close(w2);
    return ret_status;

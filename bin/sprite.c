@@ -7,7 +7,8 @@ sprite_load(Eet_File   *src,
             int        *h_ret)
 {
    unsigned char *mem;
-   int w, h, size, expected_size;
+   int size, expected_size;
+   uint16_t w, h;
 
    mem = eet_read(src, key, &size);
    EINA_SAFETY_ON_NULL_RETURN_VAL(mem, NULL);
@@ -15,7 +16,7 @@ sprite_load(Eet_File   *src,
    memcpy(&w, mem + 0, sizeof(uint16_t));
    memcpy(&h, mem + 2, sizeof(uint16_t));
 
-   expected_size = (w * h) + 4;
+   expected_size = (w * h * 4) + 4;
    if (expected_size != size)
      {
         CRI("Sprite data was loaded with size [%i], expected [%i]",

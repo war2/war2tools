@@ -150,6 +150,12 @@ bitmap_sprite_draw(Editor *restrict ed,
 
    info = sprite_info_random_get();
    sprite = sprite_get(ed, unit, info, &w, &h, &flip);
+
+   _bitmap_image_push(ed, sprite, x * TEXTURE_WIDTH, y * TEXTURE_WIDTH, w, h);
+   /* FIXME: for all cells covered by the unit */
+   ed->cells[y][x].unit = unit;
+   ed->cells[y][x].orient = info;
+   ed->cells[y][x].player = color;
 }
 
 void

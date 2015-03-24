@@ -16,7 +16,6 @@
 #include <time.h>
 
 #include "debug.h"
-#include "bool.h"
 #include "pud.h"
 #include "jpeg.h"
 

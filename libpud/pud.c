@@ -625,3 +625,9 @@ pud_check(Pud *pud)
    return PUD_FALSE;
 }
 
+Pud_Bool
+pud_unit_building_is(Pud_Unit unit)
+{
+   return ((unit >= PUD_UNIT_FARM) && (unit <= PUD_UNIT_RUNESTONE));
+}
+

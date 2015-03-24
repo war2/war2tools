@@ -98,6 +98,22 @@ _bitmap_image_push(Editor        *          ed,
    evas_object_image_data_update_add(ed->bitmap, x, at_y, w, img_h);
 }
 
+static void
+_bitmap_init(Editor *restrict ed)
+{
+   int i, j, tile;
+
+   for (j = 0; j < ed->map_h; j++)
+     {
+        for (i = 0; i < ed->map_w; i++)
+          {
+             // FIXME This is pretty bad
+             // FIXME Study borders between tiles for a better algorithm
+             tile = texture_dictionary_entry_random_get(&ed->tex_dict.constr);
+             bitmap_tile_set(ed, i, j, tile);
+          }
+     }
+}
 
 
 /*============================================================================*
@@ -163,7 +179,7 @@ bitmap_add(Editor *ed)
    evas_object_event_callback_add(obj, EVAS_CALLBACK_MOUSE_MOVE, _mouse_move_cb, ed);
    evas_object_event_callback_add(obj, EVAS_CALLBACK_MOUSE_DOWN, _mouse_down_cb, ed);
 
-   bitmap_tile_set(ed, 5, 2, 165);
+   _bitmap_init(ed);
 
    return EINA_TRUE;
 }

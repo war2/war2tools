@@ -527,6 +527,7 @@ _toolbar_fill(Editor      *ed,
 {
    Evas_Object *seg;
    unsigned int i;
+   Elm_Object_Item *eoi;
 
    seg = _segment_add(win);
    _item_add(seg, win, "light.png", &(ed->tint), EDITOR_TINT_LIGHT);
@@ -563,6 +564,8 @@ _toolbar_fill(Editor      *ed,
         seg = ed->segments[i];
         _object_set(tb, seg);
         evas_object_smart_callback_add(seg, "changed", _segment_changed_cb, NULL);
+        eoi = elm_segment_control_item_get(seg, 0);
+        elm_segment_control_item_selected_set(eoi, EINA_TRUE);
      }
 }
 

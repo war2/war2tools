@@ -136,8 +136,8 @@ unsigned char *
 texture_get(Editor       *ed,
             unsigned int  key)
 {
-   EINA_SAFETY_ON_TRUE_RETURN_VAL(((int)key < texture_dictionary_min(ed)) ||
-                                  ((int)key > texture_dictionary_max(ed)),
+   EINA_SAFETY_ON_TRUE_RETURN_VAL((key < texture_dictionary_min(ed)) ||
+                                  (key > texture_dictionary_max(ed)),
                                   NULL);
 
    Eina_Bool chk;
@@ -180,15 +180,23 @@ texture_tile_access(Editor       *ed,
    return texture_get(ed, key);
 }
 
-int
+unsigned int
 texture_dictionary_min(Editor *ed)
 {
    return ed->tex_dict.hwalls.begin;
 }
 
-int
+unsigned int
 texture_dictionary_max(Editor *ed)
 {
    return ed->tex_dict.constr_x.end;
 }
+
+unsigned int
+texture_dictionary_entry_random_get(Texture_Dictionary_Entry *entry)
+{
+   /* Does not return 4 */
+   return rand() % (entry->end - entry->begin + 1) + entry->begin;
+}
+
 

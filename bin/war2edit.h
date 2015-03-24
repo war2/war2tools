@@ -11,6 +11,7 @@
 
 typedef struct _Grid_Cell Grid_Cell;
 typedef struct _Editor Editor;
+typedef struct _Texture_Dictionary_Entry Texture_Dictionary_Entry;
 typedef struct _Texture_Dictionary Texture_Dictionary;
 
 #include "log.h"

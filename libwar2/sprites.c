@@ -196,28 +196,16 @@ _sprites_entries_parse(War2_Data                *w2,
 War2_Sprites_Descriptor *
 war2_sprites_decode_entry(War2_Data *w2,
                           Pud_Player                player_color,
-                          Pud_Era                   era,
                           unsigned int              entry,
                           War2_Sprites_Decode_Func  func)
 {
    War2_Sprites_Descriptor *ud;
-   unsigned int entries[2] = { 0, entry };
-
-   switch (era)
-     {
-      case PUD_ERA_FOREST:    entries[0] = 2;   break;
-      case PUD_ERA_WINTER:    entries[0] = 18;  break;
-      case PUD_ERA_WASTELAND: entries[0] = 10;  break;
-      case PUD_ERA_SWAMP:     entries[0] = 438; break;
-     }
+   unsigned int entries[2] = { 2, entry };
 
    ud = calloc(1, sizeof(*ud));
    if (!ud) DIE_RETURN(NULL, "Failed to allocate memory");
-   ud->era = era;
    ud->color = player_color;
    ud->object = entry;
-   ud->sprite_type = 0;
-   ud->side = 0;
 
    _sprites_entries_parse(w2, ud, entries, func);
 

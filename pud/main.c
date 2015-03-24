@@ -45,7 +45,8 @@ _usage(FILE *stream)
            "    -s | --sections       Gets sections in the PUD file.\n"
            "    -S | --sprite <entry> Extract the graphic entry specified. Only when -W is enabled.\n"
            "                  <color> An output file (with -o) and type (-p,-j,-g) must be provided.\n"
-           "                  <era>   Color must be a string (red, blue, ...) as well as era.\n"
+           "                          Color must be a string (red, blue, ...). Arguments must be\n"
+           "                          comma-separated\n"
            "\n"
            "    -v | --verbose        Activate verbose mode. Cumulate flags increase verbosity level.\n"
            "    -h | --help           Shows this message\n"
@@ -80,7 +81,7 @@ static struct {
    unsigned int enabled : 1;
    unsigned int entry;
    Pud_Player   color;
-   Pud_Era      era;
+   /*Pud_Era      era;*/
 } sprite;
 
 
@@ -92,6 +93,7 @@ static struct {
 
 #define IS_STR(str_) !strncasecmp(str, str_, sizeof(str_) - 1)
 
+#if 0
 static Pud_Era
 _str2era(const char *str)
 {
@@ -109,6 +111,7 @@ _str2era(const char *str)
         exit(1);
      }
 }
+#endif
 
 static Pud_Player
 _str2color(const char *str)
@@ -179,11 +182,10 @@ main(int    argc,
    int i;
    char *ptr;
 
-
    /* Getopt */
    while (1)
      {
-        c = getopt_long(argc, argv, "o:pjsS:::hgWPvt:", _options, &opt_idx);
+        c = getopt_long(argc, argv, "o:pjsS::hgWPvt:", _options, &opt_idx);
         if (c == -1) break;
 
         switch (c)
@@ -201,7 +203,6 @@ main(int    argc,
               printf("-> %s\n", optarg);
               sprite.entry = strtol(optarg, &ptr, 10);
               sprite.color = _str2color(ptr + 1);
-              sprite.era = _str2era(strrchr(optarg, ',') + 1);
               break;
 
            case 's':
@@ -271,7 +272,7 @@ main(int    argc,
              if (out.jpeg + out.ppm + out.png != 1)
                ABORT(1, "You must use one of --jpeg,--ppm,--png.");
 
-             ud = war2_sprites_decode_entry(w2, sprite.color, sprite.era, sprite.entry, _war2_entry_cb);
+             ud = war2_sprites_decode_entry(w2, sprite.color, sprite.entry, _war2_entry_cb);
              war2_sprites_descriptor_free(ud);
           }
      }

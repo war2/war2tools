@@ -89,7 +89,6 @@ war2_sprites_decode(War2_Data                *w2,
 War2_Sprites_Descriptor *
 war2_sprites_decode_entry(War2_Data *w2,
                           Pud_Player                player_color,
-                          Pud_Era                   era,
                           unsigned int              entry,
                           War2_Sprites_Decode_Func  func);
 

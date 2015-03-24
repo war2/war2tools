@@ -186,7 +186,7 @@ main(int    argc,
    War2_Sprites_Descriptor *ud;
    int verbose = 0;
    uint16_t w;
-   Pud_Bool war2 = false;
+   Pud_Bool war2 = PUD_FALSE;
    int i;
    char *ptr;
 
@@ -217,7 +217,7 @@ main(int    argc,
               break;
 
            case 'W':
-              war2 = true;
+              war2 = PUD_TRUE;
               break;
 
            case 't':
@@ -262,7 +262,7 @@ main(int    argc,
    file = argv[optind];
    if (file == NULL) ABORT(1, "NULL input file");
 
-   if (war2 == true)
+   if (war2 == PUD_TRUE)
      {
         if (tile_at.enabled ||
             print.enabled   ||

@@ -7,21 +7,21 @@
 
 #include "pud_private.h"
 
-bool
+Pud_Bool
 pud_minimap_to_ppm(Pud        *pud,
                    const char *file)
 {
-   PUD_SANITY_CHECK(pud, PUD_OPEN_MODE_R, false);
+   PUD_SANITY_CHECK(pud, PUD_OPEN_MODE_R, PUD_FALSE);
 
    FILE *f;
    int i, size;
    unsigned char *map;
 
    map = pud_minimap_bitmap_generate(pud, &size);
-   if (!map) DIE_RETURN(false, "Failed to generate bitmap");
+   if (!map) DIE_RETURN(PUD_FALSE, "Failed to generate bitmap");
 
    f = fopen(file, "w");
-   if (!f) DIE_RETURN(false, "Failed to open [%s]", file);
+   if (!f) DIE_RETURN(PUD_FALSE, "Failed to open [%s]", file);
 
    /* Write PPM header */
    fprintf(f,
@@ -42,5 +42,5 @@ pud_minimap_to_ppm(Pud        *pud,
 
    PUD_VERBOSE(pud, 1, "Created [%s]", file);
 
-   return true;
+   return PUD_TRUE;
 }

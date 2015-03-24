@@ -193,7 +193,36 @@ _sprites_entries_parse(War2_Data                *w2,
    return PUD_TRUE;
 }
 
+War2_Sprites_Descriptor *
+war2_sprites_decode_entry(War2_Data *w2,
+                          Pud_Player                player_color,
+                          Pud_Era                   era,
+                          unsigned int              entry,
+                          War2_Sprites_Decode_Func  func)
+{
+   War2_Sprites_Descriptor *ud;
+   unsigned int entries[2] = { 0, entry };
 
+   switch (era)
+     {
+      case PUD_ERA_FOREST:    entries[0] = 2;   break;
+      case PUD_ERA_WINTER:    entries[0] = 18;  break;
+      case PUD_ERA_WASTELAND: entries[0] = 10;  break;
+      case PUD_ERA_SWAMP:     entries[0] = 438; break;
+     }
+
+   ud = calloc(1, sizeof(*ud));
+   if (!ud) DIE_RETURN(NULL, "Failed to allocate memory");
+   ud->era = era;
+   ud->color = player_color;
+   ud->object = entry;
+   ud->sprite_type = 0;
+   ud->side = 0;
+
+   _sprites_entries_parse(w2, ud, entries, func);
+
+   return ud;
+}
 
 War2_Sprites_Descriptor *
 war2_sprites_decode(War2_Data                *w2,
@@ -309,12 +338,12 @@ war2_sprites_decode(War2_Data                *w2,
            case PUD_UNIT_SKELETON              : NEUTRAL_UNIT(69); break;
            case PUD_UNIT_DAEMON                : NEUTRAL_UNIT(70); break;
 
-             /* Start Locations */
-           case PUD_UNIT_HUMAN_START           : HUMAN_START(164); break;           
-           case PUD_UNIT_ORC_START             : ORC_START(165); break;           
+                                                 /* Start Locations */
+           case PUD_UNIT_HUMAN_START           : HUMAN_START(164); break;
+           case PUD_UNIT_ORC_START             : ORC_START(165); break;
 
-             /* Buildings */
-           case PUD_UNIT_HUMAN_GUARD_TOWER   :   HUMAN_BUILDING_SWITCH( 80, 169,  80, 507); break; 
+                                                 /* Buildings */
+           case PUD_UNIT_HUMAN_GUARD_TOWER   :   HUMAN_BUILDING_SWITCH( 80, 169,  80, 507); break;
            case PUD_UNIT_ORC_GUARD_TOWER     :     ORC_BUILDING_SWITCH( 81, 170,  81, 508); break;
            case PUD_UNIT_HUMAN_CANNON_TOWER  :   HUMAN_BUILDING_SWITCH( 82, 171,  82, 509); break;
            case PUD_UNIT_ORC_CANNON_TOWER    :     ORC_BUILDING_SWITCH( 83, 172,  83, 510); break;
@@ -357,7 +386,7 @@ war2_sprites_decode(War2_Data                *w2,
            case PUD_UNIT_DARK_PORTAL         : NEUTRAL_BUILDING_SWITCH(167, 184, 185, 513); break;
            case PUD_UNIT_RUNESTONE           : NEUTRAL_BUILDING_SWITCH(181, 186, 181, 514); break;
            case PUD_UNIT_CIRCLE_OF_POWER     : NEUTRAL_BUILDING_SWITCH(166, 166, 166, 525); break;
-          }                            
+          }
      }
 
    /* Set entry for palette conversion */
@@ -393,4 +422,5 @@ war2_sprites_descriptor_free(War2_Sprites_Descriptor *ud)
 {
    free(ud);
 }
+
 

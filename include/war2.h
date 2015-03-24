@@ -85,6 +85,14 @@ war2_sprites_decode(War2_Data                *w2,
                     unsigned int              object,
                     War2_Sprites_Decode_Func  func);
 
+
+War2_Sprites_Descriptor *
+war2_sprites_decode_entry(War2_Data *w2,
+                          Pud_Player                player_color,
+                          Pud_Era                   era,
+                          unsigned int              entry,
+                          War2_Sprites_Decode_Func  func);
+
 void war2_sprites_descriptor_free(War2_Sprites_Descriptor *ud);
 
 Pud_Bool war2_png_write(const char          *file,

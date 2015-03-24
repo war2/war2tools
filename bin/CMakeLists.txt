@@ -8,7 +8,6 @@ if (ELEMENTARY_FOUND)
       ${ELEMENTARY_INCLUDE_DIRS}
    )
 
-   add_definitions(-Wall)
    add_definitions(-DPACKAGE_COMPILE_BIN_DIR=\"${CMAKE_CURRENT_BINARY_DIR}\")
    add_definitions(-DPACKAGE_COMPILE_DATA_DIR=\"${CMAKE_BINARY_DIR}/data\")
 

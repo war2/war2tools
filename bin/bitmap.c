@@ -144,11 +144,12 @@ bitmap_sprite_draw(Editor *restrict ed,
                    int              y)
 {
    unsigned char *sprite;
-   Sprite_Orient info;
+   Sprite_Info info;
    int w, h;
+   Eina_Bool flip;
 
-   info = sprite_orient_random_get();
-   sprite = sprite_get(ed, unit, info, &w, &h);
+   info = sprite_info_random_get();
+   sprite = sprite_get(ed, unit, info, &w, &h, &flip);
 }
 
 void

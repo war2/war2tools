@@ -77,37 +77,73 @@ sprite_buildings_open(Pud_Era era)
 unsigned char *
 sprite_get(Editor        *ed,
            Pud_Unit       unit,
-           Sprite_Orient  info,
+           Sprite_Info    info,
            int           *w,
-           int           *h)
+           int           *h,
+           Eina_Bool     *flip_me)
 {
    unsigned char *data;
    char key[64];
    Eet_File *ef;
    Eina_Bool chk;
    int len;
-
+   int orient;
+   Eina_Bool flip;
 
    if (pud_unit_building_is(unit))
      {
         ef = ed->buildings;
         len = snprintf(key, sizeof(key), "%s", pud_unit2str(unit));
+        flip = EINA_FALSE;
      }
    else
      {
         ef = ed->units;
-        if ((unit == PUD_UNIT_GNOMISH_SUBMARINE) ||
-            (unit == PUD_UNIT_GIANT_TURTLE))
+
+        if (info != SPRITE_INFO_ICON)
           {
-             len = snprintf(key, sizeof(key), "%s/%s/%i",
-                      pud_unit2str(unit), ed->era_str, info - 1);
+             switch (info)
+               {
+                case SPRITE_INFO_SOUTH_WEST:
+                   orient = SPRITE_INFO_SOUTH_EAST;
+                   flip = EINA_TRUE;
+                   break;
+
+                case SPRITE_INFO_WEST:
+                   orient = SPRITE_INFO_EAST;
+                   flip = EINA_TRUE;
+                   break;
+
+                case SPRITE_INFO_NORTH_WEST:
+                   orient = SPRITE_INFO_NORTH_EAST;
+                   flip = EINA_TRUE;
+                   break;
+
+                default:
+                   orient = info;
+                   flip = EINA_FALSE;
+                   break;
+               }
+
+             if ((unit == PUD_UNIT_GNOMISH_SUBMARINE) ||
+                 (unit == PUD_UNIT_GIANT_TURTLE))
+               {
+                  len = snprintf(key, sizeof(key), "%s/%s/%i",
+                                 pud_unit2str(unit), ed->era_str, orient);
+               }
+             else
+               {
+                  len = snprintf(key, sizeof(key), "%s/%i",
+                                 pud_unit2str(unit), orient);
+               }
           }
         else
           {
-             len = snprintf(key, sizeof(key), "%s/%i",
-                      pud_unit2str(unit), info - 1);
+             CRI("ICONS not implemented!");
+             return NULL;
           }
      }
+   if (flip_me) *flip_me = flip;
 
    data = eina_hash_find(ed->sprites, key);
    if (data == NULL)
@@ -151,10 +187,10 @@ sprite_hash_new(void)
    return eina_hash_string_superfast_new(_free_cb);
 }
 
-Sprite_Orient
-sprite_orient_random_get(void)
+Sprite_Info
+sprite_info_random_get(void)
 {
    /* Does not return 4 */
-   return rand() % (SPRITE_ORIENT_SOUTH - SPRITE_ORIENT_NORTH) + SPRITE_ORIENT_NORTH;
+   return rand() % (SPRITE_INFO_SOUTH - SPRITE_INFO_NORTH) + SPRITE_INFO_NORTH;
 }
 

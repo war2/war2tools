@@ -6,6 +6,8 @@ void cursor_enable(Editor *ed);
 void cursor_disable(Editor *ed);
 void cursor_resize(Editor *ed, int w, int h);
 void cursor_move(Editor *ed, int x, int y);
+void cursor_hide(Editor *ed);
+void cursor_show(Editor *ed);
 
 #endif /* ! _CURSOR_H_ */
 

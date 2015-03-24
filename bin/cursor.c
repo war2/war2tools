@@ -67,3 +67,15 @@ cursor_move(Editor *ed,
    evas_object_move(ed->cursor, bx + x * 32, by + y * 32);
 }
 
+void
+cursor_hide(Editor *ed)
+{
+   edje_object_signal_emit(ed->cursor, "hide", "war2edit");
+}
+
+void
+cursor_show(Editor *ed)
+{
+   edje_object_signal_emit(ed->cursor, "show", "war2edit");
+}
+

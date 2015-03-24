@@ -107,11 +107,11 @@ struct _Editor
 
 Eina_Bool editor_init(void);
 void editor_shutdown(void);
+
 void editor_free(Editor *ed);
 Editor *editor_new(void);
-void editor_mainconfig_show(Editor *ed);
-void editor_mainconfig_hide(Editor *ed);
 void editor_error(Editor *ed, const char *msg);
+void editor_finalize(Editor *ed);
 
 #define EDITOR_ERROR_RET(ed_, msg_, ...) \
    do { \

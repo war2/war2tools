@@ -24,6 +24,10 @@ collections {
                inherit: "default" 0.0;
                color: 255 0 0 255;
             }
+            description { state: "hidden" 0.0;
+               inherit: "default" 0.0;
+               visible: 0;
+            }
          }
       }
       programs {
@@ -32,6 +36,15 @@ collections {
             target: "frame";
          }
          program { signal: "enable"; source: "war2edit";
+            action: STATE_SET "default" 0.0;
+            target: "frame";
+         }
+         /* XXX Maybe remove this */
+         program { signal: "hide"; source: "war2edit";
+            action: STATE_SET "hidden" 0.0;
+            target: "frame";
+         }
+         program { signal: "show"; source: "war2edit";
             action: STATE_SET "default" 0.0;
             target: "frame";
          }

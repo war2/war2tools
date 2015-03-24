@@ -21,6 +21,7 @@ if (ELEMENTARY_FOUND)
       texture.c
       sprite.c
       cursor.c
+      mainconfig.c
    )
    add_executable(war2edit ${WAR2EDIT_SRC})
    add_dependencies(war2edit edje_themes)

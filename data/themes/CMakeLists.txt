@@ -12,6 +12,7 @@ if (EDJE_CC)
       COMMAND ${EDJE_CC} -id ${CMAKE_CURRENT_SOURCE_DIR}/images ${EDC} ${EDJ}
       VERBATIM
       COMMENT "Generating ${EDJ}"
+      DEPENDS ${EDC}
    )
    add_custom_target(edje_theme_default DEPENDS ${EDJ})
    add_dependencies(edje_themes edje_theme_default)

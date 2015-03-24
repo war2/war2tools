@@ -11,6 +11,7 @@ static const struct option _options[] =
 {
      {"output",   required_argument,    0, 'o'},
      {"tile-at",  required_argument,    0, 't'},
+     {"sprite",   required_argument,    0, 'S'},
      {"ppm",      no_argument,          0, 'p'},
      {"jpeg",     no_argument,          0, 'j'},
      {"png",      no_argument,          0, 'g'},
@@ -31,27 +32,137 @@ _usage(FILE *stream)
            "    pudviewer [options] <file.pud>\n"
            "\n"
            "Options:\n"
-           "    -W | --war           The file to parse is a .WAR file instead of a .PUD\n"
-           "    -P | --print         Prints the data in stdout\n"
-           "    -o | --output <file> When -p or -j is present outputs the file with the provided filename\n"
-           "    -p | --ppm           Outputs the minimap as a ppm file. If --out is not specified,\n"
-           "                         the output's filename will the the input file plus \".ppm\"\n"
-           "    -j | --jpeg          Outputs the minimap as a jpeg file. If --out is not specified,\n"
-           "                         the output's filename will the the input file plus \".jpeg\"\n"
-           "    -g | --png           Outputs the minimap as a png file. If --out is not specified,\n"
-           "                         the output's filename will the the input file plus \".png\"\n"
-           "    -t | --tile-at <x,y> Gets the tile ID at x,y\n"
-           "    -s | --sections      Gets sections in the file.\n"
-           "    -v | --verbose       Activate verbose mode. Cumulate flags increase verbosity level.\n"
-           "    -h | --help          Shows this message\n"
+           "    -W | --war            The file to parse is a .WAR file instead of a .PUD\n"
+           "    -P | --print          Prints the data in stdout\n"
+           "    -o | --output <file>  When -p or -j is present outputs the file with the provided filename\n"
+           "    -p | --ppm            Outputs the minimap as a ppm file. If --out is not specified,\n"
+           "                          the output's filename will the the input file plus \".ppm\"\n"
+           "    -j | --jpeg           Outputs the minimap as a jpeg file. If --out is not specified,\n"
+           "                          the output's filename will the the input file plus \".jpeg\"\n"
+           "    -g | --png            Outputs the minimap as a png file. If --out is not specified,\n"
+           "                          the output's filename will the the input file plus \".png\"\n"
+           "    -t | --tile-at <x,y>  Gets the tile ID at x,y\n"
+           "    -s | --sections       Gets sections in the PUD file.\n"
+           "    -S | --sprite <entry> Extract the graphic entry specified. Only when -W is enabled.\n"
+           "                  <color> An output file (with -o) and type (-p,-j,-g) must be provided.\n"
+           "                  <era>   Color must be a string (red, blue, ...) as well as era.\n"
+           "\n"
+           "    -v | --verbose        Activate verbose mode. Cumulate flags increase verbosity level.\n"
+           "    -h | --help           Shows this message\n"
            "\n",
            VERSION);
 }
+
+
+static struct  {
+   int          x;
+   int          y;
+   unsigned int enabled : 1;
+} tile_at;
+
+static struct {
+   char         *file;
+   unsigned int  ppm     : 1;
+   unsigned int  jpeg    : 1;
+   unsigned int  png     : 1;
+   unsigned int  enabled : 1;
+} out;
+
+static struct {
+   unsigned int enabled : 1;
+} print;
+
+static struct {
+   unsigned int enabled : 1;
+} sections;
+
+static struct {
+   unsigned int enabled : 1;
+   unsigned int entry;
+   Pud_Player   color;
+   Pud_Era      era;
+} sprite;
+
+
 
 #define ABORT(errcode_, msg, ...) \
    do { ret_status = errcode_;  ERR(msg, ## __VA_ARGS__); goto end; } while (0)
 
 #define ZERO(struct_) memset(&struct_, 0, sizeof(struct_))
+
+#define IS_STR(str_) !strncasecmp(str, str_, sizeof(str_) - 1)
+
+static Pud_Era
+_str2era(const char *str)
+{
+   if (IS_STR("forest"))
+     return PUD_ERA_FOREST;
+   else if (IS_STR("winter"))
+     return PUD_ERA_WINTER;
+   else if (IS_STR("wasteland"))
+     return PUD_ERA_WASTELAND;
+   else if (IS_STR("swamp"))
+     return PUD_ERA_SWAMP;
+   else
+     {
+        fprintf(stderr, "*** Invalid ERA <%s>\n", str);
+        exit(1);
+     }
+}
+
+static Pud_Player
+_str2color(const char *str)
+{
+   if (IS_STR("red"))
+     return PUD_PLAYER_RED;
+   else if (IS_STR("blue"))
+     return PUD_PLAYER_BLUE;
+   else if (IS_STR("green"))
+     return PUD_PLAYER_GREEN;
+   else if (IS_STR("violet"))
+     return PUD_PLAYER_VIOLET;
+   else if (IS_STR("orange"))
+     return PUD_PLAYER_ORANGE;
+   else if (IS_STR("black"))
+     return PUD_PLAYER_BLACK;
+   else if (IS_STR("white"))
+     return PUD_PLAYER_WHITE;
+   else if (IS_STR("yellow"))
+     return PUD_PLAYER_YELLOW;
+   else
+     {
+        fprintf(stderr, "*** Invalid COLOR <%s>\n", str);
+        exit(1);
+     }
+}
+
+static void
+_war2_entry_cb(const Pud_Color               *img,
+               int                            w,
+               int                            h,
+               const War2_Sprites_Descriptor *ud,
+               int                            img_nb)
+{
+   Pud_Bool chk = PUD_FALSE;
+   if (out.png)
+     chk = war2_png_write(out.file, w, h, (const unsigned char *)img);
+   else if (out.jpeg)
+     chk = war2_jpeg_write(out.file, w, h, (const unsigned char *)img);
+   else if (out.ppm)
+     {
+        fprintf(stderr, "*** Unimplemented PPM\n");
+        exit(-1);
+     }
+   if (!chk)
+     {
+        fprintf(stderr, "*** Failed to save to [%s]", out.file);
+        exit(2);
+     }
+
+   (void) ud;
+   (void) img_nb;
+}
+
 
 int
 main(int    argc,
@@ -61,44 +172,18 @@ main(int    argc,
    const char *file;
    Pud *pud = NULL;
    War2_Data *w2 = NULL;
+   War2_Sprites_Descriptor *ud;
    int verbose = 0;
    uint16_t w;
-   bool war2 = false;
+   Pud_Bool war2 = false;
    int i;
+   char *ptr;
 
-   struct  {
-      int          x;
-      int          y;
-      unsigned int enabled : 1;
-   } tile_at;
-
-   struct {
-      char         *file;
-      unsigned int  ppm     : 1;
-      unsigned int  jpeg    : 1;
-      unsigned int  png     : 1;
-      unsigned int  enabled : 1;
-   } out;
-
-   struct {
-      unsigned int enabled : 1;
-   } print;
-
-   struct {
-      unsigned int enabled : 1;
-   } sections;
-
-
-   /* Reset all opts */
-   ZERO(tile_at);
-   ZERO(out);
-   ZERO(print);
-   ZERO(sections);
 
    /* Getopt */
    while (1)
      {
-        c = getopt_long(argc, argv, "o:pjshgWPvt:", _options, &opt_idx);
+        c = getopt_long(argc, argv, "o:pjsS:::hgWPvt:", _options, &opt_idx);
         if (c == -1) break;
 
         switch (c)
@@ -110,6 +195,14 @@ main(int    argc,
            case 'h':
               _usage(stdout);
               return 0;
+
+           case 'S':
+              sprite.enabled = 1;
+              printf("-> %s\n", optarg);
+              sprite.entry = strtol(optarg, &ptr, 10);
+              sprite.color = _str2color(ptr + 1);
+              sprite.era = _str2era(strrchr(optarg, ',') + 1);
+              break;
 
            case 's':
               sections.enabled = 1;
@@ -150,6 +243,7 @@ main(int    argc,
               break;
           }
      }
+
    if (argc - optind != 1)
      {
         ERR("pudviewer requires one argument.");
@@ -163,19 +257,29 @@ main(int    argc,
    if (war2 == true)
      {
         if (tile_at.enabled ||
-            out.enabled     ||
-            print.enabled)
+            print.enabled   ||
+            sections.enabled)
           ABORT(1, "Invalid option when --war,-W is specified");
 
         w2 = war2_open(file, verbose);
         if (w2 == NULL) ABORT(3, "Failed to create War2_Data from [%s]", file);
 
-        /* -s,--sections */
-        if (sections.enabled)
-          fprintf(stdout, "%i\n", w2->entries_count);
+        if (sprite.enabled)
+          {
+             if (!out.enabled)
+               ABORT(1, "You must use -o with this option");
+             if (out.jpeg + out.ppm + out.png != 1)
+               ABORT(1, "You must use one of --jpeg,--ppm,--png.");
+
+             ud = war2_sprites_decode_entry(w2, sprite.color, sprite.era, sprite.entry, _war2_entry_cb);
+             war2_sprites_descriptor_free(ud);
+          }
      }
    else
      {
+        if (sprite.enabled)
+          ABORT(1, "Invalid option when --war,-W is not specified");
+
         /* Open file */
         pud = pud_open(file, PUD_OPEN_MODE_R);
         if (pud == NULL) ABORT(3, "Failed to create pud from [%s]", file);
@@ -195,11 +299,11 @@ main(int    argc,
              fprintf(stdout, "0x%04x\n", w);
           }
 
-        /* --output,--ppm,--jpeg */
+        /* --output,--ppm,--jpeg,--png */
         if (out.enabled)
           {
              if (out.jpeg + out.ppm + out.png != 1)
-               ABORT(1, "--jpeg,--ppm,--png cannot be combined together.");
+               ABORT(1, "You must use one of --jpeg,--ppm,--png.");
 
              if (!out.file)
                {

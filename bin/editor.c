@@ -156,6 +156,8 @@ _mc_create_cb(void        *data,
    elm_object_content_set(ed->scroller, ed->bitmap);
    evas_object_show(ed->bitmap);
 
+   /* Get the origin of the bitmap. This is done once
+    * and is used to get the origin of the clipping view */
    evas_object_geometry_get(ed->bitmap, &x, &y, NULL, NULL);
    ed->bitmap_origin.x = x;
    ed->bitmap_origin.y = y;
@@ -406,6 +408,81 @@ _error_close_cb(void        *data,
    editor_free(ed);
 }
 
+static void
+_item_add(Evas_Object *seg,
+          Evas_Object *win,
+          const char  *filename)
+{
+   char path[PATH_MAX];
+   Evas_Object *o;
+
+   snprintf(path, sizeof(path), DATA_DIR"/images/%s", filename);
+   o = elm_icon_add(win);
+   elm_image_file_set(o, path, NULL);
+   evas_object_size_hint_aspect_set(o, EVAS_ASPECT_CONTROL_BOTH, 1, 1);
+   elm_image_resizable_set(o, EINA_TRUE, EINA_TRUE);
+
+   elm_segment_control_item_add(seg, o, NULL);
+}
+
+static void
+_object_set(Evas_Object *tb,
+            Evas_Object *obj)
+{
+   Elm_Object_Item *eoi;
+   eoi = elm_toolbar_item_append(tb, NULL, NULL, NULL, NULL);
+   elm_object_item_part_content_set(eoi, "object", obj);
+}
+
+static Evas_Object *
+_segment_add(Evas_Object *win)
+{
+   Evas_Object *o;
+
+   o = elm_segment_control_add(win);
+   eo_do(
+      o,
+      evas_obj_size_hint_weight_set(EVAS_HINT_EXPAND, 0.0),
+      evas_obj_size_hint_align_set(EVAS_HINT_FILL, EVAS_HINT_FILL)
+   );
+
+   return o;
+}
+static void
+_toolbar_fill(Evas_Object *tb, Evas_Object *win)
+{
+   Evas_Object *seg;
+
+   seg = _segment_add(win);
+   _item_add(seg, win, "light.png");
+   _item_add(seg, win, "dark.png");
+   _object_set(tb, seg);
+
+   seg = _segment_add(win);
+   _item_add(seg, win, "spread_normal.png");
+   _item_add(seg, win, "spread_circle.png");
+   _item_add(seg, win, "spread_random.png");
+   _object_set(tb, seg);
+
+   seg = _segment_add(win);
+   _item_add(seg, win, "radius_small.png");
+   _item_add(seg, win, "radius_medium.png");
+   _item_add(seg, win, "radius_big.png");
+   _object_set(tb, seg);
+
+   seg = _segment_add(win);
+   _item_add(seg, win, "magnifying_glass.png");
+   _item_add(seg, win, "water.png");
+   _item_add(seg, win, "mud.png");
+   _item_add(seg, win, "grass.png");
+   _item_add(seg, win, "trees.png");
+   _item_add(seg, win, "rocks.png");
+   _item_add(seg, win, "human_wall.png");
+   _item_add(seg, win, "orc_wall.png");
+   evas_object_size_hint_min_set(seg, 200, 20);  /* FIXME Hotfix FIXME */
+   _object_set(tb, seg);
+}
+
 /*============================================================================*
  *                                 Public API                                 *
  *============================================================================*/
@@ -413,7 +490,6 @@ _error_close_cb(void        *data,
 Eina_Bool
 editor_init(void)
 {
-   elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_CLOSED);
    return EINA_TRUE;
 }
 
@@ -701,13 +777,33 @@ editor_new(void)
    itm = ed->main_sel[2] = elm_menu_item_add(ed->menu, NULL, NULL, "Players", NULL, NULL);
    itm = ed->main_sel[3] = elm_menu_item_add(ed->menu, NULL, NULL, "Help", NULL, NULL);
 
+   /* Toolbar */
+   ed->toolbar = elm_toolbar_add(ed->win);
+   EINA_SAFETY_ON_NULL_GOTO(ed->toolbar, err_win_del);
+   eo_do(
+      ed->toolbar,
+      elm_obj_toolbar_shrink_mode_set(ELM_TOOLBAR_SHRINK_SCROLL),
+      evas_obj_size_hint_weight_set(EVAS_HINT_EXPAND, 0.0),
+      evas_obj_size_hint_align_set(EVAS_HINT_FILL, 0.0),
+      elm_obj_toolbar_homogeneous_set(EINA_FALSE),
+      elm_obj_toolbar_align_set(0.0),
+      evas_obj_visibility_set(EINA_TRUE)
+   );
+   elm_toolbar_transverse_expanded_set(ed->toolbar, EINA_TRUE);
+   _toolbar_fill(ed->toolbar, ed->win);
+   elm_box_pack_end(o, ed->toolbar);
+
+   //      elm_obj_toolbar_item_append("file", "New", NULL, NULL),
+   //      elm_obj_toolbar_item_append("folder", "Open", NULL, NULL),
+   //      elm_obj_toolbar_item_append("menu/edit", "Save", NULL, NULL),
+
    /* Scroller */
    ed->scroller = elm_scroller_add(ed->win);
    EINA_SAFETY_ON_NULL_GOTO(ed->scroller, err_win_del);
    evas_object_size_hint_weight_set(ed->scroller, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(ed->scroller, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_scroller_policy_set(ed->scroller, ELM_SCROLLER_POLICY_ON, ELM_SCROLLER_POLICY_ON);
-  /* elm_scroller_propagate_events_set(ed->scroller, EINA_FALSE); */
+   /* elm_scroller_propagate_events_set(ed->scroller, EINA_FALSE); */
    elm_box_pack_end(o, ed->scroller);
    evas_object_show(ed->scroller);
    elm_scroller_page_relative_set(ed->scroller, 0, 1);

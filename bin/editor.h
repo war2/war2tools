@@ -28,6 +28,10 @@ struct _Editor
    Eina_Hash    *textures;
    Texture_Dictionary tex_dict;
 
+   /* Toolbar */
+   Evas_Object *toolbar;
+
+   /* Cursor */
    Evas_Object *cursor;
    Eina_Bool cursor_is_enabled;
 

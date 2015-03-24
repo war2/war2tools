@@ -26,6 +26,7 @@ find_package(PkgConfig)
 find_package(JPEG)
 find_package(PNG)
 
+include(cmake/copy_file.cmake)
 
 set(LIBWAR2_LIBRARIES libwar2 libpud)
 set(LIBWAR2_INCLUDE_DIRS "")

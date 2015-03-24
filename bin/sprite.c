@@ -37,7 +37,7 @@ sprite_units_open(void)
    Eet_File *ef;
    const char *file;
 
-   file = "../data/sprites/units/units.eet";
+   file = DATA_DIR"/sprites/units/units.eet";
    ef = eet_open(file, EET_FILE_MODE_READ);
    if (EINA_UNLIKELY(ef == NULL))
      {
@@ -57,10 +57,10 @@ sprite_buildings_open(Pud_Era era)
 
    switch (era)
      {
-      case PUD_ERA_FOREST:    file = "../data/sprites/buildings/forest.eet";    break;
-      case PUD_ERA_WINTER:    file = "../data/sprites/buildings/winter.eet";    break;
-      case PUD_ERA_WASTELAND: file = "../data/sprites/buildings/wasteland.eet"; break;
-      case PUD_ERA_SWAMP:     file = "../data/sprites/buildings/swamp.eet";     break;
+      case PUD_ERA_FOREST:    file = DATA_DIR"/sprites/buildings/forest.eet";    break;
+      case PUD_ERA_WINTER:    file = DATA_DIR"/sprites/buildings/winter.eet";    break;
+      case PUD_ERA_WASTELAND: file = DATA_DIR"/sprites/buildings/wasteland.eet"; break;
+      case PUD_ERA_SWAMP:     file = DATA_DIR"/sprites/buildings/swamp.eet";     break;
      }
 
    ef = eet_open(file, EET_FILE_MODE_READ);

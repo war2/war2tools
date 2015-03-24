@@ -7,6 +7,8 @@
 #include <pud.h>
 #include <Elementary.h>
 
+#define DATA_DIR PACKAGE_COMPILE_DATA_DIR
+
 typedef struct _Grid_Cell Grid_Cell;
 typedef struct _Editor Editor;
 typedef struct _Texture_Dictionary Texture_Dictionary;

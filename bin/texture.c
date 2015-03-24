@@ -38,10 +38,10 @@ texture_tileset_open(Pud_Era era)
 
    switch (era)
      {
-      case PUD_ERA_FOREST:    file = "../data/tiles/forest.eet";    break;
-      case PUD_ERA_WINTER:    file = "../data/tiles/winter.eet";    break;
-      case PUD_ERA_WASTELAND: file = "../data/tiles/wasteland.eet"; break;
-      case PUD_ERA_SWAMP:     file = "../data/tiles/swamp.eet";     break;
+      case PUD_ERA_FOREST:    file = DATA_DIR"/tiles/forest.eet";    break;
+      case PUD_ERA_WINTER:    file = DATA_DIR"/tiles/winter.eet";    break;
+      case PUD_ERA_WASTELAND: file = DATA_DIR"/tiles/wasteland.eet"; break;
+      case PUD_ERA_SWAMP:     file = DATA_DIR"/tiles/swamp.eet";     break;
      }
 
    ef = eet_open(file, EET_FILE_MODE_READ);

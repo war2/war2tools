@@ -9,6 +9,8 @@ if (ELEMENTARY_FOUND)
    )
 
    add_definitions(-Wall)
+   add_definitions(-DPACKAGE_COMPILE_BIN_DIR=\"${CMAKE_CURRENT_BINARY_DIR}\")
+   add_definitions(-DPACKAGE_COMPILE_DATA_DIR=\"${CMAKE_BINARY_DIR}/data\")
 
    set(
       WAR2EDIT_SRC

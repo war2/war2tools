@@ -13,7 +13,7 @@ cursor_add(Editor *ed)
    evas_object_pass_events_set(obj, EINA_TRUE);
    evas_object_propagate_events_set(obj, EINA_FALSE);
 
-   edje = "./data/themes/default.edj";
+   edje = DATA_DIR"/themes/default.edj";
    chk = edje_object_file_set(obj, edje, "war2edit/cursor");
    if (!chk)
      {

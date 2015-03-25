@@ -73,10 +73,17 @@ war2edit
 --------
 
 A clone of Warcraft II World Map Editor.
-It relies on the EFL and Elementary. The game engine is coded using OpenGL (2.1 compliant).
+It relies on the EFL, Elementary, libpud and libwar2.
 
 TODO:
-Basically, everything.
+- [ ] Unicity of starting locations
+- [ ] Center units
+- [ ] Lock cursor
+- [ ] Properties (players, units, upgrades, start, map)
+- [ ] Save a file
+- [ ] Load a file
+- [ ] Tiles !!!!
+- [ ] About
 
 
 tools

@@ -123,6 +123,9 @@ _sprites_entries_parse(War2_Data                *w2,
    war2_palette_convert(ptr, ud->palette);
    free(ptr);
 
+   /* Set alpha */
+   ud->palette[PALETTE_ALPHA].a = 0x00;
+
    ptr = war2_entry_extract(w2, entries[1], &size);
    if (!ptr) DIE_RETURN(PUD_FALSE, "Failed to extract entry");
 
@@ -150,7 +153,6 @@ _sprites_entries_parse(War2_Data                *w2,
              memcpy(&oline, rows + (l * sizeof(uint16_t)), sizeof(uint16_t));
              o = rows + oline;
 
-
              for (pcount = 0; pcount < w;)
                {
                   c = *(o++);
@@ -158,8 +160,7 @@ _sprites_entries_parse(War2_Data                *w2,
                     {
                        /* Repeat the next byte (c \ RLE_REPEAT) times as pixel value */
                        c &= 0x3f;
-                       if (c + pcount >= w)
-                         c = w - pcount;
+                       if (c + pcount >= w) c = w - pcount;
                        memset(&(pimg[pcount]), *(o++), c);
                        pcount += c;
                     }
@@ -167,8 +168,7 @@ _sprites_entries_parse(War2_Data                *w2,
                     {
                        /* Leave (c \ RLE_LEAVE) pixels transparent */
                        c &= 0x7f;
-                       if (c + pcount >= w)
-                         c = w - pcount;
+                       if (c + pcount >= w) c = w - pcount;
                        memset(&(pimg[pcount]), PALETTE_ALPHA, c);
                        pcount += c;
                     }

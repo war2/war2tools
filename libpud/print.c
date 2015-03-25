@@ -142,7 +142,7 @@ pud_print(Pud  *pud,
      {
         fprintf(stream, "   Unit %04i.........:\n", i);
         fprintf(stream, "      X,Y............: %i,%i\n", pud->units[i].x, pud->units[i].y);
-        fprintf(stream, "      Type...........: 0x%x\n", pud->units[i].type);
+        fprintf(stream, "      Type...........: %s (0x%x)\n", pud_unit2str(pud->units[i].type), pud->units[i].type);
         fprintf(stream, "      Owner..........: 0x%x\n", pud->units[i].owner);
         fprintf(stream, "      Alter..........: %u\n", pud->units[i].alter);
      }

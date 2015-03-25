@@ -19,7 +19,10 @@ cell_matrix_new(Editor *ed)
 
    for (i = 0; i < ed->map_h; i++)
      for (j = 0; j < ed->map_w; j++)
-       ptr[i][j].unit = PUD_UNIT_NONE;
+       {
+          ptr[i][j].unit_above = PUD_UNIT_NONE;
+          ptr[i][j].unit_below = PUD_UNIT_NONE;
+       }
    /* Other fields are set to 0 */
 
    return ptr;

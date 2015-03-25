@@ -199,4 +199,46 @@ texture_dictionary_entry_random_get(Texture_Dictionary_Entry *entry)
    return rand() % (entry->end - entry->begin + 1) + entry->begin;
 }
 
+Eina_Bool
+texture_water_is(Texture_Dictionary *dict,
+                 unsigned int        tile)
+{
+   /* water limit is not considered as water since you cannot
+    * place units there (except flying ones) */
+   return ((tile >= dict->water.begin) && (tile <= dict->water.end));
+}
+
+Eina_Bool
+texture_wall_is(Texture_Dictionary *dict,
+                unsigned int        tile)
+{
+   return ((((tile >= dict->hwalls.begin) && (tile <= dict->hwalls.end))) ||
+           (((tile >= dict->owalls.begin) && (tile <= dict->owalls.end))));
+}
+
+Eina_Bool
+texture_tree_is(Texture_Dictionary *dict,
+                 unsigned int        tile)
+{
+   return ((tile >= dict->trees.begin) && (tile <= dict->trees.end));
+}
+
+Eina_Bool
+texture_rock_is(Texture_Dictionary *dict,
+                 unsigned int        tile)
+{
+   return ((tile >= dict->rocks.begin) && (tile <= dict->rocks.end));
+}
+
+
+Eina_Bool
+texture_walkable_is(Texture_Dictionary *dict,
+                    unsigned int        tile)
+{
+   return ((!texture_water_is(dict, tile)) &&
+           (!texture_wall_is(dict, tile)) &&
+           (!texture_tree_is(dict, tile)) &&
+           (!texture_rock_is(dict, tile)));
+}
+
 

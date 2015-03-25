@@ -116,17 +116,69 @@ _mouse_move_cb(void        *data,
    Editor *ed = data;
    Evas_Event_Mouse_Move *ev = info;
    int x, y;
+   Cell c;
 
    _coords_to_grid(ed, ev->cur.canvas, &x, &y);
    cursor_pos_set(ed, x, y);
 
-   if (ed->cells[y][x].unit != PUD_UNIT_NONE)
-     cursor_disable(ed);
-   else
+   c = ed->cells[y][x];
+
+   if (texture_rock_is(&ed->tex_dict, c.tile) ||
+       texture_wall_is(&ed->tex_dict, c.tile) ||
+       texture_tree_is(&ed->tex_dict, c.tile))
      {
-        /* Free call if the cursor is already enabled
-         * because the cursor state is cached */
-        cursor_enable(ed);
+        /* Handle only flying units: they are the only one
+         * that can be placed there */
+        if (!pud_unit_flying_is(ed->sel_unit))
+          cursor_disable(ed);
+        else
+          {
+             /* Don't collide with another unit */
+             if (c.unit_above != PUD_UNIT_NONE)
+               cursor_disable(ed);
+             else
+               cursor_enable(ed);
+          }
+     }
+   else /* Ground, water */
+     {
+        /* Flying units */
+        if (pud_unit_flying_is(ed->sel_unit))
+          {
+             /* Don't collide with another unit */
+             if (c.unit_above != PUD_UNIT_NONE)
+               cursor_disable(ed);
+             else
+               cursor_enable(ed);
+          }
+        else /* marine,ground units */
+          {
+             if (texture_water_is(&ed->tex_dict, c.tile)) /* water */
+               {
+                  if (pud_unit_marine_is(ed->sel_unit))
+                    {
+                       /* Don't collide with another unit */
+                       if (c.unit_below != PUD_UNIT_NONE)
+                         cursor_disable(ed);
+                       else
+                         cursor_enable(ed);
+                    }
+                  else
+                    cursor_disable(ed);
+               }
+             else /* ground */
+               {
+                  if (pud_unit_marine_is(ed->sel_unit))
+                    cursor_disable(ed);
+                  else
+                    {
+                       if (c.unit_below != PUD_UNIT_NONE)
+                         cursor_disable(ed);
+                       else
+                         cursor_enable(ed);
+                    }
+               }
+          }
      }
 }
 
@@ -139,6 +191,7 @@ _mouse_down_cb(void        *data,
    Editor *ed = data;
    Evas_Event_Mouse_Down *ev = info;
    int x, y;
+   Sprite_Info orient;
 
    if (!ed->cursor.enabled) return;
 
@@ -146,8 +199,24 @@ _mouse_down_cb(void        *data,
 
    if (ed->sel_unit != PUD_UNIT_NONE)
      {
+        if (pud_unit_start_location_is(ed->sel_unit))
+          {
+             const int lx = ed->start_locations[ed->sel_player].x;
+             const int ly = ed->start_locations[ed->sel_player].y;
+
+             /* Start location did exist: move it. Also refresh
+              * the zone where it was to remove it. */
+             /* FIXME See Cedric's message on E-phab */
+             if (ed->start_locations[ed->sel_player].x != -1)
+               bitmap_refresh_zone(ed, lx - 1, ly - 1, 3, 3);
+
+             ed->start_locations[ed->sel_player].x = x;
+             ed->start_locations[ed->sel_player].y = y;
+          }
+
         /* Draw the unit, and therefore lock the cursor. */
-        bitmap_sprite_draw(ed, ed->sel_unit, ed->sel_player, x, y);
+        orient = sprite_info_random_get();
+        bitmap_sprite_draw(ed, ed->sel_unit, ed->sel_player, orient, x, y);
         cursor_disable(ed);
      }
 }
@@ -158,19 +227,60 @@ _mouse_down_cb(void        *data,
  *============================================================================*/
 
 void
+bitmap_refresh_zone(Editor *restrict ed,
+                    int              x,
+                    int              y,
+                    int              w,
+                    int              h)
+{
+   int i, j;
+   Cell c;
+
+   /* Bounds checking - needed */
+   if (x < 0) x = 0;
+   if (y < 0) y = 0;
+   if (x + w >= ed->map_w) w = ed->map_w - x - 1;
+   if (y + h >= ed->map_h) h = ed->map_h - y - 1;
+
+   for (j = y; j < y + h; j++)
+     {
+        for (i = x; i < x + w; i++)
+          {
+             c = ed->cells[j][i];
+             bitmap_tile_set(ed, i, j, c.tile);
+             if (c.anchor_below)
+               bitmap_sprite_draw(ed, c.unit_below, c.player_below, c.orient_below, i, j);
+          }
+     }
+
+   /* FIXME This is pretty bad!! To avoid mixing sprites I do 2 separate passes.
+    * FIXME There is certainly much much better, I'll do it some day. */
+   for (j = y; j < y + h; j++)
+     {
+        for (i = x; i < x + w; i++)
+          {
+             if (c.anchor_above)
+               bitmap_sprite_draw(ed, c.unit_above, c.player_above, c.orient_above, i, j);
+          }
+     }
+}
+
+void
 bitmap_sprite_draw(Editor *restrict ed,
                    Pud_Unit         unit,
                    Pud_Player       color,
+                   unsigned int     orient,
                    int              x,
                    int              y)
 {
    unsigned char *sprite;
-   Sprite_Info info;
    int w, h, cw, ch, cx, cy, at_x, at_y;
    Eina_Bool flip;
 
-   info = sprite_info_random_get();
-   sprite = sprite_get(ed, unit, info, NULL, NULL, &w, &h, &flip);
+   /* Don't draw */
+   if (unit == PUD_UNIT_NONE) return;
+
+   sprite = sprite_get(ed, unit, orient, NULL, NULL, &w, &h, &flip);
    EINA_SAFETY_ON_NULL_RETURN(sprite);
 
    cursor_size_get(ed, &cw, &ch);
@@ -183,9 +293,18 @@ bitmap_sprite_draw(Editor *restrict ed,
    _bitmap_image_push(ed, sprite, at_x, at_y, w, h, flip, color);
 
    /* FIXME: for all cells covered by the unit */
-   ed->cells[y][x].unit = unit;
-   ed->cells[y][x].orient = info;
-   ed->cells[y][x].player = color;
+   if (pud_unit_flying_is(unit))
+     {
+        ed->cells[y][x].unit_above = unit;
+        ed->cells[y][x].orient_above = orient;
+        ed->cells[y][x].player_above = color;
+     }
+   else
+     {
+        ed->cells[y][x].unit_below = unit;
+        ed->cells[y][x].orient_below = orient;
+        ed->cells[y][x].player_below = color;
+     }
 }
 
 void

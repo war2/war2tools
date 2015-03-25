@@ -12,17 +12,17 @@ struct _Texture_Dictionary_Entry
 
 struct _Texture_Dictionary
 {
-   Texture_Dictionary_Entry hwalls;
-   Texture_Dictionary_Entry owalls;
+   Texture_Dictionary_Entry hwalls;  /* human walls */
+   Texture_Dictionary_Entry owalls;  /* orc walls */
    Texture_Dictionary_Entry trees;
    Texture_Dictionary_Entry rocks;
-   Texture_Dictionary_Entry nconstr;
-   Texture_Dictionary_Entry water_l;
-   Texture_Dictionary_Entry constr;
-   Texture_Dictionary_Entry constr_l;
+   Texture_Dictionary_Entry nconstr; /* non constructible */
+   Texture_Dictionary_Entry water_l; /* water limits */
+   Texture_Dictionary_Entry constr; /* constructible */
+   Texture_Dictionary_Entry constr_l; /* constructible limits */
    Texture_Dictionary_Entry water;
-   Texture_Dictionary_Entry nconstr_x;
-   Texture_Dictionary_Entry constr_x;
+   Texture_Dictionary_Entry nconstr_x; /* extra non constructible */
+   Texture_Dictionary_Entry constr_x; /* extra constructible */
 };
 
 Eina_Bool texture_init(void);
@@ -41,6 +41,27 @@ unsigned int texture_dictionary_max(Editor *ed);
 unsigned int texture_dictionary_entry_random_get(Texture_Dictionary_Entry *entry);
 
 Eina_Hash *texture_hash_new(void);
+
+
+Eina_Bool
+texture_water_is(Texture_Dictionary *dict,
+                 unsigned int        tile);
+
+Eina_Bool
+texture_wall_is(Texture_Dictionary *dict,
+                unsigned int        tile);
+
+Eina_Bool
+texture_tree_is(Texture_Dictionary *dict,
+                 unsigned int        tile);
+
+Eina_Bool
+texture_rock_is(Texture_Dictionary *dict,
+                 unsigned int        tile);
+
+Eina_Bool
+texture_walkable_is(Texture_Dictionary *dict,
+                    unsigned int        tile);
 
 #endif /* ! _TEXTURE_H_ */
 

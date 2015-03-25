@@ -33,6 +33,7 @@ typedef enum
    EDITOR_TINT_DARK
 } Editor_Tint;
 
+
 struct _Editor
 {
    Pud          *pud;
@@ -83,7 +84,11 @@ struct _Editor
       Evas_Object *menu_era;
    } mainconfig;
 
+   Evas_Point start_locations[8];
    Evas_Object *radio_units_reset;
+
+   /* Orc, Human */
+   uint8_t sides[8];
 
    Evas_Point bitmap_origin;
 

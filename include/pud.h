@@ -442,6 +442,11 @@ uint16_t pud_tile_at(Pud *pud, int x, int y);
 Pud_Bool pud_tile_set(Pud *pud, uint16_t x, uint16_t y, uint16_t tile);
 Pud_Bool pud_unit_building_is(Pud_Unit unit);
 
+Pud_Bool pud_unit_start_location_is(Pud_Unit unit);
+Pud_Bool pud_unit_flying_is(Pud_Unit unit);
+Pud_Bool pud_unit_underwater_is(Pud_Unit unit);
+Pud_Bool pud_unit_marine_is(Pud_Unit unit);
+
 #ifdef __cplusplus
 %>
 #endif

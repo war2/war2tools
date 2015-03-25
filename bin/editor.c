@@ -148,9 +148,22 @@ editor_new(void)
    Editor *ed;
    char title[128], wins[32];
    Evas_Object *o;
+   int i;
 
    ed = calloc(1, sizeof(Editor));
    EINA_SAFETY_ON_NULL_GOTO(ed, err_ret);
+
+   for (i = 0; i < 8; i++)
+     {
+        /* No start location */
+        ed->start_locations[i].x = -1;
+        ed->start_locations[i].y = -1;
+
+        /* Set initial races */
+        if (i % 2 == 0) ed->sides[i] = PUD_SIDE_HUMAN;
+        else ed->sides[i] = PUD_SIDE_ORC;
+     }
+
 
    /* Create window's title */
    snprintf(wins, sizeof(wins), " - %i", eina_list_count(_editors));

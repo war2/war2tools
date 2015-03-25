@@ -632,3 +632,34 @@ pud_unit_building_is(Pud_Unit unit)
            (unit != PUD_UNIT_HUMAN_START) && (unit != PUD_UNIT_ORC_START));
 }
 
+Pud_Bool
+pud_unit_start_location_is(Pud_Unit unit)
+{
+   return ((unit == PUD_UNIT_HUMAN_START) || (unit == PUD_UNIT_ORC_START));
+}
+
+Pud_Bool
+pud_unit_flying_is(Pud_Unit unit)
+{
+   return ((unit == PUD_UNIT_GNOMISH_FLYING_MACHINE) ||
+           (unit == PUD_UNIT_GOBLIN_ZEPPLIN) ||
+           (unit == PUD_UNIT_GRYPHON_RIDER) ||
+           (unit == PUD_UNIT_DRAGON) ||
+           (unit == PUD_UNIT_DEATHWING) ||
+           (unit == PUD_UNIT_KURDAN_AND_SKY_REE));
+}
+
+Pud_Bool
+pud_unit_underwater_is(Pud_Unit unit)
+{
+   return ((unit == PUD_UNIT_GNOMISH_SUBMARINE) ||
+           (unit == PUD_UNIT_GIANT_TURTLE));
+}
+
+Pud_Bool
+pud_unit_marine_is(Pud_Unit unit)
+{
+   return ((pud_unit_underwater_is(unit)) ||
+           ((unit >= PUD_UNIT_HUMAN_TANKER) && (unit <= PUD_UNIT_JUGGERNAUGHT)));
+}
+

@@ -14,6 +14,7 @@ struct _Cell
    unsigned int spread_above : 2; /* 4 values */        // 39
    unsigned int anchor_below : 1;                       // 40
    unsigned int anchor_above : 1;                       // 41
+   unsigned int alter : 7; /* 0-64: gold/oil */         // 48
 };
 
 Cell **cell_matrix_new(Editor *ed);

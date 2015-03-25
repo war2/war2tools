@@ -622,7 +622,7 @@ pud_check(Pud *pud)
    if (pud->starting_points < 2)
      DIE_RETURN(PUD_FALSE, "You must have at least 2 starting points");
 
-   return PUD_FALSE;
+   return PUD_TRUE;
 }
 
 Pud_Bool
@@ -661,5 +661,19 @@ pud_unit_marine_is(Pud_Unit unit)
 {
    return ((pud_unit_underwater_is(unit)) ||
            ((unit >= PUD_UNIT_HUMAN_TANKER) && (unit <= PUD_UNIT_JUGGERNAUGHT)));
+}
+
+Pud_Bool
+pud_unit_always_passive_is(Pud_Unit unit)
+{
+   return (unit == PUD_UNIT_CRITTER);
+}
+
+Pud_Bool
+pud_unit_oil_well_is(Pud_Unit unit)
+{
+   return ((unit == PUD_UNIT_OIL_PATCH) ||
+           (unit == PUD_UNIT_HUMAN_OIL_WELL) ||
+           (unit == PUD_UNIT_ORC_OIL_WELL));
 }
 

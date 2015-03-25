@@ -92,6 +92,7 @@ struct _Editor
 
    /* Orc, Human */
    uint8_t sides[8];
+   unsigned int units_count;
 
    Evas_Point bitmap_origin;
 

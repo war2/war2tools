@@ -211,6 +211,7 @@ _mouse_down_cb(void        *data,
                {
                   ed->cells[ly][lx].unit_below = PUD_UNIT_NONE;
                   bitmap_refresh_zone(ed, lx - 1, ly - 1, 3, 3);
+                  if (ed->units_count > 0) ed->units_count++;
                }
 
              ed->start_locations[ed->sel_player].x = x;
@@ -220,6 +221,7 @@ _mouse_down_cb(void        *data,
         /* Draw the unit, and therefore lock the cursor. */
         orient = sprite_info_random_get();
         bitmap_sprite_draw(ed, ed->sel_unit, ed->sel_player, orient, x, y);
+        ed->units_count++;
         cursor_disable(ed);
      }
 }

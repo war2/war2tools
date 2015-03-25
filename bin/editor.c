@@ -86,6 +86,7 @@ editor_free(Editor *ed)
    if (ed->units) eet_close(ed->units);
    if (ed->buildings) eet_close(ed->buildings);
    if (ed->sprites) eina_hash_free(ed->sprites);
+   if (ed->save_file) eina_stringshare_del(ed->save_file);
    free(ed->pixels);
    cell_matrix_free(ed->cells);
    pud_close(ed->pud);

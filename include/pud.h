@@ -446,6 +446,8 @@ Pud_Bool pud_unit_start_location_is(Pud_Unit unit);
 Pud_Bool pud_unit_flying_is(Pud_Unit unit);
 Pud_Bool pud_unit_underwater_is(Pud_Unit unit);
 Pud_Bool pud_unit_marine_is(Pud_Unit unit);
+Pud_Bool pud_unit_always_passive_is(Pud_Unit unit);
+Pud_Bool pud_unit_oil_well_is(Pud_Unit unit);
 
 #ifdef __cplusplus
 %>

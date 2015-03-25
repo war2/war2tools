@@ -190,7 +190,9 @@ main(int    argc,
       PUD_UNIT_ARCHER,
       PUD_UNIT_MAGE,
       PUD_UNIT_HUMAN_TANKER,
-      PUD_UNIT_ELVEN_DESTROYER
+      PUD_UNIT_ELVEN_DESTROYER,
+      PUD_UNIT_HUMAN_START,
+      PUD_UNIT_ORC_START
    };
    const Pud_Unit buildings[] = {
       PUD_UNIT_HUMAN_GUARD_TOWER,
@@ -235,9 +237,7 @@ main(int    argc,
       PUD_UNIT_GOLD_MINE,
       PUD_UNIT_DARK_PORTAL,
       PUD_UNIT_RUNESTONE,
-      PUD_UNIT_CIRCLE_OF_POWER,
-      PUD_UNIT_HUMAN_START,
-      PUD_UNIT_ORC_START
+      PUD_UNIT_CIRCLE_OF_POWER
    };
 
 #define GEN_UNIT(unit_, era_) \
@@ -351,6 +351,10 @@ main(int    argc,
    war2_close(w2);
    eet_shutdown();
    war2_shutdown();
+
+   printf("\n"
+          "Do not forget to run cmake to copy generated files\n"
+          "\n");
 
    return 0;
 }

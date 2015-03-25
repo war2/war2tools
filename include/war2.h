@@ -105,6 +105,13 @@ war2_jpeg_write(const char          *file,
                 int                  h,
                 const unsigned char *data);
 
+
+Pud_Bool
+war2_ppm_write(const char          *file,
+               int                  w,
+               int                  h,
+               const unsigned char *data);
+
 #ifdef __cplusplus
 %>
 #endif

@@ -157,12 +157,12 @@ _war2_entry_cb(const Pud_Color               *img,
    else if (out.jpeg)
      {
         snprintf(file, sizeof(file), "%s_%i.jpg", out.file, img_nb);
-        chk = war2_jpeg_write(out.file, w, h, (const unsigned char *)img);
+        chk = war2_jpeg_write(file, w, h, (const unsigned char *)img);
      }
    else if (out.ppm)
      {
-        fprintf(stderr, "*** Unimplemented PPM\n");
-        exit(-1);
+        snprintf(file, sizeof(file), "%s_%i.ppm", out.file, img_nb);
+        chk = war2_ppm_write(file, w, h, (const unsigned char *)img);
      }
    if (!chk)
      {

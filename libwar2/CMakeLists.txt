@@ -17,6 +17,7 @@ add_library(libwar2 SHARED
    sprites.c
    png.c
    jpeg.c
+   ppm.c
 )
 SET_TARGET_PROPERTIES(libwar2 PROPERTIES PREFIX "")
 

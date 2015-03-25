@@ -178,6 +178,9 @@ editor_new(void)
    evas_object_smart_callback_add(ed->win, "delete,request", _win_del_cb, ed);
    evas_object_resize(ed->win, 640, 480);
 
+   /* File selector */
+   file_selector_add(ed);
+
    /* Add a box to put widgets in it */
    o = elm_box_add(ed->win);
    EINA_SAFETY_ON_NULL_GOTO(o, err_win_del);
@@ -225,7 +228,6 @@ editor_new(void)
    /* Add inwin */
    ed->inwin = elm_win_inwin_add(ed->win);
    EINA_SAFETY_ON_NULL_GOTO(ed->inwin, err_win_del);
-   elm_win_inwin_content_set(ed->inwin, ed->mainconfig.container);
 
    /* Show window */
    evas_object_show(ed->win);

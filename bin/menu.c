@@ -64,24 +64,33 @@ _win_new_cb(void        *data  EINA_UNUSED,
 }
 
 static void
-_win_open_cb(void        *data  EINA_UNUSED,
+_win_open_cb(void        *data,
              Evas_Object *obj   EINA_UNUSED,
              void        *event EINA_UNUSED)
 {
+   Editor *ed = data;
+   file_load_prompt(ed);
 }
 
 static void
-_win_save_cb(void        *data  EINA_UNUSED,
+_win_save_cb(void        *data,
              Evas_Object *obj   EINA_UNUSED,
              void        *event EINA_UNUSED)
 {
+   Editor *ed = data;
+   if (!ed->save_file)
+     file_save_prompt(ed);
+   else
+     file_save(ed);
 }
 
 static void
-_win_save_as_cb(void        *data  EINA_UNUSED,
+_win_save_as_cb(void        *data,
                 Evas_Object *obj   EINA_UNUSED,
                 void        *event EINA_UNUSED)
 {
+   Editor *ed = data;
+   file_save_prompt(ed);
 }
 
 static void
@@ -194,7 +203,6 @@ _radio_units_changed_cb(void        *data,
 
    if (EINA_UNLIKELY(!handled))
      CRI("Unit [%s] cursor is not handled", pud_unit2str(ed->sel_unit));
-   // TODO Change cursor size in function of unit type
 }
 
 static void
@@ -225,7 +233,7 @@ menu_add(Editor *ed)
 
    itm = elm_menu_item_add(ed->menu, NULL, NULL,  "File", NULL, NULL);
    elm_menu_item_add(ed->menu, itm, NULL, "New...", _win_new_cb, NULL);
-   elm_menu_item_add(ed->menu, itm, NULL, "Open...", _win_open_cb, NULL);
+   elm_menu_item_add(ed->menu, itm, NULL, "Open...", _win_open_cb, ed);
    elm_menu_item_add(ed->menu, itm, NULL, "Save", _win_save_cb, ed);
    elm_menu_item_add(ed->menu, itm, NULL, "Save As...", _win_save_as_cb, ed);
    elm_menu_item_separator_add(ed->menu, itm);

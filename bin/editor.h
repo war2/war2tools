@@ -42,6 +42,7 @@ struct _Editor
    Evas_Object  *inwin;
    Evas_Object  *mainbox;
    Evas_Object  *scroller;
+   Evas_Object  *fs; /* File selector */
    Cell   **cells;
 
    Evas_Object   *bitmap;
@@ -66,6 +67,8 @@ struct _Editor
    Editor_Tint   tint;
    Pud_Unit      sel_unit;
    Pud_Player    sel_player;
+
+   Eina_Stringshare *save_file;
 
    /* Cursor */
    struct {

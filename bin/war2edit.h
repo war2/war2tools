@@ -20,6 +20,7 @@ typedef struct _Texture_Dictionary Texture_Dictionary;
 #include "mainconfig.h"
 #include "toolbar.h"
 #include "cell.h"
+#include "file.h"
 #include "menu.h"
 #include "sprite.h"
 #include "cursor.h"

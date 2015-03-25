@@ -267,6 +267,7 @@ mainconfig_show(Editor *ed)
    menu_enabled_set(ed, EINA_FALSE);
 
    /* Show inwin */
+   elm_win_inwin_content_set(ed->inwin, ed->mainconfig.container);
    elm_win_inwin_activate(ed->inwin);
    evas_object_show(ed->inwin);
 }

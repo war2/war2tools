@@ -20,6 +20,7 @@ if (ELEMENTARY_FOUND)
       texture.c
       sprite.c
       cursor.c
+      file.c
       mainconfig.c
       menu.c
       toolbar.c

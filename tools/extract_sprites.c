@@ -160,6 +160,7 @@ main(int    argc,
       PUD_UNIT_DRAGON,
       PUD_UNIT_ORC_TRANSPORT,
       PUD_UNIT_JUGGERNAUGHT,
+      PUD_UNIT_ORC_TANKER,
       /*PUD_UNIT_GIANT_TURTLE,*/ // Specific
       PUD_UNIT_GRUNT,
       PUD_UNIT_PEON,

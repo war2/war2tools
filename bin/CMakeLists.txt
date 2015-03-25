@@ -28,7 +28,7 @@ if (ELEMENTARY_FOUND)
    add_dependencies(war2edit edje_themes)
 
    link_directories(${ELEMENTARY_LIBRARY_DIRS})
-   target_link_libraries(war2edit ${LIBPUD_LIBRARIES} ${ELEMENTARY_LIBRARIES})
+   target_link_libraries(war2edit ${LIBPUD_LIBRARIES} ${LIBWAR2_LIBRARIES} ${ELEMENTARY_LIBRARIES})
 
    install(
       TARGETS war2edit

@@ -5,6 +5,7 @@
 #define EFL_EO_API_SUPPORT
 
 #include <pud.h>
+#include <war2.h>
 #include <Elementary.h>
 
 #define DATA_DIR PACKAGE_COMPILE_DATA_DIR

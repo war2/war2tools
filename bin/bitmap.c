@@ -44,6 +44,7 @@ _bitmap_image_push(Editor        *          ed,
    const int w = img_w;
    int img_y, bmp_y, img_x, bmp_x, k;
    unsigned char *restrict bmp = ed->pixels;
+   unsigned char bgr[4];
 
    int bmp_x_start;
    int bmp_x_step;
@@ -51,6 +52,7 @@ _bitmap_image_push(Editor        *          ed,
    img_w *= 4;
    at_x *= 4;
 
+   /* Always used when there is full alpha */
    for (img_y = 0, bmp_y = at_y;
         (img_y < img_h) && (bmp_y < bmp_h);
         ++img_y, ++bmp_y)
@@ -72,8 +74,17 @@ _bitmap_image_push(Editor        *          ed,
              img_x += 4, bmp_x += bmp_x_step)
           {
              k = img_x + (img_y * img_w);
-             if (img[k+3] != 0)
-               memcpy(&(bmp[bmp_x + bmp_y * bmp_w]), &(img[k]), 4);
+             memcpy(&(bgr[0]), &(img[k]), 4);
+             if (colorize != -1)
+               {
+                  war2_sprites_color_convert(colorize,
+                                             bgr[2], bgr[1], bgr[0],
+                                             &(bgr[2]), &(bgr[1]), &(bgr[0]));
+               }
+             if (bgr[3] != 0)
+               {
+                  memcpy(&(bmp[bmp_x + bmp_y * bmp_w]), &(bgr[0]), 4);
+               }
           }
      }
 

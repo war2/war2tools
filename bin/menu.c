@@ -253,7 +253,7 @@ menu_add(Editor *ed)
    RADIO_ADD(PUD_UNIT_MAGE, "Mage");
 
    i = elm_menu_item_add(ed->menu, itm, NULL, "Human Water", NULL, NULL);
-   RADIO_ADD(PUD_UNIT_HUMAN_START, "Human Tanker");
+   RADIO_ADD(PUD_UNIT_HUMAN_TANKER, "Human Tanker");
    RADIO_ADD(PUD_UNIT_ELVEN_DESTROYER, "Elven Destroyer");
    RADIO_ADD(PUD_UNIT_BATTLESHIP, "Battleship");
    RADIO_ADD(PUD_UNIT_HUMAN_TRANSPORT, "Human Transport");

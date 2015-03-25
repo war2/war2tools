@@ -156,26 +156,27 @@ _sprites_entries_parse(War2_Data                *w2,
              for (pcount = 0; pcount < w;)
                {
                   c = *(o++);
-                  if (c & RLE_REPEAT)
-                    {
-                       /* Repeat the next byte (c \ RLE_REPEAT) times as pixel value */
-                       c &= 0x3f;
-                       if (c + pcount >= w) c = w - pcount;
-                       memset(&(pimg[pcount]), *(o++), c);
-                       pcount += c;
-                    }
-                  else if (c & RLE_LEAVE)
+                  /* NOTE:
+                   * The order of bits examination is important and
+                   * not specified in the documentation!
+                   */
+                  if (c & RLE_LEAVE)
                     {
                        /* Leave (c \ RLE_LEAVE) pixels transparent */
                        c &= 0x7f;
-                       if (c + pcount >= w) c = w - pcount;
                        memset(&(pimg[pcount]), PALETTE_ALPHA, c);
+                       pcount += c;
+                    }
+                  else if (c & RLE_REPEAT)
+                    {
+                       /* Repeat the next byte (c \ RLE_REPEAT) times as pixel value */
+                       c &= 0x3f;
+                       memset(&(pimg[pcount]), *(o++), c);
                        pcount += c;
                     }
                   else
                     {
                        /* Take the next (c) bytes as pixel values */
-                       if (c + pcount >= w) c = w - pcount;
                        memcpy(&(pimg[pcount]), o, c);
                        pcount += c;
                        o += c;
@@ -245,10 +246,10 @@ war2_sprites_decode(War2_Data                *w2,
 #define ORC_UNIT_SWITCH(a_, b_, c_, d_) \
                { \
                   switch (era) { \
-                   case PUD_ERA_FOREST:    entries[1] = a_; break; \
-                   case PUD_ERA_WINTER:    entries[1] = b_; break; \
-                   case PUD_ERA_WASTELAND: entries[1] = c_; break; \
-                   case PUD_ERA_SWAMP:     entries[1] = d_; break; \
+                     case PUD_ERA_FOREST:    entries[1] = a_; break; \
+                     case PUD_ERA_WINTER:    entries[1] = b_; break; \
+                     case PUD_ERA_WASTELAND: entries[1] = c_; break; \
+                     case PUD_ERA_SWAMP:     entries[1] = d_; break; \
                   } \
                   type = WAR2_SPRITES_UNITS; side = PUD_SIDE_ORC; \
                }
@@ -256,10 +257,10 @@ war2_sprites_decode(War2_Data                *w2,
 #define HUMAN_UNIT_SWITCH(a_, b_, c_, d_) \
                { \
                   switch (era) { \
-                   case PUD_ERA_FOREST:    entries[1] = a_; break; \
-                   case PUD_ERA_WINTER:    entries[1] = b_; break; \
-                   case PUD_ERA_WASTELAND: entries[1] = c_; break; \
-                   case PUD_ERA_SWAMP:     entries[1] = d_; break; \
+                     case PUD_ERA_FOREST:    entries[1] = a_; break; \
+                     case PUD_ERA_WINTER:    entries[1] = b_; break; \
+                     case PUD_ERA_WASTELAND: entries[1] = c_; break; \
+                     case PUD_ERA_SWAMP:     entries[1] = d_; break; \
                   } \
                   type = WAR2_SPRITES_UNITS; side = PUD_SIDE_HUMAN; \
                }
@@ -268,30 +269,30 @@ war2_sprites_decode(War2_Data                *w2,
 #define ORC_BUILDING_SWITCH(a_, b_, c_, d_) \
                { \
                   switch (era) { \
-                   case PUD_ERA_FOREST:    entries[1] = a_; break; \
-                   case PUD_ERA_WINTER:    entries[1] = b_; break; \
-                   case PUD_ERA_WASTELAND: entries[1] = c_; break; \
-                   case PUD_ERA_SWAMP:     entries[1] = d_; break; \
+                     case PUD_ERA_FOREST:    entries[1] = a_; break; \
+                     case PUD_ERA_WINTER:    entries[1] = b_; break; \
+                     case PUD_ERA_WASTELAND: entries[1] = c_; break; \
+                     case PUD_ERA_SWAMP:     entries[1] = d_; break; \
                   } \
                   type = WAR2_SPRITES_BUILDINGS; side = PUD_SIDE_ORC; \
                }
 #define HUMAN_BUILDING_SWITCH(a_, b_, c_, d_) \
                { \
                   switch (era) { \
-                   case PUD_ERA_FOREST:    entries[1] = a_; break; \
-                   case PUD_ERA_WINTER:    entries[1] = b_; break; \
-                   case PUD_ERA_WASTELAND: entries[1] = c_; break; \
-                   case PUD_ERA_SWAMP:     entries[1] = d_; break; \
+                     case PUD_ERA_FOREST:    entries[1] = a_; break; \
+                     case PUD_ERA_WINTER:    entries[1] = b_; break; \
+                     case PUD_ERA_WASTELAND: entries[1] = c_; break; \
+                     case PUD_ERA_SWAMP:     entries[1] = d_; break; \
                   } \
                   type = WAR2_SPRITES_BUILDINGS; side = PUD_SIDE_HUMAN; \
                }
 #define NEUTRAL_BUILDING_SWITCH(a_, b_, c_, d_) \
                { \
                   switch (era) { \
-                   case PUD_ERA_FOREST:    entries[1] = a_; break; \
-                   case PUD_ERA_WINTER:    entries[1] = b_; break; \
-                   case PUD_ERA_WASTELAND: entries[1] = c_; break; \
-                   case PUD_ERA_SWAMP:     entries[1] = d_; break; \
+                     case PUD_ERA_FOREST:    entries[1] = a_; break; \
+                     case PUD_ERA_WINTER:    entries[1] = b_; break; \
+                     case PUD_ERA_WASTELAND: entries[1] = c_; break; \
+                     case PUD_ERA_SWAMP:     entries[1] = d_; break; \
                   } \
                   type = WAR2_SPRITES_BUILDINGS; side = PUD_SIDE_NEUTRAL; \
                }

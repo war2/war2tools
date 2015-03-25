@@ -120,7 +120,7 @@ _mouse_move_cb(void        *data,
    _coords_to_grid(ed, ev->cur.canvas, &x, &y);
    cursor_pos_set(ed, x, y);
 
-   if (ed->cells[y][x].unit != 0)
+   if (ed->cells[y][x].unit != PUD_UNIT_NONE)
      cursor_disable(ed);
    else
      {
@@ -144,7 +144,7 @@ _mouse_down_cb(void        *data,
 
    _coords_to_grid(ed, ev->canvas, &x, &y);
 
-   if (ed->sel_unit != EDITOR_NO_UNIT_SELECTED)
+   if (ed->sel_unit != PUD_UNIT_NONE)
      {
         /* Draw the unit, and therefore lock the cursor. */
         bitmap_sprite_draw(ed, ed->sel_unit, ed->sel_player, x, y);

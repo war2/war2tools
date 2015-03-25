@@ -1,8 +1,6 @@
 #ifndef _EDITOR_H_
 #define _EDITOR_H_
 
-#define EDITOR_NO_UNIT_SELECTED 0x99
-
 typedef enum
 {
    EDITOR_SPREAD_NORMAL,

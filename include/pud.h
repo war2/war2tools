@@ -223,9 +223,14 @@ typedef enum
    PUD_UNIT_RUNESTONE                   = 0x66,
    PUD_UNIT_HUMAN_WALL                  = 0x67,
    PUD_UNIT_ORC_WALL                    = 0x68,
-   PUD_UNIT_CRITTER_SHEEP               = 0x80,
-   PUD_UNIT_CRITTER_PIG                 = 0x81,
-   PUD_UNIT_CRITTER_SEAL                = 0x82
+
+   /* Custom types */
+   PUD_UNIT_CRITTER_SHEEP               = 0x69,
+   PUD_UNIT_CRITTER_PIG                 = 0x70,
+   PUD_UNIT_CRITTER_SEAL                = 0x71,
+
+   /* Sentinel. Do not touch 0x7f. war2edit heavily relies on this value */
+   PUD_UNIT_NONE                        = 0x7f
 } Pud_Unit;
 
 typedef enum

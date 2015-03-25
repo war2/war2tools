@@ -365,7 +365,7 @@ menu_add(Editor *ed)
    RADIO_ADD(PUD_UNIT_DAEMON, "Daemon");
 
    /* Add a fictive radio which will be used to reset the units selection */
-   _radio_add(ed, rd, EDITOR_NO_UNIT_SELECTED, NULL, NULL, _radio_units_changed_cb);
+   ed->radio_units_reset = _radio_add(ed, rd, PUD_UNIT_NONE, NULL, NULL, _radio_units_changed_cb);
    menu_unit_selection_reset(ed);
 
 #undef RADIO_ADD
@@ -419,6 +419,7 @@ menu_enabled_set(Editor    *ed,
 void
 menu_unit_selection_reset(Editor *ed)
 {
-   elm_radio_value_set(ed->radio_units_reset, EDITOR_NO_UNIT_SELECTED);
+   elm_radio_value_set(ed->radio_units_reset, PUD_UNIT_NONE);
+   ed->sel_unit = PUD_UNIT_NONE;
 }
 

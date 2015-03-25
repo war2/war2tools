@@ -34,7 +34,7 @@ cursor_enable(Editor *ed)
 {
    if (!ed->cursor.enabled)
      {
-        edje_object_signal_emit(ed->cursor.obj, "enable", "");
+        edje_object_signal_emit(ed->cursor.obj, "enable", "war2edit");
         ed->cursor.enabled = EINA_TRUE;
      }
 }

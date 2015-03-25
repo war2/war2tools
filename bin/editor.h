@@ -43,7 +43,7 @@ struct _Editor
    Evas_Object  *inwin;
    Evas_Object  *mainbox;
    Evas_Object  *scroller;
-   Grid_Cell   **cells;
+   Cell   **cells;
 
    Evas_Object   *bitmap;
    unsigned char *pixels;

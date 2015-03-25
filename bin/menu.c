@@ -366,6 +366,7 @@ menu_add(Editor *ed)
 
    /* Add a fictive radio which will be used to reset the units selection */
    _radio_add(ed, rd, EDITOR_NO_UNIT_SELECTED, NULL, NULL, _radio_units_changed_cb);
+   menu_unit_selection_reset(ed);
 
 #undef RADIO_ADD
 

@@ -10,7 +10,7 @@
 
 #define DATA_DIR PACKAGE_COMPILE_DATA_DIR
 
-typedef struct _Grid_Cell Grid_Cell;
+typedef struct _Cell Cell;
 typedef struct _Editor Editor;
 typedef struct _Texture_Dictionary_Entry Texture_Dictionary_Entry;
 typedef struct _Texture_Dictionary Texture_Dictionary;
@@ -19,6 +19,7 @@ typedef struct _Texture_Dictionary Texture_Dictionary;
 #include "texture.h"
 #include "mainconfig.h"
 #include "toolbar.h"
+#include "cell.h"
 #include "menu.h"
 #include "sprite.h"
 #include "cursor.h"

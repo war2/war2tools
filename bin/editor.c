@@ -87,8 +87,7 @@ editor_free(Editor *ed)
    if (ed->buildings) eet_close(ed->buildings);
    if (ed->sprites) eina_hash_free(ed->sprites);
    free(ed->pixels);
-   if (ed->cells) free(ed->cells[0]);
-   free(ed->cells);
+   cell_matrix_free(ed->cells);
    pud_close(ed->pud);
    evas_object_del(ed->win);
    free(ed);

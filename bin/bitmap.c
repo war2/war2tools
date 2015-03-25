@@ -4,30 +4,6 @@
  *                                 Private API                                *
  *============================================================================*/
 
-static Grid_Cell **
-_grid_cells_new(Editor *ed)
-{
-   Grid_Cell **ptr;
-   int i;
-
-   /* Iliffe vector allocation */
-
-   ptr = malloc(ed->map_h * sizeof(*ptr));
-   EINA_SAFETY_ON_NULL_RETURN_VAL(ptr, NULL);
-
-   ptr[0] = calloc(ed->map_w * ed->map_h, sizeof(**ptr));
-   EINA_SAFETY_ON_NULL_GOTO(ptr[0], fail);
-
-   for (i = 1; i < ed->map_h; ++i)
-     ptr[i] = ptr[i - 1] + ed->map_w;
-
-   return ptr;
-
-fail:
-   free(ptr);
-   return NULL;
-}
-
 static void
 _bitmap_image_push(Editor        *          ed,
                    unsigned char * restrict img,
@@ -143,6 +119,15 @@ _mouse_move_cb(void        *data,
 
    _coords_to_grid(ed, ev->cur.canvas, &x, &y);
    cursor_pos_set(ed, x, y);
+
+   if (ed->cells[y][x].unit != 0)
+     cursor_disable(ed);
+   else
+     {
+        /* Free call if the cursor is already enabled
+         * because the cursor state is cached */
+        cursor_enable(ed);
+     }
 }
 
 static void
@@ -160,7 +145,11 @@ _mouse_down_cb(void        *data,
    _coords_to_grid(ed, ev->canvas, &x, &y);
 
    if (ed->sel_unit != EDITOR_NO_UNIT_SELECTED)
-     bitmap_sprite_draw(ed, ed->sel_unit, ed->sel_player, x, y);
+     {
+        /* Draw the unit, and therefore lock the cursor. */
+        bitmap_sprite_draw(ed, ed->sel_unit, ed->sel_player, x, y);
+        cursor_disable(ed);
+     }
 }
 
 
@@ -252,7 +241,7 @@ bitmap_add(Editor *ed)
    ed->bitmap_w = width;
    ed->bitmap_h = height;
 
-   ed->cells = _grid_cells_new(ed);
+   ed->cells = cell_matrix_new(ed);
    EINA_SAFETY_ON_NULL_RETURN_VAL(ed->cells, EINA_FALSE);
 
    evas_object_event_callback_add(obj, EVAS_CALLBACK_MOUSE_MOVE, _mouse_move_cb, ed);

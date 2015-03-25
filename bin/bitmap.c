@@ -184,6 +184,7 @@ bitmap_sprite_draw(Editor *restrict ed,
 
    info = sprite_info_random_get();
    sprite = sprite_get(ed, unit, info, &w, &h, &flip);
+   EINA_SAFETY_ON_NULL_RETURN(sprite);
 
    _bitmap_image_push(ed, sprite, x * TEXTURE_WIDTH, y * TEXTURE_WIDTH,
                       w, h, flip, color);

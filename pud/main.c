@@ -26,10 +26,10 @@ static void
 _usage(FILE *stream)
 {
    fprintf(stream,
-           "pudviewer %.1f - Warcraft II PUD viewer\n"
+           PROGRAM" %.1f - Warcraft II PUD utilities\n"
            "\n"
            "Usage:\n"
-           "    pudviewer [options] <file.pud>\n"
+           "    "PROGRAM" [options] <file.pud>\n"
            "\n"
            "Options:\n"
            "    -W | --war            The file to parse is a .WAR file instead of a .PUD\n"
@@ -257,7 +257,7 @@ main(int    argc,
 
    if (argc - optind != 1)
      {
-        ERR("pudviewer requires one argument.");
+        ERR(PROGRAM" requires one argument.");
         ERR("Relaunch with option --help for hints");
         return 1;
      }

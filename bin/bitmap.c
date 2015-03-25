@@ -208,7 +208,10 @@ _mouse_down_cb(void        *data,
               * the zone where it was to remove it. */
              /* FIXME See Cedric's message on E-phab */
              if (ed->start_locations[ed->sel_player].x != -1)
-               bitmap_refresh_zone(ed, lx - 1, ly - 1, 3, 3);
+               {
+                  ed->cells[ly][lx].unit_below = PUD_UNIT_NONE;
+                  bitmap_refresh_zone(ed, lx - 1, ly - 1, 3, 3);
+               }
 
              ed->start_locations[ed->sel_player].x = x;
              ed->start_locations[ed->sel_player].y = y;

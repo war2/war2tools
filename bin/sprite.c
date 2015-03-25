@@ -132,6 +132,12 @@ sprite_get(Editor        *ed,
                   len = snprintf(key, sizeof(key), "%s/%s/%i",
                                  pud_unit2str(unit), ed->era_str, orient);
                }
+             else if ((unit == PUD_UNIT_HUMAN_START) ||
+                      (unit == PUD_UNIT_ORC_START))
+               {
+                  len = snprintf(key, sizeof(key), "%s/0",
+                                 pud_unit2str(unit));
+               }
              else
                {
                   len = snprintf(key, sizeof(key), "%s/%i",

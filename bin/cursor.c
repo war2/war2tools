@@ -20,10 +20,11 @@ cursor_add(Editor *ed)
         CRI("Failed to set cursor from theme file [%s]", edje);
         return EINA_FALSE;
      }
-   ed->cursor_is_enabled = EINA_TRUE;
-   ed->cursor = obj;
+   ed->cursor.enabled = EINA_TRUE;
+   ed->cursor.obj = obj;
    evas_object_show(obj);
-   cursor_resize(ed, 1, 1);
+   cursor_size_set(ed, 1, 1);
+   cursor_pos_set(ed, 0, 0);
 
    return EINA_TRUE;
 }
@@ -31,51 +32,80 @@ cursor_add(Editor *ed)
 void
 cursor_enable(Editor *ed)
 {
-   if (!ed->cursor_is_enabled)
+   if (!ed->cursor.enabled)
      {
-        edje_object_signal_emit(ed->cursor, "enable", "");
-        ed->cursor_is_enabled = EINA_TRUE;
+        edje_object_signal_emit(ed->cursor.obj, "enable", "");
+        ed->cursor.enabled = EINA_TRUE;
      }
 }
 
 void
 cursor_disable(Editor *ed)
 {
-   if (ed->cursor_is_enabled)
+   if (ed->cursor.enabled)
      {
-        edje_object_signal_emit(ed->cursor, "disable", "war2edit");
-        ed->cursor_is_enabled = EINA_FALSE;
+        edje_object_signal_emit(ed->cursor.obj, "disable", "war2edit");
+        ed->cursor.enabled = EINA_FALSE;
      }
 }
 
 void
-cursor_resize(Editor *ed,
-              int     w,
-              int     h)
+cursor_size_set(Editor *ed,
+                int     w,
+                int     h)
 {
-   evas_object_resize(ed->cursor, w * 32, h * 32);
+   if ((w != ed->cursor.w) || (h != ed->cursor.h))
+     {
+        evas_object_resize(ed->cursor.obj, w * 32, h * 32);
+        ed->cursor.w = w;
+        ed->cursor.h = h;
+     }
 }
 
 void
-cursor_move(Editor *ed,
-            int     x,
-            int     y)
+cursor_size_get(Editor *ed,
+                int    *w,
+                int    *h)
+{
+   if (w) *w = ed->cursor.w;
+   if (h) *h = ed->cursor.h;
+}
+
+void
+cursor_pos_set(Editor *ed,
+               int     x,
+               int     y)
 {
    int bx, by;
 
-   eo_do(ed->bitmap, evas_obj_position_get(&bx, &by));
-   evas_object_move(ed->cursor, bx + x * 32, by + y * 32);
+   if ((ed->cursor.x != x) || (ed->cursor.y != y))
+     {
+        eo_do(ed->bitmap, evas_obj_position_get(&bx, &by));
+        evas_object_move(ed->cursor.obj, bx + x * 32, by + y * 32);
+        ed->cursor.x = x;
+        ed->cursor.y = y;
+     }
 }
+
+void
+cursor_pos_get(Editor *ed,
+               int    *x,
+               int    *y)
+{
+   if (x) *x = ed->cursor.x;
+   if (y) *y = ed->cursor.y;
+}
+
 
 void
 cursor_hide(Editor *ed)
 {
-   edje_object_signal_emit(ed->cursor, "hide", "war2edit");
+   edje_object_signal_emit(ed->cursor.obj, "hide", "war2edit");
 }
 
 void
 cursor_show(Editor *ed)
 {
-   edje_object_signal_emit(ed->cursor, "show", "war2edit");
+   edje_object_signal_emit(ed->cursor.obj, "show", "war2edit");
 }
 

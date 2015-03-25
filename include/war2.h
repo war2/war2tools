@@ -66,7 +66,7 @@ struct _War2_Sprites_Descriptor
 };
 
 typedef void (*War2_Tileset_Decode_Func)(const Pud_Color *tile, int w, int h, const War2_Tileset_Descriptor *ts, int img_nb);
-typedef void (*War2_Sprites_Decode_Func)(const Pud_Color *sprite, int w, int h, const War2_Sprites_Descriptor *ts, int img_nb);
+typedef void (*War2_Sprites_Decode_Func)(const Pud_Color *sprite, int x, int y, int w, int h, const War2_Sprites_Descriptor *ts, int img_nb);
 
 War2_Data *war2_open(const char *file, int verbose);
 void war2_close(War2_Data *w2);

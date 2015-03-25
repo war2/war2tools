@@ -190,7 +190,7 @@ _sprites_entries_parse(War2_Data                *w2,
           img_rgba[k] = ud->palette[img[k]];
 
         _sprites_colorize(img_rgba, size, ud->color);
-        func(img_rgba, w, h, ud, i);
+        func(img_rgba, x, y, w, h, ud, i);
      }
 
    free(img_rgba);

@@ -69,8 +69,14 @@ struct _Editor
    Pud_Player    sel_player;
 
    /* Cursor */
-   Evas_Object *cursor;
-   Eina_Bool cursor_is_enabled;
+   struct {
+      Evas_Object *obj;
+      int          x;
+      int          y;
+      int          w;
+      int          h;
+      Eina_Bool    enabled;
+   } cursor;
 
    struct _mainconfig {
       Evas_Object *container;

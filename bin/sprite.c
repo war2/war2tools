@@ -3,20 +3,24 @@
 void *
 sprite_load(Eet_File   *src,
             const char *key,
+            int        *x_ret,
+            int        *y_ret,
             int        *w_ret,
             int        *h_ret)
 {
    unsigned char *mem;
    int size, expected_size;
-   uint16_t w, h;
+   uint16_t x, y, w, h;
 
    mem = eet_read(src, key, &size);
    EINA_SAFETY_ON_NULL_RETURN_VAL(mem, NULL);
 
-   memcpy(&w, mem + 0, sizeof(uint16_t));
-   memcpy(&h, mem + 2, sizeof(uint16_t));
+   memcpy(&x, mem + 0, sizeof(uint16_t));
+   memcpy(&y, mem + 2, sizeof(uint16_t));
+   memcpy(&w, mem + 4, sizeof(uint16_t));
+   memcpy(&h, mem + 6, sizeof(uint16_t));
 
-   expected_size = (w * h * 4) + 4;
+   expected_size = (w * h * 4) + 8;
    if (expected_size != size)
      {
         CRI("Sprite data was loaded with size [%i], expected [%i]",
@@ -25,11 +29,13 @@ sprite_load(Eet_File   *src,
         return NULL;
      }
 
-   DBG("Loaded sprite [%s] of size %ix%i\n", key, w, h);
+   DBG("Loaded sprite [%s] of size %ix%i (offsets: %i,%i)\n", key, w, h, x, y);
 
+   if (x_ret) *x_ret = x;
+   if (y_ret) *y_ret = y;
    if (w_ret) *w_ret = w;
    if (h_ret) *h_ret = h;
-   return mem + 4;
+   return mem + 8;
 }
 
 Eet_File *
@@ -79,6 +85,8 @@ unsigned char *
 sprite_get(Editor        *ed,
            Pud_Unit       unit,
            Sprite_Info    info,
+           int           *x,
+           int           *y,
            int           *w,
            int           *h,
            Eina_Bool     *flip_me)
@@ -90,6 +98,7 @@ sprite_get(Editor        *ed,
    int len;
    int orient;
    Eina_Bool flip;
+   uint16_t sx, sy, sw, sh;
 
    if (pud_unit_building_is(unit))
      {
@@ -155,7 +164,7 @@ sprite_get(Editor        *ed,
    data = eina_hash_find(ed->sprites, key);
    if (data == NULL)
      {
-        data = sprite_load(ef, key, w, h);
+        data = sprite_load(ef, key, x, y, w, h);
         if (EINA_UNLIKELY(data == NULL))
           {
              ERR("Failed to load sprite for key [%s]", key);
@@ -173,8 +182,10 @@ sprite_get(Editor        *ed,
      }
    else
      {
-        if (w) memcpy(w, data - 4, sizeof(uint16_t));
-        if (h) memcpy(h, data - 2, sizeof(uint16_t));
+        if (x) { memcpy(&sx, data - 8, sizeof(uint16_t)); *x = sx; }
+        if (y) { memcpy(&sy, data - 6, sizeof(uint16_t)); *y = sy; }
+        if (w) { memcpy(&sw, data - 4, sizeof(uint16_t)); *w = sw; }
+        if (h) { memcpy(&sh, data - 2, sizeof(uint16_t)); *h = sh; }
         DBG("Access key [%s] (already registered). SRT = <%p>", key, data);
         return data;
      }
@@ -183,8 +194,8 @@ sprite_get(Editor        *ed,
 static void
 _free_cb(void *data)
 {
-   /* There is a 4 bytes offset */
-   data -= 4;
+   /* There is a 8 bytes offset */
+   data -= 8;
    free(data);
 }
 

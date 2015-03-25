@@ -266,6 +266,5 @@ editor_finalize(Editor *ed)
    ed->bitmap_origin.y = y;
 
    cursor_add(ed);
-   cursor_move(ed, 0, 0);
 }
 

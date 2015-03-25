@@ -155,7 +155,7 @@ _radio_units_changed_cb(void        *data,
       case PUD_UNIT_HUMAN_TRANSPORT:
       case PUD_UNIT_CIRCLE_OF_POWER:
       case PUD_UNIT_RUNESTONE:
-         cursor_resize(ed, 2, 2);
+         cursor_size_set(ed, 2, 2);
          handled = EINA_TRUE;
          break;
 
@@ -175,19 +175,19 @@ _radio_units_changed_cb(void        *data,
                case PUD_UNIT_KEEP:
                case PUD_UNIT_CASTLE:
                case PUD_UNIT_FORTRESS:
-                  cursor_resize(ed, 4, 4);
+                  cursor_size_set(ed, 4, 4);
                   handled = EINA_TRUE;
                   break;
 
                default:
-                  cursor_resize(ed, 3, 3);
+                  cursor_size_set(ed, 3, 3);
                   handled = EINA_TRUE;
                   break;
               }
           }
         else
           {
-             cursor_resize(ed, 1, 1);
+             cursor_size_set(ed, 1, 1);
              handled = EINA_TRUE;
           }
      }

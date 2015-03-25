@@ -142,7 +142,7 @@ _mouse_move_cb(void        *data,
    int x, y;
 
    _coords_to_grid(ed, ev->cur.canvas, &x, &y);
-   cursor_move(ed, x, y);
+   cursor_pos_set(ed, x, y);
 }
 
 static void
@@ -155,14 +155,12 @@ _mouse_down_cb(void        *data,
    Evas_Event_Mouse_Down *ev = info;
    int x, y;
 
-   if (!ed->cursor_is_enabled) return;
+   if (!ed->cursor.enabled) return;
 
    _coords_to_grid(ed, ev->canvas, &x, &y);
 
    if (ed->sel_unit != EDITOR_NO_UNIT_SELECTED)
-     {
-        bitmap_sprite_draw(ed, ed->sel_unit, ed->sel_player, x, y);
-     }
+     bitmap_sprite_draw(ed, ed->sel_unit, ed->sel_player, x, y);
 }
 
 
@@ -179,15 +177,21 @@ bitmap_sprite_draw(Editor *restrict ed,
 {
    unsigned char *sprite;
    Sprite_Info info;
-   int w, h;
+   int w, h, cw, ch, cx, cy, at_x, at_y;
    Eina_Bool flip;
 
    info = sprite_info_random_get();
-   sprite = sprite_get(ed, unit, info, &w, &h, &flip);
+   sprite = sprite_get(ed, unit, info, NULL, NULL, &w, &h, &flip);
    EINA_SAFETY_ON_NULL_RETURN(sprite);
 
-   _bitmap_image_push(ed, sprite, x * TEXTURE_WIDTH, y * TEXTURE_WIDTH,
-                      w, h, flip, color);
+   cursor_size_get(ed, &cw, &ch);
+   cursor_pos_get(ed, &cx, &cy);
+
+   at_x = (cx * TEXTURE_WIDTH) + ((cw * TEXTURE_WIDTH) - w) / 2;
+   at_y = (cy * TEXTURE_HEIGHT) + ((ch * TEXTURE_HEIGHT) - h) / 2;
+
+   /* Because the axis is inverted */
+   _bitmap_image_push(ed, sprite, at_x, at_y, w, h, flip, color);
 
    /* FIXME: for all cells covered by the unit */
    ed->cells[y][x].unit = unit;

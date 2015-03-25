@@ -15,11 +15,13 @@ static Eet_File *_ef = NULL;
 
 static void *
 _convert(const Pud_Color *sprite,
+         int              x,
+         int              y,
          int              w,
          int              h,
          int             *size_ret)
 {
-   const int size = w * h * sizeof(Pud_Color) + 4;
+   const int size = w * h * sizeof(Pud_Color) + 8;
    unsigned char *data, tmp;
    int i;
 
@@ -31,16 +33,20 @@ _convert(const Pud_Color *sprite,
      }
 
    /* Format:
+    *  16bits: offset X of image
+    *  16bits: offset Y of image
     *  16bits: width of image
     *  16bits: height of image
     *   Nbits: raw image */
-   memcpy(data + 0, &w, 2);
-   memcpy(data + 2, &h, 2);
-   memcpy(data + 4, sprite, size - 4);
+   memcpy(data + 0, &x, 2);
+   memcpy(data + 2, &y, 2);
+   memcpy(data + 4, &w, 2);
+   memcpy(data + 6, &h, 2);
+   memcpy(data + 8, sprite, size - 4);
 
    /* Set ALPHA as the highest bit to fit the ARGB8888 colorspace
     * (Store as BGRA) for decoding */
-   for (i = 4; i < size; i += 4)
+   for (i = 8; i < size; i += 4)
      {
         tmp = data[i + 2];
         data[i + 2] = data[i + 0];
@@ -53,6 +59,8 @@ _convert(const Pud_Color *sprite,
 
 static void
 _unit_cb(const Pud_Color               *sprite,
+         int                            x,
+         int                            y,
          int                            w,
          int                            h,
          const War2_Sprites_Descriptor *ud,
@@ -81,7 +89,7 @@ _unit_cb(const Pud_Color               *sprite,
    snprintf(era, sizeof(era), "%s", pud_era2str(ud->era));
    era[0] += 32; /* Lowercase, b*tch */
 
-   data = _convert(sprite, w, h, &size);
+   data = _convert(sprite, x, y, w, h, &size);
    if (!data) return;
 
    /* Generate key */
@@ -109,6 +117,8 @@ _unit_cb(const Pud_Color               *sprite,
 
 static void
 _building_cb(const Pud_Color               *sprite,
+             int                            x,
+             int                            y,
              int                            w,
              int                            h,
              const War2_Sprites_Descriptor *ud,
@@ -121,7 +131,7 @@ _building_cb(const Pud_Color               *sprite,
    /* Only handle the 5 first images [0,4] */
    if (img_nb > 0) return;
 
-   data = _convert(sprite, w, h, &size);
+   data = _convert(sprite, x, y, w, h, &size);
    if (!data) return;
 
    snprintf(key, sizeof(key), "%s", pud_unit2str(ud->object));

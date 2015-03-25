@@ -141,6 +141,8 @@ _str2color(const char *str)
 
 static void
 _war2_entry_cb(const Pud_Color               *img,
+               int                            x,
+               int                            y,
                int                            w,
                int                            h,
                const War2_Sprites_Descriptor *ud,
@@ -169,7 +171,8 @@ _war2_entry_cb(const Pud_Color               *img,
         fprintf(stderr, "*** Failed to save to [%s]", file);
         exit(2);
      }
-   printf("Saving sprite %i at \"%s\"\n", img_nb, file);
+   printf("Saving sprite %i at \"%s\". X,Y,W,H = %i,%i,%i,%i\n",
+          img_nb, file, x, y, w, h);
 
    (void) ud;
 }

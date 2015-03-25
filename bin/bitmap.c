@@ -40,7 +40,7 @@ _bitmap_image_push(Editor        *          ed,
    const int bmp_h = ed->bitmap_h;
    const int x = at_x;
    const int w = img_w;
-   int img_y, bmp_y;
+   int img_y, bmp_y, img_x, bmp_x, k;
    unsigned char *restrict bmp = ed->pixels;
 
    img_w *= 4;
@@ -50,10 +50,16 @@ _bitmap_image_push(Editor        *          ed,
         (img_y < img_h) && (bmp_y < bmp_h);
         ++img_y, ++bmp_y)
      {
-        memcpy(&(bmp[(bmp_y * bmp_w) + at_x]),
-               &(img[img_y * img_w]),
-               img_w);
+        for (img_x = 0, bmp_x = at_x;
+             (img_x < img_w) && (bmp_x < bmp_w);
+             img_x += 4, bmp_x += 4)
+          {
+             k = img_x + (img_y * img_w);
+             if (img[k+3] != 0)
+               memcpy(&(bmp[bmp_x + bmp_y * bmp_w]), &(img[k]), 4);
+          }
      }
+
    evas_object_image_data_update_add(ed->bitmap, x, at_y, w, img_h);
 }
 

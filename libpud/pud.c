@@ -628,6 +628,7 @@ pud_check(Pud *pud)
 Pud_Bool
 pud_unit_building_is(Pud_Unit unit)
 {
-   return ((unit >= PUD_UNIT_FARM) && (unit <= PUD_UNIT_RUNESTONE));
+   return ((unit >= PUD_UNIT_FARM) && (unit <= PUD_UNIT_RUNESTONE) &&
+           (unit != PUD_UNIT_HUMAN_START) && (unit != PUD_UNIT_ORC_START));
 }
 

@@ -34,7 +34,9 @@ _bitmap_image_push(Editor        *          ed,
                    int                      at_x,
                    int                      at_y,
                    int                      img_w,
-                   int                      img_h)
+                   int                      img_h,
+                   Eina_Bool                hflip,
+                   int                      colorize)
 {
    const int bmp_w = ed->bitmap_w * 4;
    const int bmp_h = ed->bitmap_h;
@@ -43,6 +45,9 @@ _bitmap_image_push(Editor        *          ed,
    int img_y, bmp_y, img_x, bmp_x, k;
    unsigned char *restrict bmp = ed->pixels;
 
+   int bmp_x_start;
+   int bmp_x_step;
+
    img_w *= 4;
    at_x *= 4;
 
@@ -50,9 +55,21 @@ _bitmap_image_push(Editor        *          ed,
         (img_y < img_h) && (bmp_y < bmp_h);
         ++img_y, ++bmp_y)
      {
-        for (img_x = 0, bmp_x = at_x;
+        /* Calculate the horizontal mirroring  */
+        if (hflip)
+          {
+             bmp_x_start = at_x + img_w;
+             bmp_x_step = -4;
+          }
+        else
+          {
+             bmp_x_start = at_x;
+             bmp_x_step = 4;
+          }
+
+        for (img_x = 0, bmp_x = bmp_x_start;
              (img_x < img_w) && (bmp_x < bmp_w);
-             img_x += 4, bmp_x += 4)
+             img_x += 4, bmp_x += bmp_x_step)
           {
              k = img_x + (img_y * img_w);
              if (img[k+3] != 0)
@@ -157,7 +174,9 @@ bitmap_sprite_draw(Editor *restrict ed,
    info = sprite_info_random_get();
    sprite = sprite_get(ed, unit, info, &w, &h, &flip);
 
-   _bitmap_image_push(ed, sprite, x * TEXTURE_WIDTH, y * TEXTURE_WIDTH, w, h);
+   _bitmap_image_push(ed, sprite, x * TEXTURE_WIDTH, y * TEXTURE_WIDTH,
+                      w, h, flip, color);
+
    /* FIXME: for all cells covered by the unit */
    ed->cells[y][x].unit = unit;
    ed->cells[y][x].orient = info;
@@ -176,7 +195,7 @@ bitmap_tile_set(Editor * restrict ed,
    EINA_SAFETY_ON_NULL_RETURN(tex);
 
    _bitmap_image_push(ed, tex, x * TEXTURE_WIDTH, y * TEXTURE_HEIGHT,
-                      TEXTURE_WIDTH, TEXTURE_HEIGHT);
+                      TEXTURE_WIDTH, TEXTURE_HEIGHT, EINA_FALSE, -1);
    ed->cells[y][x].tile = key;
 }
 

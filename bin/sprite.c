@@ -192,6 +192,6 @@ Sprite_Info
 sprite_info_random_get(void)
 {
    /* Does not return 4 */
-   return rand() % (SPRITE_INFO_SOUTH - SPRITE_INFO_NORTH) + SPRITE_INFO_NORTH;
+   return rand() % (SPRITE_INFO_NORTH_WEST - SPRITE_INFO_NORTH) + SPRITE_INFO_NORTH;
 }
 

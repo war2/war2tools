@@ -112,6 +112,16 @@ war2_ppm_write(const char          *file,
                int                  h,
                const unsigned char *data);
 
+void
+war2_sprites_color_convert(Pud_Player     col,
+                           unsigned char  in_r,
+                           unsigned char  in_g,
+                           unsigned char  in_b,
+                           unsigned char *out_r,
+                           unsigned char *out_g,
+                           unsigned char *out_b);
+
+
 #ifdef __cplusplus
 %>
 #endif

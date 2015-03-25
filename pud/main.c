@@ -335,31 +335,20 @@ main(int    argc,
              if (out.ppm)
                {
                   if (!pud_minimap_to_ppm(pud, out.file))
-                    {
-                       free(out.file);
-                       ABORT(4, "Failed to output [%s] to [%s]", file, out.file);
-                    }
+                    ABORT(4, "Failed to output [%s] to [%s]", file, out.file);
                }
              else if (out.jpeg)
                {
                   if (!pud_minimap_to_jpeg(pud, out.file))
-                    {
-                       free(out.file);
-                       ABORT(4, "Failed to output [%s] to [%s]", file, out.file);
-                    }
+                    ABORT(4, "Failed to output [%s] to [%s]", file, out.file);
                }
              else if (out.png)
                {
                   if (!pud_minimap_to_png(pud, out.file))
-                    {
-                       free(out.file);
-                       ABORT(4, "Failed to output [%s] to [%s]", file, out.file);
-                    }
+                    ABORT(4, "Failed to output [%s] to [%s]", file, out.file);
                }
              else
                ABORT(1, "Output is required no format is specified");
-
-             free(out.file);
           }
 
         /* -P,--print */

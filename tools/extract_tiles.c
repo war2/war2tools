@@ -10,7 +10,10 @@
 
 #define EXPORT_PNG 0
 #define EXPORT_EET 1
-#define EXPORT EXPORT_PNG
+
+/* === Setup here === */
+#define EXPORT EXPORT_EET
+
 
 #if !HAVE_EET && EXPORT == EXPORT_EET
 # warning Cannot export as EET. Defaults to PNG.
@@ -61,7 +64,7 @@ _export_tile(const Pud_Color    *tile,
    /* Fog of war */
    if (img_nb <= 16) return;
 
-   snprintf(buf, sizeof(buf), "../data/tiles/png/%s/%i.png",
+   snprintf(buf, sizeof(buf), "../data/tiles/png/%s/0x%04x.png",
             _era2str(ts->era), img_nb);
 
    war2_png_write(buf, w, h, (unsigned char *)tile);

@@ -148,7 +148,7 @@ editor_new(void)
 {
    Editor *ed;
    char title[128], wins[32];
-   Evas_Object *o;
+   Evas_Object *o, *box;
    int i;
 
    ed = calloc(1, sizeof(Editor));
@@ -197,8 +197,19 @@ editor_new(void)
 
 
    /* Toolbar */
-   toolbar_add(ed);
-   elm_box_pack_end(o, ed->toolbar);
+
+   box = elm_box_add(ed->win);
+   EINA_SAFETY_ON_NULL_GOTO(box, err_win_del);
+   eo_do(
+      box,
+      evas_obj_size_hint_weight_set(EVAS_HINT_EXPAND, 0.0),
+      evas_obj_size_hint_align_set(EVAS_HINT_FILL, EVAS_HINT_FILL);
+      elm_obj_box_horizontal_set(EINA_TRUE),
+      elm_obj_box_homogeneous_set(EINA_FALSE),
+      evas_obj_visibility_set(EINA_TRUE)
+   );
+   elm_box_pack_end(o, box);
+   toolbar_add(ed, box);
 
    /* Scroller */
    ed->scroller = elm_scroller_add(ed->win);

@@ -50,7 +50,7 @@ _segment_changed_cb(void        *data,
    /* Safely unset the unit selection */
    menu_unit_selection_reset(ed);
 
-   DBG("Clicked on segment %p: %i", obj, sd->val);
+   DBG("Segment %p changed: %i", obj, sd->val);
 }
 
 
@@ -92,11 +92,17 @@ _item_add(Evas_Object  *seg,
    Segment_Data *data;
 
    snprintf(path, sizeof(path), DATA_DIR"/images/%s", filename);
-   o = elm_icon_add(win);
-   elm_image_file_set(o, path, NULL);
-   evas_object_size_hint_aspect_set(o, EVAS_ASPECT_CONTROL_BOTH, 1, 1);
-   elm_image_resizable_set(o, EINA_TRUE, EINA_TRUE);
-
+   //o = elm_icon_add(win);
+   //elm_image_file_set(o, path, NULL);
+//   evas_object_size_hint_aspect_set(o, EVAS_ASPECT_CONTROL_BOTH, 1, 1);
+   //elm_image_resizable_set(o, EINA_TRUE, EINA_TRUE);
+   o = elm_label_add(win);
+   elm_object_text_set(o, "quiche");
+   eo_do(
+      o,
+      evas_obj_size_hint_weight_set(EVAS_HINT_EXPAND, EVAS_HINT_EXPAND),
+      evas_obj_size_hint_align_set(EVAS_HINT_FILL, EVAS_HINT_FILL)
+   );
    data = _segment_data_new(bind, value);
    eoi = elm_segment_control_item_add(seg, o, NULL);
    elm_object_item_data_set(eoi, data);
@@ -132,14 +138,27 @@ _segment_add(Evas_Object *win)
  *                                 Public API                                 *
  *============================================================================*/
 
-void
-toolbar_fill(Editor      *ed,
-             Evas_Object *tb,
-             Evas_Object *win)
+Eina_Bool
+toolbar_add(Editor *ed)
 {
    Evas_Object *seg;
    unsigned int i;
    Elm_Object_Item *eoi;
+   Evas_Object *win = ed->win;
+
+   ed->toolbar = elm_toolbar_add(win);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(ed->toolbar, EINA_FALSE);
+
+   eo_do(
+      ed->toolbar,
+      elm_obj_toolbar_shrink_mode_set(ELM_TOOLBAR_SHRINK_MENU),
+      evas_obj_size_hint_weight_set(EVAS_HINT_EXPAND, 0.0),
+      evas_obj_size_hint_align_set(EVAS_HINT_FILL, 0.0),
+      elm_obj_toolbar_homogeneous_set(EINA_FALSE),
+      elm_obj_toolbar_align_set(0.0),
+      evas_obj_visibility_set(EINA_TRUE)
+   );
+   elm_toolbar_transverse_expanded_set(ed->toolbar, EINA_TRUE),
 
    seg = _segment_add(win);
    _item_add(seg, win, "light.png", &(ed->tint), EDITOR_TINT_LIGHT);
@@ -156,7 +175,6 @@ toolbar_fill(Editor      *ed,
    _item_add(seg, win, "radius_small.png", &(ed->radius), EDITOR_RADIUS_SMALL);
    _item_add(seg, win, "radius_medium.png", &(ed->radius), EDITOR_RADIUS_MEDIUM);
    _item_add(seg, win, "radius_big.png", &(ed->radius), EDITOR_RADIUS_BIG);
-   _object_set(tb, seg);
    ed->segments[2] = seg;
 
    seg = _segment_add(win);
@@ -168,16 +186,18 @@ toolbar_fill(Editor      *ed,
    _item_add(seg, win, "rocks.png", &(ed->action), EDITOR_ACTION_ROCKS);
    _item_add(seg, win, "human_wall.png", &(ed->action), EDITOR_ACTION_HUMAN_WALLS);
    _item_add(seg, win, "orc_wall.png", &(ed->action), EDITOR_ACTION_ORCS_WALLS);
-   evas_object_size_hint_min_set(seg, 200, 20);  /* FIXME Hotfix FIXME */
+   // evas_object_size_hint_min_set(seg, 200, 20);  /* FIXME Hotfix FIXME */
    ed->segments[3] = seg;
 
    for (i = 0; i < EINA_C_ARRAY_LENGTH(ed->segments); i++)
      {
         seg = ed->segments[i];
-        _object_set(tb, seg);
+        _object_set(ed->toolbar, seg);
         evas_object_smart_callback_add(seg, "changed", _segment_changed_cb, ed);
         eoi = elm_segment_control_item_get(seg, 0);
         elm_segment_control_item_selected_set(eoi, EINA_TRUE);
      }
+
+   return EINA_TRUE;
 }
 

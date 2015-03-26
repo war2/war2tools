@@ -195,21 +195,9 @@ editor_new(void)
    /* Get the main menu */
    menu_add(ed);
 
-   /* Toolbar */
-   ed->toolbar = elm_toolbar_add(ed->win);
-   EINA_SAFETY_ON_NULL_GOTO(ed->toolbar, err_win_del);
-   eo_do(
-      ed->toolbar,
-      elm_obj_toolbar_shrink_mode_set(ELM_TOOLBAR_SHRINK_SCROLL),
-      evas_obj_size_hint_weight_set(EVAS_HINT_EXPAND, 0.0),
-      evas_obj_size_hint_align_set(EVAS_HINT_FILL, 0.0),
-      elm_obj_toolbar_homogeneous_set(EINA_FALSE),
-      elm_obj_toolbar_align_set(0.0),
-      evas_obj_visibility_set(EINA_TRUE)
-   );
 
-   elm_toolbar_transverse_expanded_set(ed->toolbar, EINA_TRUE);
-   toolbar_fill(ed, ed->toolbar, ed->win);
+   /* Toolbar */
+   toolbar_add(ed);
    elm_box_pack_end(o, ed->toolbar);
 
    /* Scroller */

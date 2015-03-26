@@ -18,68 +18,51 @@ _tile_decode(War2_Tileset_Descriptor  *ts,
    /* Lookup table (flip table): 0=>7, 1=>6, 2=>5, ... 7=>0
     * Thanks wargus for the tip. */
    const int ft[8] = { 7, 6, 5, 4, 3, 2, 1, 0 };
-   uint8_t chunk[32];
    Pud_Color img[1024];
    int j, i_img, off, offset, o, x, y;
-   int w = 0; /* Init matters */
    Pud_Bool flip_x, flip_y;
    unsigned char col;
+   const Pud_Color black = { 0, 0, 0, 0xff };
 
-   /* Read the first 16 words (32 bytes) */
-   //memcpy(&(chunk[0]), &(map[tile]), 32); /* XXX */
-//   for (j = 0; j < 32; j += 2)
-//     {
-//        memcpy(&w, &(chunk[j]), sizeof(uint16_t));
-        //printf("Chunk [0x%04lx]: 0x%04x\n", i / 42, w);
+   off = ((tile >> 4) * 42) + ((tile & 0xf) * 2);
 
-        /* If one of the words is 0, the tile is unused */
-//        if (w == 0) break;
+   offset = 0;
+   memcpy(&offset, &(map[off]), sizeof(uint16_t));
+   offset *= 32;
+   if (offset == 0) return;
 
-   w= tile;
-        off = ((w >> 4) * 42) + ((w & 0xf) * 2);
+   /* For each word in the block of 16 */
+   for (j = 0, i_img = 0; j < 32; j += 2, i_img++)
+     {
+        /* Get offset and flips */
+        o = 0;
+        memcpy(&o, &(ptr[offset + j]), sizeof(uint16_t));
+        flip_x = o & 2; // 0b10
+        flip_y = o & 1; // 0b01
+        o = (o & 0xfffc) * 16;
 
-        offset = 0;
-        memcpy(&offset, &(map[off]), sizeof(uint16_t));
-        offset *= 32;
-        if (offset == 0)
+        /* Decode a minitile (8x8) */
+        for (y = 0; y < 8; y++)
           {
-             printf("Err for image 0x%04x\n", w);
-             return;
-     //        continue;
-          }
-
-        /* For each word in the block of 16 */
-        for (j = 0, i_img = 0; j < 32; j += 2, i_img++)
-          {
-             /* Get offset and flips */
-             o = 0;
-             memcpy(&o, &(ptr[offset + j]), sizeof(uint16_t));
-             flip_x = o & 2; // 0b10
-             flip_y = o & 1; // 0b01
-             o = (o & 0xfffc) * 16;
-
-             /* Decode a minitile (8x8) */
-             for (y = 0; y < 8; y++)
+             for (x = 0; x < 8; x++)
                {
-                  for (x = 0; x < 8; x++)
-                    {
-                       /* If flip_x/flip_y are PUD_TRUE, the minitile must be flipped on
-                        * its x/y axis. We use a flip table which avoids calculations
-                        * to do so. */
-                       col = data[o + ((flip_x ? ft[x] : x) + (flip_y ? ft[y] : y) * 8)];
+                  /* If flip_x/flip_y are PUD_TRUE, the minitile must be flipped on
+                   * its x/y axis. We use a flip table which avoids calculations
+                   * to do so. */
+                  col = data[o + ((flip_x ? ft[x] : x) + (flip_y ? ft[y] : y) * 8)];
 
-                       /* Maths: we have 16 blocks of 8x8 to place in a 32x32
-                        * image which has a linear memory layout */
-                       const int xblock = x + ((i_img % 4) * 8);
-                       const int yblock = y + ((i_img / 4) * 8);
+                  /* Maths: we have 16 blocks of 8x8 to place in a 32x32
+                   * image which has a linear memory layout */
+                  const int xblock = x + ((i_img % 4) * 8);
+                  const int yblock = y + ((i_img / 4) * 8);
 
-                       /* Convert the byte to color thanks to the palette */
-                       img[xblock + 32 * yblock] = ts->palette[col];
-                    }
+                  /* Convert the byte to color thanks to the palette */
+                  img[xblock + 32 * yblock] = ts->palette[col];
                }
           }
-        func(img, 32, 32, ts, w);
-   //  }
+     }
+   if (memcmp(&(img[0]), &black, 3))
+     func(img, 32, 32, ts, tile);
 }
 
 static Pud_Bool

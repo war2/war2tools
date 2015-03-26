@@ -2,10 +2,85 @@
  * tileset.c
  * libwar2
  *
- * Copyright (c) 2014 Jean Guyomarc'h
+ * Copyright (c) 2014 - 2015 Jean Guyomarc'h
  */
 
 #include "war2_private.h"
+
+static void
+_tile_decode(War2_Tileset_Descriptor  *ts,
+             War2_Tileset_Decode_Func  func,
+             unsigned char            *ptr,
+             unsigned char            *data,
+             unsigned char            *map,
+             uint16_t                  tile)
+{
+   /* Lookup table (flip table): 0=>7, 1=>6, 2=>5, ... 7=>0
+    * Thanks wargus for the tip. */
+   const int ft[8] = { 7, 6, 5, 4, 3, 2, 1, 0 };
+   uint8_t chunk[32];
+   Pud_Color img[1024];
+   int j, i_img, off, offset, o, x, y;
+   int w = 0; /* Init matters */
+   Pud_Bool flip_x, flip_y;
+   unsigned char col;
+
+   /* Read the first 16 words (32 bytes) */
+   //memcpy(&(chunk[0]), &(map[tile]), 32); /* XXX */
+//   for (j = 0; j < 32; j += 2)
+//     {
+//        memcpy(&w, &(chunk[j]), sizeof(uint16_t));
+        //printf("Chunk [0x%04lx]: 0x%04x\n", i / 42, w);
+
+        /* If one of the words is 0, the tile is unused */
+//        if (w == 0) break;
+
+   w= tile;
+        off = ((w >> 4) * 42) + ((w & 0xf) * 2);
+
+        offset = 0;
+        memcpy(&offset, &(map[off]), sizeof(uint16_t));
+        offset *= 32;
+        if (offset == 0)
+          {
+             printf("Err for image 0x%04x\n", w);
+             return;
+     //        continue;
+          }
+
+        /* For each word in the block of 16 */
+        for (j = 0, i_img = 0; j < 32; j += 2, i_img++)
+          {
+             /* Get offset and flips */
+             o = 0;
+             memcpy(&o, &(ptr[offset + j]), sizeof(uint16_t));
+             flip_x = o & 2; // 0b10
+             flip_y = o & 1; // 0b01
+             o = (o & 0xfffc) * 16;
+
+             /* Decode a minitile (8x8) */
+             for (y = 0; y < 8; y++)
+               {
+                  for (x = 0; x < 8; x++)
+                    {
+                       /* If flip_x/flip_y are PUD_TRUE, the minitile must be flipped on
+                        * its x/y axis. We use a flip table which avoids calculations
+                        * to do so. */
+                       col = data[o + ((flip_x ? ft[x] : x) + (flip_y ? ft[y] : y) * 8)];
+
+                       /* Maths: we have 16 blocks of 8x8 to place in a 32x32
+                        * image which has a linear memory layout */
+                       const int xblock = x + ((i_img % 4) * 8);
+                       const int yblock = y + ((i_img / 4) * 8);
+
+                       /* Convert the byte to color thanks to the palette */
+                       img[xblock + 32 * yblock] = ts->palette[col];
+                    }
+               }
+          }
+        func(img, 32, 32, ts, w);
+   //  }
+}
 
 static Pud_Bool
 _ts_entries_parse(War2_Data                *w2,
@@ -13,19 +88,10 @@ _ts_entries_parse(War2_Data                *w2,
                   const unsigned int       *entries,
                   War2_Tileset_Decode_Func  func)
 {
-   /* Lookup table (flip table): 0=>7, 1=>6, 2=>5, ... 7=>0
-    * Thanks wargus for the tip. */
-   const int ft[8] = { 7, 6, 5, 4, 3, 2, 1, 0 };
-
    unsigned char *ptr, *data, *map;
-   size_t size, i, map_size;
-   Pud_Bool flip_x, flip_y;
-   int o, x, y, j, i_img;
-   Pud_Color img[1024];
-   uint8_t chunk[32];
-   uint16_t w;
-   int img_ctr = 0;
-   unsigned char col;
+   size_t size, map_size;
+   int tile;
+   int i, j, k;
 
    /* If no callback has been specified, do nothing */
    if (!func)
@@ -59,27 +125,31 @@ _ts_entries_parse(War2_Data                *w2,
      }
    ts->tiles = size / 32;
 
-   /* This entry contains the offsets for a given tile 0x????
-    * Each chunk is 42 bytes: 32 used and 10 unused */
-   for (i = 0; i < map_size; i += 42)
+   for (j = 0x1; j <= 0xc; j++)
      {
-        /* Read the first 16 words (32 bytes) */
-        memcpy(&(chunk[0]), &(map[i]), 32);
-        for (j = 0; j < 32; j += 2)
+        for (i = 0; i <= 0xf; i++)
           {
-             memcpy(&w, &(chunk[j]), sizeof(uint16_t));
-             //printf("Chunk [0x%04lx]: 0x%04x\n", i / 42, w);
+             tile = (j * 0x10) + i;
+             _tile_decode(ts, func, ptr, data, map, tile);
+          }
+     }
 
-             /* If one of the words is 0, the tile is unused */
-             if (w == 0x0000)
+   for (j = 0x1; j <= 0x9; j++)
+     {
+        for (i = 0x0; i <= 0xd; i++)
+          {
+             for (k = 0x0; k <= 0xf; k++)
                {
-                  break;
+                  tile = (j * 0x100) + (i * 0x10) + k;
+                  _tile_decode(ts, func, ptr, data, map, tile);
                }
           }
      }
 
-   // FIXME Fog of war (16 first tiles) */
 
+#if 0
+   // FIXME Fog of war (16 first tiles) */
+   int img_ctr;
    /* Jump by blocks of 16 words */
    for (i = 0, img_ctr = 1; i < size; i += 32, img_ctr++)
      {
@@ -87,6 +157,7 @@ _ts_entries_parse(War2_Data                *w2,
         for (j = 0, i_img = 0; j < 32; j += 2, i_img++)
           {
              /* Get offset and flips */
+             o = 0;
              memcpy(&o, &(ptr[i + j]), sizeof(uint16_t));
              flip_x = o & 2; // 0b10
              flip_y = o & 1; // 0b01
@@ -115,6 +186,7 @@ _ts_entries_parse(War2_Data                *w2,
 
         func(img, 32, 32, ts, img_ctr);
      }
+#endif
 
    free(ptr);
    free(data);
@@ -128,10 +200,11 @@ war2_tileset_decode(War2_Data                *w2,
                     Pud_Era                   era,
                     War2_Tileset_Decode_Func  func)
 {
-   const unsigned int forest[] = { 2, 3, 4, 5, 6, 7, 8 };
-   const unsigned int wasteland[] = { 10, 11, 12, 13, 14, 15, 16 };
-   const unsigned int winter[] = { 18, 19, 20, 21, 22, 23, 24 };
-   const unsigned int swamp[] = { 438, 439, 440, 441, 442, 443, 444 };
+   /* Last 3 entries are unknown (cf. doc) */
+   const unsigned int forest[] = { 2, 3, 4, 5/*, 6, 7, 8*/ };
+   const unsigned int wasteland[] = { 10, 11, 12, 13/*, 14, 15, 16*/ };
+   const unsigned int winter[] = { 18, 19, 20, 21/*, 22, 23, 24*/ };
+   const unsigned int swamp[] = { 438, 439, 440, 441/*, 442, 443, 444*/ };
    const unsigned int *entries;
    War2_Tileset_Descriptor *ts;
 

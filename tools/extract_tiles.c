@@ -24,7 +24,7 @@
 #if EXPORT == EXPORT_EET
 # include <Eet.h>
 static Eet_File *_ef = NULL;
-# define OPEN_EET(era) _ef = eet_open("../data/tiles/eet/" era ".eet", EET_FILE_MODE_READ_WRITE)
+# define OPEN_EET(era) _ef = eet_open("../data/tiles/" era ".eet", EET_FILE_MODE_WRITE)
 # define CLOSE_EET() eet_close(_ef)
 #else
 # define OPEN_EET(era)
@@ -102,10 +102,11 @@ _export_tile(const Pud_Color    *tile,
         data[i + 0] = tmp;
      }
 
-   snprintf(key, sizeof(key), "%i", img_nb);
+   snprintf(key, sizeof(key), "0x%04x", img_nb);
    bytes = eet_write(_ef, key, data, size, 1);
    if (bytes <= 0)
      fprintf(stderr, "*** Failed to save key [%s]\n", key);
+   //printf("Write key [%s] in \"%s\"\n", key, eet_file_get(_ef));
 
    free(data);
 }
@@ -170,6 +171,9 @@ main(int    argc,
    eet_shutdown();
 #endif
 
+   printf("\n"
+          "Do not forget to run cmake to copy generated files\n"
+          "\n");
 
    return 0;
 }

@@ -56,7 +56,6 @@ struct _Editor
 
    Eet_File     *textures_src;
    Eina_Hash    *textures;
-   Texture_Dictionary tex_dict;
 
    /* Toolbar */
    Evas_Object *toolbar;

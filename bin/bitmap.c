@@ -76,9 +76,8 @@ _bitmap_init(Editor *restrict ed)
      {
         for (i = 0; i < ed->map_w; i++)
           {
-             // FIXME This is pretty bad
-             // FIXME Study borders between tiles for a better algorithm
-             tile = texture_dictionary_entry_random_get(&ed->tex_dict.constr);
+             // FIXME This is sooo bad
+             tile = 0x005e;
              bitmap_tile_set(ed, i, j, tile);
           }
      }
@@ -123,9 +122,9 @@ _mouse_move_cb(void        *data,
 
    c = ed->cells[y][x];
 
-   if (texture_rock_is(&ed->tex_dict, c.tile) ||
-       texture_wall_is(&ed->tex_dict, c.tile) ||
-       texture_tree_is(&ed->tex_dict, c.tile))
+   if (texture_rock_is(c.tile) ||
+       texture_wall_is(c.tile) ||
+       texture_tree_is(c.tile))
      {
         /* Handle only flying units: they are the only one
          * that can be placed there */
@@ -153,7 +152,7 @@ _mouse_move_cb(void        *data,
           }
         else /* marine,ground units */
           {
-             if (texture_water_is(&ed->tex_dict, c.tile)) /* water */
+             if (texture_water_is(c.tile)) /* water */
                {
                   if (pud_unit_marine_is(ed->sel_unit))
                     {
@@ -312,20 +311,26 @@ bitmap_sprite_draw(Editor *restrict ed,
      }
 }
 
-void
+Eina_Bool
 bitmap_tile_set(Editor * restrict ed,
                 int               x,
                 int               y,
                 unsigned int      key)
 {
    unsigned char *tex;
+   Eina_Bool missing;
 
-   tex = texture_get(ed, key);
-   EINA_SAFETY_ON_NULL_RETURN(tex);
+   tex = texture_get(ed, key, &missing);
+   /* If the texture could not be loaded because of an internal error,
+    * return TRUE because we can do nothing about it.
+    * If the texture was non-existant, let's try again: the tileset
+    * is not helping us */
+   if (!tex) return !missing;
 
    _bitmap_image_push(ed, tex, x * TEXTURE_WIDTH, y * TEXTURE_HEIGHT,
                       TEXTURE_WIDTH, TEXTURE_HEIGHT, EINA_FALSE, -1);
    ed->cells[y][x].tile = key;
+   return EINA_TRUE;
 }
 
 Eina_Bool

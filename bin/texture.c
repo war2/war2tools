@@ -2,7 +2,8 @@
 
 void *
 texture_load(Eet_File     *src,
-             unsigned int  key)
+             unsigned int  key,
+             Eina_Bool    *missing)
 {
    /* 4 channels (rgba) of 1 byte each */
    const int expected_size = TEXTURE_WIDTH * TEXTURE_HEIGHT * 4 * sizeof(unsigned char);
@@ -10,11 +11,19 @@ texture_load(Eet_File     *src,
    char key_str[8];
    int size;
 
-   snprintf(key_str, sizeof(key_str), "%u", key);
+   snprintf(key_str, sizeof(key_str), "0x%04x", key);
 
-   /* Get raw data (uncompressed). The image is pre-flipped vertically. */
+   /* Get raw data (uncompressed). */
    mem = eet_read(src, key_str, &size);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(mem, NULL);
+   if (!mem)
+     {
+        DBG("Cannot find key \"%s\"", key_str);
+        /* Some tiles may not exist on some tilesets
+         * Not finding the tile is likely not to be an error. */
+        if (missing) *missing = EINA_TRUE;
+        return NULL;
+     }
+   if (missing) *missing = EINA_FALSE;
 
    /* Check the size */
    if (EINA_UNLIKELY(size != expected_size))
@@ -62,64 +71,6 @@ texture_shutdown(void)
 {
 }
 
-#define TD_FILL(td,d2,d3,d4,d5,d6,d7,d8,d9,d10,d11,d12,d13,d14,d15,d16,d17,d18,d19,d20,d21,d22,d23) \
-   do { \
-      td->hwalls.begin  = d2; \
-      td->hwalls.end = d3; \
-      td->owalls.begin = d4; \
-      td->owalls.end = d5; \
-      td->trees.begin = d6; \
-      td->trees.end = d7; \
-      td->rocks.begin = d8; \
-      td->rocks.end = d9; \
-      td->nconstr.begin = d10; \
-      td->nconstr.end = d11; \
-      td->water_l.begin = d12; \
-      td->water_l.end = d13; \
-      td->constr.begin = d14; \
-      td->constr.end = d15; \
-      td->constr_l.begin = d16; \
-      td->constr_l.end = d17; \
-      td->water.begin = d18; \
-      td->water.end = d19; \
-      td->nconstr_x.begin = d20; \
-      td->nconstr_x.end = d21; \
-      td->constr_x.begin = d22; \
-      td->constr_x.end = d23; \
-   } while (0)
-
-void
-texture_dictionary_init(Texture_Dictionary *td,
-                        Pud_Era             era)
-{
-   EINA_SAFETY_ON_NULL_RETURN(td);
-
-   switch (era)
-     {
-      case PUD_ERA_FOREST:
-         TD_FILL(td, 17, 34, 35, 52, 103, 142, 143, 180, 181, 206, 207, 238,
-                 239, 270, 271, 300, 301, 334, 335, 356, 357, 372);
-         break;
-
-      case PUD_ERA_WINTER:
-         TD_FILL(td, 17, 34, 35, 52, 103, 137, 138, 175, 176, 199, 200, 231,
-                 232, 259, 260, 291, 292, 331, 332, 349, 350, 379);
-         break;
-
-      case PUD_ERA_WASTELAND:
-         TD_FILL(td, 17, 34, 35, 52, 103, 139, 140, 177, 178, 201, 202, 233,
-                 234, 264, 265, 296, 297, 330, 331, 346, 347, 373);
-         break;
-
-      case PUD_ERA_SWAMP:
-         TD_FILL(td, 17, 34, 35, 52, 103, 137, 138, 175, 176, 207, 208, 239,
-                 240, 270, 271, 302, 303, 336, 337, 354, 355, 389);
-         break;
-     }
-}
-
-#undef TD_FILL
-
 static void
 _hash_free_cb(void *data)
 {
@@ -134,23 +85,26 @@ texture_hash_new(void)
 
 unsigned char *
 texture_get(Editor       *ed,
-            unsigned int  key)
+            unsigned int  key,
+            Eina_Bool    *missing)
 {
-   EINA_SAFETY_ON_TRUE_RETURN_VAL((key < texture_dictionary_min(ed)) ||
-                                  (key > texture_dictionary_max(ed)),
-                                  NULL);
-
    Eina_Bool chk;
    unsigned char *tex;
 
    tex = eina_hash_find(ed->textures, &key);
    if (tex == NULL)
      {
-        tex = texture_load(ed->textures_src, key);
-        if (EINA_UNLIKELY(tex == NULL))
+        tex = texture_load(ed->textures_src, key, missing);
+        if (tex == NULL)
           {
-             ERR("Failed to load texture for key [%u]", key);
-             return NULL;
+             /* See texture_load() */
+             if (EINA_LIKELY(missing && *missing))
+               return NULL;
+             else
+               {
+                  ERR("Failed to load texture for key [%u]", key);
+                  return NULL;
+               }
           }
         chk = eina_hash_add(ed->textures, &key, tex);
         if (chk == EINA_FALSE)
@@ -177,68 +131,41 @@ texture_tile_access(Editor       *ed,
    unsigned int key;
 
    key = ed->cells[y][x].tile;
-   return texture_get(ed, key);
-}
-
-unsigned int
-texture_dictionary_min(Editor *ed)
-{
-   return ed->tex_dict.hwalls.begin;
-}
-
-unsigned int
-texture_dictionary_max(Editor *ed)
-{
-   return ed->tex_dict.constr_x.end;
-}
-
-unsigned int
-texture_dictionary_entry_random_get(Texture_Dictionary_Entry *entry)
-{
-   /* Does not return 4 */
-   return rand() % (entry->end - entry->begin + 1) + entry->begin;
+   return texture_get(ed, key, NULL);
 }
 
 Eina_Bool
-texture_water_is(Texture_Dictionary *dict,
-                 unsigned int        tile)
+texture_water_is(unsigned int tile)
 {
-   /* water limit is not considered as water since you cannot
-    * place units there (except flying ones) */
-   return ((tile >= dict->water.begin) && (tile <= dict->water.end));
+   uint16_t t = tile & 0x00f0;
+   return ((t == 0x10) || (t == 0x20));
 }
 
 Eina_Bool
-texture_wall_is(Texture_Dictionary *dict,
-                unsigned int        tile)
+texture_wall_is(unsigned int tile)
 {
-   return ((((tile >= dict->hwalls.begin) && (tile <= dict->hwalls.end))) ||
-           (((tile >= dict->owalls.begin) && (tile <= dict->owalls.end))));
+   return (((tile & 0x00f0) == 0xa0) || ((tile & 0x00f0) == 0xc0) ||
+           ((tile & 0x0f00) == 0x900) || ((tile & 0x0f00) == 0x800));
 }
 
 Eina_Bool
-texture_tree_is(Texture_Dictionary *dict,
-                 unsigned int        tile)
+texture_tree_is(unsigned int tile)
 {
-   return ((tile >= dict->trees.begin) && (tile <= dict->trees.end));
+   return (((tile & 0x00f0) == 0x70) || ((tile & 0x0f00) == 0x700));
 }
 
 Eina_Bool
-texture_rock_is(Texture_Dictionary *dict,
-                 unsigned int        tile)
+texture_rock_is(unsigned int tile)
 {
-   return ((tile >= dict->rocks.begin) && (tile <= dict->rocks.end));
+   return (((tile & 0x00f0) == 0x80) || ((tile & 0x0f00) == 0x400));
 }
 
-
 Eina_Bool
-texture_walkable_is(Texture_Dictionary *dict,
-                    unsigned int        tile)
+texture_walkable_is(unsigned int tile)
 {
-   return ((!texture_water_is(dict, tile)) &&
-           (!texture_wall_is(dict, tile)) &&
-           (!texture_tree_is(dict, tile)) &&
-           (!texture_rock_is(dict, tile)));
+   return (!texture_wall_is(tile) &&
+           !texture_tree_is(tile) &&
+           !texture_rock_is(tile));
 }
 
 

@@ -266,7 +266,6 @@ editor_finalize(Editor *ed)
    ed->sprites = sprite_hash_new();
 
    ed->textures_src = texture_tileset_open(ed->era);
-   texture_dictionary_init(&(ed->tex_dict), ed->era);
    ed->textures = texture_hash_new();
 
    chk = bitmap_add(ed);

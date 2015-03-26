@@ -71,13 +71,16 @@ static void
 _bitmap_init(Editor *restrict ed)
 {
    int i, j, tile;
+   const int init_tiles[] = {
+      0x0050, 0x0051, 0x0052
+   };
+   const int seed = EINA_C_ARRAY_LENGTH(init_tiles);
 
    for (j = 0; j < ed->map_h; j++)
      {
         for (i = 0; i < ed->map_w; i++)
           {
-             // FIXME This is sooo bad
-             tile = 0x005e;
+             tile = init_tiles[rand() % seed];
              bitmap_tile_set(ed, i, j, tile);
           }
      }

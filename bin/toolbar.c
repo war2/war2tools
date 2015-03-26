@@ -80,57 +80,71 @@ _segment_data_free(Segment_Data *data)
 }
 
 static void
-_item_add(Evas_Object  *seg,
-          Evas_Object  *win,
-          const char   *filename,
+_icon_add(Evas_Object  *win,
+          Evas_Object  *seg,
+          const char   *file,
           void         *bind,
           unsigned int  value)
 {
-   char path[PATH_MAX];
-   Evas_Object *o;
+   Evas_Object *obj;
    Elm_Object_Item *eoi;
    Segment_Data *data;
 
-   snprintf(path, sizeof(path), DATA_DIR"/images/%s", filename);
-   //o = elm_icon_add(win);
-   //elm_image_file_set(o, path, NULL);
-//   evas_object_size_hint_aspect_set(o, EVAS_ASPECT_CONTROL_BOTH, 1, 1);
-   //elm_image_resizable_set(o, EINA_TRUE, EINA_TRUE);
-   o = elm_label_add(win);
-   elm_object_text_set(o, "quiche");
+   obj = elm_icon_add(win);
+   EINA_SAFETY_ON_NULL_RETURN(obj);
+
    eo_do(
-      o,
-      evas_obj_size_hint_weight_set(EVAS_HINT_EXPAND, EVAS_HINT_EXPAND),
-      evas_obj_size_hint_align_set(EVAS_HINT_FILL, EVAS_HINT_FILL)
+      obj,
+      evas_obj_size_hint_aspect_set(EVAS_ASPECT_CONTROL_BOTH, 1, 1),
+      elm_obj_image_resizable_set(EINA_TRUE, EINA_TRUE)
    );
+   elm_image_file_set(obj, file, NULL);
+
    data = _segment_data_new(bind, value);
-   eoi = elm_segment_control_item_add(seg, o, NULL);
+   EINA_SAFETY_ON_NULL_RETURN(data);
+
+   eoi = elm_segment_control_item_add(seg, obj, NULL);
+   EINA_SAFETY_ON_NULL_RETURN(eoi);
    elm_object_item_data_set(eoi, data);
 }
 
-static void
-_object_set(Evas_Object *tb,
-            Evas_Object *obj)
-{
-   Elm_Object_Item *eoi;
-   eoi = elm_toolbar_item_append(tb, NULL, NULL, NULL, NULL);
-   elm_object_item_part_content_set(eoi, "object", obj);
-}
-
 static Evas_Object *
-_segment_add(Evas_Object *win)
+_segment_add(Editor      *ed,
+             Evas_Object *box)
 {
    Evas_Object *o;
 
-   o = elm_segment_control_add(win);
+   o = elm_segment_control_add(ed->win);
    eo_do(
       o,
-      evas_obj_size_hint_weight_set(EVAS_HINT_EXPAND, 0.0),
-      evas_obj_size_hint_align_set(EVAS_HINT_FILL, EVAS_HINT_FILL)
+      evas_obj_size_hint_weight_set(0.0, 0.0),
+      evas_obj_size_hint_align_set(0.0, EVAS_HINT_FILL),
+      evas_obj_visibility_set(EINA_TRUE)
    );
    evas_object_event_callback_add(o, EVAS_CALLBACK_DEL, _segment_free_cb, NULL);
+   evas_object_smart_callback_add(o, "changed", _segment_changed_cb, ed);
+   elm_box_pack_end(box, o);
 
    return o;
+}
+
+static void
+_segment_constraint(Evas_Object *seg,
+                    int          elems)
+{
+   /*
+    * FIXME I think this is bad to use this.
+    * TODO Investigate more into details.
+    */
+
+   const int w = elems * 30;
+   const int h = 30;
+
+   eo_do(
+      seg,
+      evas_obj_size_hint_max_set(w, h),
+      evas_obj_size_hint_max_set(w, h)
+   );
 }
 
 
@@ -139,64 +153,64 @@ _segment_add(Evas_Object *win)
  *============================================================================*/
 
 Eina_Bool
-toolbar_add(Editor *ed)
+toolbar_add(Editor      *ed,
+            Evas_Object *box)
 {
-   Evas_Object *seg;
+   Evas_Object *seg[4], *obj;
    unsigned int i;
    Elm_Object_Item *eoi;
-   Evas_Object *win = ed->win;
 
-   ed->toolbar = elm_toolbar_add(win);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(ed->toolbar, EINA_FALSE);
+#define ITEM_ADD(seg_, win_, icon_, bind_, value_) \
+   _icon_add(win_, seg_, DATA_DIR"/images/" icon_, bind_, value_)
 
-   eo_do(
-      ed->toolbar,
-      elm_obj_toolbar_shrink_mode_set(ELM_TOOLBAR_SHRINK_MENU),
-      evas_obj_size_hint_weight_set(EVAS_HINT_EXPAND, 0.0),
-      evas_obj_size_hint_align_set(EVAS_HINT_FILL, 0.0),
-      elm_obj_toolbar_homogeneous_set(EINA_FALSE),
-      elm_obj_toolbar_align_set(0.0),
-      evas_obj_visibility_set(EINA_TRUE)
-   );
-   elm_toolbar_transverse_expanded_set(ed->toolbar, EINA_TRUE),
+   seg[0] = _segment_add(ed, box);
+   ITEM_ADD(seg[0], ed->win, "light.png", &(ed->tint), EDITOR_TINT_LIGHT);
+   ITEM_ADD(seg[0], ed->win, "dark.png", &(ed->tint), EDITOR_TINT_DARK);
+   _segment_constraint(seg[0], 2);
 
-   seg = _segment_add(win);
-   _item_add(seg, win, "light.png", &(ed->tint), EDITOR_TINT_LIGHT);
-   _item_add(seg, win, "dark.png", &(ed->tint), EDITOR_TINT_DARK);
-   ed->segments[0] = seg;
+   seg[1] = _segment_add(ed, box);
+   ITEM_ADD(seg[1], ed->win, "spread_normal.png", &(ed->spread), EDITOR_SPREAD_NORMAL);
+   ITEM_ADD(seg[1], ed->win, "spread_circle.png", &(ed->spread), EDITOR_SPREAD_CIRCLE);
+   ITEM_ADD(seg[1], ed->win, "spread_random.png", &(ed->spread), EDITOR_SPREAD_RANDOM);
+   _segment_constraint(seg[1], 3);
 
-   seg = _segment_add(win);
-   _item_add(seg, win, "spread_normal.png", &(ed->spread), EDITOR_SPREAD_NORMAL);
-   _item_add(seg, win, "spread_circle.png", &(ed->spread), EDITOR_SPREAD_CIRCLE);
-   _item_add(seg, win, "spread_random.png", &(ed->spread), EDITOR_SPREAD_RANDOM);
-   ed->segments[1] = seg;
+   seg[2] = _segment_add(ed, box);
+   ITEM_ADD(seg[2], ed->win, "radius_small.png", &(ed->radius), EDITOR_RADIUS_SMALL);
+   ITEM_ADD(seg[2], ed->win, "radius_medium.png", &(ed->radius), EDITOR_RADIUS_MEDIUM);
+   ITEM_ADD(seg[2], ed->win, "radius_big.png", &(ed->radius), EDITOR_RADIUS_BIG);
+   _segment_constraint(seg[2], 3);
 
-   seg = _segment_add(win);
-   _item_add(seg, win, "radius_small.png", &(ed->radius), EDITOR_RADIUS_SMALL);
-   _item_add(seg, win, "radius_medium.png", &(ed->radius), EDITOR_RADIUS_MEDIUM);
-   _item_add(seg, win, "radius_big.png", &(ed->radius), EDITOR_RADIUS_BIG);
-   ed->segments[2] = seg;
+   seg[3] = _segment_add(ed, box);
+   ITEM_ADD(seg[3], ed->win, "magnifying_glass.png", &(ed->action), EDITOR_ACTION_SELECTION);
+   ITEM_ADD(seg[3], ed->win, "water.png", &(ed->action), EDITOR_ACTION_WATER);
+   ITEM_ADD(seg[3], ed->win, "mud.png", &(ed->action), EDITOR_ACTION_NON_CONSTRUCTIBLE);
+   ITEM_ADD(seg[3], ed->win, "grass.png", &(ed->action), EDITOR_ACTION_CONSTRUCTIBLE);
+   ITEM_ADD(seg[3], ed->win, "trees.png", &(ed->action), EDITOR_ACTION_TREES);
+   ITEM_ADD(seg[3], ed->win, "rocks.png", &(ed->action), EDITOR_ACTION_ROCKS);
+   ITEM_ADD(seg[3], ed->win, "human_wall.png", &(ed->action), EDITOR_ACTION_HUMAN_WALLS);
+   ITEM_ADD(seg[3], ed->win, "orc_wall.png", &(ed->action), EDITOR_ACTION_ORCS_WALLS);
+   _segment_constraint(seg[3], 8);
 
-   seg = _segment_add(win);
-   _item_add(seg, win, "magnifying_glass.png", &(ed->action), EDITOR_ACTION_SELECTION);
-   _item_add(seg, win, "water.png", &(ed->action), EDITOR_ACTION_WATER);
-   _item_add(seg, win, "mud.png", &(ed->action), EDITOR_ACTION_NON_CONSTRUCTIBLE);
-   _item_add(seg, win, "grass.png", &(ed->action), EDITOR_ACTION_CONSTRUCTIBLE);
-   _item_add(seg, win, "trees.png", &(ed->action), EDITOR_ACTION_TREES);
-   _item_add(seg, win, "rocks.png", &(ed->action), EDITOR_ACTION_ROCKS);
-   _item_add(seg, win, "human_wall.png", &(ed->action), EDITOR_ACTION_HUMAN_WALLS);
-   _item_add(seg, win, "orc_wall.png", &(ed->action), EDITOR_ACTION_ORCS_WALLS);
-   // evas_object_size_hint_min_set(seg, 200, 20);  /* FIXME Hotfix FIXME */
-   ed->segments[3] = seg;
+#undef ITEM_ADD
 
-   for (i = 0; i < EINA_C_ARRAY_LENGTH(ed->segments); i++)
+   /* Select an element */
+   for (i = 0; i < EINA_C_ARRAY_LENGTH(seg); i++)
      {
-        seg = ed->segments[i];
-        _object_set(ed->toolbar, seg);
-        evas_object_smart_callback_add(seg, "changed", _segment_changed_cb, ed);
-        eoi = elm_segment_control_item_get(seg, 0);
+        eoi = elm_segment_control_item_get(seg[i], 0);
         elm_segment_control_item_selected_set(eoi, EINA_TRUE);
      }
+
+   /* Rectangle is used as a filler to force left-alignment */
+   obj = evas_object_rectangle_add(evas_object_evas_get(ed->win));
+   EINA_SAFETY_ON_NULL_RETURN_VAL(obj, EINA_FALSE);
+   eo_do(
+      obj,
+      evas_obj_color_set(0, 0, 0, 0),
+      evas_obj_size_hint_weight_set(EVAS_HINT_EXPAND, 0.0),
+      evas_obj_size_hint_align_set(1.0, 0.0),
+      evas_obj_visibility_set(EINA_TRUE)
+   );
+   elm_box_pack_end(box, obj);
 
    return EINA_TRUE;
 }

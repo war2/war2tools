@@ -15,32 +15,34 @@ static void _segment_data_free(Segment_Data *data);
  *============================================================================*/
 
 static void
-_toolbar_free_cb(void        *data EINA_UNUSED,
+_segment_free_cb(void        *data EINA_UNUSED,
                  Evas        *e    EINA_UNUSED,
                  Evas_Object *obj,
                  void        *info EINA_UNUSED)
 {
+   unsigned int i, count;
    Elm_Object_Item *eoi;
    Segment_Data *sd;
 
-   for (eoi = elm_toolbar_first_item_get(obj);
-        eoi != NULL;
-        eoi = elm_toolbar_item_next_get(eoi))
+   count = elm_segment_control_item_count_get(obj);
+   for (i = 0; i < count; i++)
      {
+        eoi = elm_segment_control_item_get(obj, i);
         sd = elm_object_item_data_get(eoi);
         _segment_data_free(sd);
      }
 }
 
 static void
-_item_active_cb(void        *data,
-                Evas_Object *obj,
-                void        *info)
+_segment_changed_cb(void        *data,
+                    Evas_Object *obj,
+                    void        *info EINA_UNUSED)
 {
    Editor *ed = data;
    Segment_Data *sd;
-   Elm_Object_Item *eoi = info;
+   Elm_Object_Item *eoi;
 
+   eoi = elm_segment_control_item_selected_get(obj);
    sd = elm_object_item_data_get(eoi);
 
    *(sd->bind) = sd->val;
@@ -48,7 +50,7 @@ _item_active_cb(void        *data,
    /* Safely unset the unit selection */
    menu_unit_selection_reset(ed);
 
-   DBG("Tb %p changed: %i", info, sd->val);
+   DBG("Segment %p changed: %i", obj, sd->val);
 }
 
 
@@ -77,31 +79,58 @@ _segment_data_free(Segment_Data *data)
    free(data);
 }
 
-static Evas_Object *
-_toolbar_add(Evas_Object *win,
-             Evas_Object *box)
+static void
+_item_add(Evas_Object  *seg,
+          Evas_Object  *win,
+          const char   *filename,
+          void         *bind,
+          unsigned int  value)
 {
-   Evas_Object *tb;
+   char path[PATH_MAX];
+   Evas_Object *o;
+   Elm_Object_Item *eoi;
+   Segment_Data *data;
 
-   tb = elm_toolbar_add(win);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(tb, NULL);
-
+   snprintf(path, sizeof(path), DATA_DIR"/images/%s", filename);
+   //o = elm_icon_add(win);
+   //elm_image_file_set(o, path, NULL);
+//   evas_object_size_hint_aspect_set(o, EVAS_ASPECT_CONTROL_BOTH, 1, 1);
+   //elm_image_resizable_set(o, EINA_TRUE, EINA_TRUE);
+   o = elm_label_add(win);
+   elm_object_text_set(o, "quiche");
    eo_do(
-      tb,
-      elm_obj_toolbar_shrink_mode_set(ELM_TOOLBAR_SHRINK_MENU),
-      evas_obj_size_hint_weight_set(EVAS_HINT_EXPAND, 0.0),
-      evas_obj_size_hint_align_set(EVAS_HINT_FILL, 0.0),
-      elm_obj_toolbar_homogeneous_set(EINA_FALSE),
-      elm_obj_toolbar_align_set(0.0),
-      evas_obj_visibility_set(EINA_TRUE)
+      o,
+      evas_obj_size_hint_weight_set(EVAS_HINT_EXPAND, EVAS_HINT_EXPAND),
+      evas_obj_size_hint_align_set(EVAS_HINT_FILL, EVAS_HINT_FILL)
    );
+   data = _segment_data_new(bind, value);
+   eoi = elm_segment_control_item_add(seg, o, NULL);
+   elm_object_item_data_set(eoi, data);
+}
 
-  // evas_object_event_callback_add(tb, EVAS_CALLBACK_DEL,
-  //                                _toolbar_free_cb, NULL);
+static void
+_object_set(Evas_Object *tb,
+            Evas_Object *obj)
+{
+   Elm_Object_Item *eoi;
+   eoi = elm_toolbar_item_append(tb, NULL, NULL, NULL, NULL);
+   elm_object_item_part_content_set(eoi, "object", obj);
+}
 
-   elm_box_pack_end(box, tb);
+static Evas_Object *
+_segment_add(Evas_Object *win)
+{
+   Evas_Object *o;
 
-   return tb;
+   o = elm_segment_control_add(win);
+   eo_do(
+      o,
+      evas_obj_size_hint_weight_set(EVAS_HINT_EXPAND, 0.0),
+      evas_obj_size_hint_align_set(EVAS_HINT_FILL, EVAS_HINT_FILL)
+   );
+   evas_object_event_callback_add(o, EVAS_CALLBACK_DEL, _segment_free_cb, NULL);
+
+   return o;
 }
 
 
@@ -110,43 +139,64 @@ _toolbar_add(Evas_Object *win,
  *============================================================================*/
 
 Eina_Bool
-toolbar_add(Editor      *ed,
-            Evas_Object *box)
+toolbar_add(Editor *ed)
 {
-   Evas_Object *tb;
+   Evas_Object *seg;
+   unsigned int i;
    Elm_Object_Item *eoi;
-   Segment_Data *sd;
+   Evas_Object *win = ed->win;
 
-#define ITEM_ADD(tb_, icon_, name_, bind_, val_) \
-   sd = _segment_data_new(bind_, val_); \
-   eoi = elm_toolbar_item_append(tb_, DATA_DIR"/images/" icon_, name_, _item_active_cb, NULL); \
-   elm_object_item_data_set(eoi, sd)
+   ed->toolbar = elm_toolbar_add(win);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(ed->toolbar, EINA_FALSE);
 
-   tb = _toolbar_add(ed->win, box);
-   ITEM_ADD(tb, "light.png", "Light", &(ed->tint), EDITOR_TINT_DARK);
-   ITEM_ADD(tb, "dark.png", "Dark", &(ed->tint), EDITOR_TINT_LIGHT);
+   eo_do(
+      ed->toolbar,
+      elm_obj_toolbar_shrink_mode_set(ELM_TOOLBAR_SHRINK_MENU),
+      evas_obj_size_hint_weight_set(EVAS_HINT_EXPAND, 0.0),
+      evas_obj_size_hint_align_set(EVAS_HINT_FILL, 0.0),
+      elm_obj_toolbar_homogeneous_set(EINA_FALSE),
+      elm_obj_toolbar_align_set(0.0),
+      evas_obj_visibility_set(EINA_TRUE)
+   );
+   elm_toolbar_transverse_expanded_set(ed->toolbar, EINA_TRUE),
 
-   tb = _toolbar_add(ed->win, box);
-   ITEM_ADD(tb, "spread_normal.png", "Square", &(ed->spread), EDITOR_SPREAD_NORMAL);
-   ITEM_ADD(tb, "spread_circle.png", "Circle", &(ed->spread), EDITOR_SPREAD_CIRCLE);
-   ITEM_ADD(tb, "spread_random.png", "Random", &(ed->spread), EDITOR_SPREAD_RANDOM);
+   seg = _segment_add(win);
+   _item_add(seg, win, "light.png", &(ed->tint), EDITOR_TINT_LIGHT);
+   _item_add(seg, win, "dark.png", &(ed->tint), EDITOR_TINT_DARK);
+   ed->segments[0] = seg;
 
-   tb = _toolbar_add(ed->win, box);
-   ITEM_ADD(tb, "radius_small.png", "Small", &(ed->radius), EDITOR_RADIUS_SMALL);
-   ITEM_ADD(tb, "radius_medium.png", "Medium", &(ed->radius), EDITOR_RADIUS_MEDIUM);
-   ITEM_ADD(tb, "radius_big.png", "Big", &(ed->radius), EDITOR_RADIUS_BIG);
+   seg = _segment_add(win);
+   _item_add(seg, win, "spread_normal.png", &(ed->spread), EDITOR_SPREAD_NORMAL);
+   _item_add(seg, win, "spread_circle.png", &(ed->spread), EDITOR_SPREAD_CIRCLE);
+   _item_add(seg, win, "spread_random.png", &(ed->spread), EDITOR_SPREAD_RANDOM);
+   ed->segments[1] = seg;
 
-   tb = _toolbar_add(ed->win, box);
-   ITEM_ADD(tb, "magnifying_glass.png", "Selection", &(ed->action), EDITOR_ACTION_SELECTION);
-   ITEM_ADD(tb, "water.png", "Water", &(ed->action), EDITOR_ACTION_WATER);
-   ITEM_ADD(tb, "mud.png", "Coast", &(ed->action), EDITOR_ACTION_NON_CONSTRUCTIBLE);
-   ITEM_ADD(tb, "grass.png", "Grass", &(ed->action), EDITOR_ACTION_CONSTRUCTIBLE);
-   ITEM_ADD(tb, "rocks.png", "Rocks", &(ed->action), EDITOR_ACTION_ROCKS);
-   ITEM_ADD(tb, "human_wall.png", "Human Wall", &(ed->action), EDITOR_ACTION_HUMAN_WALLS);
-   ITEM_ADD(tb, "orc_wall.png", "Orc Wall", &(ed->action), EDITOR_ACTION_ORCS_WALLS);
+   seg = _segment_add(win);
+   _item_add(seg, win, "radius_small.png", &(ed->radius), EDITOR_RADIUS_SMALL);
+   _item_add(seg, win, "radius_medium.png", &(ed->radius), EDITOR_RADIUS_MEDIUM);
+   _item_add(seg, win, "radius_big.png", &(ed->radius), EDITOR_RADIUS_BIG);
+   ed->segments[2] = seg;
 
+   seg = _segment_add(win);
+   _item_add(seg, win, "magnifying_glass.png", &(ed->action), EDITOR_ACTION_SELECTION);
+   _item_add(seg, win, "water.png", &(ed->action), EDITOR_ACTION_WATER);
+   _item_add(seg, win, "mud.png", &(ed->action), EDITOR_ACTION_NON_CONSTRUCTIBLE);
+   _item_add(seg, win, "grass.png", &(ed->action), EDITOR_ACTION_CONSTRUCTIBLE);
+   _item_add(seg, win, "trees.png", &(ed->action), EDITOR_ACTION_TREES);
+   _item_add(seg, win, "rocks.png", &(ed->action), EDITOR_ACTION_ROCKS);
+   _item_add(seg, win, "human_wall.png", &(ed->action), EDITOR_ACTION_HUMAN_WALLS);
+   _item_add(seg, win, "orc_wall.png", &(ed->action), EDITOR_ACTION_ORCS_WALLS);
+   // evas_object_size_hint_min_set(seg, 200, 20);  /* FIXME Hotfix FIXME */
+   ed->segments[3] = seg;
 
-#undef ITEM_ADD
+   for (i = 0; i < EINA_C_ARRAY_LENGTH(ed->segments); i++)
+     {
+        seg = ed->segments[i];
+        _object_set(ed->toolbar, seg);
+        evas_object_smart_callback_add(seg, "changed", _segment_changed_cb, ed);
+        eoi = elm_segment_control_item_get(seg, 0);
+        elm_segment_control_item_selected_set(eoi, EINA_TRUE);
+     }
 
    return EINA_TRUE;
 }

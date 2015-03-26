@@ -58,6 +58,8 @@ struct _Editor
    Eina_Hash    *textures;
 
    /* Toolbar */
+   Evas_Object *toolbar;
+   Evas_Object *segments[4];
    Editor_Action action;
    Editor_Spread spread;
    Editor_Radius radius;

@@ -204,7 +204,7 @@ editor_new(void)
          evas_obj_size_hint_align_set(EVAS_HINT_FILL, EVAS_HINT_FILL);
          elm_obj_box_horizontal_set(EINA_TRUE),
          elm_obj_box_homogeneous_set(EINA_FALSE),
-         evas_obj_visibility_set(EINA_TRUE)
+         efl_gfx_visible_set(EINA_TRUE)
       );
    elm_box_pack_end(o, box);
    toolbar_add(ed, box);

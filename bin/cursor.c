@@ -80,7 +80,7 @@ cursor_pos_set(Editor *ed,
 
    if ((ed->cursor.x != x) || (ed->cursor.y != y))
      {
-        eo_do(ed->bitmap, evas_obj_position_get(&bx, &by));
+        eo_do(ed->bitmap, efl_gfx_position_get(&bx, &by));
         evas_object_move(ed->cursor.obj, bx + x * 32, by + y * 32);
         ed->cursor.x = x;
         ed->cursor.y = y;

@@ -119,7 +119,7 @@ _segment_add(Editor      *ed,
       o,
       evas_obj_size_hint_weight_set(0.0, 0.0),
       evas_obj_size_hint_align_set(0.0, EVAS_HINT_FILL),
-      evas_obj_visibility_set(EINA_TRUE)
+      efl_gfx_visible_set(EINA_TRUE)
    );
    evas_object_event_callback_add(o, EVAS_CALLBACK_DEL, _segment_free_cb, NULL);
    evas_object_smart_callback_add(o, "changed", _segment_changed_cb, ed);
@@ -205,10 +205,10 @@ toolbar_add(Editor      *ed,
    EINA_SAFETY_ON_NULL_RETURN_VAL(obj, EINA_FALSE);
    eo_do(
       obj,
-      evas_obj_color_set(0, 0, 0, 0),
+      efl_gfx_color_set(0, 0, 0, 0),
       evas_obj_size_hint_weight_set(EVAS_HINT_EXPAND, 0.0),
       evas_obj_size_hint_align_set(1.0, 0.0),
-      evas_obj_visibility_set(EINA_TRUE)
+      efl_gfx_visible_set(EINA_TRUE)
    );
    elm_box_pack_end(box, obj);
 

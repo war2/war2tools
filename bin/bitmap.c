@@ -360,7 +360,7 @@ bitmap_add(Editor *ed)
    eo_do(
       obj,
       evas_obj_image_colorspace_set(EVAS_COLORSPACE_ARGB8888),
-      evas_obj_image_size_set(width, height),
+      efl_gfx_view_size_set(width, height),
       evas_obj_size_hint_weight_set(EVAS_HINT_EXPAND, EVAS_HINT_EXPAND),
       evas_obj_size_hint_align_set(0.0, 0.0),
       evas_obj_size_hint_min_set(width, height),

@@ -73,7 +73,7 @@ war2edit
 --------
 
 A clone of Warcraft II World Map Editor.
-It relies on the EFL, Elementary, libpud and libwar2.
+It relies on the EFL, Elementary, Elm_Bitmap (https://github.com/jeanguyomarch/elm_bitmap), libpud and libwar2.
 
 TODO:
 - [ ] Unicity of starting locations

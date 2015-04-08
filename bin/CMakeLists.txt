@@ -1,12 +1,7 @@
 pkg_check_modules(ELEMENTARY elementary)
+pkg_check_modules(ELM_BITMAP elm-bitmap)
 
-if (ELEMENTARY_FOUND)
-
-   include_directories(
-      ${CMAKE_CURRENT_SOURCE_DIR}
-      ${CMAKE_CURRENT_SOURCE_DIR}/../include
-      ${ELEMENTARY_INCLUDE_DIRS}
-   )
+if (ELEMENTARY_FOUND AND ELM_BITMAP_FOUND)
 
    add_definitions(-DPACKAGE_COMPILE_BIN_DIR=\"${CMAKE_CURRENT_BINARY_DIR}\")
    add_definitions(-DPACKAGE_COMPILE_DATA_DIR=\"${CMAKE_BINARY_DIR}/data\")
@@ -29,8 +24,20 @@ if (ELEMENTARY_FOUND)
    add_executable(war2edit ${WAR2EDIT_SRC})
    add_dependencies(war2edit edje_themes)
 
-   link_directories(${ELEMENTARY_LIBRARY_DIRS})
-   target_link_libraries(war2edit ${LIBPUD_LIBRARIES} ${LIBWAR2_LIBRARIES} ${ELEMENTARY_LIBRARIES})
+   target_include_directories(
+      war2edit
+      PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}
+      PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/../include
+      PUBLIC ${ELEMENTARY_INCLUDE_DIRS}
+      PUBLIC ${ELM_BITMAP_INCLUDE_DIRS}
+   )
+
+   target_link_libraries(war2edit
+      ${LIBPUD_LIBRARIES}
+      ${LIBWAR2_LIBRARIES}
+      ${ELEMENTARY_LIBRARIES}
+      ${ELM_BITMAP_LIBRARIES}
+   )
 
    install(
       TARGETS war2edit

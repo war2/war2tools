@@ -7,6 +7,7 @@
 #include <pud.h>
 #include <war2.h>
 #include <Elementary.h>
+#include <Elm_Bitmap.h>
 
 #define DATA_DIR PACKAGE_COMPILE_DATA_DIR
 

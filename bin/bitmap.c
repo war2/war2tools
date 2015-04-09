@@ -109,6 +109,44 @@ _bitmap_init(Editor *restrict ed)
      }
 }
 
+static void
+_click_handle(Editor *ed,
+              int     x,
+              int     y)
+{
+   Sprite_Info orient;
+
+   if (!elm_bitmap_cursor_enabled_get(ed->bitmap)) return;
+
+   if (ed->sel_unit != PUD_UNIT_NONE)
+     {
+        if (pud_unit_start_location_is(ed->sel_unit))
+          {
+             const int lx = ed->start_locations[ed->sel_player].x;
+             const int ly = ed->start_locations[ed->sel_player].y;
+
+             /* Start location did exist: move it. Also refresh
+              * the zone where it was to remove it. */
+             /* FIXME See Cedric's message on E-phab */
+             if (ed->start_locations[ed->sel_player].x != -1)
+               {
+                  ed->cells[ly][lx].unit_below = PUD_UNIT_NONE;
+                  bitmap_refresh_zone(ed, lx - 1, ly - 1, 3, 3);
+                  if (ed->units_count > 0) ed->units_count++;
+               }
+
+             ed->start_locations[ed->sel_player].x = x;
+             ed->start_locations[ed->sel_player].y = y;
+          }
+
+        /* Draw the unit, and therefore lock the cursor. */
+        orient = sprite_info_random_get();
+        bitmap_sprite_draw(ed, ed->sel_unit, ed->sel_player, orient, x, y);
+        ed->units_count++;
+        elm_bitmap_cursor_enabled_set(ed->bitmap, EINA_FALSE);
+     }
+}
+
 static Eina_Bool
 _unit_below_cursor_is(Cell          **cells,
                       int             x,
@@ -216,6 +254,9 @@ _hovered_cb(void        *data,
                }
           }
      }
+
+   if (ev->mouse.buttons & 1)
+     _click_handle(data, x, y);
 }
 
 static void
@@ -223,39 +264,8 @@ _clicked_cb(void        *data,
             Evas_Object *bmp  EINA_UNUSED,
             void        *info)
 {
-   Editor *ed = data;
    Elm_Bitmap_Event_Clicked *ev = info;
-   Sprite_Info orient;
-
-   if (!elm_bitmap_cursor_enabled_get(ed->bitmap)) return;
-
-   if (ed->sel_unit != PUD_UNIT_NONE)
-     {
-        if (pud_unit_start_location_is(ed->sel_unit))
-          {
-             const int lx = ed->start_locations[ed->sel_player].x;
-             const int ly = ed->start_locations[ed->sel_player].y;
-
-             /* Start location did exist: move it. Also refresh
-              * the zone where it was to remove it. */
-             /* FIXME See Cedric's message on E-phab */
-             if (ed->start_locations[ed->sel_player].x != -1)
-               {
-                  ed->cells[ly][lx].unit_below = PUD_UNIT_NONE;
-                  bitmap_refresh_zone(ed, lx - 1, ly - 1, 3, 3);
-                  if (ed->units_count > 0) ed->units_count++;
-               }
-
-             ed->start_locations[ed->sel_player].x = ev->cell_x;
-             ed->start_locations[ed->sel_player].y = ev->cell_y;
-          }
-
-        /* Draw the unit, and therefore lock the cursor. */
-        orient = sprite_info_random_get();
-        bitmap_sprite_draw(ed, ed->sel_unit, ed->sel_player, orient, ev->cell_x, ev->cell_y);
-        ed->units_count++;
-        elm_bitmap_cursor_enabled_set(ed->bitmap, EINA_FALSE);
-     }
+   _click_handle(data, ev->cell_x, ev->cell_y);
 }
 
 

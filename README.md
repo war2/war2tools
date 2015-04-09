@@ -76,11 +76,8 @@ A clone of Warcraft II World Map Editor.
 It relies on the EFL, Elementary, Elm_Bitmap (https://github.com/jeanguyomarch/elm_bitmap), libpud and libwar2.
 
 TODO:
-- [ ] Unicity of starting locations
-- [ ] Center units
 - [ ] Lock cursor
 - [ ] Properties (players, units, upgrades, start, map)
-- [ ] Save a file
 - [ ] Load a file
 - [ ] Tiles !!!!
 - [ ] About

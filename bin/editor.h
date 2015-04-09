@@ -46,7 +46,6 @@ struct _Editor
    Cell   **cells;
 
    Evas_Object   *bitmap;
-   unsigned char *pixels;
 
    Eet_File     *units;
    Eet_File     *buildings;
@@ -67,16 +66,6 @@ struct _Editor
 
    Eina_Stringshare *save_file;
 
-   /* Cursor */
-   struct {
-      Evas_Object *obj;
-      int          x;
-      int          y;
-      int          w;
-      int          h;
-      Eina_Bool    enabled;
-   } cursor;
-
    struct _mainconfig {
       Evas_Object *container;
       Evas_Object *img;
@@ -96,11 +85,6 @@ struct _Editor
    Pud_Dimensions size;
    int map_w;
    int map_h;
-   int bitmap_w;
-   int bitmap_h;
-
-   int bmp_step_w;
-   int bmp_step_h;
 
    Pud_Era era;
    Eina_Bool has_extension;

@@ -14,7 +14,6 @@ if (ELEMENTARY_FOUND AND ELM_BITMAP_FOUND)
       bitmap.c
       texture.c
       sprite.c
-      cursor.c
       file.c
       mainconfig.c
       menu.c
@@ -22,7 +21,6 @@ if (ELEMENTARY_FOUND AND ELM_BITMAP_FOUND)
       cell.c
    )
    add_executable(war2edit ${WAR2EDIT_SRC})
-   add_dependencies(war2edit edje_themes)
 
    target_include_directories(
       war2edit

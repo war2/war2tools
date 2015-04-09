@@ -1,40 +1,39 @@
 #include "war2edit.h"
 
+typedef struct {
+   Editor    *ed;
+   int        colorize;
+   Eina_Bool  hflip;
+} Draw_Data;
+
 /*============================================================================*
  *                                 Private API                                *
  *============================================================================*/
 
 static void
-_bitmap_image_push(Editor        *          ed,
-                   unsigned char * restrict img,
-                   int                      at_x,
-                   int                      at_y,
-                   int                      img_w,
-                   int                      img_h,
-                   Eina_Bool                hflip,
-                   int                      colorize)
+_bitmap_draw_func(void                 *data,
+                  Evas_Object          *obj  EINA_UNUSED,
+                  Elm_Bitmap_Draw_Info *info)
 {
-   const int bmp_w = ed->bitmap_w * 4;
-   const int bmp_h = ed->bitmap_h;
-   const int x = at_x;
-   const int w = img_w;
+   Draw_Data *d = data;
+   const int bmp_w = info->bitmap_w * 4;
    int img_y, bmp_y, img_x, bmp_x, k;
-   unsigned char *restrict bmp = ed->pixels;
+   int img_w, at_x;
+   unsigned char *restrict bmp = info->pixels;
    unsigned char bgr[4];
-
    int bmp_x_start;
    int bmp_x_step;
 
-   img_w *= 4;
-   at_x *= 4;
+   img_w = info->source_w * 4;
+   at_x = info->at_x * 4;
 
    /* Always used when there is full alpha */
-   for (img_y = 0, bmp_y = at_y;
-        (img_y < img_h) && (bmp_y < bmp_h);
+   for (img_y = 0, bmp_y = info->at_y;
+        (img_y < info->source_h) && (bmp_y < info->bitmap_h);
         ++img_y, ++bmp_y)
      {
         /* Calculate the horizontal mirroring  */
-        if (hflip)
+        if (d->hflip)
           {
              bmp_x_start = at_x + img_w;
              bmp_x_step = -4;
@@ -50,10 +49,10 @@ _bitmap_image_push(Editor        *          ed,
              img_x += 4, bmp_x += bmp_x_step)
           {
              k = img_x + (img_y * img_w);
-             memcpy(&(bgr[0]), &(img[k]), 4);
-             if (colorize != -1)
+             memcpy(&(bgr[0]), &(info->source[k]), 4);
+             if (d->colorize != -1)
                {
-                  war2_sprites_color_convert(colorize,
+                  war2_sprites_color_convert(d->colorize,
                                              bgr[2], bgr[1], bgr[0],
                                              &(bgr[2]), &(bgr[1]), &(bgr[0]));
                }
@@ -63,8 +62,29 @@ _bitmap_image_push(Editor        *          ed,
                }
           }
      }
+}
 
-   evas_object_image_data_update_add(ed->bitmap, x, at_y, w, img_h);
+static void
+_draw(Editor *ed,
+      unsigned char *restrict img,
+      int                     at_x,
+      int                     at_y,
+      int                     img_w,
+      int                     img_h,
+      Eina_Bool               hflip,
+      int                     colorize)
+{
+   Draw_Data *draw_data;
+
+   draw_data = malloc(sizeof(*draw_data));
+   EINA_SAFETY_ON_NULL_RETURN(draw_data);
+
+   draw_data->ed = ed;
+   draw_data->hflip = hflip;
+   draw_data->colorize = colorize;
+
+   elm_bitmap_abs_draw(ed->bitmap, draw_data, img, img_w, img_h, at_x, at_y);
+   free(draw_data); /* XXX */
 }
 
 static void
@@ -86,44 +106,21 @@ _bitmap_init(Editor *restrict ed)
      }
 }
 
-static void
-_coords_to_grid(Editor *restrict  ed,
-                Evas_Coord_Point  cur,
-                int              *x,
-                int              *y)
-{
-   Evas_Point scr_view;
-   int cell_x, cell_y;
-
-   /* Which cell in the grid are we pointing at? */
-   elm_scroller_region_get(ed->scroller, &scr_view.x, &scr_view.y, NULL, NULL);
-   cell_x = (cur.x + scr_view.x - ed->bitmap_origin.x) / TEXTURE_WIDTH;
-   cell_y = (cur.y + scr_view.y - ed->bitmap_origin.y) / TEXTURE_HEIGHT;
-
-   *x = cell_x;
-   *y = cell_y;
-}
-
 
 /*============================================================================*
  *                                   Events                                   *
  *============================================================================*/
 
 static void
-_mouse_move_cb(void        *data,
-               Evas        *evas EINA_UNUSED,
-               Evas_Object *bmp  EINA_UNUSED,
-               void        *info)
+_hovered_cb(void        *data,
+            Evas_Object *bmp  EINA_UNUSED,
+            void        *info)
 {
    Editor *ed = data;
-   Evas_Event_Mouse_Move *ev = info;
-   int x, y;
+   Elm_Bitmap_Event_Hovered *ev = info;
    Cell c;
 
-   _coords_to_grid(ed, ev->cur.canvas, &x, &y);
-   cursor_pos_set(ed, x, y);
-
-   c = ed->cells[y][x];
+   c = ed->cells[ev->cell_y][ev->cell_x];
 
    if (texture_rock_is(c.tile) ||
        texture_wall_is(c.tile) ||
@@ -132,14 +129,14 @@ _mouse_move_cb(void        *data,
         /* Handle only flying units: they are the only one
          * that can be placed there */
         if (!pud_unit_flying_is(ed->sel_unit))
-          cursor_disable(ed);
+          elm_bitmap_cursor_enabled_set(ed->bitmap, EINA_FALSE);
         else
           {
              /* Don't collide with another unit */
              if (c.unit_above != PUD_UNIT_NONE)
-               cursor_disable(ed);
+               elm_bitmap_cursor_enabled_set(ed->bitmap, EINA_FALSE);
              else
-               cursor_enable(ed);
+               elm_bitmap_cursor_enabled_set(ed->bitmap, EINA_TRUE);
           }
      }
    else /* Ground, water */
@@ -149,9 +146,9 @@ _mouse_move_cb(void        *data,
           {
              /* Don't collide with another unit */
              if (c.unit_above != PUD_UNIT_NONE)
-               cursor_disable(ed);
+               elm_bitmap_cursor_enabled_set(ed->bitmap, EINA_FALSE);
              else
-               cursor_enable(ed);
+               elm_bitmap_cursor_enabled_set(ed->bitmap, EINA_TRUE);
           }
         else /* marine,ground units */
           {
@@ -161,23 +158,23 @@ _mouse_move_cb(void        *data,
                     {
                        /* Don't collide with another unit */
                        if (c.unit_below != PUD_UNIT_NONE)
-                         cursor_disable(ed);
+                         elm_bitmap_cursor_enabled_set(ed->bitmap, EINA_FALSE);
                        else
-                         cursor_enable(ed);
+                         elm_bitmap_cursor_enabled_set(ed->bitmap, EINA_TRUE);
                     }
                   else
-                    cursor_disable(ed);
+                    elm_bitmap_cursor_enabled_set(ed->bitmap, EINA_FALSE);
                }
              else /* ground */
                {
                   if (pud_unit_marine_is(ed->sel_unit))
-                    cursor_disable(ed);
+                    elm_bitmap_cursor_enabled_set(ed->bitmap, EINA_FALSE);
                   else
                     {
                        if (c.unit_below != PUD_UNIT_NONE)
-                         cursor_disable(ed);
+                         elm_bitmap_cursor_enabled_set(ed->bitmap, EINA_FALSE);
                        else
-                         cursor_enable(ed);
+                         elm_bitmap_cursor_enabled_set(ed->bitmap, EINA_TRUE);
                     }
                }
           }
@@ -185,19 +182,15 @@ _mouse_move_cb(void        *data,
 }
 
 static void
-_mouse_down_cb(void        *data,
-               Evas        *evas EINA_UNUSED,
-               Evas_Object *bmp  EINA_UNUSED,
-               void        *info)
+_clicked_cb(void        *data,
+            Evas_Object *bmp  EINA_UNUSED,
+            void        *info)
 {
    Editor *ed = data;
-   Evas_Event_Mouse_Down *ev = info;
-   int x, y;
+   Elm_Bitmap_Event_Clicked *ev = info;
    Sprite_Info orient;
 
-   if (!ed->cursor.enabled) return;
-
-   _coords_to_grid(ed, ev->canvas, &x, &y);
+   if (!elm_bitmap_cursor_enabled_get(ed->bitmap)) return;
 
    if (ed->sel_unit != PUD_UNIT_NONE)
      {
@@ -216,15 +209,15 @@ _mouse_down_cb(void        *data,
                   if (ed->units_count > 0) ed->units_count++;
                }
 
-             ed->start_locations[ed->sel_player].x = x;
-             ed->start_locations[ed->sel_player].y = y;
+             ed->start_locations[ed->sel_player].x = ev->cell_x;
+             ed->start_locations[ed->sel_player].y = ev->cell_y;
           }
 
         /* Draw the unit, and therefore lock the cursor. */
         orient = sprite_info_random_get();
-        bitmap_sprite_draw(ed, ed->sel_unit, ed->sel_player, orient, x, y);
+        bitmap_sprite_draw(ed, ed->sel_unit, ed->sel_player, orient, ev->cell_x, ev->cell_y);
         ed->units_count++;
-        cursor_disable(ed);
+        elm_bitmap_cursor_enabled_set(ed->bitmap, EINA_FALSE);
      }
 }
 
@@ -290,14 +283,17 @@ bitmap_sprite_draw(Editor *restrict ed,
    sprite = sprite_get(ed, unit, orient, NULL, NULL, &w, &h, &flip);
    EINA_SAFETY_ON_NULL_RETURN(sprite);
 
-   cursor_size_get(ed, &cw, &ch);
-   cursor_pos_get(ed, &cx, &cy);
+   eo_do(
+      ed->bitmap,
+      elm_obj_bitmap_cursor_size_get(&cw, &ch),
+      elm_obj_bitmap_cursor_pos_get(&cx, &cy)
+   );
 
    at_x = (cx * TEXTURE_WIDTH) + ((cw * TEXTURE_WIDTH) - w) / 2;
    at_y = (cy * TEXTURE_HEIGHT) + ((ch * TEXTURE_HEIGHT) - h) / 2;
 
    /* Because the axis is inverted */
-   _bitmap_image_push(ed, sprite, at_x, at_y, w, h, flip, color);
+   _draw(ed, sprite, at_x, at_y, w, h, flip, color);
 
    /* FIXME: for all cells covered by the unit */
    if (pud_unit_flying_is(unit))
@@ -330,8 +326,8 @@ bitmap_tile_set(Editor * restrict ed,
     * is not helping us */
    if (!tex) return !missing;
 
-   _bitmap_image_push(ed, tex, x * TEXTURE_WIDTH, y * TEXTURE_HEIGHT,
-                      TEXTURE_WIDTH, TEXTURE_HEIGHT, EINA_FALSE, -1);
+   _draw(ed, tex, x * TEXTURE_WIDTH, y * TEXTURE_HEIGHT,
+         TEXTURE_WIDTH, TEXTURE_HEIGHT, EINA_FALSE, -1);
    ed->cells[y][x].tile = key;
    return EINA_TRUE;
 }
@@ -341,43 +337,25 @@ bitmap_add(Editor *ed)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(ed, EINA_FALSE);
 
-   const int width = ed->map_w * TEXTURE_WIDTH;
-   const int height = ed->map_h * TEXTURE_HEIGHT;
-   const int size = width * height * 4 * sizeof(unsigned char);
-   Evas *e;
    Evas_Object *obj;
-   unsigned char *mem;
 
-   e = evas_object_evas_get(ed->win);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(e, EINA_FALSE);
-
-   obj = evas_object_image_filled_add(e);
+   obj = elm_bitmap_init_add(ed->win, 32, 32, ed->map_w, ed->map_h);
    EINA_SAFETY_ON_NULL_RETURN_VAL(obj, EINA_FALSE);
-
-   mem = calloc(size, sizeof(unsigned char));
-   EINA_SAFETY_ON_NULL_RETURN_VAL(mem, EINA_FALSE);
 
    eo_do(
       obj,
-      evas_obj_image_colorspace_set(EVAS_COLORSPACE_ARGB8888),
-      efl_gfx_view_size_set(width, height),
-      evas_obj_size_hint_weight_set(EVAS_HINT_EXPAND, EVAS_HINT_EXPAND),
       evas_obj_size_hint_align_set(0.0, 0.0),
-      evas_obj_size_hint_min_set(width, height),
-      evas_obj_size_hint_max_set(width, height),
-      evas_obj_image_data_set(mem)
+      evas_obj_size_hint_weight_set(EVAS_HINT_EXPAND, EVAS_HINT_EXPAND),
+      elm_obj_bitmap_resizable_set(EINA_FALSE),
+      elm_obj_bitmap_cursor_visibility_set(EINA_TRUE),
+      elm_obj_bitmap_draw_func_set(_bitmap_draw_func)
    );
+   evas_object_smart_callback_add(obj, "clicked", _clicked_cb, ed);
+   evas_object_smart_callback_add(obj, "hovered", _hovered_cb, ed);
 
    ed->bitmap = obj;
-   ed->pixels = mem;
-   ed->bitmap_w = width;
-   ed->bitmap_h = height;
-
    ed->cells = cell_matrix_new(ed);
    EINA_SAFETY_ON_NULL_RETURN_VAL(ed->cells, EINA_FALSE);
-
-   evas_object_event_callback_add(obj, EVAS_CALLBACK_MOUSE_MOVE, _mouse_move_cb, ed);
-   evas_object_event_callback_add(obj, EVAS_CALLBACK_MOUSE_DOWN, _mouse_down_cb, ed);
 
    _bitmap_init(ed);
 

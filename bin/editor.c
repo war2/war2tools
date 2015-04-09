@@ -25,26 +25,6 @@ _win_del_cb(void        *data,
    editor_free(ed);
 }
 
-//static void
-//_menu_clicked_cb(void        *data,
-//                 Evas_Object *obj   EINA_UNUSED,
-//                 void        *event EINA_UNUSED)
-//{
-//   Editor *ed = data;
-//   printf("Clicked\n");
-//   cursor_hide(ed);
-//}
-//
-//static void
-//_menu_dismissed_cb(void        *data,
-//                   Evas_Object *obj   EINA_UNUSED,
-//                   void        *event EINA_UNUSED)
-//{
-//   Editor *ed = data;
-//   printf("Dismissed\n");
-//   cursor_show(ed);
-//}
-
 static void
 _error_close_cb(void        *data,
                 Evas_Object *obj  EINA_UNUSED,
@@ -87,7 +67,6 @@ editor_free(Editor *ed)
    if (ed->buildings) eet_close(ed->buildings);
    if (ed->sprites) eina_hash_free(ed->sprites);
    if (ed->save_file) eina_stringshare_del(ed->save_file);
-   free(ed->pixels);
    cell_matrix_free(ed->cells);
    pud_close(ed->pud);
    evas_object_del(ed->win);
@@ -270,13 +249,5 @@ editor_finalize(Editor *ed)
    EINA_SAFETY_ON_FALSE_RETURN(chk);
    elm_object_content_set(ed->scroller, ed->bitmap);
    evas_object_show(ed->bitmap);
-
-   /* Get the origin of the bitmap. This is done once
-    * and is used to get the origin of the clipping view */
-   evas_object_geometry_get(ed->bitmap, &x, &y, NULL, NULL);
-   ed->bitmap_origin.x = x;
-   ed->bitmap_origin.y = y;
-
-   cursor_add(ed);
 }
 

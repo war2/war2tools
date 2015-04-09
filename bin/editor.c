@@ -7,15 +7,6 @@ static Eina_List *_editors = NULL;
  *                                  Callbacks                                 *
  *============================================================================*/
 
-
-static void
-_win_focused_cb(void        *data  EINA_UNUSED,
-                Evas_Object *obj   EINA_UNUSED,
-                void        *event EINA_UNUSED)
-{
-//   Editor *ed = data;
-}
-
 static void
 _win_del_cb(void        *data,
             Evas_Object *obj   EINA_UNUSED,
@@ -154,7 +145,6 @@ editor_new(void)
    ed->win = elm_win_util_standard_add("win-editor", title);
    EINA_SAFETY_ON_NULL_GOTO(ed->win, err_free);
    elm_win_focus_highlight_enabled_set(ed->win, EINA_FALSE);
-   evas_object_smart_callback_add(ed->win, "focus,in", _win_focused_cb, ed);
    evas_object_smart_callback_add(ed->win, "delete,request", _win_del_cb, ed);
    evas_object_resize(ed->win, 640, 480);
 

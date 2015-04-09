@@ -194,11 +194,8 @@ editor_new(void)
    EINA_SAFETY_ON_NULL_GOTO(ed->scroller, err_win_del);
    evas_object_size_hint_weight_set(ed->scroller, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(ed->scroller, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   elm_scroller_policy_set(ed->scroller, ELM_SCROLLER_POLICY_ON, ELM_SCROLLER_POLICY_ON);
-   /* elm_scroller_propagate_events_set(ed->scroller, EINA_FALSE); */
    elm_box_pack_end(o, ed->scroller);
    evas_object_show(ed->scroller);
-   elm_scroller_page_relative_set(ed->scroller, 0, 1);
 
    /* Mainconfig: get user input for various mainstream parameters */
    mainconfig_add(ed);
@@ -228,7 +225,6 @@ err_ret:
 void
 editor_finalize(Editor *ed)
 {
-   int x, y;
    Eina_Bool chk;
 
    pud_dimensions_to_size(ed->size, &(ed->map_w), &(ed->map_h));

@@ -1,5 +1,8 @@
 #include "war2edit.h"
 
+#define UNIT_BELOW (1 << 0)
+#define UNIT_ABOVE (1 << 1)
+
 typedef struct {
    Editor    *ed;
    int        colorize;
@@ -106,6 +109,35 @@ _bitmap_init(Editor *restrict ed)
      }
 }
 
+static Eina_Bool
+_unit_below_cursor_is(Cell          **cells,
+                      int             x,
+                      int             y,
+                      int             cw,
+                      int             ch,
+                      unsigned char   types)
+{
+   int i, j;
+
+   for (j = y; j < y + ch; ++j)
+     {
+        for (i = x; i < x + cw; ++i)
+          {
+             if (types & UNIT_BELOW)
+               {
+                  if (cells[j][i].unit_below != PUD_UNIT_NONE)
+                    return EINA_TRUE;
+               }
+             if (types & UNIT_ABOVE)
+               {
+                  if (cells[j][i].unit_above != PUD_UNIT_NONE)
+                    return EINA_TRUE;
+               }
+          }
+     }
+   return EINA_FALSE;
+}
+
 
 /*============================================================================*
  *                                   Events                                   *
@@ -119,8 +151,13 @@ _hovered_cb(void        *data,
    Editor *ed = data;
    Elm_Bitmap_Event_Hovered *ev = info;
    Cell c;
+   int x, y, cw, ch;
 
-   c = ed->cells[ev->cell_y][ev->cell_x];
+   x = ev->cell_x;
+   y = ev->cell_y;
+   elm_bitmap_cursor_size_get(ed->bitmap, &cw, &ch);
+
+   c = ed->cells[y][x];
 
    if (texture_rock_is(c.tile) ||
        texture_wall_is(c.tile) ||
@@ -133,7 +170,7 @@ _hovered_cb(void        *data,
         else
           {
              /* Don't collide with another unit */
-             if (c.unit_above != PUD_UNIT_NONE)
+             if (_unit_below_cursor_is(ed->cells, x, y, cw, ch, UNIT_ABOVE))
                elm_bitmap_cursor_enabled_set(ed->bitmap, EINA_FALSE);
              else
                elm_bitmap_cursor_enabled_set(ed->bitmap, EINA_TRUE);
@@ -145,7 +182,7 @@ _hovered_cb(void        *data,
         if (pud_unit_flying_is(ed->sel_unit))
           {
              /* Don't collide with another unit */
-             if (c.unit_above != PUD_UNIT_NONE)
+             if (_unit_below_cursor_is(ed->cells, x, y, cw, ch, UNIT_ABOVE))
                elm_bitmap_cursor_enabled_set(ed->bitmap, EINA_FALSE);
              else
                elm_bitmap_cursor_enabled_set(ed->bitmap, EINA_TRUE);
@@ -157,7 +194,7 @@ _hovered_cb(void        *data,
                   if (pud_unit_marine_is(ed->sel_unit))
                     {
                        /* Don't collide with another unit */
-                       if (c.unit_below != PUD_UNIT_NONE)
+                       if (_unit_below_cursor_is(ed->cells, x, y, cw, ch, UNIT_BELOW))
                          elm_bitmap_cursor_enabled_set(ed->bitmap, EINA_FALSE);
                        else
                          elm_bitmap_cursor_enabled_set(ed->bitmap, EINA_TRUE);
@@ -171,7 +208,7 @@ _hovered_cb(void        *data,
                     elm_bitmap_cursor_enabled_set(ed->bitmap, EINA_FALSE);
                   else
                     {
-                       if (c.unit_below != PUD_UNIT_NONE)
+                       if (_unit_below_cursor_is(ed->cells, x, y, cw, ch, UNIT_BELOW))
                          elm_bitmap_cursor_enabled_set(ed->bitmap, EINA_FALSE);
                        else
                          elm_bitmap_cursor_enabled_set(ed->bitmap, EINA_TRUE);

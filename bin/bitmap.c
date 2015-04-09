@@ -275,6 +275,7 @@ bitmap_sprite_draw(Editor *restrict ed,
 {
    unsigned char *sprite;
    int w, h, cw, ch, cx, cy, at_x, at_y;
+   int i, j;
    Eina_Bool flip;
 
    /* Don't draw */
@@ -292,21 +293,36 @@ bitmap_sprite_draw(Editor *restrict ed,
    at_x = (cx * TEXTURE_WIDTH) + ((cw * TEXTURE_WIDTH) - w) / 2;
    at_y = (cy * TEXTURE_HEIGHT) + ((ch * TEXTURE_HEIGHT) - h) / 2;
 
-   /* Because the axis is inverted */
    _draw(ed, sprite, at_x, at_y, w, h, flip, color);
 
-   /* FIXME: for all cells covered by the unit */
+   /* Bitfields, cannot take addresses to shorten that */
    if (pud_unit_flying_is(unit))
      {
-        ed->cells[y][x].unit_above = unit;
-        ed->cells[y][x].orient_above = orient;
-        ed->cells[y][x].player_above = color;
+        for (j = y; j < y + ch; ++j)
+          {
+             for (i = x; i < x + cw; ++i)
+               {
+                  ed->cells[j][i].unit_above = unit;
+                  ed->cells[j][i].orient_above = orient;
+                  ed->cells[j][i].player_above = color;
+                  ed->cells[j][i].anchor_above = 0;
+               }
+          }
+        ed->cells[y][x].anchor_above = 1;
      }
    else
      {
-        ed->cells[y][x].unit_below = unit;
-        ed->cells[y][x].orient_below = orient;
-        ed->cells[y][x].player_below = color;
+        for (j = y; j < y + ch; ++j)
+          {
+             for (i = x; i < x + cw; ++i)
+               {
+                  ed->cells[j][i].unit_below = unit;
+                  ed->cells[j][i].orient_below = orient;
+                  ed->cells[j][i].player_below = color;
+                  ed->cells[j][i].anchor_below = 0;
+               }
+          }
+        ed->cells[y][x].anchor_below = 1;
      }
 }
 

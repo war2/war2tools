@@ -1,5 +1,5 @@
-war2edit
-========
+war2tools
+=========
 
 This repository contains tools to manipulate PUD files. PUDs are Warcraft II map files.
 The build system used is `cmake`:
@@ -68,20 +68,6 @@ It allows to export the minimap of a PUD to an image. Supported formats:
 - jpg
 - png
 - ppm
-
-war2edit
---------
-
-A clone of Warcraft II World Map Editor.
-It relies on the EFL, Elementary, Elm_Bitmap (https://github.com/jeanguyomarch/elm_bitmap), libpud and libwar2.
-
-TODO:
-- [ ] Lock cursor
-- [ ] Properties (players, units, upgrades, start, map)
-- [ ] Load a file
-- [ ] Tiles !!!!
-- [ ] About
-
 
 tools
 -----

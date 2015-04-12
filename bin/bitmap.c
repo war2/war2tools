@@ -145,6 +145,9 @@ _click_handle(Editor *ed,
         ed->units_count++;
         elm_bitmap_cursor_enabled_set(ed->bitmap, EINA_FALSE);
      }
+   else if (ed->action != EDITOR_ACTION_NONE)
+     {
+     }
 }
 
 static Eina_Bool

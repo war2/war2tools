@@ -56,6 +56,23 @@ pud_parse_ver(Pud *pud)
    w = READ16(pud, FAIL(PUD_FALSE));
 
    pud->version = w;
+   switch (w)
+     {
+      case 0x0011:
+         pud->extension_pack = 0;
+         break;
+
+      case 0x013:
+         pud->extension_pack = 1;
+         break;
+
+      default:
+         fprintf(stderr, "*** Unknown version 0x%04x."
+                 " Defaults to extension pack\n", w);
+         pud->extension_pack = 1;
+         break;
+     }
+
    return PUD_TRUE;
 }
 

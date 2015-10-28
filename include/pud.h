@@ -382,11 +382,12 @@ struct _Pud
    /* Cache */
    uint8_t       current_section;
 
-   unsigned int  verbose       : 4;
-   unsigned int  init          : 1;
-   unsigned int  default_allow : 1;
-   unsigned int  default_udta  : 1;
-   unsigned int  default_ugrd  : 1;
+   unsigned int  verbose        : 3;
+   unsigned int  init           : 1;
+   unsigned int  default_allow  : 1;
+   unsigned int  default_udta   : 1;
+   unsigned int  default_ugrd   : 1;
+   unsigned int  extension_pack : 1;
 };
 
 typedef struct _Pud_Color Pud_Color;

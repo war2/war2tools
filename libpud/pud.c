@@ -113,7 +113,11 @@ _open(Pud           *pud,
       Pud_Open_Mode  mode)
 {
    /* Close the file if was already open */
-   if (pud->mem_map) { pud_munmap(pud->mem_map, pud->mem_map_size); pud->mem_map = NULL; }
+   if (pud->mem_map)
+     {
+        pud_munmap(pud->mem_map, pud->mem_map_size);
+        pud->mem_map = NULL;
+     }
    if (pud->filename) free(pud->filename);
 
    /* Copy the filename */

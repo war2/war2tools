@@ -258,10 +258,10 @@ typedef enum
 
 typedef enum
 {
-   PUD_ERA_FOREST,
-   PUD_ERA_WINTER,
-   PUD_ERA_WASTELAND,
-   PUD_ERA_SWAMP
+   PUD_ERA_FOREST       = 0,
+   PUD_ERA_WINTER       = 1,
+   PUD_ERA_WASTELAND    = 2,
+   PUD_ERA_SWAMP        = 3
 } Pud_Era;
 
 typedef struct _Pud Pud;

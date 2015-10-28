@@ -253,6 +253,9 @@ main(int    argc,
            case 'P':
               print.enabled = 1;
               break;
+
+           default:
+              return 1;
           }
      }
 

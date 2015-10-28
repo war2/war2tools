@@ -19,7 +19,8 @@ static const struct option _options[] =
      {"sections", no_argument,          0, 's'},
      {"war",      no_argument,          0, 'W'},
      {"verbose",  no_argument,          0, 'v'},
-     {"help",     no_argument,          0, 'h'}
+     {"help",     no_argument,          0, 'h'},
+     {NULL,       0,                    0, '\0'}
 };
 
 static void

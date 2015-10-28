@@ -34,8 +34,8 @@
       if (!(pud)) { \
          DIE_RETURN(__VA_ARGS__, "Invalid PUD input [%p]", pud); \
       } \
-      if (pud->open_mode != mode) { \
-         DIE_RETURN(__VA_ARGS__, "PUD open mode is [%i] expected [%i]", \
+      if (!(pud->open_mode & (mode))) { \
+         DIE_RETURN(__VA_ARGS__, "PUD open mode is [%02x] expected [%02x]", \
                     pud->open_mode, mode); \
       } \
    } while (0)

@@ -126,8 +126,8 @@ _open(Pud           *pud,
 
    pud->open_mode = mode;
 
-   /* Open */
-   if (mode == PUD_OPEN_MODE_R)
+   /* Open (read-only vs others) */
+   if ((mode & PUD_OPEN_MODE_R) && !(mode & PUD_OPEN_MODE_W))
      {
         pud->mem_map = pud_mmap(file, &(pud->mem_map_size));
         if (pud->mem_map == NULL)
@@ -158,6 +158,8 @@ pud_new(void)
 
    pud = calloc(1, sizeof(*pud));
    if (!pud) DIE_GOTO(err, "Failed to alloc Pud: %s", strerror(errno));
+
+   pud->open_mode = PUD_OPEN_MODE_R | PUD_OPEN_MODE_W;
 
    /* Set defaults */
    if (!pud_defaults_set(pud))
@@ -284,8 +286,6 @@ pud_tile_at(Pud *pud,
             int  x,
             int  y)
 {
-   PUD_SANITY_CHECK(pud, PUD_OPEN_MODE_R, 0);
-
    if (((unsigned int)(x * y)) >= (unsigned int)pud->tiles)
      DIE_RETURN(0, "Invalid coordinates %i,%i", x, y);
 

@@ -49,12 +49,18 @@ long2bin(uint32_t x)
 const char *
 mode2str(Pud_Open_Mode mode)
 {
-   switch (mode)
+   if (mode & PUD_OPEN_MODE_R)
      {
-      case PUD_OPEN_MODE_R:  return "rb";
-      case PUD_OPEN_MODE_W:  return "wb";
-      default:               return NULL;
+        if (mode & PUD_OPEN_MODE_W)
+          return "rb+"; /* RW */
+        else /* RO */
+          return "rb";
      }
+   else if (mode & PUD_OPEN_MODE_W)
+     return "wb+";
+
+   /* Should not happen... */
+   return "rb";
 }
 
 Pud_Color

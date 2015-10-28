@@ -152,6 +152,44 @@ err:
 }
 
 Pud *
+pud_new(void)
+{
+   Pud *pud;
+
+   pud = calloc(1, sizeof(*pud));
+   if (!pud) DIE_GOTO(err, "Failed to alloc Pud: %s", strerror(errno));
+
+   /* Set defaults */
+   if (!pud_defaults_set(pud))
+     DIE_GOTO(err_free, "Failed to set defaults");
+
+   pud_tag_generate(pud);
+   pud_version_set(pud, PUD_VERSION_BDP);
+   pud_description_set(pud, "No description available");
+   pud_era_set(pud, PUD_ERA_FOREST);
+   pud_dimensions_set(pud, PUD_DIMENSIONS_32_32);
+
+   return pud;
+
+err_free:
+   free(pud);
+err:
+   return NULL;
+}
+
+void
+pud_free(Pud *pud)
+{
+   pud_close(pud);
+}
+
+void
+pud_tag_generate(Pud *pud)
+{
+   pud->tag = rand() % UINT32_MAX;
+}
+
+Pud *
 pud_open(const char    *file,
          Pud_Open_Mode  mode)
 {

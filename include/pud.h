@@ -20,6 +20,9 @@ typedef unsigned char Pud_Bool;
 #define PUD_TRUE  ((Pud_Bool)(1))
 #define PUD_FALSE ((Pud_Bool)(0))
 
+#define PUD_VERSION_TOD  0x0011
+#define PUD_VERSION_BDP  0x0013
+
 typedef enum
 {
    PUD_SECTION_TYPE     = 0,
@@ -284,31 +287,31 @@ struct _Pud
       uint8_t players[8];
       uint8_t unusable[7];
       uint8_t neutral;
-   } owner;
+   } owner; /* [defaults] */
 
    struct {
       uint8_t players[8];
       uint8_t unusable[7];
       uint8_t neutral;
-   } side;
+   } side; /* [defaults] */
 
    struct {
       uint16_t players[8];
       uint16_t unusable[7];
       uint16_t neutral;
-   } sgld, slbr, soil;
+   } sgld, slbr, soil; /* [defaults] */
 
    struct {
       uint8_t players[8];
       uint8_t unusable[7];
       uint8_t neutral;
-   } ai;
+   } ai; /* [defaults] */
 
    struct _alow {
       uint32_t players[8];
       uint32_t unusable[7];
       uint32_t neutral;
-   } unit_alow, spell_start, spell_alow, spell_acq, up_alow, up_acq;
+   } unit_alow, spell_start, spell_alow, spell_acq, up_alow, up_acq; /* [defaults] */
 
    struct _ugrd {
       uint8_t           time;
@@ -318,7 +321,7 @@ struct _Pud
       uint16_t          icon;
       uint16_t          group;
       uint32_t          flags;
-   } upgrade[52];
+   } upgrade[52]; /* [defaults] */
 
    /* Cache values */
    int map_w;
@@ -374,7 +377,7 @@ struct _Pud
       unsigned int has_magic          : 1;
       unsigned int weapons_upgradable : 1;
       unsigned int armor_upgradable   : 1;
-   } unit_data[110];
+   } unit_data[110]; /* [defaults] */
 
    /* Bitfield: is section X present? */
    uint32_t     sections;
@@ -383,10 +386,10 @@ struct _Pud
    uint8_t       current_section;
 
    unsigned int  verbose        : 3;
-   unsigned int  init           : 1;
-   unsigned int  default_allow  : 1;
-   unsigned int  default_udta   : 1;
-   unsigned int  default_ugrd   : 1;
+   unsigned int  init           : 1; /* set by defaults */
+   unsigned int  default_allow  : 1; /* [defaults] */
+   unsigned int  default_udta   : 1; /* [defaults] */
+   unsigned int  default_ugrd   : 1; /* [defaults] */
    unsigned int  extension_pack : 1;
 };
 
@@ -403,6 +406,8 @@ struct _Pud_Color
 Pud_Bool pud_init(void);
 void pud_shutdown(void);
 
+Pud *pud_new(void);
+void pud_free(Pud *pud);
 Pud *pud_open(const char *file, Pud_Open_Mode mode);
 void pud_close(Pud *pud);
 Pud_Bool pud_reopen(Pud *pud, const char *file, Pud_Open_Mode mode);
@@ -423,6 +428,7 @@ Pud_Bool pud_write(const Pud *pud);
 int pud_unit_add(Pud *pud, uint16_t x, uint16_t y, Pud_Player owner, Pud_Unit type, uint16_t alter);
 void pud_era_set(Pud *pud, Pud_Era era);
 void pud_dimensions_set(Pud *pud, Pud_Dimensions dims);
+void pud_tag_generate(Pud *pud);
 
 void *pud_mmap(const char *file, size_t *size_ret);
 void pud_munmap(void *map, size_t size);

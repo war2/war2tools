@@ -610,7 +610,7 @@ pud_parse_mtxm(Pud *pud)
 
    uint32_t chk;
    uint16_t w;
-   int i;
+   unsigned int i;
 
    chk = pud_go_to_section(pud, PUD_SECTION_MTXM);
    if (!chk) DIE_RETURN(PUD_FALSE, "Failed to reach section MTXM");
@@ -637,7 +637,7 @@ pud_parse_sqm(Pud *pud)
 
    uint32_t chk;
    uint16_t w;
-   int i;
+   unsigned int i;
 
    chk = pud_go_to_section(pud, PUD_SECTION_SQM);
    if (!chk) DIE_RETURN(PUD_FALSE, "Failed to reach section SQM ");
@@ -678,7 +678,7 @@ pud_parse_regm(Pud *pud)
 
    uint32_t chk;
    uint16_t w;
-   int i;
+   unsigned int i;
 
    chk = pud_go_to_section(pud, PUD_SECTION_REGM);
    if (!chk) DIE_RETURN(PUD_FALSE, "Failed to reach section REGM");

@@ -302,10 +302,6 @@ main(int    argc,
         /* Set verbosity level */
         pud_verbose_set(pud, verbose);
 
-        /* Parse pud */
-        if (!pud_parse(pud))
-          ABORT(5, "Parsing of [%s] failed", file);
-
         /* --tile-at */
         if (tile_at.enabled)
           {

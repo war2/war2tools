@@ -152,7 +152,7 @@ err:
 }
 
 Pud *
-pud_new(void)
+pud_new(void) // FIXME change API name
 {
    Pud *pud;
 
@@ -179,7 +179,7 @@ err:
    return NULL;
 }
 
-void
+void // FIXME remove this shit
 pud_free(Pud *pud)
 {
    pud_close(pud);
@@ -205,13 +205,16 @@ pud_open(const char    *file,
 
    /* Open */
    if (!_open(pud, file, mode))
-     DIE_GOTO(err_free, "Failed to open PUD");
+     DIE_GOTO(err, "Failed to open PUD");
+
+   if (mode & PUD_OPEN_MODE_R)
+     if (!pud_parse(pud))
+       DIE_GOTO(err, "Failed to parse PUD");
 
    return pud;
 
-err_free:
-   free(pud);
 err:
+   pud_close(pud);
    return NULL;
 }
 

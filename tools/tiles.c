@@ -47,7 +47,6 @@ main(int    argc,
         fprintf(stderr, "*** pud_new() failed\n");
         return 2;
      }
-   pud_parse(pud);
 
    /* Parse PPM */
    ppm = ppm_parse(argv[2], &w, &h);

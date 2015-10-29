@@ -75,13 +75,6 @@ main(int    argc,
         fprintf(stderr, "*** Failed to open [%s]\n", file);
         return 2;
      }
-   i = pud_parse(pud);
-   if (!i)
-     {
-        fprintf(stderr, "*** Failed to parse [%s]\n", argv[1]);
-        pud_close(pud);
-        return 3;
-     }
 
    switch (t)
      {

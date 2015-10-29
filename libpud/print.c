@@ -13,7 +13,7 @@ void
 pud_print(Pud  *pud,
           FILE *stream)
 {
-   int i, j;
+   unsigned int i, j;
 
    if (!stream) stream = stdout;
 

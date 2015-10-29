@@ -307,7 +307,7 @@ pud_dimensions_set(Pud            *pud,
    PUD_SANITY_CHECK(pud, PUD_OPEN_MODE_W, VOID);
 
    size_t size;
-   int i;
+   unsigned int i;
 
    pud->dims = dims;
    pud_dimensions_to_size(dims, &(pud->map_w), &(pud->map_h));
@@ -341,7 +341,7 @@ pud_write(const Pud *pud)
    uint8_t b;
    uint16_t w;
    uint32_t l;
-   int i, j, map_len, units_len;
+   unsigned int i, j, map_len, units_len;
 
    map_len = p->tiles * sizeof(uint16_t);
    units_len = p->units_count * sizeof(struct _unit);
@@ -653,6 +653,20 @@ pud_tile_set(Pud      *pud,
    return PUD_TRUE;
 }
 
+uint16_t
+pud_tile_get(const Pud    *pud,
+             unsigned int  x,
+             unsigned int  y)
+{
+   PUD_SANITY_CHECK(pud, PUD_OPEN_MODE_R, 0x0000);
+
+   if ((x > pud->map_w - 1) || (y > pud->map_h - 1))
+     DIE_RETURN(0x0000, "Invalid indexes [%i][%i]", x, y);
+
+   return pud->tiles_map[(y * pud->map_w) + x];
+}
+
+
 Pud_Bool
 pud_check(Pud *pud)
 {
@@ -717,5 +731,27 @@ pud_unit_oil_well_is(Pud_Unit unit)
    return ((unit == PUD_UNIT_OIL_PATCH) ||
            (unit == PUD_UNIT_HUMAN_OIL_WELL) ||
            (unit == PUD_UNIT_ORC_OIL_WELL));
+}
+
+void
+pud_tiles_randomize(Pud *pud)
+{
+   PUD_SANITY_CHECK(pud, PUD_OPEN_MODE_W, VOID);
+
+   const uint16_t tiles[] = {
+      0x0050, 0x0051, 0x0052
+   };
+   const unsigned int count = sizeof(tiles) / sizeof(*tiles);
+   unsigned int i, j;
+   uint16_t tile;
+
+   for (j = 0; j < pud->map_h; j++)
+     {
+        for (i = 0; i < pud->map_w; i++)
+          {
+             tile = tiles[rand() % count];
+             pud_tile_set(pud, i, j, tile);
+          }
+     }
 }
 

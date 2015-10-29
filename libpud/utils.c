@@ -54,8 +54,8 @@ pud_side_convert(uint8_t code)
 
 void
 pud_dimensions_to_size(Pud_Dimensions  dim,
-                       int            *x_ret,
-                       int            *y_ret)
+                       unsigned int   *x_ret,
+                       unsigned int   *y_ret)
 {
    int x = 0, y = 0;
 

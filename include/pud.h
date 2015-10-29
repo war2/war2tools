@@ -324,12 +324,12 @@ struct _Pud
    } upgrade[52]; /* [defaults] */
 
    /* Cache values */
-   int map_w;
-   int map_h;
+   unsigned int map_w;
+   unsigned int map_h;
    int8_t starting_points;
    int8_t human_players;
    int8_t computer_players;
-   int tiles; /* pud->map_w * pud->map_h */
+   unsigned int tiles; /* pud->map_w * pud->map_h */
 
    /* Number of elements is in 'tiles' */
    uint16_t *tiles_map;
@@ -344,7 +344,7 @@ struct _Pud
       uint16_t alter;
    } *units;
 
-   int units_count;
+   unsigned int units_count;
 
    struct _unit_data {
       uint16_t     overlap_frames;
@@ -416,7 +416,7 @@ void pud_verbose_set(Pud *pud, int lvl);
 Pud_Bool pud_section_is_optional(Pud_Section sec);
 uint32_t pud_go_to_section(Pud *pud, Pud_Section sec);
 void pud_print(Pud *pud, FILE *stream);
-void pud_dimensions_to_size(Pud_Dimensions dim, int *x_ret, int *y_ret);
+void pud_dimensions_to_size(Pud_Dimensions dim, unsigned int *x_ret, unsigned int *y_ret);
 Pud_Owner pud_owner_convert(uint8_t code);
 Pud_Side pud_side_convert(uint8_t code);
 void pud_version_set(Pud *pud, uint16_t version);
@@ -447,6 +447,7 @@ Pud_Bool pud_section_exists(char sec[4]);
 uint16_t pud_tile_at(Pud *pud, int x, int y);
 
 Pud_Bool pud_tile_set(Pud *pud, uint16_t x, uint16_t y, uint16_t tile);
+uint16_t pud_tile_get(const Pud *pud, unsigned int x, unsigned int y);
 Pud_Bool pud_unit_building_is(Pud_Unit unit);
 
 Pud_Bool pud_unit_start_location_is(Pud_Unit unit);

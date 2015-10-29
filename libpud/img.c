@@ -14,7 +14,7 @@ pud_minimap_bitmap_generate(Pud *pud,
    PUD_SANITY_CHECK(pud, PUD_OPEN_MODE_R, NULL);
 
    unsigned char *map;
-   struct _unit *u;
+   struct _Pud_Unit *u;
    Pud_Color c;
    unsigned int i, j, k;
    int idx;

@@ -336,7 +336,7 @@ struct _Pud
    uint16_t *action_map;
    uint16_t *movement_map;
 
-   struct _unit {
+   struct _Pud_Unit {
       uint16_t x;
       uint16_t y;
       uint8_t  type;

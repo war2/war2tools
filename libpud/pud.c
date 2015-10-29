@@ -344,7 +344,7 @@ pud_write(const Pud *pud)
    unsigned int i, j, map_len, units_len;
 
    map_len = p->tiles * sizeof(uint16_t);
-   units_len = p->units_count * sizeof(struct _unit);
+   units_len = p->units_count * sizeof(struct _Pud_Unit);
 
    f = fopen(pud->filename, "wb");
    if (!f) DIE_RETURN(PUD_FALSE, "Failed to open [%s]", pud->filename);
@@ -538,7 +538,7 @@ pud_write(const Pud *pud)
 
    /* Section UNIT */
    WSEC(PUD_SECTION_UNIT, units_len);
-   fwrite(p->units, sizeof(struct _unit), p->units_count, f);
+   fwrite(p->units, sizeof(struct _Pud_Unit), p->units_count, f);
    PUD_CHECK_FERROR(f, PUD_FALSE);
 
 #undef WSTR
@@ -605,7 +605,7 @@ pud_unit_add(Pud        *pud,
         //          alter = 1;
      }
 
-   struct _unit u = {
+   struct _Pud_Unit u = {
       .x     = x,
       .y     = y,
       .type  = type,
@@ -618,11 +618,11 @@ pud_unit_add(Pud        *pud,
 
    /* TODO Optimise memory allocation because it is not great */
    nb = pud->units_count + 1;
-   size = nb * sizeof(struct _unit);
+   size = nb * sizeof(struct _Pud_Unit);
    ptr = realloc(pud->units, size);
    if (ptr == NULL) DIE_RETURN(-1, "Failed to alloc memory");
    pud->units = ptr;
-   memcpy(&(pud->units[pud->units_count]), &u, sizeof(struct _unit));
+   memcpy(&(pud->units[pud->units_count]), &u, sizeof(struct _Pud_Unit));
 
    /* Update data about units (for validity checks) */
    if ((type == PUD_UNIT_HUMAN_START) || (type == PUD_UNIT_ORC_START))

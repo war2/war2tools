@@ -706,7 +706,7 @@ pud_parse_unit(Pud *pud)
    uint32_t chk;
    int units, size;
    int i;
-   struct _unit *u;
+   struct _Pud_Unit *u;
 
    chk = pud_go_to_section(pud, PUD_SECTION_UNIT);
    if (!chk) DIE_RETURN(PUD_FALSE, "Failed to reach section UNIT");
@@ -714,13 +714,13 @@ pud_parse_unit(Pud *pud)
    HAS_SECTION(PUD_SECTION_UNIT);
    units = chk / 8;
 
-   size = sizeof(struct _unit) * units;
+   size = sizeof(struct _Pud_Unit) * units;
    pud->units = realloc(pud->units, size);
    if (!pud->units) DIE_RETURN(PUD_FALSE, "Failed to allocate memory");
    memset(pud->units, 0, size);
    pud->units_count = units;
 
-   READBUF(pud, pud->units, struct _unit, units, ECHAP(err));
+   READBUF(pud, pud->units, struct _Pud_Unit, units, ECHAP(err));
 
    for (i = 0; i < units; i++)
      {

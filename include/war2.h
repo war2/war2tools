@@ -58,7 +58,7 @@ struct _War2_Sprites_Descriptor
    Pud_Player   color;
    Pud_Era      era;
    Pud_Side     side;
-   unsigned int object;
+   Pud_Unit     object;
    War2_Sprites sprite_type;
 
    int          count;

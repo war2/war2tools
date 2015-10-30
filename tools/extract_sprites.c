@@ -360,10 +360,6 @@ main(int    argc,
    eet_shutdown();
    war2_shutdown();
 
-   printf("\n"
-          "Do not forget to run cmake to copy generated files\n"
-          "\n");
-
    return 0;
 }
 

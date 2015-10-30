@@ -121,7 +121,7 @@ _open(Pud           *pud,
    if (pud->filename) free(pud->filename);
 
    /* Copy the filename */
-   pud->filename = strdup(file);
+   pud->filename = strdup(file); /* XXX Not a fan of strdup() ... */
    if (!pud->filename) DIE_GOTO(err, "Failed to strdup [%s]", file);
 
    pud->open_mode = mode;
@@ -152,7 +152,7 @@ err:
 }
 
 Pud *
-pud_new(void) // FIXME change API name
+pud_open_new(const char *file)
 {
    Pud *pud;
 
@@ -160,6 +160,13 @@ pud_new(void) // FIXME change API name
    if (!pud) DIE_GOTO(err, "Failed to alloc Pud: %s", strerror(errno));
 
    pud->open_mode = PUD_OPEN_MODE_R | PUD_OPEN_MODE_W;
+
+   if (file)
+     {
+        pud->filename = strdup(file);
+        if (!pud->filename)
+          DIE_GOTO(err_free, "Failed to strdup(\"%s\")", file);
+     }
 
    /* Set defaults */
    if (!pud_defaults_set(pud))
@@ -175,14 +182,9 @@ pud_new(void) // FIXME change API name
 
 err_free:
    free(pud);
+   free(pud->filename);
 err:
    return NULL;
-}
-
-void // FIXME remove this shit
-pud_free(Pud *pud)
-{
-   pud_close(pud);
 }
 
 void

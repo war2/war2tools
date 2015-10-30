@@ -126,8 +126,8 @@ _open(Pud           *pud,
 
    pud->open_mode = mode;
 
-   /* Open (read-only vs others) */
-   if ((mode & PUD_OPEN_MODE_R) && !(mode & PUD_OPEN_MODE_W))
+   /* Open */
+   if (mode & PUD_OPEN_MODE_R)
      {
         pud->mem_map = pud_mmap(file, &(pud->mem_map_size));
         if (pud->mem_map == NULL)
@@ -159,7 +159,7 @@ pud_open_new(const char *file)
    pud = calloc(1, sizeof(*pud));
    if (!pud) DIE_GOTO(err, "Failed to alloc Pud: %s", strerror(errno));
 
-   pud->open_mode = PUD_OPEN_MODE_R | PUD_OPEN_MODE_W;
+   pud->open_mode = PUD_OPEN_MODE_W;
 
    if (file)
      {

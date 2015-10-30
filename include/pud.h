@@ -423,7 +423,7 @@ void pud_description_set(Pud *pud, char descr[32]);
 void pud_tag_set(Pud *pud, uint32_t tag);
 Pud_Bool pud_check(Pud *pud);
 Pud_Bool pud_defaults_set(Pud *pud);
-Pud_Bool pud_write(const Pud *pud);
+Pud_Bool pud_write(const Pud *pud, const char *file);
 int pud_unit_add(Pud *pud, uint16_t x, uint16_t y, Pud_Player owner, Pud_Unit type, uint16_t alter);
 void pud_era_set(Pud *pud, Pud_Era era);
 void pud_dimensions_set(Pud *pud, Pud_Dimensions dims);

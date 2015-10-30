@@ -337,7 +337,8 @@ pud_dimensions_set(Pud            *pud,
 }
 
 Pud_Bool
-pud_write(const Pud *pud)
+pud_write(const Pud  *pud,
+          const char *file)
 {
    // FIXME f is never fclose()d on error
    PUD_SANITY_CHECK(pud, PUD_OPEN_MODE_W, PUD_FALSE);
@@ -348,12 +349,13 @@ pud_write(const Pud *pud)
    uint16_t w;
    uint32_t l;
    unsigned int i, j, map_len, units_len;
+   const char *savefile = (file) ? file : pud->filename;
 
    map_len = p->tiles * sizeof(uint16_t);
    units_len = p->units_count * sizeof(struct _Pud_Unit);
 
-   f = fopen(pud->filename, "wb");
-   if (!f) DIE_RETURN(PUD_FALSE, "Failed to open [%s]", pud->filename);
+   f = fopen(savefile, "wb");
+   if (!f) DIE_RETURN(PUD_FALSE, "Failed to open [%s]", savefile);
 
 #define W8(val, nb) \
    do { \

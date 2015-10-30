@@ -18,6 +18,11 @@
 #include "debug.h"
 #include "pud.h"
 
+static inline Pud_Bool
+pud_mem_map_ok(Pud *pud)
+{
+   return (pud->ptr < pud->mem_map + pud->mem_map_size);
+}
 
 /* Visual hint when returning nothing */
 #define VOID

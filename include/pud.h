@@ -406,7 +406,7 @@ struct _Pud_Color
 Pud_Bool pud_init(void);
 void pud_shutdown(void);
 
-Pud *pud_open_new(const char *file);
+Pud *pud_open_new(const char *file, Pud_Open_Mode mode);
 Pud *pud_open(const char *file, Pud_Open_Mode mode);
 void pud_close(Pud *pud);
 Pud_Bool pud_reopen(Pud *pud, const char *file, Pud_Open_Mode mode);

@@ -152,14 +152,15 @@ err:
 }
 
 Pud *
-pud_open_new(const char *file)
+pud_open_new(const char    *file,
+             Pud_Open_Mode  mode)
 {
    Pud *pud;
 
    pud = calloc(1, sizeof(*pud));
    if (!pud) DIE_GOTO(err, "Failed to alloc Pud: %s", strerror(errno));
 
-   pud->open_mode = PUD_OPEN_MODE_W;
+   pud->open_mode = mode;
 
    if (file)
      {

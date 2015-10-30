@@ -13,6 +13,7 @@
 
 static Eet_File *_ef = NULL;
 
+
 static void *
 _convert(const Pud_Color *sprite,
          int              x,
@@ -66,10 +67,32 @@ _unit_cb(const Pud_Color               *sprite,
          const War2_Sprites_Descriptor *ud,
          int                            img_nb)
 {
+   static const Pud_Unit aliases[] = {
+      PUD_UNIT_UTHER_LIGHTBRINGER,      PUD_UNIT_KNIGHT,
+      PUD_UNIT_LOTHAR,                  PUD_UNIT_KNIGHT,
+      PUD_UNIT_TURALYON,                PUD_UNIT_KNIGHT,
+      PUD_UNIT_ALLERIA,                 PUD_UNIT_ARCHER,
+      PUD_UNIT_DANATH,                  PUD_UNIT_INFANTRY,
+      PUD_UNIT_KHADGAR,                 PUD_UNIT_MAGE,
+      PUD_UNIT_KURDAN_AND_SKY_REE,      PUD_UNIT_GRYPHON_RIDER,
+      PUD_UNIT_GROM_HELLSCREAM,         PUD_UNIT_GRUNT,
+      PUD_UNIT_KHORGATH_BLADEFIST,      PUD_UNIT_GRUNT,
+      PUD_UNIT_ZULJIN,                  PUD_UNIT_AXETHROWER,
+      PUD_UNIT_CHO_GALL,                PUD_UNIT_OGRE,
+      PUD_UNIT_DENTARG,                 PUD_UNIT_OGRE,
+      PUD_UNIT_GUL_DAN,                 PUD_UNIT_DEATH_KNIGHT,
+      PUD_UNIT_TERON_GOREFIEND,         PUD_UNIT_DEATH_KNIGHT,
+      PUD_UNIT_DEATHWING,               PUD_UNIT_DRAGON
+   };
+   static const unsigned int aliases_count = SIZEOF_ARRAY(aliases);
+
    void *data;
    int bytes, size;
-   char key[32];
-   unsigned int u = ud->object;
+   char key[64], key2[64];
+   const Pud_Unit u = ud->object;
+   unsigned int i;
+   const int compress = 1;
+   Eina_Bool ok;
 
    /* Only handle the 5 first images [0,4] */
    if ((u == PUD_UNIT_HUMAN_START) ||
@@ -95,11 +118,27 @@ _unit_cb(const Pud_Color               *sprite,
                  pud_era2str(ud->era), img_nb);
      }
    else
-     snprintf(key, sizeof(key), "%s/%i", pud_unit2str(ud->object), img_nb);
+     snprintf(key, sizeof(key), "%s/%i", pud_unit2str(u), img_nb);
 
-   bytes = eet_write(_ef, key, data, size, 1);
+   bytes = eet_write(_ef, key, data, size, compress);
    if (bytes <= 0)
      fprintf(stderr, "*** Failed to save key [%s]\n", key);
+
+   /* Generate aliases */
+   for (i = 0; i < aliases_count; i += 2)
+     {
+        if (u == aliases[i + 1])
+          {
+             snprintf(key2, sizeof(key2), "%s/%i",
+                      pud_unit2str(aliases[i]), img_nb);
+             ok = eet_alias(_ef, key2, key, compress);
+             if (!ok)
+               {
+                  fprintf(stderr, "*** Failed to set alias: [%s]->[%s]\n",
+                          key2, key);
+               }
+          }
+     }
 
 #if 0
    /* Quick and dirty debug */

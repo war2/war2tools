@@ -275,7 +275,7 @@ main(int    argc,
    /*=========================*
     *          UNITS          *
     *=========================*/
-   _ef = eet_open("../data/sprites/units/units.eet", EET_FILE_MODE_WRITE);
+   _ef = eet_open("units.eet", EET_FILE_MODE_WRITE);
    if (!_ef)
      {
         war2_close(w2);
@@ -299,7 +299,7 @@ main(int    argc,
    /*=========================*
     *     FOREST BUILDINGS    *
     *=========================*/
-   _ef = eet_open("../data/sprites/buildings/forest.eet", EET_FILE_MODE_WRITE);
+   _ef = eet_open("forest.eet", EET_FILE_MODE_WRITE);
    if (!_ef)
      {
         war2_close(w2);
@@ -314,7 +314,7 @@ main(int    argc,
    /*=========================*
     *     WINTER BUILDINGS    *
     *=========================*/
-   _ef = eet_open("../data/sprites/buildings/winter.eet", EET_FILE_MODE_WRITE);
+   _ef = eet_open("winter.eet", EET_FILE_MODE_WRITE);
    if (!_ef)
      {
         war2_close(w2);
@@ -329,7 +329,7 @@ main(int    argc,
    /*=========================*
     *   WASTELAND BUILDINGS   *
     *=========================*/
-   _ef = eet_open("../data/sprites/buildings/wasteland.eet", EET_FILE_MODE_WRITE);
+   _ef = eet_open("wasteland.eet", EET_FILE_MODE_WRITE);
    if (!_ef)
      {
         war2_close(w2);
@@ -344,7 +344,7 @@ main(int    argc,
    /*=========================*
     *      SWAMP BUILDINGS    *
     *=========================*/
-   _ef = eet_open("../data/sprites/buildings/swamp.eet", EET_FILE_MODE_WRITE);
+   _ef = eet_open("swamp.eet", EET_FILE_MODE_WRITE);
    if (!_ef)
      {
         war2_close(w2);

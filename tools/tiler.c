@@ -117,7 +117,7 @@ main(int    argc,
           }
      }
 
-   chk = pud_write(pud);
+   chk = pud_write(pud, NULL);
    if (!chk) DIE_RETURN(4, "Failed to write pud");
 
    pud_close(pud);

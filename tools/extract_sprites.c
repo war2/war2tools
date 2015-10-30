@@ -68,7 +68,6 @@ _unit_cb(const Pud_Color               *sprite,
 {
    void *data;
    int bytes, size;
-   char era[16];
    char key[32];
    unsigned int u = ud->object;
 
@@ -85,17 +84,16 @@ _unit_cb(const Pud_Color               *sprite,
           return;
      }
 
-   /* Get tileset */
-   snprintf(era, sizeof(era), "%s", pud_era2str(ud->era));
-   era[0] += 32; /* Lowercase, b*tch */
-
    data = _convert(sprite, x, y, w, h, &size);
    if (!data) return;
 
    /* Generate key */
    if ((u == PUD_UNIT_GNOMISH_SUBMARINE) ||
        (u == PUD_UNIT_GIANT_TURTLE))
-     snprintf(key, sizeof(key), "%s/%s/%i", pud_unit2str(ud->object), era, img_nb);
+     {
+        snprintf(key, sizeof(key), "%s/%s/%i", pud_unit2str(ud->object),
+                 pud_era2str(ud->era), img_nb);
+     }
    else
      snprintf(key, sizeof(key), "%s/%i", pud_unit2str(ud->object), img_nb);
 

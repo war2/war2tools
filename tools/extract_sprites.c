@@ -42,7 +42,7 @@ _convert(const Pud_Color *sprite,
    memcpy(data + 2, &y, 2);
    memcpy(data + 4, &w, 2);
    memcpy(data + 6, &h, 2);
-   memcpy(data + 8, sprite, size - 4);
+   memcpy(data + 8, sprite, size - 8);
 
    /* Set ALPHA as the highest bit to fit the ARGB8888 colorspace
     * (Store as BGRA) for decoding */

@@ -765,3 +765,47 @@ pud_tiles_randomize(Pud *pud)
      }
 }
 
+Pud_Color
+pud_color_for_player(Pud_Player player)
+{
+   switch (player)
+     {
+      case PUD_PLAYER_RED:    return color_make(0xc0, 0x00, 0x00, 0xff); // Red
+      case PUD_PLAYER_BLUE:   return color_make(0x00, 0x00, 0xc0, 0xff); // Blue
+      case PUD_PLAYER_GREEN:  return color_make(0x00, 0xff, 0x00, 0xff); // Green
+      case PUD_PLAYER_VIOLET: return color_make(0x80, 0x00, 0xc0, 0xff); // Violet
+      case PUD_PLAYER_ORANGE: return color_make(0xff, 0x80, 0x00, 0xff); // Orange
+      case PUD_PLAYER_BLACK:  return color_make(0x00, 0x00, 0x00, 0xff); // Black
+      case PUD_PLAYER_WHITE:  return color_make(0xff, 0xff, 0xff, 0xff); // White
+      case PUD_PLAYER_YELLOW: return color_make(0xff, 0xd0, 0x00, 0xff); // Yellow
+      default: ERR("Invalid player [%i]", player); break;
+     }
+
+   return color_make(0x7f, 0x7f, 0x7f, 0xff);
+}
+
+Pud_Color
+pud_gold_mine_color_get(void)
+{
+   return color_make(0xff, 0xff, 0x00, 0xff);
+}
+
+Pud_Color
+pud_oil_patch_color_get(void)
+{
+   return color_make(0x00, 0x00, 0x00, 0xff);
+}
+
+Pud_Color
+pud_color_for_unit(Pud_Unit   unit,
+                   Pud_Player player)
+{
+
+   if (unit == PUD_UNIT_GOLD_MINE)
+     return pud_gold_mine_color_get();
+   else if (unit == PUD_UNIT_OIL_PATCH)
+     return pud_oil_patch_color_get();
+   else
+     return pud_color_for_player(player);
+}
+

@@ -20,6 +20,7 @@ pud_minimap_bitmap_generate(Pud *pud,
    int idx;
    int size;
    uint16_t w, h;
+   const Pud_Era era = pud->era;
 
    size = pud->tiles * 4;
    map = malloc(size * sizeof(unsigned char));
@@ -27,7 +28,7 @@ pud_minimap_bitmap_generate(Pud *pud,
 
    for (i = 0, idx = 0; i < pud->tiles; i++, idx += 4)
      {
-        c = pud_tile_to_color(pud, pud->tiles_map[i]);
+        c = pud_tile_to_color(era, pud->tiles_map[i]);
 
         map[idx + 0] = c.r;
         map[idx + 1] = c.g;

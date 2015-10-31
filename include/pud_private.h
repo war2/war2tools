@@ -119,7 +119,6 @@ const char *mode2str(Pud_Open_Mode mode);
 
 Pud_Bool pud_mem_map_ok(Pud *pud);
 
-Pud_Color pud_tile_to_color(Pud *pud, uint16_t tile);
 
 Pud_Bool pud_parse_type(Pud *pud);
 Pud_Bool pud_parse_ver(Pud *pud);

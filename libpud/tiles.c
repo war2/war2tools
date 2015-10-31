@@ -9,10 +9,10 @@
 #include "pud.h"
 
 Pud_Color
-pud_tile_to_color(Pud      *pud,
+pud_tile_to_color(Pud_Era   era,
                   uint16_t  tile)
 {
-   switch (pud->era)
+   switch (era)
      {
       case PUD_ERA_FOREST:
          switch (tile)
@@ -1600,7 +1600,7 @@ pud_tile_to_color(Pud      *pud,
 
      }
 
-   ERR("Unhandled tile [0x%04x] for era %s", tile, pud_era2str(pud->era));
+   ERR("Unhandled tile [0x%04x] for era %s", tile, pud_era2str(era));
    return color_make(0xff, 0x00, 0xff, 0xff); // Flashy to be seen (debug)
 }
 

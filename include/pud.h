@@ -456,6 +456,7 @@ Pud_Bool pud_unit_marine_is(Pud_Unit unit);
 Pud_Bool pud_unit_always_passive_is(Pud_Unit unit);
 Pud_Bool pud_unit_oil_well_is(Pud_Unit unit);
 
+Pud_Color pud_tile_to_color(Pud_Era era, uint16_t tile);
 Pud_Color pud_color_for_player(Pud_Player player);
 Pud_Color pud_gold_mine_color_get(void);
 Pud_Color pud_oil_patch_color_get(void);

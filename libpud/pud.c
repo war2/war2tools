@@ -356,6 +356,7 @@ pud_write(const Pud  *pud,
 
    f = fopen(savefile, "wb");
    if (!f) DIE_RETURN(PUD_FALSE, "Failed to open [%s]", savefile);
+   setvbuf(f, NULL, _IOFBF, 0); /* Fully buffered */
 
 #define W8(val, nb) \
    do { \

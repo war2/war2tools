@@ -111,14 +111,34 @@ _unit_cb(const Pud_Color               *sprite,
    if (!data) return;
 
    /* Generate key */
-   if ((u == PUD_UNIT_GNOMISH_SUBMARINE) ||
-       (u == PUD_UNIT_GIANT_TURTLE))
+   switch (u)
      {
-        snprintf(key, sizeof(key), "%s/%s/%i", pud_unit2str(ud->object),
-                 pud_era2str(ud->era), img_nb);
+      case PUD_UNIT_GNOMISH_SUBMARINE:
+      case PUD_UNIT_GIANT_TURTLE:
+         snprintf(key, sizeof(key), "%s/%s/%i", pud_unit2str(ud->object),
+                  pud_era2str(ud->era), img_nb);
+         break;
+
+      case PUD_UNIT_CRITTER_SHEEP:
+         snprintf(key, sizeof(key), "critter/Forest/%i", img_nb);
+         break;
+
+      case PUD_UNIT_CRITTER_PIG:
+         snprintf(key, sizeof(key), "critter/Wasteland/%i", img_nb);
+         break;
+
+      case PUD_UNIT_CRITTER_SEAL:
+         snprintf(key, sizeof(key), "critter/Winter/%i", img_nb);
+         break;
+
+      case PUD_UNIT_CRITTER_RED_PIG:
+         snprintf(key, sizeof(key), "critter/Swamp/%i", img_nb);
+         break;
+
+      default:
+         snprintf(key, sizeof(key), "%s/%i", pud_unit2str(u), img_nb);
+         break;
      }
-   else
-     snprintf(key, sizeof(key), "%s/%i", pud_unit2str(u), img_nb);
 
    bytes = eet_write(_ef, key, data, size, compress);
    if (bytes <= 0)

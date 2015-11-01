@@ -228,6 +228,7 @@ pud_unit2str(Pud_Unit unit)
       case PUD_UNIT_CRITTER_SHEEP         : return "sheep";
       case PUD_UNIT_CRITTER_PIG           : return "pig";
       case PUD_UNIT_CRITTER_SEAL          : return "seal";
+      case PUD_UNIT_CRITTER_RED_PIG       : return "red_pig";
       default                             : return "<UNKNOWN UNIT>";
      }
 }

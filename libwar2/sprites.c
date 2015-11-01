@@ -330,6 +330,7 @@ war2_sprites_decode(War2_Data                *w2,
            case PUD_UNIT_CRITTER_SHEEP         : NEUTRAL_UNIT(64); break;
            case PUD_UNIT_CRITTER_PIG           : NEUTRAL_UNIT(65); break;
            case PUD_UNIT_CRITTER_SEAL          : NEUTRAL_UNIT(66); break;
+           case PUD_UNIT_CRITTER_RED_PIG       : NEUTRAL_UNIT(470); break;
            case PUD_UNIT_SKELETON              : NEUTRAL_UNIT(69); break;
            case PUD_UNIT_DAEMON                : NEUTRAL_UNIT(70); break;
 

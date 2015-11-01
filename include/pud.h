@@ -229,8 +229,9 @@ typedef enum
 
    /* Custom types */
    PUD_UNIT_CRITTER_SHEEP               = 0x69,
-   PUD_UNIT_CRITTER_PIG                 = 0x70,
-   PUD_UNIT_CRITTER_SEAL                = 0x71,
+   PUD_UNIT_CRITTER_PIG                 = 0x6a,
+   PUD_UNIT_CRITTER_SEAL                = 0x6b,
+   PUD_UNIT_CRITTER_RED_PIG             = 0x6c,
 
    /* Sentinel. Do not touch 0x7f. war2edit heavily relies on this value */
    PUD_UNIT_NONE                        = 0x7f

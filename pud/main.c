@@ -192,12 +192,12 @@ main(int    argc,
    uint16_t w;
    Pud_Bool war2 = PUD_FALSE;
    int i;
-   char *ptr;
+   char *ptr = NULL;
 
    /* Getopt */
    while (1)
      {
-        c = getopt_long(argc, argv, "o:pjsS::hgWPvt:", _options, &opt_idx);
+        c = getopt_long(argc, argv, "o:pjsS:hgWPvt:", _options, &opt_idx);
         if (c == -1) break;
 
         switch (c)

@@ -547,8 +547,14 @@ pud_write(const Pud  *pud,
 
    /* Section UNIT */
    WSEC(PUD_SECTION_UNIT, units_len);
-   fwrite(p->units, sizeof(struct _Pud_Unit), p->units_count, f);
-   PUD_CHECK_FERROR(f, PUD_FALSE);
+   for (i = 0; i < p->units_count; ++i)
+     {
+        W16(p->units[i].x, 1);
+        W16(p->units[i].y, 1);
+        W8(p->units[i].type, 1);
+        W8(p->units[i].owner, 1);
+        W16(p->units[i].alter, 1);
+     }
 
 #undef WSTR
 #undef WISEC

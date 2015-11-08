@@ -360,40 +360,40 @@ pud_write(const Pud  *pud,
 
 #define W8(val, nb) \
    do { \
-      for (j = 0; j < nb; j++) fwrite(&val, sizeof(uint8_t), 1, f); \
+      for (j = 0; j < nb; j++) fwrite(&(val), sizeof(uint8_t), 1, f); \
       PUD_CHECK_FERROR(f, PUD_FALSE); \
    } while (0)
 
 #define W16(val, nb) \
    do { \
-      for (j = 0; j < nb; j++) fwrite(&val, sizeof(uint16_t), 1, f); \
+      for (j = 0; j < nb; j++) fwrite(&(val), sizeof(uint16_t), 1, f); \
       PUD_CHECK_FERROR(f, PUD_FALSE); \
    } while (0)
 
 #define W32(val, nb) \
    do { \
-      for (j = 0; j < nb; j++) fwrite(&val, sizeof(uint32_t), 1, f); \
+      for (j = 0; j < nb; j++) fwrite(&(val), sizeof(uint32_t), 1, f); \
       PUD_CHECK_FERROR(f, PUD_FALSE); \
    } while (0)
 
 #define WI8(imm, nb) \
    do { \
       b = imm; \
-      for (j = 0; j < nb; j++) fwrite(&b, sizeof(uint8_t), 1, f); \
+      for (j = 0; j < nb; j++) fwrite(&(b), sizeof(uint8_t), 1, f); \
       PUD_CHECK_FERROR(f, PUD_FALSE); \
    } while (0)
 
 #define WI16(imm, nb) \
    do { \
       w = imm; \
-      for (j = 0; j < nb; j++) fwrite(&w, sizeof(uint16_t), 1, f); \
+      for (j = 0; j < nb; j++) fwrite(&(w), sizeof(uint16_t), 1, f); \
       PUD_CHECK_FERROR(f, PUD_FALSE); \
    } while (0)
 
 #define WI32(imm, nb) \
    do { \
       l = imm; \
-      for (j = 0; j < nb; j++) fwrite(&l, sizeof(uint32_t), 1, f); \
+      for (j = 0; j < nb; j++) fwrite(&(l), sizeof(uint32_t), 1, f); \
       PUD_CHECK_FERROR(f, PUD_FALSE); \
    } while (0)
 

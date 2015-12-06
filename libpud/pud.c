@@ -722,6 +722,12 @@ pud_unit_flying_is(Pud_Unit unit)
 }
 
 Pud_Bool
+pud_unit_land_is(Pud_Unit unit)
+{
+   return ((!pud_unit_underwater_is(unit)) && (!pud_unit_flying_is(unit)));
+}
+
+Pud_Bool
 pud_unit_underwater_is(Pud_Unit unit)
 {
    return ((unit == PUD_UNIT_GNOMISH_SUBMARINE) ||

@@ -241,7 +241,7 @@ typedef enum
 {
    PUD_OWNER_NOBODY                     = 0x03,
    PUD_OWNER_PASSIVE_COMPUTER           = 0x02,
-   PUD_OWNER_COMPUTER                   = 0x01,
+   PUD_OWNER_COMPUTER                   = 0x04,
    PUD_OWNER_HUMAN                      = 0x05,
    PUD_OWNER_RESCUE_PASSIVE             = 0x06,
    PUD_OWNER_RESCUE_ACTIVE              = 0x07

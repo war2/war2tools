@@ -43,17 +43,15 @@ pud_defaults_set(Pud *pud)
    pud->ai.neutral = 0x00;
 
    /* SIDE */
-   for (i = 0; i < 2; i++) pud->side.players[i] = 0x00;
-   for (     ; i < 8; i++) pud->side.players[i] = 0x01;
-   for (i = 0; i < 7; i++) pud->side.unusable[i] = 0x00;
-   pud->side.neutral = 0x00;
+   for (i = 0; i < 8; i++)
+     pud->side.players[i] = (i % 2 == 0) ? PUD_SIDE_HUMAN : PUD_SIDE_ORC;
+   pud->side.neutral = PUD_SIDE_NEUTRAL;
 
    /* OWNR */
-   pud->owner.players[0] = 0x05;
-   pud->owner.players[1] = 0x04;
-   for (i = 2; i < 8; i++) pud->owner.players[i] = 0x03;
-   for (i = 0; i < 7; i++) pud->owner.unusable[i] = 0x03;
-   pud->owner.neutral = 0x02;
+   pud->owner.players[0] = PUD_OWNER_HUMAN;
+   for (i = 1; i < 8; i++) pud->owner.players[i] = PUD_OWNER_COMPUTER;
+   for (i = 0; i < 7; i++) pud->owner.unusable[i] = PUD_OWNER_NOBODY;
+   pud->owner.neutral = PUD_OWNER_PASSIVE_COMPUTER;
 
    _udta_defaults_set(pud);
    _ugrd_defaults_set(pud);

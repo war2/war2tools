@@ -8,7 +8,7 @@
 #ifndef _PUD_H_
 #define _PUD_H_
 #ifdef __cplusplus
-extern "C" <%
+extern "C" {
 #endif
 
 #include <stdint.h>
@@ -465,7 +465,7 @@ Pud_Color pud_oil_patch_color_get(void);
 Pud_Color pud_color_for_unit(Pud_Unit unit, Pud_Player player);
 
 #ifdef __cplusplus
-%>
+}
 #endif
 #endif /* ! _PUD_H_ */
 

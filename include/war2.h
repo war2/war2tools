@@ -8,7 +8,7 @@
 #ifndef _WAR2_H_
 #define _WAR2_H_
 #ifdef __cplusplus
-extern "C" <%
+extern "C" {
 #endif
 
 #include "pud.h"
@@ -123,7 +123,7 @@ war2_sprites_color_convert(Pud_Player     col,
 
 
 #ifdef __cplusplus
-%>
+}
 #endif
 #endif /* ! _WAR2_H_ */
 

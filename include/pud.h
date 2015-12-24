@@ -496,6 +496,8 @@ Pud_Color pud_gold_mine_color_get(void);
 Pud_Color pud_oil_patch_color_get(void);
 Pud_Color pud_color_for_unit(Pud_Unit unit, Pud_Player player);
 
+Pud_Side pud_unit_side_get(Pud_Unit unit);
+
 #ifdef __cplusplus
 }
 #endif

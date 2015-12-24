@@ -821,3 +821,25 @@ pud_color_for_unit(Pud_Unit   unit,
      return pud_color_for_player(player);
 }
 
+Pud_Side
+pud_unit_side_get(Pud_Unit unit)
+{
+   switch (unit)
+     {
+      case PUD_UNIT_SKELETON:
+      case PUD_UNIT_DAEMON:
+      case PUD_UNIT_CRITTER:
+      case PUD_UNIT_GOLD_MINE:
+      case PUD_UNIT_OIL_PATCH:
+         return PUD_SIDE_NEUTRAL;
+
+      default:
+         break;
+     }
+
+   if ((unit >= PUD_UNIT_CIRCLE_OF_POWER) && (unit <= PUD_UNIT_NONE))
+     return PUD_SIDE_NEUTRAL;
+
+   return (unit % 2 == 0) ? PUD_SIDE_HUMAN : PUD_SIDE_ORC;
+}
+

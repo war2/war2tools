@@ -1,0 +1,13 @@
+language: c
+script: mkdir -p build && cd build && cmake .. && make
+compiler:
+   - clang
+   - gcc
+
+before_install:
+   - sudo add-apt-repository ppa:niko2040/e19
+   - sudo apt-get update -q
+   - sudo apt-get install libelementary1-dev
+   - sudo apt-get install libjpeg-dev
+   - sudo apt-get install libneg-dev
+

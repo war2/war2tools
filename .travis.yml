@@ -83,6 +83,8 @@ addons:
          - autoconf
          - libtool
          - libpng-dev
+         - luajit
+         - libluajit-5.1-dev
 
 language: c
 script: mkdir -p build && cd build && cmake .. && make

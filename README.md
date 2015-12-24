@@ -82,6 +82,13 @@ Those binaries are mostly helpers to create the libraries.
 - `tiles`: used to generate parts of `libpud/tiles.c`
 
 
+Contributors
+============
+
+- Lucie Guyomarc'h
+   - Fix mispelled names
+
+
 License
 =======
 

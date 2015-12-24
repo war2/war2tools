@@ -169,12 +169,12 @@ pud_unit2str(Pud_Unit unit)
       case PUD_UNIT_TURALYON              : return "turalyon";
       case PUD_UNIT_EYE_OF_KILROGG        : return "eye_of_kilrogg";
       case PUD_UNIT_DANATH                : return "danath";
-      case PUD_UNIT_KHORGATH_BLADEFIST    : return "khorgath_bladefist";
+      case PUD_UNIT_KARGATH_BLADEFIST     : return "kargath_bladefist";
       case PUD_UNIT_CHO_GALL              : return "cho_gall";
       case PUD_UNIT_LOTHAR                : return "lothar";
       case PUD_UNIT_GUL_DAN               : return "gul_dan";
       case PUD_UNIT_UTHER_LIGHTBRINGER    : return "uther_lightbringer";
-      case PUD_UNIT_ZULJIN                : return "zuljin";
+      case PUD_UNIT_ZUL_JIN               : return "zul_jin";
       case PUD_UNIT_SKELETON              : return "skeleton";
       case PUD_UNIT_DAEMON                : return "daemon";
       case PUD_UNIT_CRITTER               : return "critter";

@@ -12,9 +12,6 @@ addons:
          - libxcb-shape0
          - libxcb1
          - libvlc5
-         - libbulletcollision2.81
-         - libbulletdynamics2.81
-         - libbulletsoftbody2.81
          - libdbus-1-3
          - libfontconfig1
          - libfreetype6
@@ -23,11 +20,7 @@ addons:
          - libgif4
          - libgl1-mesa-glx
          - libglib2.0-0
-         - libgstreamer-plugins-base1.0-0
-         - libgstreamer1.0-0
-         - libharfbuzz0b
          - libjpeg8
-         - liblinearmath2.81
          - libluajit-5.1-2
          - libmount1
          - libpng12-0
@@ -35,8 +28,6 @@ addons:
          - libsndfile1
          - libssl1.0.0
          - libstdc++6
-         - libtiff5
-         - libudev1
          - libwebp5
          - libx11-6
          - libxcomposite1
@@ -46,7 +37,6 @@ addons:
          - libxfixes3
          - libxi6
          - libxinerama1
-         - libxp6
          - libxrandr2
          - libxrender1
          - libxss1
@@ -58,10 +48,7 @@ addons:
          - libpng12-0
          - libcairo2
          - libglib2.0-0
-         - libpoppler44
-         - libraw9
          - librsvg2-2
-         - libspectre1
          - zlib1g
          - autopoint
          - doxygen
@@ -74,12 +61,7 @@ addons:
          - libfontconfig1-dev
          - libfribidi-dev
          - libx11-dev
-         - libcogl-gles2-dev
          - libgif-dev
-         - libtiff5-dev
-         - libgstreamer-plugins-base1.0-dev
-         - libdbus-1-dev
-         - libmount-dev
          - libblkid-dev
          - libpulse-dev
          - libsndfile1-dev
@@ -92,12 +74,10 @@ addons:
          - libxcomposite-dev
          - libxss-dev
          - libxext-dev
-         - libxkbfile-dev
          - libxtst-dev
          - libxcb1-dev
          - libxcb-shape0-dev
          - libxcb-keysyms1-dev
-         - libbullet-dev
          - vlc
          - libvlc-dev
          - autoconf
@@ -109,5 +89,7 @@ script: mkdir -p build && cd build && cmake .. && make
 compiler: gcc
 
 before_script:
-   - git clone git://git.enlightenment.org/core/efl.git && cd efl && ./autogen.sh --prefix=/usr && make && sudo make install && sudo ldconfig 
+   - wget http://download.enlightenment.org/rel/libs/efl/efl-1.16.0.tar.gz
+   - tar -xf efl-1.16.0.tar.gz
+   - cd efl-1.16.0 && ./configure --prefix=/usr --disable-physics --disable-audio --disable-libmount --disable-libeeze && make && sudo make install && sudo ldconfig
 

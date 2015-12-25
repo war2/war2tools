@@ -21,7 +21,6 @@ addons:
          - libgl1-mesa-glx
          - libglib2.0-0
          - libjpeg8
-         - libluajit-5.1-2
          - libmount1
          - libpng12-0
          - libpulse0
@@ -44,7 +43,6 @@ addons:
          - zlib1g
          - libfreetype6
          - libgcc1
-         - libluajit-5.1-2
          - libpng12-0
          - libcairo2
          - libglib2.0-0
@@ -56,7 +54,7 @@ addons:
          - libssl-dev
          - libjpeg-dev
          - luajit
-         - libluajit-5.1-dev
+         - pkg-config
          - libfreetype6-dev
          - libfontconfig1-dev
          - libfribidi-dev

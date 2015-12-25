@@ -86,7 +86,5 @@ script: mkdir -p build && cd build && cmake .. && make
 compiler: gcc
 
 before_script:
-   - wget http://download.enlightenment.org/rel/libs/efl/efl-1.16.0.tar.gz
-   - tar -xf efl-1.16.0.tar.gz
-   - cd efl-1.16.0 && ./configure --prefix=/usr --disable-physics --disable-audio --disable-libmount --disable-libeeze --disable-gstreamer --disable-gstreamer1 --enable-i-really-know-what-i-am-doing-and-that-this-will-probably-break-things-and-i-will-fix-them-myself-and-send-patches-aba && make && sudo make install && sudo ldconfig
+   - if [ ! -e "efl-1.16.0.tar.gz" ]; then wget http://download.enlightenment.org/rel/libs/efl/efl-1.16.0.tar.gz; tar -xf efl-1.16.0.tar.gz ; cd efl-1.16.0 && ./configure --prefix=/usr --disable-physics --disable-audio --disable-libmount --disable-libeeze --disable-gstreamer --disable-gstreamer1 --enable-i-really-know-what-i-am-doing-and-that-this-will-probably-break-things-and-i-will-fix-them-myself-and-send-patches-aba && make && sudo make install && sudo ldconfig && cd ..; fi
 

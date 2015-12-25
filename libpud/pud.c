@@ -738,7 +738,9 @@ Pud_Bool
 pud_unit_marine_is(Pud_Unit unit)
 {
    return ((pud_unit_underwater_is(unit)) ||
-           ((unit >= PUD_UNIT_HUMAN_TANKER) && (unit <= PUD_UNIT_JUGGERNAUGHT)));
+           ((unit >= PUD_UNIT_HUMAN_TANKER) &&
+            (unit <= PUD_UNIT_JUGGERNAUGHT)) ||
+           (pud_unit_oil_well_is(unit)));
 }
 
 Pud_Bool

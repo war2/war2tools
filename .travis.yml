@@ -27,7 +27,6 @@ addons:
          - libsndfile1
          - libssl1.0.0
          - libstdc++6
-         - libwebp5
          - libx11-6
          - libxcomposite1
          - libxcursor1
@@ -60,7 +59,6 @@ addons:
          - libfribidi-dev
          - libx11-dev
          - libgif-dev
-         - libblkid-dev
          - libpulse-dev
          - libsndfile1-dev
          - libxinerama-dev
@@ -81,7 +79,6 @@ addons:
          - autoconf
          - libtool
          - libpng-dev
-         - luajit
          - libluajit-5.1-dev
 
 language: c

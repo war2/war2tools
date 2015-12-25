@@ -97,11 +97,11 @@ script: mkdir -p build && cd build && cmake .. && make
 compiler: gcc
 
 before_script:
-   - wget http://download.enlightenment.org/rel/libs/efl/efl-1.16.0.tar.gz
-   - tar -xf efl-1.16.0.tar.gz
-   - cd efl-1.16.0 && ./configure --prefix=/usr --disable-physics --disable-audio --disable-libmount --disable-libeeze --disable-gstreamer --disable-gstreamer1 --enable-i-really-know-what-i-am-doing-and-that-this-will-probably-break-things-and-i-will-fix-them-myself-and-send-patches-aba && make && sudo make install && sudo ldconfig && cd ..
-   - wget https://cmake.org/files/v3.4/cmake-3.4.1-Linux-x86_64.tar.gz
+   - wget --no-check-certificate https://cmake.org/files/v3.4/cmake-3.4.1-Linux-x86_64.tar.gz
    - tar -xf cmake-3.4.1-Linux-x86_64.tar.gz
    - sudo bash -c "cp -r cmake-3.4.1-Linux-x86_64/* /usr/"
    - cmake --version
+   - wget http://download.enlightenment.org/rel/libs/efl/efl-1.16.0.tar.gz
+   - tar -xf efl-1.16.0.tar.gz
+   - cd efl-1.16.0 && ./configure --prefix=/usr --disable-physics --disable-audio --disable-libmount --disable-libeeze --disable-gstreamer --disable-gstreamer1 --enable-i-really-know-what-i-am-doing-and-that-this-will-probably-break-things-and-i-will-fix-them-myself-and-send-patches-aba && make && sudo make install && sudo ldconfig && cd ..
 

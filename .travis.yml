@@ -81,6 +81,17 @@ addons:
          - libpng-dev
          - libluajit-5.1-dev
 
+   coverity_scan:
+      project:
+         name: jeanguyomarch/war2tools
+         version: 0.99.0
+         description: Warcraft II Utilities
+
+      notification_email: jean.guyomarch@gmail.com
+      build_command_prepend: cmake .
+      build_command: make
+      branch_pattern: coverity_scan
+
 language: c
 script: mkdir -p build && cd build && cmake .. && make
 compiler: gcc
@@ -89,7 +100,7 @@ before_script:
    - sudo add-apt-repository -y ppa:george-edison55/cmake-3.x
    - sudo apt-get -y --force-yes update
    - sudo apt-get -y --force-yes install cmake
-   - sudo apt-get -y --force-yes upgrade cmake
+   - sudo apt-get -y --force-yes -f upgrade cmake
    - wget http://download.enlightenment.org/rel/libs/efl/efl-1.16.0.tar.gz
    - tar -xf efl-1.16.0.tar.gz
    - cd efl-1.16.0 && ./configure --prefix=/usr --disable-physics --disable-audio --disable-libmount --disable-libeeze --disable-gstreamer --disable-gstreamer1 --enable-i-really-know-what-i-am-doing-and-that-this-will-probably-break-things-and-i-will-fix-them-myself-and-send-patches-aba && make && sudo make install && sudo ldconfig && cd ..

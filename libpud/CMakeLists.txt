@@ -11,6 +11,7 @@ set(
    tiles.c
    utils.c
    mmap.c
+   random.c
 )
 
 include_directories(

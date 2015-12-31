@@ -498,6 +498,8 @@ Pud_Color pud_color_for_unit(Pud_Unit unit, Pud_Player player);
 
 Pud_Side pud_unit_side_get(Pud_Unit unit);
 
+uint8_t pud_random_get(const uint16_t tile);
+
 #ifdef __cplusplus
 }
 #endif

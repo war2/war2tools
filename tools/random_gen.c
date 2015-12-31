@@ -66,6 +66,7 @@ main(int    argc,
                   mask = 0x0ff0;
                   kase = tile & mask;
                   state = ST_BOUNDRY;
+                  k = 0;
                }
              break;
 

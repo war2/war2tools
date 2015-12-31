@@ -77,7 +77,7 @@ pud_random_get(const uint16_t tile)
         switch (tile & 0x0ff0)
           {
            case 0x0100:
-              GEN(5, 0x0, 0x2, 0x4, 0x0, 0x1); break;
+              GEN(2, 0x0, 0x1); break;
            case 0x0110:
               GEN(2, 0x0, 0x1); break;
            case 0x0120:

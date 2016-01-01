@@ -436,12 +436,12 @@ pud_write(const Pud  *pud,
 
    /* Section UDTA */
    WISEC(PUD_SECTION_UDTA, 5696);
-   w = p->default_udta; W16(w, 1); // Bitfield
+   WI16(p->default_udta, 1);
    for (i = 0; i < 110; i++) W16(p->unit_data[i].overlap_frames, 1);
    WI16(0, 508); // Obsolete data
    for (i = 0; i < 110; i++) W32(p->unit_data[i].sight, 1);
    for (i = 0; i < 110; i++) W16(p->unit_data[i].hp, 1);
-   for (i = 0; i < 110; i++) { b = p->unit_data[i].has_magic; W8(b, 1); }
+   for (i = 0; i < 110; i++) WI8(p->unit_data[i].has_magic, 1);
    for (i = 0; i < 110; i++) W8(p->unit_data[i].build_time, 1);
    for (i = 0; i < 110; i++) W8(p->unit_data[i].gold_cost, 1);
    for (i = 0; i < 110; i++) W8(p->unit_data[i].lumber_cost, 1);
@@ -461,12 +461,12 @@ pud_write(const Pud  *pud,
    for (i = 0; i < 110; i++) W8(p->unit_data[i].computer_react_range, 1);
    for (i = 0; i < 110; i++) W8(p->unit_data[i].human_react_range, 1);
    for (i = 0; i < 110; i++) W8(p->unit_data[i].armor, 1);
-   for (i = 0; i < 110; i++) { b = p->unit_data[i].rect_sel; W8(b, 1); }
+   for (i = 0; i < 110; i++) WI8(p->unit_data[i].rect_sel, 1);
    for (i = 0; i < 110; i++) W8(p->unit_data[i].priority, 1);
    for (i = 0; i < 110; i++) W8(p->unit_data[i].basic_damage, 1);
    for (i = 0; i < 110; i++) W8(p->unit_data[i].piercing_damage, 1);
-   for (i = 0; i < 110; i++) { b = p->unit_data[i].weapons_upgradable; W8(b, 1); }
-   for (i = 0; i < 110; i++) { b = p->unit_data[i].armor_upgradable; W8(b, 1); }
+   for (i = 0; i < 110; i++) WI8(p->unit_data[i].weapons_upgradable, 1);
+   for (i = 0; i < 110; i++) WI8(p->unit_data[i].armor_upgradable, 1);
    for (i = 0; i < 110; i++) W8(p->unit_data[i].missile_weapon, 1);
    for (i = 0; i < 110; i++) W8(p->unit_data[i].type, 1);
    for (i = 0; i < 110; i++) W8(p->unit_data[i].decay_rate, 1);

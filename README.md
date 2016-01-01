@@ -98,7 +98,7 @@ The following license applies only to all source files.
 
 The MIT License (MIT)
 
-Copyright (c) 2014 - 2015 Jean Guyomarc'h
+Copyright (c) 2014 - 2016 Jean Guyomarc'h
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

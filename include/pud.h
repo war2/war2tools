@@ -2,7 +2,7 @@
  * pud.h
  * libpud
  *
- * Copyright (c) 2014 -2015 Jean Guyomarc'h
+ * Copyright (c) 2014 -2016 Jean Guyomarc'h
  */
 
 #ifndef _PUD_H_

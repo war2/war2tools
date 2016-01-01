@@ -2,7 +2,7 @@
  * main.c
  * pud
  *
- * Copyright (c) 2014 Jean Guyomarc'h
+ * Copyright (c) 2014 - 2016 Jean Guyomarc'h
  */
 
 #include "pudutils.h"

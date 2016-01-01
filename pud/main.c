@@ -16,6 +16,7 @@ static const struct option _options[] =
      {"jpeg",     no_argument,          0, 'j'},
      {"png",      no_argument,          0, 'g'},
      {"print",    no_argument,          0, 'P'},
+     {"regm",     no_argument,          0, 'R'},
      {"sections", no_argument,          0, 's'},
      {"war",      no_argument,          0, 'W'},
      {"verbose",  no_argument,          0, 'v'},
@@ -43,6 +44,7 @@ _usage(FILE *stream)
            "    -g | --png            Outputs the minimap as a png file. If --out is not specified,\n"
            "                          the output's filename will the the input file plus \".png\"\n"
            "    -t | --tile-at <x,y>  Gets the tile ID at x,y\n"
+           "    -R | --regm           Writes the action map\n"
            "    -s | --sections       Gets sections in the PUD file.\n"
            "    -S | --sprite <entry> Extract the graphic entry specified. Only when -W is enabled.\n"
            "                  <color> An output file (with -o) and type (-p,-j,-g) must be provided.\n"
@@ -84,6 +86,10 @@ static struct {
    Pud_Player   color;
    /*Pud_Era      era;*/
 } sprite;
+
+static struct {
+   unsigned int enabled : 1;
+} regm;
 
 
 
@@ -197,7 +203,7 @@ main(int    argc,
    /* Getopt */
    while (1)
      {
-        c = getopt_long(argc, argv, "o:pjsS:hgWPvt:", _options, &opt_idx);
+        c = getopt_long(argc, argv, "o:pjsS:hgWPRvt:", _options, &opt_idx);
         if (c == -1) break;
 
         switch (c)
@@ -214,6 +220,10 @@ main(int    argc,
               sprite.enabled = 1;
               sprite.entry = strtol(optarg, &ptr, 10);
               sprite.color = _str2color(ptr + 1);
+              break;
+
+           case 'R':
+              regm.enabled = 1;
               break;
 
            case 's':
@@ -273,6 +283,7 @@ main(int    argc,
      {
         if (tile_at.enabled ||
             print.enabled   ||
+            regm.enabled    ||
             sections.enabled)
           ABORT(1, "Invalid option when --war,-W is specified");
 
@@ -313,6 +324,8 @@ main(int    argc,
         /* --output,--ppm,--jpeg,--png */
         if (out.enabled)
           {
+             if (regm.enabled)
+               ABORT(1, "--regm is not compatible with --output");
              if (out.jpeg + out.ppm + out.png != 1)
                ABORT(1, "You must use one of --jpeg,--ppm,--png.");
 
@@ -349,6 +362,15 @@ main(int    argc,
                }
              else
                ABORT(1, "Output is required no format is specified");
+          }
+        if (regm.enabled)
+          {
+             for (i = 0; i < (int) (pud->map_w * pud->map_h); ++i)
+               {
+                  fprintf(stdout, "0x%04x ", pud->action_map[i]);
+                  if (((i + 1) % pud->map_w) == 0)
+                    fputc('\n', stdout);
+               }
           }
 
         /* -P,--print */

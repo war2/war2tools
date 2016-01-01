@@ -414,7 +414,7 @@ pud_write(const Pud  *pud,
 
    /* Section DESC */
    WISEC(PUD_SECTION_DESC, 32);
-   W8(p->description, 32);
+   for (i = 0; i < 32; ++i) W8(p->description[i], 1);
 
    /* Section OWNR */
    WISEC(PUD_SECTION_OWNR, 16);

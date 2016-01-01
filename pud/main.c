@@ -17,6 +17,7 @@ static const struct option _options[] =
      {"png",      no_argument,          0, 'g'},
      {"print",    no_argument,          0, 'P'},
      {"regm",     no_argument,          0, 'R'},
+     {"sqm",      no_argument,          0, 'Q'},
      {"sections", no_argument,          0, 's'},
      {"war",      no_argument,          0, 'W'},
      {"verbose",  no_argument,          0, 'v'},
@@ -45,6 +46,7 @@ _usage(FILE *stream)
            "                          the output's filename will the the input file plus \".png\"\n"
            "    -t | --tile-at <x,y>  Gets the tile ID at x,y\n"
            "    -R | --regm           Writes the action map\n"
+           "    -Q | --sqm            Writes the movement map\n"
            "    -s | --sections       Gets sections in the PUD file.\n"
            "    -S | --sprite <entry> Extract the graphic entry specified. Only when -W is enabled.\n"
            "                  <color> An output file (with -o) and type (-p,-j,-g) must be provided.\n"
@@ -90,6 +92,10 @@ static struct {
 static struct {
    unsigned int enabled : 1;
 } regm;
+
+static struct {
+   unsigned int enabled : 1;
+} sqm;
 
 
 
@@ -203,7 +209,7 @@ main(int    argc,
    /* Getopt */
    while (1)
      {
-        c = getopt_long(argc, argv, "o:pjsS:hgWPRvt:", _options, &opt_idx);
+        c = getopt_long(argc, argv, "o:pjsS:hgWPRQvt:", _options, &opt_idx);
         if (c == -1) break;
 
         switch (c)
@@ -224,6 +230,10 @@ main(int    argc,
 
            case 'R':
               regm.enabled = 1;
+              break;
+
+           case 'Q':
+              sqm.enabled = 1;
               break;
 
            case 's':
@@ -284,6 +294,7 @@ main(int    argc,
         if (tile_at.enabled ||
             print.enabled   ||
             regm.enabled    ||
+            sqm.enabled     ||
             sections.enabled)
           ABORT(1, "Invalid option when --war,-W is specified");
 
@@ -326,6 +337,8 @@ main(int    argc,
           {
              if (regm.enabled)
                ABORT(1, "--regm is not compatible with --output");
+             if (sqm.enabled)
+               ABORT(1, "--sqm is not compatible with --output");
              if (out.jpeg + out.ppm + out.png != 1)
                ABORT(1, "You must use one of --jpeg,--ppm,--png.");
 
@@ -368,6 +381,15 @@ main(int    argc,
              for (i = 0; i < (int) (pud->map_w * pud->map_h); ++i)
                {
                   fprintf(stdout, "0x%04x ", pud->action_map[i]);
+                  if (((i + 1) % pud->map_w) == 0)
+                    fputc('\n', stdout);
+               }
+          }
+        if (sqm.enabled)
+          {
+             for (i = 0; i < (int) (pud->map_w * pud->map_h); ++i)
+               {
+                  fprintf(stdout, "0x%04x ", pud->movement_map[i]);
                   if (((i + 1) % pud->map_w) == 0)
                     fputc('\n', stdout);
                }

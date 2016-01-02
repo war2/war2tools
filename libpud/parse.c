@@ -705,8 +705,6 @@ pud_parse_unit(Pud *pud)
 
    uint32_t chk;
    int units, size;
-   int i;
-   struct _Pud_Unit *u;
 
    chk = pud_go_to_section(pud, PUD_SECTION_UNIT);
    if (!chk) DIE_RETURN(PUD_FALSE, "Failed to reach section UNIT");
@@ -721,21 +719,6 @@ pud_parse_unit(Pud *pud)
    pud->units_count = units;
 
    READBUF(pud, pud->units, struct _Pud_Unit, units, ECHAP(err));
-
-   for (i = 0; i < units; i++)
-     {
-        u = &(pud->units[i]);
-
-        /* Update data about units (for validity checks) */
-        // TODO owner <-> player
-        //if (owner == PUD_OWNER_HUMAN)
-        //  pud->human_players++;
-        //else if (owner == PUD_OWNER_COMPUTER)
-        //  pud->computer_players++;
-        if ((u->type == PUD_UNIT_HUMAN_START) ||
-            (u->type == PUD_UNIT_ORC_START))
-          pud->starting_points++;
-     }
 
    return PUD_TRUE;
 

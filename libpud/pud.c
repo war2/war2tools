@@ -639,15 +639,6 @@ pud_unit_add(Pud        *pud,
    pud->units = ptr;
    memcpy(&(pud->units[pud->units_count]), &u, sizeof(struct _Pud_Unit));
 
-   /* Update data about units (for validity checks) */
-   if ((type == PUD_UNIT_HUMAN_START) || (type == PUD_UNIT_ORC_START))
-     pud->starting_points++;
-   // FIXME Invalid comparaisons. owner is of type Pud_Player
-   //if (owner == PUD_OWNER_HUMAN)
-   //  pud->human_players++;
-   //else if (owner == PUD_OWNER_COMPUTER)
-   //  pud->computer_players++;
-
    pud->units_count = nb;
 
    return nb;
@@ -682,18 +673,28 @@ pud_tile_get(const Pud    *pud,
 }
 
 
-Pud_Bool
+Pud_Error
 pud_check(Pud *pud)
 {
-   if (!pud->init)
-     DIE_RETURN(PUD_FALSE, "pud->init is PUD_FALSE");
-   if ((pud->human_players < 1) || (pud->computer_players < 1))
-     DIE_RETURN(PUD_FALSE, "You must have at least 1 human player"
-                " and 1 computer player");
-   if (pud->starting_points < 2)
-     DIE_RETURN(PUD_FALSE, "You must have at least 2 starting points");
+   unsigned int i;
+   unsigned int starting_locations = 0;
+   struct _Pud_Unit *u;
 
-   return PUD_TRUE;
+   if (!pud->init)
+     return PUD_ERROR_NOT_INITIALIZED;
+
+   for (i = 0; i < pud->units_count; ++i)
+     {
+        u = &(pud->units[i]);
+        if ((u->type == PUD_UNIT_ORC_START) ||
+            (u->type == PUD_UNIT_HUMAN_START))
+          ++starting_locations;
+     }
+
+   if (starting_locations <= 1)
+     return PUD_ERROR_INVALID_START_LOCATIONS;
+
+   return PUD_ERROR_NONE;
 }
 
 Pud_Bool

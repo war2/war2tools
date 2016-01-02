@@ -358,9 +358,6 @@ struct _Pud
    /* Cache values */
    unsigned int map_w;
    unsigned int map_h;
-   int8_t starting_points;
-   int8_t human_players;
-   int8_t computer_players;
    unsigned int tiles; /* pud->map_w * pud->map_h */
 
    /* Number of elements is in 'tiles' */
@@ -436,6 +433,13 @@ struct _Pud_Color
    unsigned char a;
 };
 
+typedef enum
+{
+   PUD_ERROR_NONE = 0,
+   PUD_ERROR_INVALID_START_LOCATIONS,
+   PUD_ERROR_NOT_INITIALIZED
+} Pud_Error;
+
 Pud_Bool pud_init(void);
 void pud_shutdown(void);
 
@@ -454,7 +458,7 @@ Pud_Side pud_side_convert(uint8_t code);
 void pud_version_set(Pud *pud, uint16_t version);
 void pud_description_set(Pud *pud, char descr[32]);
 void pud_tag_set(Pud *pud, uint32_t tag);
-Pud_Bool pud_check(Pud *pud);
+Pud_Error pud_check(Pud *pud);
 Pud_Bool pud_defaults_set(Pud *pud);
 Pud_Bool pud_write(const Pud *pud, const char *file);
 int pud_unit_add(Pud *pud, uint16_t x, uint16_t y, Pud_Player owner, Pud_Unit type, uint16_t alter);

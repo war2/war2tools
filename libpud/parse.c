@@ -704,7 +704,7 @@ pud_parse_unit(Pud *pud)
    PUD_SANITY_CHECK(pud, PUD_OPEN_MODE_R, PUD_FALSE);
 
    uint32_t chk;
-   int units, size;
+   int units, size, i;
 
    chk = pud_go_to_section(pud, PUD_SECTION_UNIT);
    if (!chk) DIE_RETURN(PUD_FALSE, "Failed to reach section UNIT");
@@ -718,7 +718,14 @@ pud_parse_unit(Pud *pud)
    memset(pud->units, 0, size);
    pud->units_count = units;
 
-   READBUF(pud, pud->units, struct _Pud_Unit, units, ECHAP(err));
+   for (i = 0; i < units; ++i)
+     {
+        pud->units[i].x     = READ16(pud, ECHAP(err));
+        pud->units[i].y     = READ16(pud, ECHAP(err));
+        pud->units[i].type  = READ8(pud, ECHAP(err));
+        pud->units[i].owner = READ8(pud, ECHAP(err));
+        pud->units[i].alter = READ16(pud, ECHAP(err));
+     }
 
    return PUD_TRUE;
 

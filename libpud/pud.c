@@ -493,7 +493,7 @@ pud_write(const Pud  *pud,
 
    /* Section UGRD */
    WISEC(PUD_SECTION_UGRD, 782);
-   w = p->default_ugrd; W16(w, 1); // Bitfield
+   w = p->default_ugrd; W16(w, 1);
    for (i = 0; i < 52; i++) W8(p->upgrade[i].time, 1);
    for (i = 0; i < 52; i++) W16(p->upgrade[i].gold, 1);
    for (i = 0; i < 52; i++) W16(p->upgrade[i].lumber, 1);

@@ -392,7 +392,7 @@ pud_parse_udta(Pud *pud)
      pud->unit_data[i].mouse_right_btn = 0xff;
 
    /* Point value for killing unit */
-   READBUF(pud, wb, uint16_t, 58, FAIL(PUD_FALSE));
+   READBUF(pud, wb, uint16_t, 110, FAIL(PUD_FALSE));
    for (i = 0; i < 110; i++)
      pud->unit_data[i].point_value = wb[i];
 

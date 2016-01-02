@@ -418,8 +418,9 @@ pud_write(const Pud  *pud,
 
    /* Section OWNR */
    WISEC(PUD_SECTION_OWNR, 16);
-   fwrite(&p->owner, sizeof(uint8_t), 16, f);
-   PUD_CHECK_FERROR(f, PUD_FALSE);
+   for (i = 0; i < 8; i++) W8(p->owner.players[i], 1);
+   for (i = 0; i < 7; i++) W8(p->owner.unusable[i], 1);
+   W8(p->owner.neutral, 1);
 
    /* Section ERA */
    WISEC(PUD_SECTION_ERA, 2);

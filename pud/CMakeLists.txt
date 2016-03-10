@@ -19,3 +19,7 @@ install(
    RUNTIME DESTINATION bin
 )
 
+install(
+   PROGRAMS ${CMAKE_CURRENT_SOURCE_DIR}/pud2png
+   DESTINATION bin
+)

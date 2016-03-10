@@ -1,0 +1,21 @@
+#! /usr/bin/env python3
+#
+# pud2png is a helper that uses the pud utility.
+# It converts all pud files in the current directory
+# into png files.
+#
+
+import os
+import re
+import subprocess
+
+files = []
+for (dirpath, dirnames, filenames) in os.walk('.'):
+    for f in filenames:
+        ext = os.path.splitext(f)[1]
+        if ext.lower() == '.pud':
+            files.append(f)
+    break
+
+for f in files:
+    subprocess.call(['pud', '--png', '--output', f + '.png', f])

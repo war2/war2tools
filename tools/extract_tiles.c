@@ -2,11 +2,12 @@
  * extract.c
  * extract
  *
- * Copyright (c) 2014 -2015 Jean Guyomarc'h
+ * Copyright (c) 2014 -2016 Jean Guyomarc'h
  */
 
-#include <war2.h>
-#include "../include/debug.h"
+#include "war2.h"
+#include "debug.h"
+
 #include <Eet.h>
 #include <Ecore_File.h>
 #include <unistd.h>
@@ -14,7 +15,7 @@
 typedef enum
 {
    PNG,
-   EET
+   EET,
 } Export_Type;
 
 static Eet_File *_ef = NULL;
@@ -197,4 +198,3 @@ main(int    argc,
 
    return 0;
 }
-

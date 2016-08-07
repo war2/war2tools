@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8)
-project(war2edit C)
+project(war2tools C)
 
 add_definitions(-g)
 add_definitions(-Wall)
@@ -55,4 +55,3 @@ add_subdirectory(tools)
 add_subdirectory(quicklook)
 
 add_custom_target(uninstall COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_SOURCE_DIR}/cmake/uninstall.cmake)
-

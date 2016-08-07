@@ -55,7 +55,7 @@ main(int    argc,
              if ((0x0f00 & tile) != 0x0000)
                {
                   printf("    default:\n");
-                  printf("       fprintf(stderr, \"*** Invalid tile %%x\\n\", tile);\n");
+                  printf("       fprintf(stderr, \"*** Invalid tile 0x%%04x\\n\", tile);\n");
                   printf("       return 0x0000;\n");
                   printf("      }\n");
                   printf("  }\n");
@@ -89,7 +89,7 @@ main(int    argc,
      }
 
    printf("    default:\n");
-   printf("       fprintf(stderr, \"*** Invalid tile %%x\\n\", tile);\n");
+   printf("       fprintf(stderr, \"*** Invalid tile 0x%%04x\\n\", tile);\n");
    printf("       return 0x0000;\n");
    printf("      }\n");
    printf("  }\n");
@@ -97,4 +97,3 @@ main(int    argc,
    fclose(f);
    return 0;
 }
-

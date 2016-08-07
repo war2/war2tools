@@ -68,7 +68,7 @@ pud_random_get(const uint16_t tile)
            case 0x00b0:
               GEN(3, 0x0, 0x2, 0x4); break;
            default:
-              fprintf(stderr, "*** Invalid tile %x\n", tile);
+              fprintf(stderr, "*** Invalid tile 0x%04x\n", tile);
               return 0x0000;
           }
      }
@@ -327,7 +327,7 @@ pud_random_get(const uint16_t tile)
            case 0x09c0:
               GEN(3, 0x0, 0x2, 0x4); break;
            default:
-              fprintf(stderr, "*** Invalid tile %x\n", tile);
+              fprintf(stderr, "*** Invalid tile 0x%04x\n", tile);
               return 0x0000;
           }
      }

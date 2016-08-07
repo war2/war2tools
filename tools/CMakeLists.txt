@@ -1,10 +1,19 @@
+pkg_check_modules(EINA eina)
 pkg_check_modules(EET eet)
 pkg_check_modules(ECORE_FILE ecore-file)
 pkg_check_modules(EMILE emile)
+pkg_check_modules(CAIRO cairo)
+
+# FIXME Very bad cmakelists....
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../include)
 link_directories(${CMAKE_CURRENT_BINARY_DIR}/../libpud)
 link_directories(${CMAKE_CURRENT_BINARY_DIR}/../libwar2)
+
+
+if (EINA_FOUND)
+   include_directories(${EINA_INCLUDE_DIRS})
+endif ()
 
 if (EET_FOUND AND EMILE_FOUND)
    add_definitions(-DHAVE_EET=1)
@@ -13,6 +22,11 @@ endif ()
 
 if (ECORE_FILE_FOUND)
    include_directories(${ECORE_FILE_INCLUDE_DIRS})
+endif ()
+
+if (CAIRO_FOUND)
+   add_definitions(-DHAVE_CAIRO=1)
+   include_directories(${CAIRO_INCLUDE_DIRS})
 endif ()
 
 add_executable(ppm_cmp ppm.c ppm_cmp.c)
@@ -35,19 +49,42 @@ target_link_libraries(random_gen ${LIBPUD_LIBRARIES})
 target_link_libraries(tilemap ${LIBPUD_LIBRARIES})
 target_link_libraries(opensave ${LIBPUD_LIBRARIES})
 
+if (ECORE_FILE_FOUND)
+
+   LIST(APPEND EXTRACT_TILES_LIBRARIES
+      ${LIBWAR2_LIBRARIES}
+      ${ECORE_FILE_LIBRARIES}
+   )
+   add_executable(extract_tiles extract_tiles.c)
+endif ()
+
+
+if (EINA_FOUND)
+   LIST(APPEND EXTRACT_TILES_LIBRARIES
+      ${EINA_LIBRARIES}
+   )
+endif ()
+if (EET_FOUND)
+   LIST(APPEND EXTRACT_TILES_LIBRARIES
+      ${EET_LIBRARIES}
+      ${EMILE_LIBRARIES}
+   )
+endif ()
+
+if (CAIRO_FOUND)
+   LIST(APPEND EXTRACT_TILES_LIBRARIES
+      ${CAIRO_LIBRARIES}
+   )
+endif ()
+target_link_libraries(extract_tiles ${EXTRACT_TILES_LIBRARIES})
+
 if (EET_FOUND)
    target_link_libraries(extract_sprites ${LIBWAR2_LIBRARIES} ${EET_LIBRARIES} ${EMILE_LIBRARIES})
    target_link_libraries(data_to_sprite ${EET_LIBRARIES} -lm)
 
-   if (ECORE_FILE_FOUND)
-      add_executable(extract_tiles extract_tiles.c)
-      target_link_libraries(
-         extract_tiles
-         ${LIBWAR2_LIBRARIES}
-         ${ECORE_FILE_LIBRARIES}
-         ${EET_LIBRARIES}
-         ${EMILE_LIBRARIES}
-      )
-   endif ()
+   #      if (CAIRO_FOUND AND EINA_FOUND)
+   #         add_executable(generate_atlas atlas.c)
+   #         target_link_libraries(generate_atlas ${ECORE_FILE_LIBRARIES} ${CAIRO_LIBRARIES} ${EINA_LIBRARIES})
+   #      endif ()
 endif ()
 

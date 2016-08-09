@@ -129,7 +129,7 @@ _export_tile_png(const Pud_Color    *tile,
    char buf[1024], buf2[1024], buf3[1024];
 
    /* Fog of war */
-   if (img_nb <= 16) return;
+   if (img_nb < 16) return;
 
    snprintf(buf, sizeof(buf),
             "%s/tiles/png/%s", getcwd(buf3, sizeof(buf3)), _era2str(ts->era));
@@ -148,13 +148,13 @@ _export_tile_atlas(const Pud_Color *tile,
 {
    Eina_Tmpstr *file;
    int fd;
-   unsigned int major, minor;
-   unsigned int x, y;
+   int major, minor;
+   int x, y;
    cairo_surface_t *img;
    const unsigned int solid_offset = (0xd + 1) * 0x9 * 32;
 
    /* Fog of war */
-   if (img_nb <= 16) return;
+   if (img_nb < 16) return;
 
    fd = eina_file_mkstemp("tmp.atlas-XXXXXX.png", &file);
    if (EINA_UNLIKELY(fd < 0))
@@ -165,8 +165,8 @@ _export_tile_atlas(const Pud_Color *tile,
    close(fd);
    war2_png_write(file, w, h, (unsigned char *)tile);
 
-   major = ((unsigned int)img_nb & 0x0f00) >> 8;
-   minor = ((unsigned int)img_nb & 0x00f0) >> 4;
+   major = (img_nb & 0x0f00) >> 8;
+   minor = (img_nb & 0x00f0) >> 4;
    if (major == 0) /* solid tiles */
      {
         y = solid_offset + ((minor - 1) * TILE_H);
@@ -175,7 +175,7 @@ _export_tile_atlas(const Pud_Color *tile,
    else
      {
         y = ((major - 1) * TILE_H * (0xd + 1)) + (minor * TILE_H);
-        x = ((unsigned int)img_nb & 0x000f) * TILE_W;
+        x = (img_nb & 0x000f) * TILE_W;
      }
 
    img = cairo_image_surface_create_from_png(file);
@@ -205,7 +205,7 @@ _export_tile_eet(const Pud_Color    *tile,
    const int size = sizeof(Pud_Color) * w * h;
 
    /* Fog of war */
-   if (img_nb <= 16) return;
+   if (img_nb < 16) return;
 
    data = malloc(size);
    if (!data)

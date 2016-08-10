@@ -7,61 +7,20 @@
 #include "ppm.h"
 #include "pud_private.h"
 #include "war2.h"
+#include <Eina.h>
 #include <Eet.h>
+#include <cairo.h>
+#include <Ecore_File.h>
+#include <unistd.h>
 
 #define SIZEOF_ARRAY(arr_) (sizeof(arr_) / sizeof(*arr_))
 
 static Eet_File *_ef = NULL;
 
-
-static void *
-_convert(const Pud_Color *sprite,
-         int              x,
-         int              y,
-         int              w,
-         int              h,
-         int             *size_ret)
-{
-   const int size = w * h * sizeof(Pud_Color) + 8;
-   unsigned char *data, tmp;
-   int i;
-
-   data = malloc(size);
-   if (!data)
-     {
-        fprintf(stderr, "*** Failed to alloc size [%i]\n", size);
-        return NULL;
-     }
-
-   /* Format:
-    *  16bits: offset X of image
-    *  16bits: offset Y of image
-    *  16bits: width of image
-    *  16bits: height of image
-    *   Nbits: raw image */
-   memcpy(data + 0, &x, 2);
-   memcpy(data + 2, &y, 2);
-   memcpy(data + 4, &w, 2);
-   memcpy(data + 6, &h, 2);
-   memcpy(data + 8, sprite, size - 8);
-
-   /* Set ALPHA as the highest bit to fit the ARGB8888 colorspace
-    * (Store as BGRA) for decoding */
-   for (i = 8; i < size; i += 4)
-     {
-        tmp = data[i + 2];
-        data[i + 2] = data[i + 0];
-        data[i + 0] = tmp;
-     }
-
-   *size_ret = size;
-   return data;
-}
-
 static void
 _unit_cb(const Pud_Color               *sprite,
-         int                            x,
-         int                            y,
+         int                            x      EINA_UNUSED,
+         int                            y      EINA_UNUSED,
          int                            w,
          int                            h,
          const War2_Sprites_Descriptor *ud,
@@ -87,12 +46,16 @@ _unit_cb(const Pud_Color               *sprite,
    static const unsigned int aliases_count = SIZEOF_ARRAY(aliases);
 
    void *data;
-   int bytes, size;
+   int bytes;
    char key[64], key2[64];
    const Pud_Unit u = ud->object;
    unsigned int i;
+   int fd;
    const int compress = 1;
    Eina_Bool ok;
+   cairo_surface_t *img;
+   Eina_Tmpstr *file;
+   int cw, ch;
 
    /* Only handle the 5 first images [0,4] */
    if ((u == PUD_UNIT_HUMAN_START) ||
@@ -107,8 +70,22 @@ _unit_cb(const Pud_Color               *sprite,
           return;
      }
 
-   data = _convert(sprite, x, y, w, h, &size);
-   if (!data) return;
+   fd = eina_file_mkstemp("tmp.sprites-XXXXXX.png", &file);
+   if (EINA_UNLIKELY(fd < 0))
+     {
+        fprintf(stderr, "*** Failed to create temporary file\n");
+        return;
+     }
+   close(fd);
+
+   war2_png_write(file, w, h, (unsigned char *)sprite);
+
+   img = cairo_image_surface_create_from_png(file);
+   cairo_surface_flush(img);
+   data = cairo_image_surface_get_data(img);
+   cw = cairo_image_surface_get_width(img);
+   ch = cairo_image_surface_get_height(img);
+   printf("format is %i\n" ,cairo_image_surface_get_format (img));
 
    /* Generate key */
    switch (u)
@@ -140,7 +117,7 @@ _unit_cb(const Pud_Color               *sprite,
          break;
      }
 
-   bytes = eet_write(_ef, key, data, size, compress);
+   bytes = eet_data_image_write(_ef, key, data, cw, ch, 1, compress, 100, 0);
    if (bytes <= 0)
      fprintf(stderr, "*** Failed to save key [%s]\n", key);
 
@@ -169,32 +146,54 @@ _unit_cb(const Pud_Color               *sprite,
    war2_png_write(nopath, w, h, (unsigned char *)sprite);
 #endif
 
-   free(data);
+   cairo_surface_destroy(img);
+   ecore_file_unlink(file);
 }
 
 static void
 _building_cb(const Pud_Color               *sprite,
-             int                            x,
-             int                            y,
+             int                            x      EINA_UNUSED,
+             int                            y      EINA_UNUSED,
              int                            w,
              int                            h,
              const War2_Sprites_Descriptor *ud,
              int                            img_nb)
 {
    void *data;
-   int bytes, size;
+   int bytes;
    char key[32];
+   cairo_surface_t *img;
+   Eina_Tmpstr *file;
+   int fd, cw, ch;
+   const int compress = 1;
 
-   /* Only handle the 5 first images [0,4] */
+   /* Only handle the first image */
    if (img_nb > 0) return;
 
-   data = _convert(sprite, x, y, w, h, &size);
-   if (!data) return;
+   fd = eina_file_mkstemp("tmp.sprites-XXXXXX.png", &file);
+   if (EINA_UNLIKELY(fd < 0))
+     {
+        fprintf(stderr, "*** Failed to create temporary file\n");
+        return;
+     }
+   close(fd);
+
+   war2_png_write(file, w, h, (unsigned char *)sprite);
+
+   img = cairo_image_surface_create_from_png(file);
+   cairo_surface_flush(img);
+   data = cairo_image_surface_get_data(img);
+   cw = cairo_image_surface_get_width(img);
+   ch = cairo_image_surface_get_height(img);
+
 
    snprintf(key, sizeof(key), "%s", pud_unit2str(ud->object));
-   bytes = eet_write(_ef, key, data, size, 1);
+   bytes = eet_data_image_write(_ef, key, data, cw, ch, 1, compress, 100, 0);
    if (bytes <= 0)
      fprintf(stderr, "*** Failed to save key [%s]\n", key);
+
+   cairo_surface_destroy(img);
+   ecore_file_unlink(file);
 
 #if 0
    /* Quick and dirty debug */
@@ -207,8 +206,6 @@ _building_cb(const Pud_Color               *sprite,
      if (nopath[i] == '/') nopath[i] = '_';
    war2_png_write(nopath, w, h, (unsigned char *)sprite);
 #endif
-
-   free(data);
 }
 
 int

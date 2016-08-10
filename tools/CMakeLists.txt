@@ -79,7 +79,7 @@ endif ()
 target_link_libraries(extract_tiles ${EXTRACT_TILES_LIBRARIES})
 
 if (EET_FOUND)
-   target_link_libraries(extract_sprites ${LIBWAR2_LIBRARIES} ${EET_LIBRARIES} ${EMILE_LIBRARIES})
+   target_link_libraries(extract_sprites ${LIBWAR2_LIBRARIES} ${EET_LIBRARIES} ${EMILE_LIBRARIES} ${EINA_LIBRARIES} ${CAIRO_LIBRARIES} ${ECORE_FILE_LIBRARIES})
    target_link_libraries(data_to_sprite ${EET_LIBRARIES} -lm)
 
    #      if (CAIRO_FOUND AND EINA_FOUND)

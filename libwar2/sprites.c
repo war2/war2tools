@@ -2,7 +2,7 @@
  * units.c
  * libwar2
  *
- * Copyright (c) 2015 Jean Guyomarc'h
+ * Copyright (c) 2015 - 2016 Jean Guyomarc'h
  */
 
 #include "war2_private.h"
@@ -11,7 +11,8 @@
 #define RLE_LEAVE  (1 << 7)
 #define PALETTE_ALPHA 0
 
-typedef struct {
+typedef struct
+{
    unsigned char r;
    unsigned char g;
    unsigned char b;
@@ -421,7 +422,8 @@ war2_sprites_descriptor_free(War2_Sprites_Descriptor *ud)
 }
 
 void
-war2_sprites_color_convert(Pud_Player     col,
+war2_sprites_color_convert(Pud_Player     from,
+                           Pud_Player     to,
                            unsigned char  in_r,
                            unsigned char  in_g,
                            unsigned char  in_b,
@@ -430,21 +432,21 @@ war2_sprites_color_convert(Pud_Player     col,
                            unsigned char *out_b)
 {
    unsigned int i;
-   Col c = {
+   const Col c = {
       .r = in_r,
       .g = in_g,
-      .b = in_b
+      .b = in_b,
    };
    const Col *ptr;
 
-   if (col == PUD_PLAYER_RED)
+   if (from == to)
      goto no_conversion;
 
    for (i = 0; i < 4; ++i)
      {
-        if (!memcmp(&c, &(_colors[0][i]), sizeof(Col)))
+        if (!memcmp(&c, &(_colors[from][i]), sizeof(Col)))
           {
-             ptr = &(_colors[col][i]);
+             ptr = &(_colors[to][i]);
              *out_r = ptr->r;
              *out_g = ptr->g;
              *out_b = ptr->b;

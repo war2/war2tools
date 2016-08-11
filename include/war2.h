@@ -2,7 +2,7 @@
  * war2.h
  * libwar2
  *
- * Copyright (c) 2014 - 2015 Jean Guyomarc'h
+ * Copyright (c) 2014 - 2016 Jean Guyomarc'h
  */
 
 #ifndef _WAR2_H_
@@ -113,7 +113,8 @@ war2_ppm_write(const char          *file,
                const unsigned char *data);
 
 void
-war2_sprites_color_convert(Pud_Player     col,
+war2_sprites_color_convert(Pud_Player     from,
+                           Pud_Player     to,
                            unsigned char  in_r,
                            unsigned char  in_g,
                            unsigned char  in_b,
@@ -126,4 +127,3 @@ war2_sprites_color_convert(Pud_Player     col,
 }
 #endif
 #endif /* ! _WAR2_H_ */
-

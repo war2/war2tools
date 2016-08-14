@@ -102,8 +102,8 @@ pud_color2str(Pud_Player color)
       case PUD_PLAYER_BLACK : return "black";
       case PUD_PLAYER_WHITE : return "white";
       case PUD_PLAYER_YELLOW: return "yellow";
+      default:                return "<INVALID COLOR>";
    }
-   return "<INVALID COLOR>";
 }
 
 const char *

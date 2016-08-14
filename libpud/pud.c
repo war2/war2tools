@@ -794,10 +794,11 @@ pud_color_for_player(Pud_Player player)
       case PUD_PLAYER_BLACK:  return color_make(0x00, 0x00, 0x00, 0xff); // Black
       case PUD_PLAYER_WHITE:  return color_make(0xff, 0xff, 0xff, 0xff); // White
       case PUD_PLAYER_YELLOW: return color_make(0xff, 0xd0, 0x00, 0xff); // Yellow
-      default: ERR("Invalid player [%i]", player); break;
+      case PUD_PLAYER_NEUTRAL:return color_make(0xa2, 0xa2, 0xa6, 0xff); // Neutral
+      default: ERR("Invalid player %i", player); break;
      }
 
-   return color_make(0x7f, 0x7f, 0x7f, 0xff);
+   return color_make(0xff, 0x00, 0xff, 0xff);
 }
 
 Pud_Color

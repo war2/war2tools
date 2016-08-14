@@ -66,6 +66,8 @@ typedef enum
    PUD_PLAYER_BLACK     = 5,
    PUD_PLAYER_WHITE     = 6,
    PUD_PLAYER_YELLOW    = 7,
+
+   PUD_PLAYER_NEUTRAL   = 15
 } Pud_Player;
 
 typedef enum

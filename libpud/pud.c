@@ -746,6 +746,17 @@ pud_unit_marine_is(Pud_Unit unit)
 }
 
 Pud_Bool
+pud_unit_coast_building_is(Pud_Unit unit)
+{
+   return ((unit == PUD_UNIT_ORC_SHIPYARD) ||
+           (unit == PUD_UNIT_HUMAN_SHIPYARD) ||
+           (unit == PUD_UNIT_ORC_FOUNDRY) ||
+           (unit == PUD_UNIT_HUMAN_FOUNDRY) ||
+           (unit == PUD_UNIT_HUMAN_REFINERY) ||
+           (unit == PUD_UNIT_ORC_REFINERY));
+}
+
+Pud_Bool
 pud_unit_always_passive_is(Pud_Unit unit)
 {
    return (unit == PUD_UNIT_CRITTER);

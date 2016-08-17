@@ -397,9 +397,25 @@ pud_write(const Pud  *pud,
       PUD_CHECK_FERROR(f, PUD_FALSE); \
    } while (0)
 
-#define WSEC(sec, len) fwrite(_pud_sections[sec], sizeof(int8_t), 4, f); PUD_CHECK_FERROR(f, PUD_FALSE); W32(len, 1)
-#define WISEC(sec, len) fwrite(_pud_sections[sec], sizeof(int8_t), 4, f); PUD_CHECK_FERROR(f, PUD_FALSE); WI32(len, 1)
-#define WSTR(str) fwrite(str, sizeof(int8_t), sizeof(str) - 1, f); PUD_CHECK_FERROR(f, PUD_FALSE);
+#define WSEC(sec, len) \
+   do { \
+      fwrite(_pud_sections[sec], sizeof(int8_t), 4, f); \
+      PUD_CHECK_FERROR(f, PUD_FALSE); \
+      W32(len, 1); \
+   } while (0)
+
+#define WISEC(sec, len) \
+   do { \
+      fwrite(_pud_sections[sec], sizeof(int8_t), 4, f); \
+      PUD_CHECK_FERROR(f, PUD_FALSE); \
+      WI32(len, 1); \
+   } while (0)
+
+#define WSTR(str) \
+   do { \
+      fwrite(str, sizeof(int8_t), sizeof(str) - 1, f); \
+      PUD_CHECK_FERROR(f, PUD_FALSE); \
+   } while (0)
 
    /* Section TYPE */
    WISEC(PUD_SECTION_TYPE, 16);

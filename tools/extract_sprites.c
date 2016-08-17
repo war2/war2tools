@@ -92,7 +92,7 @@ _unit_cb(const Pud_Color               *sprite,
      {
       case PUD_UNIT_GNOMISH_SUBMARINE:
       case PUD_UNIT_GIANT_TURTLE:
-         snprintf(key, sizeof(key), "%s/%s/%i", pud_unit2str(ud->object),
+         snprintf(key, sizeof(key), "%s/%s/%i", pud_unit2str(ud->object, PUD_FALSE),
                   pud_era2str(ud->era), img_nb);
          break;
 
@@ -113,7 +113,7 @@ _unit_cb(const Pud_Color               *sprite,
          break;
 
       default:
-         snprintf(key, sizeof(key), "%s/%i", pud_unit2str(u), img_nb);
+         snprintf(key, sizeof(key), "%s/%i", pud_unit2str(u, PUD_FALSE), img_nb);
          break;
      }
 
@@ -127,7 +127,7 @@ _unit_cb(const Pud_Color               *sprite,
         if (u == aliases[i + 1])
           {
              snprintf(key2, sizeof(key2), "%s/%i",
-                      pud_unit2str(aliases[i]), img_nb);
+                      pud_unit2str(aliases[i], PUD_FALSE), img_nb);
              ok = eet_alias(_ef, key2, key, compress);
              if (!ok)
                {
@@ -187,7 +187,7 @@ _building_cb(const Pud_Color               *sprite,
    ch = cairo_image_surface_get_height(img);
 
 
-   snprintf(key, sizeof(key), "%s", pud_unit2str(ud->object));
+   snprintf(key, sizeof(key), "%s", pud_unit2str(ud->object, PUD_FALSE));
    bytes = eet_data_image_write(_ef, key, data, cw, ch, 1, compress, 100, 0);
    if (bytes <= 0)
      fprintf(stderr, "*** Failed to save key [%s]\n", key);

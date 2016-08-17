@@ -485,7 +485,7 @@ Pud_Bool pud_minimap_to_ppm(Pud *pud, const char *file);
 
 const char *pud_section_at_index(int idx);
 
-const char *pud_unit2str(Pud_Unit unit);
+const char *pud_unit2str(Pud_Unit unit, Pud_Bool pretty);
 const char *pud_era2str(Pud_Era era);
 const char *pud_color2str(Pud_Player color);
 

@@ -399,7 +399,7 @@ war2_sprites_decode(War2_Data                *w2,
    if (entries[1] == 0)
      DIE_RETURN(NULL, "Invalid object [%u]", object);
    WAR2_VERBOSE(w2, 1, "Decoding entry [%i] for object [%u] (%s,%s)",
-                entries[1], object, pud_unit2str(object), pud_era2str(era));
+                entries[1], object, pud_unit2str(object, PUD_FALSE), pud_era2str(era));
 
    /* Alloc */
    ud = calloc(1, sizeof(*ud));

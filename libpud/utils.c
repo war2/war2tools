@@ -216,9 +216,9 @@ static const Unit _names[] =
       .name =  "teron_gorefiend",
       .pretty =  "Teron Gorefiend",
    },
-   [PUD_UNIT_KURDAN_AND_SKY_REE] = {
-      .name =  "kurdan_and_sky_ree",
-      .pretty =  "Kurdan and Sky'ree",
+   [PUD_UNIT_KURDRAN_AND_SKY_REE] = {
+      .name =  "kurdran_and_sky_ree",
+      .pretty =  "Kurdran and Sky'ree",
    },
    [PUD_UNIT_DENTARG] = {
       .name =  "dentarg",

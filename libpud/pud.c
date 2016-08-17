@@ -720,7 +720,7 @@ pud_unit_flying_is(Pud_Unit unit)
            (unit == PUD_UNIT_DRAGON) ||
            (unit == PUD_UNIT_DEATHWING) ||
            (unit == PUD_UNIT_DAEMON) ||
-           (unit == PUD_UNIT_KURDAN_AND_SKY_REE));
+           (unit == PUD_UNIT_KURDRAN_AND_SKY_REE));
 }
 
 Pud_Bool

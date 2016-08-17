@@ -150,7 +150,7 @@ typedef enum
    PUD_UNIT_BERSERKER                   = 0x13,
    PUD_UNIT_ALLERIA                     = 0x14,
    PUD_UNIT_TERON_GOREFIEND             = 0x15,
-   PUD_UNIT_KURDAN_AND_SKY_REE          = 0x16,
+   PUD_UNIT_KURDRAN_AND_SKY_REE         = 0x16,
    PUD_UNIT_DENTARG                     = 0x17,
    PUD_UNIT_KHADGAR                     = 0x18,
    PUD_UNIT_GROM_HELLSCREAM             = 0x19,

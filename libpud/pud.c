@@ -18,9 +18,9 @@ static const char * const _pud_sections[] =
 Pud_Bool
 pud_section_exists(char sec[4])
 {
-   int i;
+   unsigned int i;
 
-   for (i = 0; i < 20; i++)
+   for (i = 0; i < sizeof(_pud_sections) / sizeof(_pud_sections[0]); i++)
      {
         if (!strncmp(sec, _pud_sections[i], 4))
           return PUD_TRUE;

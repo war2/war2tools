@@ -258,7 +258,7 @@ static const Unit _names[] =
    },
    [PUD_UNIT_BATTLESHIP] = {
       .name =  "battleship",
-      .pretty =  "battleship",
+      .pretty =  "Battleship",
    },
    [PUD_UNIT_JUGGERNAUGHT] = {
       .name =  "juggernaught",

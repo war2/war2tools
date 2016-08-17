@@ -405,7 +405,7 @@ See appendix E for possible use of "unusable" 7 players.
 
         0x0000           water
         0x4000           land
-        0xfaff           island (no trans, no land)
+        0xfaff           island (no transport, no land)
         0xfbff           wall
         0xfdff           mountains
         0xfeff           forest
@@ -689,5 +689,3 @@ Credits:
 Daniel Lemberg.
 Simon Pelsser (Scorpions).
 Lasse Jensen.
-
-

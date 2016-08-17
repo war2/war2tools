@@ -593,7 +593,6 @@ pud_tag_set(Pud      *pud,
             uint32_t  tag)
 {
    PUD_SANITY_CHECK(pud, PUD_OPEN_MODE_W, VOID);
-   if (tag == 0) tag = rand() % UINT16_MAX;
    pud->tag = tag;
 }
 

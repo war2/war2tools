@@ -620,7 +620,7 @@ pud_unit_add(Pud        *pud,
         //          alter = 1;
      }
 
-   struct _Pud_Unit u = {
+   const struct _Pud_Unit u = {
       .x     = x,
       .y     = y,
       .type  = type,

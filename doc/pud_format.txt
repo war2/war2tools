@@ -1,4 +1,6 @@
-Source: http://cade.datamax.bg/war2x/pudspec.html
+Sources:
+- http://cade.datamax.bg/war2x/pudspec.html
+- http://forum.war2.ru/index.php?topic=2272.5;wap2
 
 
 PUD file format revision 3
@@ -156,16 +158,31 @@ See appendix E for possible use of "unusable" 7 players.
                 0x01    griffon hammer
                 0x02    dragon breath
                 0x03    flame shield
+                0x04    flame shield (self)
+                0x05    blizzard
+                0x06    death and decay
                 0x07    big cannon
+                0x08    black powder
+                0x09    heal effect
                 0x0a    touch of death
+                0x0b    rune
+                0x0c    tornado
                 0x0d    catapult rock
                 0x0e    ballista bolt
                 0x0f    arrow
                 0x10    axe
                 0x11    submarine missile
                 0x12    turtle missile
+                0x13    dark flame
+                0x14    bright flame
+                0x15    blood
+                0x16    more black powder
+                0x17    explosion
                 0x18    small cannon
+                0x19    metal spark
+                0x1a    mini-explosion
                 0x1b    demon fire
+                0x1c    green cross
                 0x1d    none
 
         110 bytes       unit type (0 land, 1 fly, 2 naval)

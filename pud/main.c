@@ -327,9 +327,15 @@ main(int    argc,
         /* --tile-at */
         if (tile_at.enabled)
           {
+             const unsigned int idx = (tile_at.y * pud->map_w) + tile_at.x;
              w = pud_tile_at(pud, tile_at.x, tile_at.y);
              if (w == 0) ABORT(3, "Failed to parse tile");
-             fprintf(stdout, "0x%04x\n", w);
+             fprintf(stdout,
+                     "ID.....: 0x%04x\n"
+                     "REGM...: 0x%04x\n"
+                     "SQM....: 0x%04x\n"
+                     ,
+                     w, pud->action_map[idx], pud->movement_map[idx]);
           }
 
         /* --output,--ppm,--jpeg,--png */

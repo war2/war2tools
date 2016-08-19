@@ -21,6 +21,9 @@ pud_parse_type(Pud *pud)
    char buf[16];
    uint32_t l;
    uint32_t chk;
+   const char type[10] = {
+      'W', 'A', 'R', '2', ' ', 'M', 'A', 'P', '\0', '\0'
+   };
 
    chk = pud_go_to_section(pud, PUD_SECTION_TYPE);
    if (!chk) DIE_RETURN(PUD_FALSE, "Failed to reach section TYPE");
@@ -29,7 +32,7 @@ pud_parse_type(Pud *pud)
 
    /* Read 10bytes + 2 unused */
    READBUF(pud, buf, uint8_t, 12, FAIL(PUD_FALSE));
-   if (strncmp(buf, "WAR2 MAP\0\0", 10))
+   if (memcmp(buf, type, 10))
      DIE_RETURN(PUD_FALSE, "TYPE section has a wrong header (not a WAR2 MAP)");
 
    /* Read ID TAG */

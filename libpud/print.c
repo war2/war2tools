@@ -137,7 +137,7 @@ pud_print(Pud  *pud,
      }
 
    /* Units */
-   fprintf(stream, "Units................:\n");
+   fprintf(stream, "Units................: %u\n", pud->units_count);
    for (i = 0; i < pud->units_count; i++)
      {
         fprintf(stream, "   Unit %04i.........:\n", i);

@@ -425,6 +425,8 @@ struct _Pud
    /* Cache */
    uint8_t       current_section;
 
+   Pud_Bool has_erax;
+
    unsigned int  verbose        : 3;
    unsigned int  init           : 1; /* set by defaults */
    unsigned int  default_allow  : 1; /* [defaults] */

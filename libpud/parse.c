@@ -159,6 +159,7 @@ pud_parse_era(Pud *pud)
    chk = pud_go_to_section(pud, PUD_SECTION_ERAX);
    if (!chk) // Optional section, use ERA by default
      {
+        pud->has_erax = PUD_FALSE;
         PUD_VERBOSE(pud, 2, "Failed to find ERAX. Trying with ERA...");
         chk = pud_go_to_section(pud, PUD_SECTION_ERA);
         if (!chk) DIE_RETURN(PUD_FALSE, "Failed to reach section ERA");
@@ -167,6 +168,7 @@ pud_parse_era(Pud *pud)
      }
    else
      {
+        pud->has_erax = PUD_TRUE;
         PUD_VERBOSE(pud, 2, "At section ERAX (size = %u)", chk);
         HAS_SECTION(PUD_SECTION_ERAX);
      }

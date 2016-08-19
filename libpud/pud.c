@@ -444,8 +444,11 @@ pud_write(const Pud  *pud,
    W16(p->era, 1);
 
    /* Section ERAX */
-   WISEC(PUD_SECTION_ERAX, 2);
-   W16(p->era, 1);
+   if (p->has_erax)
+     {
+        WISEC(PUD_SECTION_ERAX, 2);
+        W16(p->era, 1);
+     }
 
    /* Section DIM */
    WISEC(PUD_SECTION_DIM, 4);

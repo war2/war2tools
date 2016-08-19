@@ -266,7 +266,7 @@ pud_parse_udta(Pud *pud)
      pud->unit_data[i].overlap_frames = wb[i];
 
    /* Obsolete data */
-   READBUF(pud, wb, uint16_t, 508, FAIL(PUD_FALSE));
+   READBUF(pud, pud->unkwown, uint16_t, 508, FAIL(PUD_FALSE));
 
    /* Sight (why the hell is it on 32 bits!?) */
    READBUF(pud, lb, uint32_t, 110, FAIL(PUD_FALSE));

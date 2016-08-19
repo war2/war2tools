@@ -420,6 +420,8 @@ struct _Pud
       uint16_t     box_h;
    } unit_data[110]; /* [defaults] */
 
+   uint16_t unkwown[508];
+
    /* Bitfield: is section X present? */
    uint32_t     sections;
 

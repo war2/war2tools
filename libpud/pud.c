@@ -420,8 +420,9 @@ pud_write(const Pud  *pud,
    /* Section TYPE */
    WISEC(PUD_SECTION_TYPE, 16);
    WSTR("WAR2 MAP");
-   WI8(0, 2);
    WI8(0, 2);           // Unused
+   WI8(0x0a, 1);
+   WI8(0xff, 1);
    W32(p->tag, 1);
 
    /* Section VER */

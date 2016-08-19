@@ -192,7 +192,7 @@ pud_parse_era(Pud *pud)
          break;
 
       default:
-         DIE_RETURN(PUD_FALSE, "Failed to parse Era [%x]", w);
+         DIE_RETURN(PUD_FALSE, "Failed to parse Era [0x%x]", w);
          break;
      }
 

@@ -668,10 +668,21 @@ pud_parse_oilm(Pud *pud)
    PUD_SANITY_CHECK(pud, PUD_OPEN_MODE_R, PUD_FALSE);
 
    uint32_t chk;
+   unsigned int i;
+   uint8_t b;
 
    chk = pud_go_to_section(pud, PUD_SECTION_OILM);
    if (!chk) PUD_VERBOSE(pud, 2, "Section OILM (obsolete) not present. Skipping...");
-   else PUD_VERBOSE(pud, 2, "Section OILM (obsolete) present. Skipping...");
+   else
+     {
+        if (!pud->oil_map)
+          pud->oil_map = malloc(pud->tiles * sizeof(uint8_t));
+        for (i = 0; i < pud->tiles; i++)
+          {
+             b = READ8(pud, FAIL(0));
+             pud->oil_map[i] = b;
+          }
+     }
 
    return PUD_TRUE;
 }

@@ -374,6 +374,7 @@ struct _Pud
    uint16_t *tiles_map;
    uint16_t *action_map;
    uint16_t *movement_map;
+   uint8_t *oil_map;
 
    struct _Pud_Unit {
       uint16_t x;
@@ -521,4 +522,3 @@ uint8_t pud_random_get(const uint16_t tile);
 }
 #endif
 #endif /* ! _PUD_H_ */
-

@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 3.0)
 project(war2tools C)
 
 add_definitions(-g)
@@ -22,7 +22,6 @@ set(LIBWAR2_VERSION_MINOR 99)
 
 set(CMAKE_COLOR_MAKEFILE   ON)
 set(CMAKE_VERBOSE_MAKEFILE OFF)
-set(CMAKE_MACOSX_RPATH OFF)
 
 find_package(PkgConfig)
 find_package(JPEG)

@@ -695,27 +695,88 @@ pud_tile_get(const Pud    *pud,
 
 
 Pud_Error
-pud_check(Pud *pud)
+pud_check(Pud                   *pud,
+          Pud_Error_Description *err)
 {
    unsigned int i;
    unsigned int starting_locations = 0;
-   struct _Pud_Unit *u;
+   const struct _Pud_Unit *u;
+   Pud_Error ret = PUD_ERROR_UNDEFINED;
+   unsigned int players_units[16];
+   Pud_Bool players_start_loc[16];
+
+   memset(players_units, 0, sizeof(players_units));
+   memset(players_start_loc, 0, sizeof(players_start_loc));
 
    if (!pud->init)
-     return PUD_ERROR_NOT_INITIALIZED;
+     {
+        ret = PUD_ERROR_NOT_INITIALIZED;
+        goto end;
+     }
 
    for (i = 0; i < pud->units_count; ++i)
      {
         u = &(pud->units[i]);
+
+        /* Check for any invalid owner (Pud_Player) */
+        if (!((u->owner < 8) || (u->owner == PUD_PLAYER_NEUTRAL)))
+          {
+             ret = PUD_ERROR_INVALID_PLAYER;
+             if (err) err->data.unit = u;
+             goto end;
+          }
+
         if ((u->type == PUD_UNIT_ORC_START) ||
             (u->type == PUD_UNIT_HUMAN_START))
-          ++starting_locations;
+          {
+             ++starting_locations;
+
+             /* Did we already register the start location for this player. */
+             if (players_start_loc[u->owner] == PUD_TRUE)
+               {
+                  ret = PUD_ERROR_TOO_MUCH_START_LOCATIONS;
+                  if (err) err->data.unit = u;
+                  goto end;
+               }
+             players_start_loc[u->owner] = PUD_TRUE;
+          }
+        else
+          {
+             players_units[u->owner]++;
+          }
      }
 
    if (starting_locations <= 1)
-     return PUD_ERROR_INVALID_START_LOCATIONS;
+     {
+        ret = PUD_ERROR_NOT_ENOUGH_START_LOCATIONS;
+        if (err) err->data.count = starting_locations;
+        goto end;
+     }
 
-   return PUD_ERROR_NONE;
+   for (i = 0; i < 16; i++)
+     {
+        /* Player has units but no start location */
+        if ((players_units[i] != 0) && (players_start_loc[i] == 0) &&
+            (i != PUD_PLAYER_NEUTRAL))
+          {
+             ret = PUD_ERROR_NO_START_LOCATION;
+             if (err) err->data.player = i;
+             goto end;
+          }
+
+        /* There is one start location but no units */
+        if ((players_units[i] == 0) && (players_start_loc[i] == PUD_TRUE))
+          {
+             ret = PUD_ERROR_EMPTY_PLAYER;
+             if (err) err->data.player = i;
+             goto end;
+          }
+     }
+
+   ret = PUD_ERROR_NONE;
+end:
+   if (err) err->type = ret;
+   return ret;
 }
 
 Pud_Bool

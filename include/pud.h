@@ -451,9 +451,26 @@ struct _Pud_Color
 typedef enum
 {
    PUD_ERROR_NONE = 0,
-   PUD_ERROR_INVALID_START_LOCATIONS,
-   PUD_ERROR_NOT_INITIALIZED
+   PUD_ERROR_UNDEFINED,
+   PUD_ERROR_NOT_ENOUGH_START_LOCATIONS,
+   PUD_ERROR_TOO_MUCH_START_LOCATIONS,
+   PUD_ERROR_NOT_INITIALIZED,
+   PUD_ERROR_EMPTY_PLAYER,
+   PUD_ERROR_INVALID_PLAYER,
+   PUD_ERROR_NO_START_LOCATION,
 } Pud_Error;
+
+typedef struct
+{
+   Pud_Error type;
+   union {
+
+      Pud_Player player;
+      unsigned int count;
+      const struct _Pud_Unit *unit;
+
+   } data;
+} Pud_Error_Description;
 
 Pud_Bool pud_init(void);
 void pud_shutdown(void);
@@ -473,7 +490,7 @@ Pud_Side pud_side_convert(uint8_t code);
 void pud_version_set(Pud *pud, uint16_t version);
 void pud_description_set(Pud *pud, char descr[32]);
 void pud_tag_set(Pud *pud, uint32_t tag);
-Pud_Error pud_check(Pud *pud);
+Pud_Error pud_check(Pud *pud, Pud_Error_Description *err);
 Pud_Bool pud_defaults_set(Pud *pud);
 Pud_Bool pud_write(const Pud *pud, const char *file);
 int pud_unit_add(Pud *pud, uint16_t x, uint16_t y, Pud_Player owner, Pud_Unit type, uint16_t alter);

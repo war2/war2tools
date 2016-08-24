@@ -773,6 +773,15 @@ pud_check(Pud                   *pud,
           }
      }
 
+   /* If a player has no unit at all, it is controlled by nobody */
+   for (i = 0; i < 8; i++)
+     {
+        if (players_units[i] == 0)
+          {
+             pud->owner.players[i] = PUD_OWNER_NOBODY;
+          }
+     }
+
    ret = PUD_ERROR_NONE;
 end:
    if (err) err->type = ret;

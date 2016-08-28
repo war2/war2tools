@@ -526,6 +526,7 @@ Pud_Bool pud_unit_marine_is(Pud_Unit unit);
 Pud_Bool pud_unit_always_passive_is(Pud_Unit unit);
 Pud_Bool pud_unit_oil_well_is(Pud_Unit unit);
 Pud_Bool pud_unit_coast_building_is(Pud_Unit unit);
+Pud_Bool pud_unit_boat_is(Pud_Unit unit);
 
 Pud_Color pud_tile_to_color(Pud_Era era, uint16_t tile);
 Pud_Color pud_color_for_player(Pud_Player player);

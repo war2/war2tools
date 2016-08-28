@@ -728,7 +728,7 @@ pud_parse_unit(Pud *pud)
    HAS_SECTION(PUD_SECTION_UNIT);
    units = chk / 8;
 
-   size = sizeof(struct _Pud_Unit) * units;
+   size = sizeof(Pud_Unit_Data) * units;
    pud->units = realloc(pud->units, size);
    if (!pud->units) DIE_RETURN(PUD_FALSE, "Failed to allocate memory");
    memset(pud->units, 0, size);

@@ -310,6 +310,16 @@ typedef enum
 } Pud_AI;
 
 typedef struct _Pud Pud;
+typedef struct _Pud_Unit_Data Pud_Unit_Data;
+
+struct _Pud_Unit_Data
+{
+   uint16_t x;
+   uint16_t y;
+   uint8_t  type;
+   uint8_t  owner;
+   uint16_t alter;
+};
 
 struct _Pud
 {
@@ -376,13 +386,7 @@ struct _Pud
    uint16_t *movement_map;
    uint8_t *oil_map;
 
-   struct _Pud_Unit {
-      uint16_t x;
-      uint16_t y;
-      uint8_t  type;
-      uint8_t  owner;
-      uint16_t alter;
-   } *units;
+   Pud_Unit_Data *units;
 
    unsigned int units_count;
 
@@ -467,7 +471,7 @@ typedef struct
 
       Pud_Player player;
       unsigned int count;
-      const struct _Pud_Unit *unit;
+      const Pud_Unit_Data *unit;
 
    } data;
 } Pud_Error_Description;

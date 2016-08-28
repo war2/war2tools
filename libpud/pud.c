@@ -353,7 +353,7 @@ pud_write(const Pud  *pud,
    const char *savefile = (file) ? file : pud->filename;
 
    map_len = p->tiles * sizeof(uint16_t);
-   units_len = p->units_count * sizeof(struct _Pud_Unit);
+   units_len = p->units_count * sizeof(Pud_Unit_Data);
 
    f = fopen(savefile, "wb");
    if (!f) DIE_RETURN(PUD_FALSE, "Failed to open [%s]", savefile);
@@ -641,7 +641,7 @@ pud_unit_add(Pud        *pud,
         //          alter = 1;
      }
 
-   const struct _Pud_Unit u = {
+   const Pud_Unit_Data u = {
       .x     = x,
       .y     = y,
       .type  = type,
@@ -654,11 +654,11 @@ pud_unit_add(Pud        *pud,
 
    /* TODO Optimise memory allocation because it is not great */
    nb = pud->units_count + 1;
-   size = nb * sizeof(struct _Pud_Unit);
+   size = nb * sizeof(Pud_Unit_Data);
    ptr = realloc(pud->units, size);
    if (ptr == NULL) DIE_RETURN(-1, "Failed to alloc memory");
    pud->units = ptr;
-   memcpy(&(pud->units[pud->units_count]), &u, sizeof(struct _Pud_Unit));
+   memcpy(&(pud->units[pud->units_count]), &u, sizeof(Pud_Unit_Data));
 
    pud->units_count = nb;
 
@@ -693,14 +693,13 @@ pud_tile_get(const Pud    *pud,
    return pud->tiles_map[(y * pud->map_w) + x];
 }
 
-
 Pud_Error
 pud_check(Pud                   *pud,
           Pud_Error_Description *err)
 {
    unsigned int i;
    unsigned int starting_locations = 0;
-   const struct _Pud_Unit *u;
+   const Pud_Unit_Data *u;
    Pud_Error ret = PUD_ERROR_UNDEFINED;
    unsigned int players_units[16];
    Pud_Bool players_start_loc[16];

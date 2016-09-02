@@ -148,6 +148,7 @@ _unit_cb(const Pud_Color               *sprite,
 
    cairo_surface_destroy(img);
    ecore_file_unlink(file);
+   eina_tmpstr_del(file);
 }
 
 static void
@@ -194,6 +195,7 @@ _building_cb(const Pud_Color               *sprite,
 
    cairo_surface_destroy(img);
    ecore_file_unlink(file);
+   eina_tmpstr_del(file);
 
 #if 0
    /* Quick and dirty debug */

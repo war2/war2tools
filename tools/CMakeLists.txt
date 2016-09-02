@@ -81,10 +81,13 @@ target_link_libraries(extract_tiles ${EXTRACT_TILES_LIBRARIES})
 if (EET_FOUND)
    target_link_libraries(extract_sprites ${LIBWAR2_LIBRARIES} ${EET_LIBRARIES} ${EMILE_LIBRARIES} ${EINA_LIBRARIES} ${CAIRO_LIBRARIES} ${ECORE_FILE_LIBRARIES})
    target_link_libraries(data_to_sprite ${EET_LIBRARIES} -lm)
-
-   #      if (CAIRO_FOUND AND EINA_FOUND)
-   #         add_executable(generate_atlas atlas.c)
-   #         target_link_libraries(generate_atlas ${ECORE_FILE_LIBRARIES} ${CAIRO_LIBRARIES} ${EINA_LIBRARIES})
-   #      endif ()
 endif ()
 
+if (CAIRO_FOUND AND EET_FOUND AND ECORE_FILE_FOUND)
+   add_executable(extract_icons extract_icons.c)
+   target_link_libraries(extract_icons
+      ${LIBPUD_LIBRARIES} ${LIBWAR2_LIBRARIES}
+      ${EINA_LIBRARIES} ${EET_LIBRARIES} ${ECORE_FILE_LIBRARIES}
+      ${CAIRO_LIBRARIES}
+   )
+endif ()

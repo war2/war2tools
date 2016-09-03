@@ -224,7 +224,7 @@ typedef enum
 
 typedef enum
 {
-   PUD_UNIT_INFANTRY                    = 0x00,
+   PUD_UNIT_FOOTMAN                     = 0x00,
    PUD_UNIT_GRUNT                       = 0x01,
    PUD_UNIT_PEASANT                     = 0x02,
    PUD_UNIT_PEON                        = 0x03,

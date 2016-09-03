@@ -68,7 +68,7 @@ main(int    argc,
    /* Place some units just to make the game playable */
    idx = pud_unit_add(pud, 0, 127, PUD_PLAYER_RED, PUD_UNIT_HUMAN_START, 1);
    if (idx < 0) DIE_RETURN(1, "Failed to add unit");
-   idx = pud_unit_add(pud, 0, 127, PUD_PLAYER_RED, PUD_UNIT_INFANTRY, 1);
+   idx = pud_unit_add(pud, 0, 127, PUD_PLAYER_RED, PUD_UNIT_FOOTMAN, 1);
    if (idx < 0) DIE_RETURN(1, "Failed to add unit");
    idx = pud_unit_add(pud, 127, 127, PUD_PLAYER_BLUE, PUD_UNIT_ORC_START, 1);
    if (idx < 0) DIE_RETURN(1, "Failed to add unit");

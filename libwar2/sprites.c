@@ -311,7 +311,7 @@ war2_sprites_decode(War2_Data                *w2,
            case PUD_UNIT_JUGGERNAUGHT          : ORC_UNIT(42); break;
            case PUD_UNIT_GNOMISH_SUBMARINE     : HUMAN_UNIT_SWITCH(43, 43, 182, 526); break;
            case PUD_UNIT_GIANT_TURTLE          : ORC_UNIT_SWITCH(44, 44, 183, 527); break;
-           case PUD_UNIT_INFANTRY              : HUMAN_UNIT(45); break;
+           case PUD_UNIT_FOOTMAN               : HUMAN_UNIT(45); break;
            case PUD_UNIT_GRUNT                 : ORC_UNIT(46); break;
            case PUD_UNIT_PEASANT               : HUMAN_UNIT(47); break;
            case PUD_UNIT_PEON                  : ORC_UNIT(48); break;

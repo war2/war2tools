@@ -128,7 +128,7 @@ typedef struct
 
 static const Unit _names[] =
 {
-   [PUD_UNIT_INFANTRY] = {
+   [PUD_UNIT_FOOTMAN] = {
       .name =  "footman",
       .pretty = "Footman",
    },
@@ -550,7 +550,7 @@ const char *
 pud_unit2str(Pud_Unit unit,
              Pud_Bool pretty)
 {
-   if ((unit < PUD_UNIT_INFANTRY) && (unit > PUD_UNIT_CRITTER_RED_PIG))
+   if ((unit < PUD_UNIT_FOOTMAN) && (unit > PUD_UNIT_CRITTER_RED_PIG))
      return NULL;
    return (pretty) ? _names[unit].pretty : _names[unit].name;
 }

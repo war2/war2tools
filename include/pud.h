@@ -144,7 +144,7 @@ typedef enum
    PUD_ICON_GOBLIN_SAPPER                        = 13,
    PUD_ICON_MAGE                                 = 14,
    PUD_ICON_DEATH_KNIGHT                         = 15,
-   PUD_ICON_BALISTA                              = 16,
+   PUD_ICON_BALLISTA                             = 16,
    PUD_ICON_CATAPULT                             = 17,
    PUD_ICON_HUMAN_TANKER                         = 18,
    PUD_ICON_ORC_TANKER                           = 19,

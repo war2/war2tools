@@ -28,7 +28,7 @@ _rands_gen(uint8_t buf[BUF_SIZE], unsigned int count, ...)
 }
 
 uint8_t
-pud_random_get(const uint16_t tile)
+pud_random_get(uint16_t tile)
 {
    uint8_t rands[BUF_SIZE];
    unsigned int count = 0;

@@ -124,426 +124,134 @@ typedef struct
 {
    const char *name;
    const char *pretty;
+   Pud_Icon icon;
 } Unit;
+
+#define UNIT(suffix_, name_, pretty_) \
+   [PUD_UNIT_ ## suffix_] = { \
+      .name = name_, \
+      .pretty = pretty_, \
+      .icon = PUD_ICON_ ## suffix_ \
+   }
+
+#define UNIT_START_LOCATION(suffix_, name_, pretty_) \
+   [PUD_UNIT_ ## suffix_] = { \
+      .name = name_, \
+      .pretty = pretty_, \
+      .icon = PUD_ICON_CANCEL \
+   }
+
+#define UNIT_START_LOCATION(suffix_, name_, pretty_) \
+   [PUD_UNIT_ ## suffix_] = { \
+      .name = name_, \
+      .pretty = pretty_, \
+      .icon = PUD_ICON_CANCEL \
+   }
 
 static const Unit _names[] =
 {
-   [PUD_UNIT_FOOTMAN] = {
-      .name =  "footman",
-      .pretty = "Footman",
-   },
-   [PUD_UNIT_GRUNT] = {
-      .name =  "grunt",
-      .pretty = "Grunt",
-   },
-   [PUD_UNIT_PEASANT] = {
-      .name =  "peasant",
-      .pretty = "Peasant",
-   },
-   [PUD_UNIT_PEON] = {
-      .name =  "peon",
-      .pretty = "Peon",
-   },
-   [PUD_UNIT_BALLISTA] = {
-      .name =  "ballista",
-      .pretty =  "Ballista",
-   },
-   [PUD_UNIT_CATAPULT] = {
-      .name =  "catapult",
-      .pretty =  "Catapult",
-   },
-   [PUD_UNIT_KNIGHT] = {
-      .name =  "knight",
-      .pretty =  "Knight",
-   },
-   [PUD_UNIT_OGRE] = {
-      .name =  "ogre",
-      .pretty =  "Ogre",
-   },
-   [PUD_UNIT_ARCHER] = {
-      .name =  "archer",
-      .pretty =  "Archer",
-   },
-   [PUD_UNIT_AXETHROWER] = {
-      .name =  "axethrower",
-      .pretty =  "Axethrower",
-   },
-   [PUD_UNIT_MAGE] = {
-      .name =  "mage",
-      .pretty =  "Mage",
-   },
-   [PUD_UNIT_DEATH_KNIGHT] = {
-      .name =  "death_knight",
-      .pretty =  "Death Knight",
-   },
-   [PUD_UNIT_PALADIN] = {
-      .name =  "paladin",
-      .pretty =  "Paladin",
-   },
-   [PUD_UNIT_OGRE_MAGE] = {
-      .name =  "ogre_mage",
-      .pretty =  "Ogre Mage",
-   },
-   [PUD_UNIT_DWARVES] = {
-      .name =  "dwarves",
-      .pretty =  "Dwarven Demolition Squad",
-   },
-   [PUD_UNIT_GOBLIN_SAPPER] = {
-      .name =  "goblin_sapper",
-      .pretty =  "Goblin Sapper",
-   },
-   [PUD_UNIT_ATTACK_PEASANT] = {
-      .name =  "attack_peasant",
-      .pretty =  "Peasant (Attack)",
-   },
-   [PUD_UNIT_ATTACK_PEON] = {
-      .name =  "attack_peon",
-      .pretty =  "Peon (Attack)",
-   },
-   [PUD_UNIT_RANGER] = {
-      .name =  "ranger",
-      .pretty =  "Elven Ranger",
-   },
-   [PUD_UNIT_BERSERKER] = {
-      .name =  "berserker",
-      .pretty =  "Berserker",
-   },
-   [PUD_UNIT_ALLERIA] = {
-      .name =  "alleria",
-      .pretty =  "Alleria",
-   },
-   [PUD_UNIT_TERON_GOREFIEND] = {
-      .name =  "teron_gorefiend",
-      .pretty =  "Teron Gorefiend",
-   },
-   [PUD_UNIT_KURDRAN_AND_SKY_REE] = {
-      .name =  "kurdran_and_sky_ree",
-      .pretty =  "Kurdran and Sky'ree",
-   },
-   [PUD_UNIT_DENTARG] = {
-      .name =  "dentarg",
-      .pretty =  "Dentarg",
-   },
-   [PUD_UNIT_KHADGAR] = {
-      .name =  "khadgar",
-      .pretty =  "Khadgar",
-   },
-   [PUD_UNIT_GROM_HELLSCREAM] = {
-      .name =  "grom_hellscream",
-      .pretty =  "Grom Hellscream",
-   },
-   [PUD_UNIT_HUMAN_TANKER] = {
-      .name =  "human_tanker",
-      .pretty =  "Human Tanker",
-   },
-   [PUD_UNIT_ORC_TANKER] = {
-      .name =  "orc_tanker",
-      .pretty =  "Orc Tanker",
-   },
-   [PUD_UNIT_HUMAN_TRANSPORT] = {
-      .name =  "human_transport",
-      .pretty = "Human Transport",
-   },
-   [PUD_UNIT_ORC_TRANSPORT] = {
-      .name =  "orc_transport",
-      .pretty =  "Orc Transport",
-   },
-   [PUD_UNIT_ELVEN_DESTROYER] = {
-      .name =  "elven_destroyer",
-      .pretty =  "Elven Destroyer",
-   },
-   [PUD_UNIT_TROLL_DESTROYER] = {
-      .name =  "troll_destroyer",
-      .pretty =  "Troll Destroyer",
-   },
-   [PUD_UNIT_BATTLESHIP] = {
-      .name =  "battleship",
-      .pretty =  "Battleship",
-   },
-   [PUD_UNIT_JUGGERNAUGHT] = {
-      .name =  "juggernaught",
-      .pretty =  "Juggernaught",
-   },
-   [PUD_UNIT_DEATHWING] = {
-      .name =  "deathwing",
-      .pretty =  "Deathwing",
-   },
-   [PUD_UNIT_GNOMISH_SUBMARINE] = {
-      .name =  "gnomish_submarine",
-      .pretty =  "Gnomish Submarine",
-   },
-   [PUD_UNIT_GIANT_TURTLE] = {
-      .name =  "giant_turtle",
-      .pretty =  "Giant Turtle",
-   },
-   [PUD_UNIT_GNOMISH_FLYING_MACHINE] = {
-      .name =  "gnomish_flying_machine",
-      .pretty =  "Gnomish Flying Machine",
-   },
-   [PUD_UNIT_GOBLIN_ZEPPLIN] = {
-      .name =  "goblin_zepplin",
-      .pretty =  "Goblin Zepplin",
-   },
-   [PUD_UNIT_GRYPHON_RIDER] = {
-      .name =  "gryphon_rider",
-      .pretty =  "Gryphon Rider",
-   },
-   [PUD_UNIT_DRAGON] = {
-      .name =  "dragon",
-      .pretty =  "Dragon",
-   },
-   [PUD_UNIT_TURALYON] = {
-      .name =  "turalyon",
-      .pretty =  "Turalyon",
-   },
-   [PUD_UNIT_EYE_OF_KILROGG] = {
-      .name =  "eye_of_kilrogg",
-      .pretty =  "Eye of Kilrogg",
-   },
-   [PUD_UNIT_DANATH] = {
-      .name =  "danath",
-      .pretty =  "Danath",
-   },
-   [PUD_UNIT_KARGATH_BLADEFIST] = {
-      .name =  "kargath_bladefist",
-      .pretty =  "Kargath Bladefist",
-   },
-   [PUD_UNIT_CHO_GALL] = {
-      .name =  "cho_gall",
-      .pretty =  "Cho'gall",
-   },
-   [PUD_UNIT_LOTHAR] = {
-      .name =  "lothar",
-      .pretty =  "Lothar",
-   },
-   [PUD_UNIT_GUL_DAN] = {
-      .name =  "gul_dan",
-      .pretty =  "Gul'dan",
-   },
-   [PUD_UNIT_UTHER_LIGHTBRINGER] = {
-      .name =  "uther_lightbringer",
-      .pretty =  "Uther Lightbringer",
-   },
-   [PUD_UNIT_ZUL_JIN] = {
-      .name =  "zul_jin",
-      .pretty =  "Zul'jin",
-   },
-   [PUD_UNIT_SKELETON] = {
-      .name =  "skeleton",
-      .pretty =  "Skeleton",
-   },
-   [PUD_UNIT_DAEMON] = {
-      .name =  "daemon",
-      .pretty =  "Daemon",
-   },
-   [PUD_UNIT_CRITTER] = {
-      .name =  "critter",
-      .pretty =  "Critter",
-   },
-   [PUD_UNIT_FARM] = {
-      .name =  "farm",
-      .pretty =  "Farm",
-   },
-   [PUD_UNIT_PIG_FARM] = {
-      .name =  "pig_farm",
-      .pretty =  "Pig Farm",
-   },
-   [PUD_UNIT_HUMAN_BARRACKS] = {
-      .name =  "human_barracks",
-      .pretty =  "Human Barracks",
-   },
-   [PUD_UNIT_ORC_BARRACKS] = {
-      .name =  "orc_barracks",
-      .pretty =  "Orc Barracks",
-   },
-   [PUD_UNIT_CHURCH] = {
-      .name =  "church",
-      .pretty =  "Church",
-   },
-   [PUD_UNIT_ALTAR_OF_STORMS] = {
-      .name =  "altar_of_storms",
-      .pretty =  "Altar of Storms",
-   },
-   [PUD_UNIT_HUMAN_SCOUT_TOWER] = {
-      .name =  "human_scout_tower",
-      .pretty =  "Human Scout_Tower",
-   },
-   [PUD_UNIT_ORC_SCOUT_TOWER] = {
-      .name =  "orc_scout_tower",
-      .pretty =  "Orc Scout Tower",
-   },
-   [PUD_UNIT_STABLES] = {
-      .name =  "stables",
-      .pretty =  "Stables",
-   },
-   [PUD_UNIT_OGRE_MOUND] = {
-      .name =  "ogre_mound",
-      .pretty =  "Ogre Mound",
-   },
-   [PUD_UNIT_GNOMISH_INVENTOR] = {
-      .name =  "gnomish_inventor",
-      .pretty =  "Gnomish Inventor",
-   },
-   [PUD_UNIT_GOBLIN_ALCHEMIST] = {
-      .name =  "goblin_alchemist",
-      .pretty =  "Goblin Alchemist",
-   },
-   [PUD_UNIT_GRYPHON_AVIARY] = {
-      .name =  "gryphon_aviary",
-      .pretty =  "Gryphon Aviary",
-   },
-   [PUD_UNIT_DRAGON_ROOST] = {
-      .name =  "dragon_roost",
-      .pretty =  "Dragon Roost",
-   },
-   [PUD_UNIT_HUMAN_SHIPYARD] = {
-      .name =  "human_shipyard",
-      .pretty =  "Human Shipyard",
-   },
-   [PUD_UNIT_ORC_SHIPYARD] = {
-      .name =  "orc_shipyard",
-      .pretty =  "Orc Shipyard",
-   },
-   [PUD_UNIT_TOWN_HALL] = {
-      .name =  "town_hall",
-      .pretty =  "Town Hall",
-   },
-   [PUD_UNIT_GREAT_HALL] = {
-      .name =  "great_hall",
-      .pretty =  "Great Hall",
-   },
-   [PUD_UNIT_ELVEN_LUMBER_MILL] = {
-      .name =  "elven_lumber_mill",
-      .pretty =  "Elven Lumber Mill",
-   },
-   [PUD_UNIT_TROLL_LUMBER_MILL] = {
-      .name =  "troll_lumber_mill",
-      .pretty =  "Troll Lumber Mill",
-   },
-   [PUD_UNIT_HUMAN_FOUNDRY] = {
-      .name =  "human_foundry",
-      .pretty =  "Human Foundry",
-   },
-   [PUD_UNIT_ORC_FOUNDRY] = {
-      .name =  "orc_foundry",
-      .pretty =  "Orc Foundry",
-   },
-   [PUD_UNIT_MAGE_TOWER] = {
-      .name =  "mage_tower",
-      .pretty =  "Mage Tower",
-   },
-   [PUD_UNIT_TEMPLE_OF_THE_DAMNED] = {
-      .name =  "temple_of_the_damned",
-      .pretty =  "Temple of the Damned",
-   },
-   [PUD_UNIT_HUMAN_BLACKSMITH] = {
-      .name =  "human_blacksmith",
-      .pretty =  "Human Blacksmith",
-   },
-   [PUD_UNIT_ORC_BLACKSMITH] = {
-      .name =  "orc_blacksmith",
-      .pretty =  "Orc Blacksmith",
-   },
-   [PUD_UNIT_HUMAN_REFINERY] = {
-      .name =  "human_refinery",
-      .pretty =  "Human Refinery",
-   },
-   [PUD_UNIT_ORC_REFINERY] = {
-      .name =  "orc_refinery",
-      .pretty =  "Orc Refinery",
-   },
-   [PUD_UNIT_HUMAN_OIL_WELL] = {
-      .name =  "human_oil_well",
-      .pretty =  "Human Oil Well",
-   },
-   [PUD_UNIT_ORC_OIL_WELL] = {
-      .name =  "orc_oil_well",
-      .pretty =  "Orc Oil Well",
-   },
-   [PUD_UNIT_KEEP] = {
-      .name =  "keep",
-      .pretty =  "Keep",
-   },
-   [PUD_UNIT_STRONGHOLD] = {
-      .name =  "stronghold",
-      .pretty = "Stronghold",
-   },
-   [PUD_UNIT_CASTLE] = {
-      .name =  "castle",
-      .pretty = "Castle",
-   },
-   [PUD_UNIT_FORTRESS] = {
-      .name =  "fortress",
-      .pretty = "Fortress",
-   },
-   [PUD_UNIT_GOLD_MINE] = {
-      .name =  "gold_mine",
-      .pretty = "Gold Mine",
-   },
-   [PUD_UNIT_OIL_PATCH] = {
-      .name =  "oil_patch",
-      .pretty = "Oil Patch",
-   },
-   [PUD_UNIT_HUMAN_START] = {
-      .name =  "human_start",
-      .pretty = "Human Start Location",
-   },
-   [PUD_UNIT_ORC_START] = {
-      .name =  "orc_start",
-      .pretty = "Orc Start Location",
-   },
-   [PUD_UNIT_HUMAN_GUARD_TOWER] = {
-      .name =  "human_guard_tower",
-      .pretty = "Human Guard Tower",
-   },
-   [PUD_UNIT_ORC_GUARD_TOWER] = {
-      .name =  "orc_guard_tower",
-      .pretty = "Orc Guard Tower",
-   },
-   [PUD_UNIT_HUMAN_CANNON_TOWER] = {
-      .name =  "human_cannon_tower",
-      .pretty = "Human Cannon Tower",
-   },
-   [PUD_UNIT_ORC_CANNON_TOWER] = {
-      .name =  "orc_cannon_tower",
-      .pretty = "Orc Cannon Tower",
-   },
-   [PUD_UNIT_CIRCLE_OF_POWER] = {
-      .name =  "circle_of_power",
-      .pretty = "Circle of Power",
-   },
-   [PUD_UNIT_DARK_PORTAL] = {
-      .name =  "dark_portal",
-      .pretty = "Dark Portal",
-   },
-   [PUD_UNIT_RUNESTONE] = {
-      .name =  "runestone",
-      .pretty = "Runestone",
-   },
-   [PUD_UNIT_HUMAN_WALL] = {
-      .name =  "human_wall",
-      .pretty = "Human Wall",
-   },
-   [PUD_UNIT_ORC_WALL] = {
-      .name =  "orc_wall",
-      .pretty = "Orc Wall",
-   },
-   [PUD_UNIT_CRITTER_SHEEP] = {
-      .name =  "sheep",
-      .pretty = "Sheep",
-   },
-   [PUD_UNIT_CRITTER_PIG] = {
-      .name =  "pig",
-      .pretty = "Pid",
-   },
-   [PUD_UNIT_CRITTER_SEAL] = {
-      .name =  "seal",
-      .pretty = "Seal",
-   },
-   [PUD_UNIT_CRITTER_RED_PIG] = {
-      .name =  "red_pig",
-      .pretty = "Red Pig",
-   },
+   UNIT(FOOTMAN, "footman", "Footman"),
+   UNIT(GRUNT, "grunt", "Grunt"),
+   UNIT(PEASANT, "peasant", "Peasant"),
+   UNIT(PEON, "peon", "Peon"),
+   UNIT(BALLISTA, "ballista", "Ballista"),
+   UNIT(CATAPULT, "catapult", "Catapult"),
+   UNIT(KNIGHT, "knight", "Knight"),
+   UNIT(OGRE, "ogre", "Ogre"),
+   UNIT(ARCHER, "archer", "Archer"),
+   UNIT(AXETHROWER, "axethrower", "Axethrower"),
+   UNIT(MAGE, "mage", "Mage"),
+   UNIT(DEATH_KNIGHT, "death_knight", "Death Knight"),
+   UNIT(PALADIN, "paladin", "Paladin"),
+   UNIT(OGRE_MAGE, "ogre_mage", "Ogre Mage"),
+   UNIT(DWARVES, "dwarves", "Dwarven Demolition Squad"),
+   UNIT(GOBLIN_SAPPER, "goblin_sapper", "Goblin Sapper"),
+   UNIT(RANGER, "ranger", "Elven Ranger"),
+   UNIT(BERSERKER, "berserker", "Berserker"),
+   UNIT(ALLERIA, "alleria", "Alleria"),
+   UNIT(TERON_GOREFIEND, "teron_gorefiend", "Teron Gorefiend"),
+   UNIT(KURDRAN_AND_SKY_REE, "kurdran_and_sky_ree", "Kurdran and Sky'ree"),
+   UNIT(DENTARG, "dentarg", "Dentarg"),
+   UNIT(KHADGAR, "khadgar", "Khadgar"),
+   UNIT(GROM_HELLSCREAM, "grom_hellscream", "Grom Hellscream"),
+   UNIT(HUMAN_TANKER, "human_tanker", "Human Tanker"),
+   UNIT(ORC_TANKER, "orc_tanker", "Orc Tanker"),
+   UNIT(HUMAN_TRANSPORT, "human_transport", "Human Transport"),
+   UNIT(ORC_TRANSPORT, "orc_transport", "Orc Transport"),
+   UNIT(ELVEN_DESTROYER, "elven_destroyer", "Elven Destroyer"),
+   UNIT(TROLL_DESTROYER, "troll_destroyer", "Troll Destroyer"),
+   UNIT(BATTLESHIP, "battleship", "Battleship"),
+   UNIT(JUGGERNAUGHT, "juggernaught", "Juggernaught"),
+   UNIT(DEATHWING, "deathwing", "Deathwing"),
+   UNIT(GNOMISH_SUBMARINE, "gnomish_submarine", "Gnomish Submarine"),
+   UNIT(GIANT_TURTLE, "giant_turtle", "Giant Turtle"),
+   UNIT(GNOMISH_FLYING_MACHINE, "gnomish_flying_machine", "Gnomish Flying Machine"),
+   UNIT(GOBLIN_ZEPPLIN, "goblin_zepplin", "Goblin Zepplin"),
+   UNIT(GRYPHON_RIDER, "gryphon_rider", "Gryphon Rider"),
+   UNIT(DRAGON, "dragon", "Dragon"),
+   UNIT(TURALYON, "turalyon", "Turalyon"),
+   UNIT(EYE_OF_KILROGG, "eye_of_kilrogg", "Eye of Kilrogg"),
+   UNIT(DANATH, "danath", "Danath"),
+   UNIT(KARGATH_BLADEFIST, "kargath_bladefist", "Kargath Bladefist"),
+   UNIT(CHO_GALL, "cho_gall", "Cho'gall"),
+   UNIT(LOTHAR, "lothar", "Lothar"),
+   UNIT(GUL_DAN, "gul_dan", "Gul'dan"),
+   UNIT(UTHER_LIGHTBRINGER, "uther_lightbringer", "Uther Lightbringer"),
+   UNIT(ZUL_JIN, "zul_jin", "Zul'jin"),
+   UNIT(SKELETON, "skeleton", "Skeleton"),
+   UNIT(DAEMON, "daemon", "Daemon"),
+   UNIT(CRITTER, "critter", "Critter"),
+   UNIT(FARM, "farm", "Farm"),
+   UNIT(PIG_FARM, "pig_farm", "Pig Farm"),
+   UNIT(HUMAN_BARRACKS, "human_barracks", "Human Barracks"),
+   UNIT(ORC_BARRACKS, "orc_barracks", "Orc Barracks"),
+   UNIT(CHURCH, "church", "Church"),
+   UNIT(ALTAR_OF_STORMS, "altar_of_storms", "Altar of Storms"),
+   UNIT(HUMAN_SCOUT_TOWER, "human_scout_tower", "Human Scout_Tower"),
+   UNIT(ORC_SCOUT_TOWER, "orc_scout_tower", "Orc Scout Tower"),
+   UNIT(STABLES, "stables", "Stables"),
+   UNIT(OGRE_MOUND, "ogre_mound", "Ogre Mound"),
+   UNIT(GNOMISH_INVENTOR, "gnomish_inventor", "Gnomish Inventor"),
+   UNIT(GOBLIN_ALCHEMIST, "goblin_alchemist", "Goblin Alchemist"),
+   UNIT(GRYPHON_AVIARY, "gryphon_aviary", "Gryphon Aviary"),
+   UNIT(DRAGON_ROOST, "dragon_roost", "Dragon Roost"),
+   UNIT(HUMAN_SHIPYARD, "human_shipyard", "Human Shipyard"),
+   UNIT(ORC_SHIPYARD, "orc_shipyard", "Orc Shipyard"),
+   UNIT(TOWN_HALL, "town_hall", "Town Hall"),
+   UNIT(GREAT_HALL, "great_hall", "Great Hall"),
+   UNIT(ELVEN_LUMBER_MILL, "elven_lumber_mill", "Elven Lumber Mill"),
+   UNIT(TROLL_LUMBER_MILL, "troll_lumber_mill", "Troll Lumber Mill"),
+   UNIT(HUMAN_FOUNDRY, "human_foundry", "Human Foundry"),
+   UNIT(ORC_FOUNDRY, "orc_foundry", "Orc Foundry"),
+   UNIT(MAGE_TOWER, "mage_tower", "Mage Tower"),
+   UNIT(TEMPLE_OF_THE_DAMNED, "temple_of_the_damned", "Temple of the Damned"),
+   UNIT(HUMAN_BLACKSMITH, "human_blacksmith", "Human Blacksmith"),
+   UNIT(ORC_BLACKSMITH, "orc_blacksmith", "Orc Blacksmith"),
+   UNIT(HUMAN_REFINERY, "human_refinery", "Human Refinery"),
+   UNIT(ORC_REFINERY, "orc_refinery", "Orc Refinery"),
+   UNIT(HUMAN_OIL_WELL, "human_oil_well", "Human Oil Well"),
+   UNIT(ORC_OIL_WELL, "orc_oil_well", "Orc Oil Well"),
+   UNIT(KEEP, "keep", "Keep"),
+   UNIT(STRONGHOLD, "stronghold", "Stronghold"),
+   UNIT(CASTLE, "castle", "Castle"),
+   UNIT(FORTRESS, "fortress", "Fortress"),
+   UNIT(GOLD_MINE, "gold_mine", "Gold Mine"),
+   UNIT(OIL_PATCH, "oil_patch", "Oil Patch"),
+   UNIT_START_LOCATION(HUMAN_START, "human_start", "Human Start Location"),
+   UNIT_START_LOCATION(ORC_START, "orc_start", "Orc Start Location"),
+   UNIT(HUMAN_GUARD_TOWER, "human_guard_tower", "Human Guard Tower"),
+   UNIT(ORC_GUARD_TOWER, "orc_guard_tower", "Orc Guard Tower"),
+   UNIT(HUMAN_CANNON_TOWER, "human_cannon_tower", "Human Cannon Tower"),
+   UNIT(ORC_CANNON_TOWER, "orc_cannon_tower", "Orc Cannon Tower"),
+   UNIT(CIRCLE_OF_POWER, "circle_of_power", "Circle of Power"),
+   UNIT(DARK_PORTAL, "dark_portal", "Dark Portal"),
+   UNIT(RUNESTONE, "runestone", "Runestone"),
+   UNIT(HUMAN_WALL, "human_wall", "Human Wall"),
+   UNIT(ORC_WALL, "orc_wall", "Orc Wall"),
+   UNIT(CRITTER_SHEEP, "sheep", "Sheep"),
+   UNIT(CRITTER_PIG, "pig", "Pid"),
+   UNIT(CRITTER_SEAL, "seal", "Seal"),
+   UNIT(CRITTER_RED_PIG, "red_pig", "Red Pig"),
 };
 
 const char *

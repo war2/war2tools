@@ -264,3 +264,11 @@ pud_unit2str(Pud_Unit unit,
      return NULL;
    return (pretty) ? _names[unit].pretty : _names[unit].name;
 }
+
+Pud_Icon
+pud_unit_icon_get(Pud_Unit unit)
+{
+   if ((unit < PUD_UNIT_FOOTMAN) && (unit > PUD_UNIT_CRITTER_RED_PIG))
+     return PUD_ICON_CANCEL;
+   return _names[unit].icon;
+}

@@ -229,6 +229,8 @@ typedef enum
    PUD_ICON_KHADGAR                              = 193,
    PUD_ICON_DENTARG                              = 194,
    PUD_ICON_TURALYON                             = 195,
+   PUD_ICON_ATTACK_PEON                          = PUD_ICON_PEON,
+   PUD_ICON_ATTACK_PEASANT                       = PUD_ICON_PEASANT,
 } Pud_Icon;
 
 typedef enum

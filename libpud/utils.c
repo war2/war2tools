@@ -166,6 +166,8 @@ static const Unit _names[] =
    UNIT(OGRE_MAGE, "ogre_mage", "Ogre Mage"),
    UNIT(DWARVES, "dwarves", "Dwarven Demolition Squad"),
    UNIT(GOBLIN_SAPPER, "goblin_sapper", "Goblin Sapper"),
+   UNIT(ATTACK_PEASANT, "attack_peasant", "Peasant (Attack)"),
+   UNIT(ATTACK_PEON, "attack_peon", "Peon (Attack)"),
    UNIT(RANGER, "ranger", "Elven Ranger"),
    UNIT(BERSERKER, "berserker", "Berserker"),
    UNIT(ALLERIA, "alleria", "Alleria"),

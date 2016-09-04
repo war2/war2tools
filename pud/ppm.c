@@ -14,7 +14,7 @@ pud_minimap_to_ppm(Pud        *pud,
    PUD_SANITY_CHECK(pud, PUD_OPEN_MODE_R, PUD_FALSE);
 
    FILE *f;
-   int i, size;
+   unsigned int i, size;
    unsigned char *map;
 
    map = pud_minimap_bitmap_generate(pud, &size);

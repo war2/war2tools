@@ -8,8 +8,8 @@
 #include "pud_private.h"
 
 unsigned char *
-pud_minimap_bitmap_generate(Pud *pud,
-                            int *size_ret)
+pud_minimap_bitmap_generate(Pud          *pud,
+                            unsigned int *size_ret)
 {
    PUD_SANITY_CHECK(pud, PUD_OPEN_MODE_R, NULL);
 
@@ -18,7 +18,7 @@ pud_minimap_bitmap_generate(Pud *pud,
    Pud_Color c;
    unsigned int i, j, k;
    int idx;
-   int size;
+   unsigned int size;
    uint16_t w, h;
    const Pud_Era era = pud->era;
 

@@ -612,7 +612,7 @@ void pud_tag_generate(Pud *pud);
 void *pud_mmap(const char *file, size_t *size_ret);
 void pud_munmap(void *map, size_t size);
 
-unsigned char *pud_minimap_bitmap_generate(Pud *pud, int *size_ret);
+unsigned char *pud_minimap_bitmap_generate(Pud *pud, unsigned int *size_ret);
 
 Pud_Bool pud_minimap_to_ppm(Pud *pud, const char *file);
 

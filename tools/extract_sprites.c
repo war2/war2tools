@@ -188,7 +188,9 @@ _building_cb(const Pud_Color               *sprite,
    ch = cairo_image_surface_get_height(img);
 
 
-   snprintf(key, sizeof(key), "%s", pud_unit2str(ud->object, PUD_FALSE));
+   snprintf(key, sizeof(key), "%s/%s",
+            pud_era2str(ud->era),
+            pud_unit2str(ud->object, PUD_FALSE));
    bytes = eet_data_image_write(_ef, key, data, cw, ch, 1, compress, 100, 0);
    if (bytes <= 0)
      fprintf(stderr, "*** Failed to save key [%s]\n", key);

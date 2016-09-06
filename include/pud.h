@@ -454,6 +454,42 @@ typedef enum
 
 typedef struct _Pud Pud;
 typedef struct _Pud_Unit_Data Pud_Unit_Data;
+typedef struct _Pud_Unit_Characteristics Pud_Unit_Characteristics;
+
+struct _Pud_Unit_Characteristics
+{
+   uint32_t     sight;
+   uint16_t     hp;
+   uint8_t      build_time;
+   uint8_t      gold_cost;
+   uint8_t      lumber_cost;
+   uint8_t      oil_cost;
+   uint8_t      range;
+   uint8_t      computer_react_range;
+   uint8_t      human_react_range;
+   uint8_t      armor;
+   uint8_t      basic_damage;
+   uint8_t      piercing_damage;
+   uint8_t      decay_rate;
+   uint8_t      annoy;
+   uint8_t      has_magic;
+   uint8_t      weapons_upgradable;
+   uint8_t      armor_upgradable;
+
+   uint8_t      missile_weapon;
+   uint8_t      type;
+   uint8_t      mouse_right_btn;
+   uint8_t      rect_sel;
+   uint8_t      priority;
+   uint16_t     point_value;
+   uint8_t      can_target;
+   uint32_t     flags;
+   uint16_t     overlap_frames;
+   uint16_t     size_w;
+   uint16_t     size_h;
+   uint16_t     box_w;
+   uint16_t     box_h;
+};
 
 struct _Pud_Unit_Data
 {
@@ -539,39 +575,7 @@ struct _Pud
 
    unsigned int units_count;
 
-   struct _unit_data {
-      uint32_t     sight;
-      uint16_t     hp;
-      uint8_t      build_time;
-      uint8_t      gold_cost;
-      uint8_t      lumber_cost;
-      uint8_t      oil_cost;
-      uint8_t      range;
-      uint8_t      computer_react_range;
-      uint8_t      human_react_range;
-      uint8_t      armor;
-      uint8_t      basic_damage;
-      uint8_t      piercing_damage;
-      uint8_t      decay_rate;
-      uint8_t      annoy;
-      uint8_t      has_magic;
-      uint8_t      weapons_upgradable;
-      uint8_t      armor_upgradable;
-
-      uint8_t      missile_weapon;
-      uint8_t      type;
-      uint8_t      mouse_right_btn;
-      uint8_t      rect_sel;
-      uint8_t      priority;
-      uint16_t     point_value;
-      uint8_t      can_target;
-      uint32_t     flags;
-      uint16_t     overlap_frames;
-      uint16_t     size_w;
-      uint16_t     size_h;
-      uint16_t     box_w;
-      uint16_t     box_h;
-   } unit_data[110]; /* [defaults] */
+   Pud_Unit_Characteristics unit_data[110]; /* [defaults] */
 
    uint16_t unkwown[508];
 

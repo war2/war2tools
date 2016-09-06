@@ -80,7 +80,7 @@ main(int    argc,
      {
       case UDTA:
 
-         W("struct _unit_data udata[110] = {");
+         W("const Pud_Unit_Characteristics udata[110] = {");
          for (i = 0; i < 110; i++)
            {
               W("  [%i] = {", i);

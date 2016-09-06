@@ -595,7 +595,7 @@ _alow_defaults_set(Pud *pud)
 static void
 _udta_defaults_set(Pud *pud)
 {
-   struct _unit_data udata[110] = {
+   const Pud_Unit_Characteristics udata[110] = {
       [0] = {
          .overlap_frames = 0,
          .sight = 4,

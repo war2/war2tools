@@ -8,8 +8,9 @@
 #include "pud_private.h"
 
 unsigned char *
-pud_minimap_bitmap_generate(Pud          *pud,
-                            unsigned int *size_ret)
+pud_minimap_bitmap_generate(Pud              *pud,
+                            unsigned int     *size_ret,
+                            Pud_Pixel_Format  pfmt)
 {
    PUD_SANITY_CHECK(pud, PUD_OPEN_MODE_R, NULL);
 
@@ -21,6 +22,14 @@ pud_minimap_bitmap_generate(Pud          *pud,
    unsigned int size;
    uint16_t w, h;
    const Pud_Era era = pud->era;
+   const unsigned int delta[2][4] = {
+      [PUD_PIXEL_FORMAT_RGBA] = {
+         0, 1, 2, 3
+      },
+      [PUD_PIXEL_FORMAT_ARGB] = {
+         2, 1, 0, 3
+      }
+   };
 
    size = pud->tiles * 4;
    map = malloc(size * sizeof(unsigned char));
@@ -30,10 +39,10 @@ pud_minimap_bitmap_generate(Pud          *pud,
      {
         c = pud_tile_to_color(era, pud->tiles_map[i]);
 
-        map[idx + 0] = c.r;
-        map[idx + 1] = c.g;
-        map[idx + 2] = c.b;
-        map[idx + 3] = c.a;
+        map[idx + delta[pfmt][0]] = c.r;
+        map[idx + delta[pfmt][1]] = c.g;
+        map[idx + delta[pfmt][2]] = c.b;
+        map[idx + delta[pfmt][3]] = c.a;
      }
 
    for (i = 0; i < pud->units_count; i++)
@@ -50,10 +59,10 @@ pud_minimap_bitmap_generate(Pud          *pud,
                {
                   idx = (((u->y + k)* pud->map_w) + (u->x + j)) * 4;
 
-                  map[idx + 0] = c.r;
-                  map[idx + 1] = c.g;
-                  map[idx + 2] = c.b;
-                  map[idx + 3] = c.a;
+                  map[idx + delta[pfmt][0]] = c.r;
+                  map[idx + delta[pfmt][1]] = c.g;
+                  map[idx + delta[pfmt][2]] = c.b;
+                  map[idx + delta[pfmt][3]] = c.a;
                }
           }
      }

@@ -86,6 +86,11 @@ typedef enum
    PUD_DIMENSIONS_128_128 /**< 128x128 map */
 } Pud_Dimensions;
 
+typedef enum
+{
+   PUD_PIXEL_FORMAT_RGBA,
+   PUD_PIXEL_FORMAT_ARGB,
+} Pud_Pixel_Format;
 
 /**
  * @typedef Pud_Player
@@ -658,7 +663,7 @@ void pud_tag_generate(Pud *pud);
 void *pud_mmap(const char *file, size_t *size_ret);
 void pud_munmap(void *map, size_t size);
 
-unsigned char *pud_minimap_bitmap_generate(Pud *pud, unsigned int *size_ret);
+unsigned char *pud_minimap_bitmap_generate(Pud *pud, unsigned int *size_ret, Pud_Pixel_Format pfmt);
 
 Pud_Bool pud_minimap_to_ppm(Pud *pud, const char *file);
 

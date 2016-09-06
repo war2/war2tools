@@ -17,7 +17,7 @@ pud_minimap_to_ppm(Pud        *pud,
    unsigned int i, size;
    unsigned char *map;
 
-   map = pud_minimap_bitmap_generate(pud, &size);
+   map = pud_minimap_bitmap_generate(pud, &size, PUD_PIXEL_FORMAT_RGBA);
    if (!map) DIE_RETURN(PUD_FALSE, "Failed to generate bitmap");
 
    f = fopen(file, "w");

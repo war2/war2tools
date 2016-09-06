@@ -92,32 +92,22 @@ pud_dimensions_to_size(Pud_Dimensions  dim,
 const char *
 pud_color2str(Pud_Player color)
 {
-   switch (color)
-   {
-      case PUD_PLAYER_RED   : return "red";
-      case PUD_PLAYER_BLUE  : return "blue";
-      case PUD_PLAYER_GREEN : return "green";
-      case PUD_PLAYER_VIOLET: return "violet";
-      case PUD_PLAYER_ORANGE: return "orange";
-      case PUD_PLAYER_BLACK : return "black";
-      case PUD_PLAYER_WHITE : return "white";
-      case PUD_PLAYER_YELLOW: return "yellow";
-      default:                return "<INVALID COLOR>";
-   }
+   const char *colors[] = {
+      "red", "blue", "green", "violet",
+      "orange", "black", "white", "yellow"
+   };
+
+   return ((unsigned)color > PUD_PLAYER_YELLOW) ? NULL : colors[color];
 }
 
 const char *
 pud_era2str(Pud_Era era)
 {
-   switch (era)
-   {
-      case PUD_ERA_FOREST:    return "Forest";
-      case PUD_ERA_WINTER:    return "Winter";
-      case PUD_ERA_WASTELAND: return "Wasteland";
-      case PUD_ERA_SWAMP:     return "Swamp";
-   }
+   const char *eras[] = {
+      "Forest", "Winter", "Wasteland", "Swamp"
+   };
 
-   return "<INVALID ERA>";
+   return ((unsigned)era > PUD_ERA_SWAMP) ? NULL : eras[era];
 }
 
 typedef struct

@@ -49,6 +49,7 @@ add_subdirectory(pc)
 add_subdirectory(pud)
 add_subdirectory(include)
 add_subdirectory(tools)
+add_subdirectory(doc)
 add_subdirectory(quicklook)
 
 if (CHECK_FOUND)

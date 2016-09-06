@@ -34,4 +34,3 @@ install(
    TARGETS libwar2
    LIBRARY DESTINATION lib
 )
-

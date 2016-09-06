@@ -145,4 +145,3 @@ ppm_save(const char *file,
 
    return 0;
 }
-

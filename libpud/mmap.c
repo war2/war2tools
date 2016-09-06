@@ -77,5 +77,3 @@ pud_munmap(void   *map,
            __func__);
 #endif
 }
-
-

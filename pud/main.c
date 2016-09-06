@@ -422,4 +422,3 @@ end:
    war2_close(w2);
    return ret_status;
 }
-

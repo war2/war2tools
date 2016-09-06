@@ -31,4 +31,3 @@ war2_palette_convert(unsigned char *ptr,
         palette[i].a = 0xff;
      }
 }
-

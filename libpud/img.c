@@ -62,4 +62,3 @@ pud_minimap_bitmap_generate(Pud          *pud,
 
    return map;
 }
-

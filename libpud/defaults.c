@@ -4120,4 +4120,3 @@ _udta_defaults_set(Pud *pud)
 
    memcpy(&(pud->unit_data[0]), &(udata[0]), sizeof(udata));
 }
-

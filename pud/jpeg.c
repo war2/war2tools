@@ -28,4 +28,3 @@ pud_minimap_to_jpeg(Pud        *pud,
 
    return chk;
 }
-

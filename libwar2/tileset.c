@@ -214,4 +214,3 @@ war2_tileset_descriptor_free(War2_Tileset_Descriptor *ts)
 {
    free(ts);
 }
-

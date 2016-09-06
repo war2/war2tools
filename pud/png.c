@@ -29,4 +29,3 @@ pud_minimap_to_png(Pud        *pud,
 
    return chk;
 }
-

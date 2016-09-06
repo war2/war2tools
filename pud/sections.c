@@ -60,4 +60,3 @@ sections_list(Pud  *pud,
    fprintf(stream, "Total: %i sections\n", verified);
    return (verified > 0);
 }
-

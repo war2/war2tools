@@ -78,4 +78,3 @@ war2_jpeg_write(const char          *file,
    return PUD_FALSE;
 #endif
 }
-

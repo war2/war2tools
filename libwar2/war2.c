@@ -220,5 +220,3 @@ war2_verbosity_set(War2_Data *w2,
 {
    if (w2) w2->verbose = level;
 }
-
-

@@ -953,4 +953,3 @@ pud_unit_side_get(Pud_Unit unit)
 
    return (unit % 2 == 0) ? PUD_SIDE_HUMAN : PUD_SIDE_ORC;
 }
-

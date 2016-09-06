@@ -223,4 +223,3 @@ pud_print(Pud  *pud,
         fprintf(stream, "\n");
      }
 }
-

@@ -21,4 +21,3 @@ war2_ppm_write(const char          *file,
 
    return PUD_TRUE;
 }
-

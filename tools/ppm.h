@@ -21,4 +21,3 @@ Col *ppm_parse(const char *file, int *w_ret, int *h_ret);
 int ppm_save(const char *file, const Col *data, int w, int h);
 
 #endif /* ! _PPM_H_ */
-

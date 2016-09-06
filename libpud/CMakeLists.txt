@@ -35,4 +35,3 @@ install(
    TARGETS libpud
    LIBRARY DESTINATION lib
 )
-

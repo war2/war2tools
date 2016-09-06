@@ -1,6 +1,11 @@
-/*
- * pud.h
- * libpud
+/**
+ * @file pud.h
+ * @brief Warcraft II PUDs manipulation library
+ *
+ * Pud provides ways to manipulate PUD files.
+ * PUD files are Warcraft II custom map files, that
+ * can be loaded into Warcraft II and distributed among
+ * players .
  *
  * Copyright (c) 2014 -2016 Jean Guyomarc'h
  */
@@ -16,58 +21,88 @@ extern "C" {
 #include <stdlib.h>
 #include <string.h>
 
+/**
+ * @typedef Pud_Bool
+ * Boolean type that can take two values among
+ * #PUD_TRUE and #PUD_FALSE
+ */
 typedef unsigned char Pud_Bool;
+
+/**
+ * @def PUD_TRUE
+ * Boolean value for TRUE (1)
+ */
 #define PUD_TRUE  ((Pud_Bool)(1))
+
+/**
+ * @def PUD_FALSE
+ * Boolean value for FALSE (0)
+ */
 #define PUD_FALSE ((Pud_Bool)(0))
 
 #define PUD_VERSION_TOD  0x0011
 #define PUD_VERSION_BDP  0x0013
 
+
+/**
+ * @typedef Pud_Section
+ * Type that represents a PUD section
+ */
 typedef enum
 {
-   PUD_SECTION_TYPE     = 0,
-   PUD_SECTION_VER      = 1,
-   PUD_SECTION_DESC     = 2,
-   PUD_SECTION_OWNR     = 3,
-   PUD_SECTION_ERA      = 4,
-   PUD_SECTION_ERAX     = 5,
-   PUD_SECTION_DIM      = 6,
-   PUD_SECTION_UDTA     = 7,
-   PUD_SECTION_ALOW     = 8,
-   PUD_SECTION_UGRD     = 9,
-   PUD_SECTION_SIDE     = 10,
-   PUD_SECTION_SGLD     = 11,
-   PUD_SECTION_SLBR     = 12,
-   PUD_SECTION_SOIL     = 13,
-   PUD_SECTION_AIPL     = 14,
-   PUD_SECTION_MTXM     = 15,
-   PUD_SECTION_SQM      = 16,
-   PUD_SECTION_OILM     = 17,
-   PUD_SECTION_REGM     = 18,
-   PUD_SECTION_UNIT     = 19
+   PUD_SECTION_TYPE     = 0, /**< Header section */
+   PUD_SECTION_VER      = 1, /**< Version section */
+   PUD_SECTION_DESC     = 2, /**< Pud description section */
+   PUD_SECTION_OWNR     = 3, /**< Owners section */
+   PUD_SECTION_ERA      = 4, /**< Era section */
+   PUD_SECTION_ERAX     = 5, /**< Extended era section */
+   PUD_SECTION_DIM      = 6, /**< Dimension of the pud */
+   PUD_SECTION_UDTA     = 7, /**< Units data section */
+   PUD_SECTION_ALOW     = 8, /**< Allowed section */
+   PUD_SECTION_UGRD     = 9, /**< Upgrades section */
+   PUD_SECTION_SIDE     = 10, /**< Sides section */
+   PUD_SECTION_SGLD     = 11, /**< Starting gold section */
+   PUD_SECTION_SLBR     = 12, /**< Starting lumber section */
+   PUD_SECTION_SOIL     = 13, /**< Starting oil section */
+   PUD_SECTION_AIPL     = 14, /**< AI players section */
+   PUD_SECTION_MTXM     = 15, /**< Tiles map section */
+   PUD_SECTION_SQM      = 16, /**< Movement map section */
+   PUD_SECTION_OILM     = 17, /**< Obsolete oil concentration map section */
+   PUD_SECTION_REGM     = 18, /**< Action map section */
+   PUD_SECTION_UNIT     = 19 /**< Units section */
 } Pud_Section;
 
+
+/**
+ * @typedef Pud_Dimensions
+ * Type that holds possible sizes of a PUD
+ */
 typedef enum
 {
-   PUD_DIMENSIONS_UNDEFINED = 0,
-   PUD_DIMENSIONS_32_32,
-   PUD_DIMENSIONS_64_64,
-   PUD_DIMENSIONS_96_96,
-   PUD_DIMENSIONS_128_128
+   PUD_DIMENSIONS_UNDEFINED = 0, /**< Undefined, invalid dimensions */
+   PUD_DIMENSIONS_32_32, /**< 32x32 map */
+   PUD_DIMENSIONS_64_64, /**< 64x64 map */
+   PUD_DIMENSIONS_96_96, /**< 96x96 map */
+   PUD_DIMENSIONS_128_128 /**< 128x128 map */
 } Pud_Dimensions;
 
+
+/**
+ * @typedef Pud_Player
+ * Type that holds a player ID
+ */
 typedef enum
 {
-   PUD_PLAYER_RED       = 0,
-   PUD_PLAYER_BLUE      = 1,
-   PUD_PLAYER_GREEN     = 2,
-   PUD_PLAYER_VIOLET    = 3,
-   PUD_PLAYER_ORANGE    = 4,
-   PUD_PLAYER_BLACK     = 5,
-   PUD_PLAYER_WHITE     = 6,
-   PUD_PLAYER_YELLOW    = 7,
+   PUD_PLAYER_RED       = 0, /**< Player 1 (or Red) */
+   PUD_PLAYER_BLUE      = 1, /**< Player 2 (or Blue) */
+   PUD_PLAYER_GREEN     = 2, /**< Player 3 (or Green) */
+   PUD_PLAYER_VIOLET    = 3, /**< Player 4 (or Violet) */
+   PUD_PLAYER_ORANGE    = 4, /**< Player 5 (or Orange) */
+   PUD_PLAYER_BLACK     = 5, /**< Player 6 (or Black) */
+   PUD_PLAYER_WHITE     = 6, /**< Player 7 (or White) */
+   PUD_PLAYER_YELLOW    = 7, /**< Player 8 (or Yellow) */
 
-   PUD_PLAYER_NEUTRAL   = 15
+   PUD_PLAYER_NEUTRAL   = 15 /** Neutral player */
 } Pud_Player;
 
 typedef enum
@@ -443,6 +478,12 @@ struct _Pud
    uint8_t        era;
    Pud_Dimensions dims;
 
+
+   /**
+    * @struct
+    * Contains the the owners of each players
+    * All values are of type #Pud_Owner
+    */
    struct {
       uint8_t players[8];
       uint8_t unusable[7];

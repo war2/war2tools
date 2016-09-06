@@ -289,9 +289,9 @@ pud_parse(Pud *pud)
 }
 
 uint16_t
-pud_tile_at(Pud *pud,
-            int  x,
-            int  y)
+pud_tile_at(const Pud *pud,
+            int        x,
+            int        y)
 {
    if (((unsigned int)(x * y)) >= (unsigned int)pud->tiles)
      DIE_RETURN(0, "Invalid coordinates %i,%i", x, y);

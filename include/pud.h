@@ -622,7 +622,7 @@ const char *pud_unit2str(Pud_Unit unit, Pud_Bool pretty);
 const char *pud_era2str(Pud_Era era);
 const char *pud_color2str(Pud_Player color);
 
-uint16_t pud_tile_at(Pud *pud, int x, int y);
+uint16_t pud_tile_at(const Pud *pud, int x, int y);
 
 Pud_Bool pud_tile_set(Pud *pud, uint16_t x, uint16_t y, uint16_t tile);
 uint16_t pud_tile_get(const Pud *pud, unsigned int x, unsigned int y);

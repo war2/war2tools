@@ -1,4 +1,7 @@
-add_executable(libpud_suite tests.c)
+add_executable(libpud_suite
+   tests.c tests.h
+   test_standalone.c
+)
 target_include_directories(libpud_suite
    SYSTEM
    PUBLIC ${CHECK_CFLAGS}

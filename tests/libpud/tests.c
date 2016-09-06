@@ -1,7 +1,7 @@
-#include "../test_suite.h"
-
+#include "tests.h"
 
 static const Efl_Test_Case etc[] = {
+     { "Standalone", test_standalone },
      { NULL, NULL }
 };
 

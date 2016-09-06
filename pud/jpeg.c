@@ -17,7 +17,7 @@ pud_minimap_to_jpeg(Pud        *pud,
    unsigned char *map;
    Pud_Bool chk;
 
-   map = pud_minimap_bitmap_generate(pud, NULL, PUD_PIXEL_FORMAT_ARGB);
+   map = pud_minimap_bitmap_generate(pud, NULL, PUD_PIXEL_FORMAT_RGBA);
    if (!map) DIE_RETURN(PUD_FALSE, "Failed to generate bitmap");
 
    chk = war2_jpeg_write(file, pud->map_w, pud->map_h, map);

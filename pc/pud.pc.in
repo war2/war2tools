@@ -6,7 +6,5 @@ includedir=${exec_prefix}/include
 Name: libpud
 Description: @LIBPUD_DESCRIPTION@
 Version: @LIBPUD_VERSION_MAJOR@.@LIBPUD_VERSION_MINOR@
-URL: @PROJECT_URL@
-Libs: -L${libdir} -lpud -ljpeg
+Libs: -L${libdir} -lpud
 Cflags: -I${includedir}
-

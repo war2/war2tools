@@ -6,7 +6,5 @@ includedir=${exec_prefix}/include
 Name: libwar2
 Description: @LIBWAR2_DESCRIPTION@
 Version: @LIBWAR2_VERSION_MAJOR@.@LIBWAR2_VERSION_MINOR@
-URL: @PROJECT_URL@
-Libs: -L${libdir} -lwar2
+Libs: -L${libdir} -lwar2 -lpud
 Cflags: -I${includedir}
-

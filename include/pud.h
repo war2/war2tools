@@ -367,6 +367,7 @@ typedef enum
 {
    PUD_OPEN_MODE_R = (1 << 0),
    PUD_OPEN_MODE_W = (1 << 1),
+   PUD_OPEN_MODE_RW = (PUD_OPEN_MODE_R | PUD_OPEN_MODE_W)
 } Pud_Open_Mode;
 
 typedef enum

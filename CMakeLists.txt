@@ -9,9 +9,6 @@ add_definitions(-std=gnu99)
 add_definitions(-D_BSD_SOURCE)
 add_definitions(-D_DEFAULT_SOURCE)
 
-set(PROJECT_DESCRIPTION "Warcraft II Map Editor Toolkit")
-set(PROJECT_URL "")
-
 set(LIBPUD_DESCRIPTION "Warcraft II PUD Manipulation Utilities")
 set(LIBPUD_VERSION_MAJOR 0)
 set(LIBPUD_VERSION_MINOR 99)
@@ -20,14 +17,9 @@ set(LIBWAR2_DESCRIPTION "Warcraft II Data Files Manipulation Utilities")
 set(LIBWAR2_VERSION_MAJOR 0)
 set(LIBWAR2_VERSION_MINOR 99)
 
-set(CMAKE_COLOR_MAKEFILE   ON)
-set(CMAKE_VERBOSE_MAKEFILE OFF)
-
 find_package(PkgConfig)
 find_package(JPEG)
 find_package(PNG)
-
-include(cmake/copy_file.cmake)
 
 set(LIBWAR2_LIBRARIES libwar2 libpud)
 set(LIBWAR2_INCLUDE_DIRS "")

@@ -21,6 +21,8 @@ find_package(PkgConfig)
 find_package(JPEG)
 find_package(PNG)
 
+pkg_check_modules(CHECK check)
+
 set(LIBWAR2_LIBRARIES libwar2 libpud)
 set(LIBWAR2_INCLUDE_DIRS "")
 set(LIBPUD_LIBRARIES libpud)
@@ -37,6 +39,10 @@ endif ()
 set(PUD_LIBRARIES libpud ${LIBWAR2_LIBRARIES})
 set(PUD_INCLUDES_DIRS ${LIBWAR2_INCLUDE_DIRS})
 
+add_custom_target(uninstall
+   COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_SOURCE_DIR}/cmake/uninstall.cmake
+)
+
 add_subdirectory(libpud)
 add_subdirectory(libwar2)
 add_subdirectory(pc)
@@ -45,4 +51,8 @@ add_subdirectory(include)
 add_subdirectory(tools)
 add_subdirectory(quicklook)
 
-add_custom_target(uninstall COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_SOURCE_DIR}/cmake/uninstall.cmake)
+if (CHECK_FOUND)
+   enable_testing()
+   add_definitions(-DTESTS_BUILD_DIR=\"${CMAKE_BINARY_DIR}/tests\")
+   add_subdirectory(tests)
+endif ()

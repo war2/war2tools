@@ -2,6 +2,7 @@
 
 static const Efl_Test_Case etc[] = {
      { "Standalone", test_standalone },
+     { "Open", test_open },
      { NULL, NULL }
 };
 

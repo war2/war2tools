@@ -953,3 +953,11 @@ pud_unit_side_get(Pud_Unit unit)
 
    return (unit % 2 == 0) ? PUD_SIDE_HUMAN : PUD_SIDE_ORC;
 }
+
+Pud_Bool
+pud_unit_valid_is(Pud_Unit unit)
+{
+   const unsigned u = (unsigned)unit;
+   return ((u <= 0x6c) &&
+           ((u != 0x22) && (u != 0x24) && (u != 0x25) && (u != 0x36)));
+}

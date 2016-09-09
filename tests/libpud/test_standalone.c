@@ -77,6 +77,24 @@ START_TEST(owner_convert)
 }
 END_TEST
 
+START_TEST(unit_valid_is)
+{
+   fail_if(pud_init() != PUD_TRUE);
+
+   fail_if(pud_unit_valid_is(PUD_UNIT_NONE));
+   fail_if(pud_unit_valid_is(-1));
+   fail_if(pud_unit_valid_is(0x22));
+   fail_if(pud_unit_valid_is(0x24));
+   fail_if(pud_unit_valid_is(0x25));
+   fail_if(pud_unit_valid_is(0x36));
+   fail_if(!pud_unit_valid_is(0x00));
+   fail_if(!pud_unit_valid_is(0x6c));
+   fail_if(!pud_unit_valid_is(0x35));
+
+   pud_shutdown();
+}
+END_TEST
+
 void
 test_standalone(TCase *tc)
 {
@@ -84,4 +102,5 @@ test_standalone(TCase *tc)
    tcase_add_test(tc, dimensions);
    tcase_add_test(tc, side_convert);
    tcase_add_test(tc, owner_convert);
+   tcase_add_test(tc, unit_valid_is);
 }

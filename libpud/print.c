@@ -151,7 +151,7 @@ pud_print(Pud  *pud,
    fprintf(stream, "Unit Data............:\n");
    for (i = 0; i < 110; i++)
      {
-        fprintf(stream, "   Unit %02x...........:\n", i);
+        fprintf(stream, "   Unit 0x%02x.........: %s\n", i, pud_unit2str(i, PUD_TRUE));
         fprintf(stream, "      Overlap........: %x\n", pud->unit_data[i].overlap_frames);
         fprintf(stream, "      Sight..........: %u\n", pud->unit_data[i].sight);
         fprintf(stream, "      Hit Points.....: %u\n", pud->unit_data[i].hp);

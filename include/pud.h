@@ -737,6 +737,9 @@ Pud_Side pud_unit_side_get(Pud_Unit unit);
 uint8_t pud_random_get(uint16_t tile);
 Pud_Icon pud_unit_icon_get(Pud_Unit unit);
 Pud_Bool pud_unit_valid_is(Pud_Unit unit);
+Pud_Unit pud_unit_switch_side(Pud_Unit unit);
+
+Pud_Side pud_side_for_player(const Pud *pud, Pud_Player player);
 
 #ifdef __cplusplus
 }

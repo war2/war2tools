@@ -962,3 +962,27 @@ pud_unit_valid_is(Pud_Unit unit)
            ((u != 0x22) && (u != 0x24) && (u != 0x25) &&
             (u != 0x30) && (u != 0x36)));
 }
+
+Pud_Unit
+pud_unit_switch_side(Pud_Unit unit)
+{
+   if (pud_unit_hero_is(unit) ||
+       (unit == PUD_UNIT_GOLD_MINE) ||
+       (unit == PUD_UNIT_OIL_PATCH) ||
+       ((unsigned)unit >= PUD_UNIT_CIRCLE_OF_POWER))
+     {
+        return unit;
+     }
+
+   if (unit % 2 == 0) return unit + 1; /* Human to Orc */
+   else return unit - 1; /* Orc to Human */
+}
+
+Pud_Side
+pud_side_for_player(const Pud *pud,
+                    Pud_Player player)
+{
+   return (player == PUD_PLAYER_NEUTRAL)
+      ? PUD_SIDE_NEUTRAL
+      : pud->side.players[player];
+}

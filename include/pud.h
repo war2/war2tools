@@ -398,6 +398,40 @@ typedef enum
 
 typedef enum
 {
+   PUD_PROJECTILE_LIGHTNING             = 0x00,
+   PUD_PROJECTILE_GRIFFON_HAMMER        = 0x01,
+   PUD_PROJECTILE_DRAGON_BREATH         = 0x02,
+   PUD_PROJECTILE_FLAME_SHIELD          = 0x03,
+   PUD_PROJECTILE_FLAME_SHIELD_SELF     = 0x04,
+   PUD_PROJECTILE_BLIZZARD              = 0x05,
+   PUD_PROJECTILE_DEATH_AND_DECAY       = 0x06,
+   PUD_PROJECTILE_BIG_CANNON            = 0x07,
+   PUD_PROJECTILE_BLACK_POWDER          = 0x08,
+   PUD_PROJECTILE_HEAL_EFFECT           = 0x09,
+   PUD_PROJECTILE_TOUCH_OF_DEATH        = 0x0a,
+   PUD_PROJECTILE_RUNE                  = 0x0b,
+   PUD_PROJECTILE_TORNADO               = 0x0c,
+   PUD_PROJECTILE_CATAPULT_ROCK         = 0x0d,
+   PUD_PROJECTILE_BALLISTA_BOLT         = 0x0e,
+   PUD_PROJECTILE_ARROW                 = 0x0f,
+   PUD_PROJECTILE_AXE                   = 0x10,
+   PUD_PROJECTILE_SUBMARINE_MISSILE     = 0x11,
+   PUD_PROJECTILE_TURTLE_MISSILE        = 0x12,
+   PUD_PROJECTILE_DARK_FLAME            = 0x13,
+   PUD_PROJECTILE_BRIGHT_FLAME          = 0x14,
+   PUD_PROJECTILE_BLOOD                 = 0x15,
+   PUD_PROJECTILE_BLACK_POWDER_MORE     = 0x16,
+   PUD_PROJECTILE_EXPLOSION             = 0x17,
+   PUD_PROJECTILE_SMALL_CANNON          = 0x18,
+   PUD_PROJECTILE_METAL_SPARK           = 0x19,
+   PUD_PROJECTILE_MINI_EXPLOSION        = 0x1a,
+   PUD_PROJECTILE_DAEMON_FIRE           = 0x1b,
+   PUD_PROJECTILE_GREEN_CROSS           = 0x1c,
+   PUD_PROJECTILE_NONE                  = 0x1d,
+} Pud_Projectile;
+
+typedef enum
+{
    PUD_SIDE_HUMAN                       = 0x00,
    PUD_SIDE_ORC                         = 0x01,
    PUD_SIDE_NEUTRAL                     = 0x02

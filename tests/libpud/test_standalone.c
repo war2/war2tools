@@ -86,6 +86,7 @@ START_TEST(unit_valid_is)
    fail_if(pud_unit_valid_is(0x22));
    fail_if(pud_unit_valid_is(0x24));
    fail_if(pud_unit_valid_is(0x25));
+   fail_if(pud_unit_valid_is(0x30));
    fail_if(pud_unit_valid_is(0x36));
    fail_if(!pud_unit_valid_is(0x00));
    fail_if(!pud_unit_valid_is(0x6c));

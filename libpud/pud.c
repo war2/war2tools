@@ -959,5 +959,6 @@ pud_unit_valid_is(Pud_Unit unit)
 {
    const unsigned u = (unsigned)unit;
    return ((u <= 0x6c) &&
-           ((u != 0x22) && (u != 0x24) && (u != 0x25) && (u != 0x36)));
+           ((u != 0x22) && (u != 0x24) && (u != 0x25) &&
+            (u != 0x30) && (u != 0x36)));
 }

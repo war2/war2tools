@@ -724,6 +724,8 @@ Pud_Bool pud_unit_oil_well_is(Pud_Unit unit);
 Pud_Bool pud_unit_coast_building_is(Pud_Unit unit);
 Pud_Bool pud_unit_boat_is(Pud_Unit unit);
 
+Pud_Bool pud_unit_hero_is(Pud_Unit unit);
+
 Pud_Color pud_tile_to_color(Pud_Era era, uint16_t tile);
 Pud_Color pud_color_for_player(Pud_Player player);
 Pud_Color pud_gold_mine_color_get(void);

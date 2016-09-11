@@ -115,27 +115,39 @@ typedef struct
    const char *name;
    const char *pretty;
    Pud_Icon icon;
+   Pud_Bool hero;
 } Unit;
 
 #define UNIT(suffix_, name_, pretty_) \
    [PUD_UNIT_ ## suffix_] = { \
       .name = name_, \
       .pretty = pretty_, \
-      .icon = PUD_ICON_ ## suffix_ \
+      .icon = PUD_ICON_ ## suffix_, \
+      .hero = PUD_FALSE, \
+   }
+
+#define HERO(suffix_, name_, pretty_) \
+   [PUD_UNIT_ ## suffix_] = { \
+      .name = name_, \
+      .pretty = pretty_, \
+      .icon = PUD_ICON_ ## suffix_, \
+      .hero = PUD_TRUE, \
    }
 
 #define UNIT_START_LOCATION(suffix_, name_, pretty_) \
    [PUD_UNIT_ ## suffix_] = { \
       .name = name_, \
       .pretty = pretty_, \
-      .icon = PUD_ICON_CANCEL \
+      .icon = PUD_ICON_CANCEL, \
+      .hero = PUD_FALSE, \
    }
 
 #define UNIT_START_LOCATION(suffix_, name_, pretty_) \
    [PUD_UNIT_ ## suffix_] = { \
       .name = name_, \
       .pretty = pretty_, \
-      .icon = PUD_ICON_CANCEL \
+      .icon = PUD_ICON_CANCEL, \
+      .hero = PUD_FALSE, \
    }
 
 static const Unit _names[110] =
@@ -160,12 +172,12 @@ static const Unit _names[110] =
    UNIT(ATTACK_PEON, "attack_peon", "Peon (Attack)"),
    UNIT(RANGER, "ranger", "Elven Ranger"),
    UNIT(BERSERKER, "berserker", "Berserker"),
-   UNIT(ALLERIA, "alleria", "Alleria"),
-   UNIT(TERON_GOREFIEND, "teron_gorefiend", "Teron Gorefiend"),
-   UNIT(KURDRAN_AND_SKY_REE, "kurdran_and_sky_ree", "Kurdran and Sky'ree"),
-   UNIT(DENTARG, "dentarg", "Dentarg"),
-   UNIT(KHADGAR, "khadgar", "Khadgar"),
-   UNIT(GROM_HELLSCREAM, "grom_hellscream", "Grom Hellscream"),
+   HERO(ALLERIA, "alleria", "Alleria"),
+   HERO(TERON_GOREFIEND, "teron_gorefiend", "Teron Gorefiend"),
+   HERO(KURDRAN_AND_SKY_REE, "kurdran_and_sky_ree", "Kurdran and Sky'ree"),
+   HERO(DENTARG, "dentarg", "Dentarg"),
+   HERO(KHADGAR, "khadgar", "Khadgar"),
+   HERO(GROM_HELLSCREAM, "grom_hellscream", "Grom Hellscream"),
    UNIT(HUMAN_TANKER, "human_tanker", "Human Tanker"),
    UNIT(ORC_TANKER, "orc_tanker", "Orc Tanker"),
    UNIT(HUMAN_TRANSPORT, "human_transport", "Human Transport"),
@@ -174,22 +186,22 @@ static const Unit _names[110] =
    UNIT(TROLL_DESTROYER, "troll_destroyer", "Troll Destroyer"),
    UNIT(BATTLESHIP, "battleship", "Battleship"),
    UNIT(JUGGERNAUGHT, "juggernaught", "Juggernaught"),
-   UNIT(DEATHWING, "deathwing", "Deathwing"),
+   HERO(DEATHWING, "deathwing", "Deathwing"),
    UNIT(GNOMISH_SUBMARINE, "gnomish_submarine", "Gnomish Submarine"),
    UNIT(GIANT_TURTLE, "giant_turtle", "Giant Turtle"),
    UNIT(GNOMISH_FLYING_MACHINE, "gnomish_flying_machine", "Gnomish Flying Machine"),
    UNIT(GOBLIN_ZEPPLIN, "goblin_zepplin", "Goblin Zepplin"),
    UNIT(GRYPHON_RIDER, "gryphon_rider", "Gryphon Rider"),
    UNIT(DRAGON, "dragon", "Dragon"),
-   UNIT(TURALYON, "turalyon", "Turalyon"),
+   HERO(TURALYON, "turalyon", "Turalyon"),
    UNIT(EYE_OF_KILROGG, "eye_of_kilrogg", "Eye of Kilrogg"),
-   UNIT(DANATH, "danath", "Danath"),
-   UNIT(KARGATH_BLADEFIST, "kargath_bladefist", "Kargath Bladefist"),
-   UNIT(CHO_GALL, "cho_gall", "Cho'gall"),
-   UNIT(LOTHAR, "lothar", "Lothar"),
-   UNIT(GUL_DAN, "gul_dan", "Gul'dan"),
-   UNIT(UTHER_LIGHTBRINGER, "uther_lightbringer", "Uther Lightbringer"),
-   UNIT(ZUL_JIN, "zul_jin", "Zul'jin"),
+   HERO(DANATH, "danath", "Danath"),
+   HERO(KARGATH_BLADEFIST, "kargath_bladefist", "Kargath Bladefist"),
+   HERO(CHO_GALL, "cho_gall", "Cho'gall"),
+   HERO(LOTHAR, "lothar", "Lothar"),
+   HERO(GUL_DAN, "gul_dan", "Gul'dan"),
+   HERO(UTHER_LIGHTBRINGER, "uther_lightbringer", "Uther Lightbringer"),
+   HERO(ZUL_JIN, "zul_jin", "Zul'jin"),
    UNIT(SKELETON, "skeleton", "Skeleton"),
    UNIT(DAEMON, "daemon", "Daemon"),
    UNIT(CRITTER, "critter", "Critter"),
@@ -304,4 +316,10 @@ pud_projectile2str(Pud_Projectile proj)
 {
    if ((unsigned)proj > 0x1d) return NULL;
    return _projectiles[proj];
+}
+
+Pud_Bool
+pud_unit_hero_is(Pud_Unit unit)
+{
+   return _names[unit].hero;
 }

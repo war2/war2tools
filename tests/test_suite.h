@@ -17,7 +17,7 @@ struct _Efl_Test_Case
    void (*build)(TCase *tc);
 };
 
-static void
+static inline void
 _efl_tests_list(const Efl_Test_Case *etc)
 {
    const Efl_Test_Case *itr = etc;
@@ -26,7 +26,7 @@ _efl_tests_list(const Efl_Test_Case *etc)
       fprintf(stderr, "\t%s\n", itr->test_case);
 }
 
-static int
+static inline int
 _efl_test_option_disp(int argc, const char **argv, const Efl_Test_Case *etc)
 {
    int i;
@@ -52,7 +52,7 @@ _efl_test_option_disp(int argc, const char **argv, const Efl_Test_Case *etc)
    return 1;
 }
 
-static int
+static inline int
 _efl_test_use(int argc, const char **argv, const char *test_case)
 {
    if (argc < 1)
@@ -64,7 +64,7 @@ _efl_test_use(int argc, const char **argv, const char *test_case)
    return 0;
 }
 
-static int
+static inline int
 _efl_test_fork_has(SRunner *sr)
 {
    if (srunner_fork_status(sr) == CK_FORK)
@@ -86,7 +86,7 @@ _efl_test_fork_has(SRunner *sr)
    return 0;
 }
 
-static int
+static inline int
 _efl_suite_build_and_run(int argc, const char **argv, const char *suite_name, const Efl_Test_Case *etc)
 {
    Suite *s;

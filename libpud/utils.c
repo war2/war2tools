@@ -241,7 +241,7 @@ static const Unit _names[] =
    UNIT(HUMAN_WALL, "human_wall", "Human Wall"),
    UNIT(ORC_WALL, "orc_wall", "Orc Wall"),
    UNIT(CRITTER_SHEEP, "sheep", "Sheep"),
-   UNIT(CRITTER_PIG, "pig", "Pid"),
+   UNIT(CRITTER_PIG, "pig", "Pig"),
    UNIT(CRITTER_SEAL, "seal", "Seal"),
    UNIT(CRITTER_RED_PIG, "red_pig", "Red Pig"),
 };

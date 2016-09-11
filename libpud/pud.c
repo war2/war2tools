@@ -463,7 +463,7 @@ pud_write(const Pud  *pud,
    for (i = 0; i < 508; i++) W16(p->unkwown[i], 1);
    for (i = 0; i < 110; i++) W32(p->unit_data[i].sight, 1);
    for (i = 0; i < 110; i++) W16(p->unit_data[i].hp, 1);
-   for (i = 0; i < 110; i++) WI8(p->unit_data[i].has_magic, 1);
+   for (i = 0; i < 110; i++) W8(p->unit_data[i].has_magic, 1);
    for (i = 0; i < 110; i++) W8(p->unit_data[i].build_time, 1);
    for (i = 0; i < 110; i++) W8(p->unit_data[i].gold_cost, 1);
    for (i = 0; i < 110; i++) W8(p->unit_data[i].lumber_cost, 1);

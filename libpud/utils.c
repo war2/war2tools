@@ -262,3 +262,46 @@ pud_unit_icon_get(Pud_Unit unit)
      return PUD_ICON_CANCEL;
    return _names[unit].icon;
 }
+
+
+
+static const char *_projectiles[0x1d + 1] =
+{
+   "Lightning",
+   "Griffon Hammer",
+   "Dragon Breath",
+   "Flame Shield",
+   "Flame Shield (Self)",
+   "Blizzard",
+   "Death and Decay",
+   "Big Cannon",
+   "Black Powder",
+   "Heal Effect",
+   "Touch of Death",
+   "Rune",
+   "Tornado",
+   "Catapult Rock",
+   "Ballista Bolt",
+   "Arrow",
+   "Axe",
+   "Submarine Missile",
+   "Turtle Missile",
+   "Dark Flame",
+   "Bright Flame",
+   "Blood",
+   "More Black Powder",
+   "Explosion",
+   "Small Cannon",
+   "Metal Spark",
+   "Mini Explosion",
+   "Daemon Fire",
+   "Green Cross",
+   "None",
+};
+
+const char *
+pud_projectile2str(Pud_Projectile proj)
+{
+   if ((unsigned)proj > 0x1d) return NULL;
+   return _projectiles[proj];
+}

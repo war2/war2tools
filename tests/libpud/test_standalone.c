@@ -96,6 +96,24 @@ START_TEST(unit_valid_is)
 }
 END_TEST
 
+START_TEST(projectile2str)
+{
+   fail_if(pud_init() != PUD_TRUE);
+
+   fail_if(pud_projectile2str(0) == NULL);
+   fail_if(pud_projectile2str(PUD_PROJECTILE_NONE) == NULL);
+   fail_if(pud_projectile2str(PUD_PROJECTILE_NONE + 1) != NULL);
+   fail_if(pud_projectile2str(-1) != NULL);
+   fail_if(strcmp("None", pud_projectile2str(PUD_PROJECTILE_NONE)) != 0);
+   fail_if(strcmp("Rune", pud_projectile2str(PUD_PROJECTILE_RUNE)) != 0);
+   fail_if(strcmp("Flame Shield (Self)", pud_projectile2str(PUD_PROJECTILE_FLAME_SHIELD_SELF)) != 0);
+
+   pud_shutdown();
+}
+END_TEST
+
+
+
 void
 test_standalone(TCase *tc)
 {
@@ -104,4 +122,5 @@ test_standalone(TCase *tc)
    tcase_add_test(tc, side_convert);
    tcase_add_test(tc, owner_convert);
    tcase_add_test(tc, unit_valid_is);
+   tcase_add_test(tc, projectile2str);
 }

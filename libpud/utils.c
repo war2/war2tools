@@ -138,7 +138,7 @@ typedef struct
       .icon = PUD_ICON_CANCEL \
    }
 
-static const Unit _names[] =
+static const Unit _names[110] =
 {
    UNIT(FOOTMAN, "footman", "Footman"),
    UNIT(GRUNT, "grunt", "Grunt"),

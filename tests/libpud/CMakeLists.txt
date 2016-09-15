@@ -5,8 +5,8 @@ add_executable(libpud_suite
 )
 target_include_directories(libpud_suite
    SYSTEM
-   PUBLIC ${CHECK_CFLAGS}
    PUBLIC ${CMAKE_SOURCE_DIR}/include
+   PUBLIC ${CHECK_CFLAGS}
 )
 target_link_libraries(libpud_suite
    ${LIBPUD_LIBRARIES}

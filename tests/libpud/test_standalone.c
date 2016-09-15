@@ -1,5 +1,5 @@
 #include "tests.h"
-#include <pud.h>
+#include "pud.h"
 #include <limits.h>
 
 START_TEST(init)

@@ -276,7 +276,6 @@ pud_unit_icon_get(Pud_Unit unit)
 }
 
 
-
 static const char *_projectiles[0x1d + 1] =
 {
    "Lightning",
@@ -322,4 +321,85 @@ Pud_Bool
 pud_unit_hero_is(Pud_Unit unit)
 {
    return _names[unit].hero;
+}
+
+
+typedef struct
+{
+   const char *name;
+   Pud_Icon icon;
+} Upgrade;
+
+#define UGRD(ugrd_, name_) \
+   [PUD_UPGRADE_ ## ugrd_] = { \
+      .name = name_, \
+      .icon = PUD_ICON_ ## ugrd_, \
+   }
+
+static const Upgrade _upgrades[52] =
+{
+   UGRD(SWORD_1, "Human Swords (+1)"),
+   UGRD(SWORD_2, "Human Swords (+2)"),
+   UGRD(AXE_1, "Orc Axes (+1)"),
+   UGRD(AXE_2, "Orc Axes (+2)"),
+   UGRD(ARROW_1, "Human Arrows (+1)"),
+   UGRD(ARROW_2, "Human Arrows (+2)"),
+   UGRD(SPEAR_1, "Orc Spears (+1)"),
+   UGRD(SPEAR_2, "Orc Spears (+2)"),
+   UGRD(HUMAN_SHIELD_1, "Human Shields (+1)"),
+   UGRD(HUMAN_SHIELD_2, "Human Shields (+2)"),
+   UGRD(ORC_SHIELD_1, "Orc Shields (+1)"),
+   UGRD(ORC_SHIELD_2, "Orc Shields (+2)"),
+   UGRD(HUMAN_SHIP_CANNON_1, "Human Ship Cannons (+1)"),
+   UGRD(HUMAN_SHIP_CANNON_2, "Human Ship Cannons (+2)"),
+   UGRD(ORC_SHIP_CANNON_1, "Orc Ship Cannons (+1)"),
+   UGRD(ORC_SHIP_CANNON_2, "Orc Ship Cannons (+2)"),
+   UGRD(HUMAN_SHIP_ARMOR_1, "Human Ship Armors (+1)"),
+   UGRD(HUMAN_SHIP_ARMOR_2, "Human Ship Armors (+2)"),
+   UGRD(ORC_SHIP_ARMOR_1, "Orc Ship Armors (+1)"),
+   UGRD(ORC_SHIP_ARMOR_2, "Orc Ship Armors (+2)"),
+   UGRD(CATAPULT_1, "Catapult Projectiles (+1)"),
+   UGRD(CATAPULT_2, "Catapult Projectiles (+2)"),
+   UGRD(BALLISTA_1, "Ballista Projectiles (+1)"),
+   UGRD(BALLISTA_2, "Ballista Projectiles (+2)"),
+   UGRD(TRAIN_RANGERS, "Train Rangers"),
+   UGRD(LONGBOW, "Long Bow"),
+   UGRD(RANGER_SCOUTING, "Scouting"),
+   UGRD(RANGER_MARKSMANSHIP, "Marksmanship"),
+   UGRD(TRAIN_BERSERKERS, "Train Berserkers"),
+   UGRD(LIGHTER_AXES, "Lighter Axes"),
+   UGRD(BERSERKER_SCOUTING, "Berserker Scouting"),
+   UGRD(BERSERKER_REGENERATION, "Berserker Regeneration"),
+   UGRD(TRAIN_OGRE_MAGES, "Train Ogre Mages"),
+   UGRD(TRAIN_PALADINS, "Train Paladins"),
+   UGRD(HOLY_VISION, "Holy Vision"),
+   UGRD(HEALING, "Healing"),
+   UGRD(EXORCISM, "Exorcism"),
+   UGRD(FLAME_SHIELD, "Flame Shield"),
+   UGRD(FIREBALL, "Fireball"),
+   UGRD(SLOW, "Slow"),
+   UGRD(INVISIBILITY, "Invisibility"),
+   UGRD(POLYMORPH, "Polymorph"),
+   UGRD(BLIZZARD, "Blizzard"),
+   UGRD(EYE_OF_KILROGG, "Eye of Kilrogg"),
+   UGRD(BLOODLUST, "Bloodlust"),
+   UGRD(RAISE_DEAD, "Raise Dead"),
+   UGRD(DEATH_COIL, "Death Coil"),
+   UGRD(WHIRLWIND, "Whirlwind"),
+   UGRD(HASTE, "Haste"),
+   UGRD(UNHOLY_ARMOR, "Unholy Armor"),
+   UGRD(RUNES, "Runes"),
+   UGRD(DEATH_AND_DECAY, "Death and Decay"),
+};
+
+Pud_Icon
+pud_upgrade_icon_get(Pud_Upgrade upgrade)
+{
+   return ((unsigned)upgrade < 52) ? _upgrades[upgrade].icon : PUD_ICON_CANCEL;
+}
+
+const char *
+pud_upgrade2str(Pud_Upgrade upgrade)
+{
+   return ((unsigned)upgrade < 52) ? _upgrades[upgrade].name : NULL;
 }

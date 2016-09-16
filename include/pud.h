@@ -763,6 +763,9 @@ const char *pud_unit2str(Pud_Unit unit, Pud_Bool pretty);
 const char *pud_era2str(Pud_Era era);
 const char *pud_color2str(Pud_Player color);
 const char *pud_projectile2str(Pud_Projectile proj);
+const char *pud_upgrade2str(Pud_Upgrade upgrade);
+
+Pud_Icon pud_upgrade_icon_get(Pud_Upgrade upgrade);
 
 uint16_t pud_tile_at(const Pud *pud, int x, int y);
 

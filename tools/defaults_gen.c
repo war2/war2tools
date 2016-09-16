@@ -145,7 +145,7 @@ main(int    argc,
 
       case UGRD:
 
-         W("struct _ugrd ugrd[52] = {");
+         W("const Pud_Upgrade_Characteristics ugrd[52] = {");
 
          for (i = 0; i < 52; i++)
            {

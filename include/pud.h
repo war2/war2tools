@@ -546,6 +546,18 @@ typedef enum
 typedef struct _Pud Pud;
 typedef struct _Pud_Unit_Data Pud_Unit_Data;
 typedef struct _Pud_Unit_Characteristics Pud_Unit_Characteristics;
+typedef struct _Pud_Upgrade_Characteristics Pud_Upgrade_Characteristics;
+
+struct _Pud_Upgrade_Characteristics
+{
+   uint8_t           time;
+   uint16_t          gold;
+   uint16_t          lumber;
+   uint16_t          oil;
+   uint16_t          icon;
+   uint16_t          group;
+   uint32_t          flags;
+};
 
 struct _Pud_Unit_Characteristics
 {
@@ -641,15 +653,7 @@ struct _Pud
       uint32_t neutral;
    } unit_alow, spell_start, spell_alow, spell_acq, up_alow, up_acq; /* [defaults] */
 
-   struct _ugrd {
-      uint8_t           time;
-      uint16_t          gold;
-      uint16_t          lumber;
-      uint16_t          oil;
-      uint16_t          icon;
-      uint16_t          group;
-      uint32_t          flags;
-   } upgrade[52]; /* [defaults] */
+   Pud_Upgrade_Characteristics upgrade[52]; /* [defaults] */
 
    /* Cache values */
    unsigned int map_w;

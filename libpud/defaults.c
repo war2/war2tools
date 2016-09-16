@@ -69,7 +69,7 @@ pud_defaults_set(Pud *pud)
 static void
 _ugrd_defaults_set(Pud *pud)
 {
-   struct _ugrd ugrd[52] = {
+   const Pud_Upgrade_Characteristics ugrd[52] = {
       [0] = {
          .time = 200,
          .gold = 800,

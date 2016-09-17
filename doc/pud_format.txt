@@ -245,6 +245,10 @@ See appendix E for possible use of "unusable" 7 players.
         See Appendix A for correct order of units inside the 110 values.
 
 7: Section 'ALOW', Pud restrictions (Optional)
+
+        Note that computer players are not affected by these restrictions.
+        It seems to only affect human players (Human & Orc).
+
         16 longs        Units and buildings allowed. (16 players)
         16 longs        Spell you start with. (16 players)
         16 longs        Spell allowed to research. (16 players)

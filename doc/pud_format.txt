@@ -297,7 +297,7 @@ See appendix E for possible use of "unusable" 7 players.
         000000000000000000000000x0000000        bit7:  invisibility
         00000000000000000000000x00000000        bit8:  polymorph
         0000000000000000000000x000000000        bit9:  blizzard
-        000000000000000000000x0000000000        bit10: eye of kilrog
+        000000000000000000000x0000000000        bit10: eye of kilrogg
         00000000000000000000x00000000000        bit11: bloodlust
         0000000000000000000x000000000000        bit12: unused
         000000000000000000x0000000000000        bit13: raise dead

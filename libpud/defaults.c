@@ -543,51 +543,20 @@ _ugrd_defaults_set(Pud *pud)
    memcpy(&(pud->upgrade[0]), &(ugrd[0]), sizeof(ugrd));
 }
 
-
-/* ALOW defaults are generated with tools/defaults_gen */
-
 static void
 _alow_defaults_set(Pud *pud)
 {
-   struct _alow alow_unit_alow = {
-        { 0, 0, 0, 0, 0, 0, 0, 0 },
-        { 0, 0, 0, 0, 0, 0, 0 },
-        0
-   };
-   struct _alow alow_spell_start = {
-        { 0, 0, 0, 0, 0, 0, 0, 0 },
-        { 0, 0, 0, 0, 0, 0, 0 },
-        0
-   };
-   struct _alow alow_spell_alow = {
-        { 0, 0, 0, 0, 0, 0, 0, 0 },
-        { 0, 0, 0, 0, 0, 0, 0 },
-        0
-   };
-   struct _alow alow_spell_acq = {
-        { 0, 0, 0, 0, 0, 0, 0, 0 },
-        { 0, 0, 0, 0, 0, 0, 0 },
-        0
-   };
-   struct _alow alow_up_alow = {
-        { 0, 0, 0, 0, 0, 0, 0, 0 },
-        { 0, 0, 0, 0, 0, 0, 0 },
-        0
-   };
-   struct _alow alow_up_acq = {
-        { 0, 0, 0, 0, 0, 0, 0, 0 },
-        { 0, 0, 0, 0, 0, 0, 0 },
-        0
-   };
+   /* Everything is allowed */
+   memset(&pud->unit_alow, 0xff, sizeof(struct _alow));
+   memset(&pud->spell_alow, 0xff, sizeof(struct _alow));
+   memset(&pud->up_alow, 0xff, sizeof(struct _alow));
 
-#define CPY(s) memcpy(&(pud->s), &alow_ ## s, sizeof(struct _alow))
-   CPY(unit_alow);
-   CPY(spell_start);
-   CPY(spell_alow);
-   CPY(spell_acq);
-   CPY(up_alow);
-   CPY(up_acq);
-#undef CPY
+   /* We start with nothing */
+   memset(&pud->spell_start, 0x00, sizeof(struct _alow));
+
+   /* We are not researching anything */
+   memset(&pud->spell_acq, 0x00, sizeof(struct _alow));
+   memset(&pud->up_acq, 0x00, sizeof(struct _alow));
 }
 
 /* UDTA defaults are generated with tools/defaults_gen */

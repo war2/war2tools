@@ -870,6 +870,8 @@ Pud_Bool pud_allow_spell_valid_is(Pud_Allow flag);
 const char *pud_allow_unit2str(Pud_Allow flag);
 const Pud_Icon *pud_allow_unit_icons_get(Pud_Allow flag);
 
+void pud_alow_defaults_set(Pud *pud);
+
 #ifdef __cplusplus
 }
 #endif

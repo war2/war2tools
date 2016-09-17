@@ -8,7 +8,6 @@
 #include "pud_private.h"
 
 static void _udta_defaults_set(Pud *pud);
-static void _alow_defaults_set(Pud *pud);
 static void _ugrd_defaults_set(Pud *pud);
 
 Pud_Bool
@@ -33,7 +32,6 @@ pud_defaults_set(Pud *pud)
    for (i = 0; i < 7; i++) pud->soil.unusable[i] = 1000;
    pud->soil.neutral = 1000;
 
-   pud->default_allow = 1;
    pud->default_udta = 1;
    pud->default_ugrd = 1;
 
@@ -55,7 +53,7 @@ pud_defaults_set(Pud *pud)
 
    _udta_defaults_set(pud);
    _ugrd_defaults_set(pud);
-   _alow_defaults_set(pud);
+   pud_alow_defaults_set(pud);
 
    /* Most of the fields are assumed valid */
    pud->init = 1;
@@ -543,9 +541,11 @@ _ugrd_defaults_set(Pud *pud)
    memcpy(&(pud->upgrade[0]), &(ugrd[0]), sizeof(ugrd));
 }
 
-static void
-_alow_defaults_set(Pud *pud)
+void
+pud_alow_defaults_set(Pud *pud)
 {
+   pud->default_allow = 1;
+
    /* Everything is allowed */
    memset(&pud->unit_alow, 0xff, sizeof(struct _alow));
    memset(&pud->spell_alow, 0xff, sizeof(struct _alow));

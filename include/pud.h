@@ -482,6 +482,8 @@ typedef enum
    PUD_PROJECTILE_NONE                  = 0x1d,
 } Pud_Projectile;
 
+typedef uint32_t Pud_Allow;
+
 typedef enum
 {
    PUD_SIDE_HUMAN                       = 0x00,
@@ -542,6 +544,69 @@ typedef enum
    PUD_AI_EXPANSION_1    = 0x20,
    PUD_AI_EXPANSION_51   = 0x52
 } Pud_AI;
+
+
+/*
+ * Allow unit bitfields
+ */
+#define PUD_ALLOW_UNIT_FOOTMAN_GRUNT                    ((uint_fast32_t)1 << (uint_fast32_t)0)
+#define PUD_ALLOW_UNIT_PEASANT_PEON                     ((uint_fast32_t)1 << (uint_fast32_t)1)
+#define PUD_ALLOW_UNIT_BALLISTA_CATAPULT                ((uint_fast32_t)1 << (uint_fast32_t)2)
+#define PUD_ALLOW_UNIT_KNIGHT_OGRE                      ((uint_fast32_t)1 << (uint_fast32_t)3)
+#define PUD_ALLOW_UNIT_ARCHER_AXETHROWER                ((uint_fast32_t)1 << (uint_fast32_t)4)
+#define PUD_ALLOW_UNIT_MAGE_DEATH_KNIGHT                ((uint_fast32_t)1 << (uint_fast32_t)5)
+#define PUD_ALLOW_UNIT_TANKER                           ((uint_fast32_t)1 << (uint_fast32_t)6)
+#define PUD_ALLOW_UNIT_DESTROYER                        ((uint_fast32_t)1 << (uint_fast32_t)7)
+#define PUD_ALLOW_UNIT_TRANSPORT                        ((uint_fast32_t)1 << (uint_fast32_t)8)
+#define PUD_ALLOW_UNIT_BATTLESHIP_JUGGERNAUGHT          ((uint_fast32_t)1 << (uint_fast32_t)9)
+#define PUD_ALLOW_UNIT_SUBMARINE_TURTLE                 ((uint_fast32_t)1 << (uint_fast32_t)10)
+#define PUD_ALLOW_UNIT_FLYING_MACHINE_ZEPLIN            ((uint_fast32_t)1 << (uint_fast32_t)11)
+#define PUD_ALLOW_UNIT_GRYPHON_DRAGON                   ((uint_fast32_t)1 << (uint_fast32_t)12)
+/* Bit 13 is unused */
+#define PUD_ALLOW_UNIT_DEMOLITION_SQUAD_SAPPERS         ((uint_fast32_t)1 << (uint_fast32_t)14)
+#define PUD_ALLOW_UNIT_AVIARY_ROOST                     ((uint_fast32_t)1 << (uint_fast32_t)15)
+#define PUD_ALLOW_UNIT_FARM                             ((uint_fast32_t)1 << (uint_fast32_t)16)
+#define PUD_ALLOW_UNIT_BARRACKS                         ((uint_fast32_t)1 << (uint_fast32_t)17)
+#define PUD_ALLOW_UNIT_LUMBER_MILL                      ((uint_fast32_t)1 << (uint_fast32_t)18)
+#define PUD_ALLOW_UNIT_STABLES_MOUND                    ((uint_fast32_t)1 << (uint_fast32_t)19)
+#define PUD_ALLOW_UNIT_MAGE_TOWER_TEMPLE                ((uint_fast32_t)1 << (uint_fast32_t)20)
+#define PUD_ALLOW_UNIT_FOUNDRY                          ((uint_fast32_t)1 << (uint_fast32_t)21)
+#define PUD_ALLOW_UNIT_REFINERY                         ((uint_fast32_t)1 << (uint_fast32_t)22)
+#define PUD_ALLOW_UNIT_INVENTOR_ALCHEMIST               ((uint_fast32_t)1 << (uint_fast32_t)23)
+#define PUD_ALLOW_UNIT_CHURCH_ALTAR_STORMS              ((uint_fast32_t)1 << (uint_fast32_t)24)
+#define PUD_ALLOW_UNIT_TOWERS                           ((uint_fast32_t)1 << (uint_fast32_t)25)
+#define PUD_ALLOW_UNIT_TOWN_HALL_GREAT_HALL             ((uint_fast32_t)1 << (uint_fast32_t)26)
+#define PUD_ALLOW_UNIT_KEEP_STRONGHOLD                  ((uint_fast32_t)1 << (uint_fast32_t)27)
+#define PUD_ALLOW_UNIT_CASTLE_FORTRESS                  ((uint_fast32_t)1 << (uint_fast32_t)28)
+#define PUD_ALLOW_UNIT_BLACKSMITH                       ((uint_fast32_t)1 << (uint_fast32_t)29)
+#define PUD_ALLOW_UNIT_SHIPYARD                         ((uint_fast32_t)1 << (uint_fast32_t)30)
+/* Bit 31 is unused */
+
+
+/*
+ * Allow unit spells
+ */
+#define PUD_ALLOW_SPELL_HOLY_VISION                     ((uint_fast32_t)1 << (uint_fast32_t)0)
+#define PUD_ALLOW_SPELL_HEALING                         ((uint_fast32_t)1 << (uint_fast32_t)1)
+/* Bit 2 is unused */
+#define PUD_ALLOW_SPELL_EXORCISM                        ((uint_fast32_t)1 << (uint_fast32_t)3)
+#define PUD_ALLOW_SPELL_FLAME_SHIELD                    ((uint_fast32_t)1 << (uint_fast32_t)4)
+#define PUD_ALLOW_SPELL_FIREBALL                        ((uint_fast32_t)1 << (uint_fast32_t)5)
+#define PUD_ALLOW_SPELL_SLOW                            ((uint_fast32_t)1 << (uint_fast32_t)6)
+#define PUD_ALLOW_SPELL_INVISIBILITY                    ((uint_fast32_t)1 << (uint_fast32_t)7)
+#define PUD_ALLOW_SPELL_POLYMORPH                       ((uint_fast32_t)1 << (uint_fast32_t)8)
+#define PUD_ALLOW_SPELL_BLIZZARD                        ((uint_fast32_t)1 << (uint_fast32_t)9)
+#define PUD_ALLOW_SPELL_EYE_OF_KILREOGG                 ((uint_fast32_t)1 << (uint_fast32_t)10)
+#define PUD_ALLOW_SPELL_BLOODLUST                       ((uint_fast32_t)1 << (uint_fast32_t)11)
+/* Bit 12 is unused */
+#define PUD_ALLOW_SPELL_RAISE_DEAD                      ((uint_fast32_t)1 << (uint_fast32_t)13)
+#define PUD_ALLOW_SPELL_DEATH_COIL                      ((uint_fast32_t)1 << (uint_fast32_t)14)
+#define PUD_ALLOW_SPELL_WHIRLWIND                       ((uint_fast32_t)1 << (uint_fast32_t)15)
+#define PUD_ALLOW_SPELL_HASTE                           ((uint_fast32_t)1 << (uint_fast32_t)16)
+#define PUD_ALLOW_SPELL_UNHOLY_ARMOR                    ((uint_fast32_t)1 << (uint_fast32_t)17)
+#define PUD_ALLOW_SPELL_RUNES                           ((uint_fast32_t)1 << (uint_fast32_t)18)
+#define PUD_ALLOW_SPELL_DEATH_AND_DECAY                 ((uint_fast32_t)1 << (uint_fast32_t)19)
+/* Bits 20 to 31 are unused */
 
 typedef struct _Pud Pud;
 typedef struct _Pud_Unit_Data Pud_Unit_Data;
@@ -648,9 +713,9 @@ struct _Pud
    } ai; /* [defaults] */
 
    struct _alow {
-      uint32_t players[8];
-      uint32_t unusable[7];
-      uint32_t neutral;
+      Pud_Allow players[8];
+      Pud_Allow unusable[7];
+      Pud_Allow neutral;
    } unit_alow, spell_start, spell_alow, spell_acq, up_alow, up_acq; /* [defaults] */
 
    Pud_Upgrade_Characteristics upgrade[52]; /* [defaults] */
@@ -799,6 +864,11 @@ Pud_Bool pud_unit_valid_is(Pud_Unit unit);
 Pud_Unit pud_unit_switch_side(Pud_Unit unit);
 
 Pud_Side pud_side_for_player(const Pud *pud, Pud_Player player);
+
+Pud_Bool pud_allow_unit_valid_is(Pud_Allow flag);
+Pud_Bool pud_allow_spell_valid_is(Pud_Allow flag);
+const char *pud_allow_unit2str(Pud_Allow flag);
+const Pud_Icon *pud_allow_unit_icons_get(Pud_Allow flag);
 
 #ifdef __cplusplus
 }

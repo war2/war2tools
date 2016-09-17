@@ -2,7 +2,7 @@
  * utils.c
  * libpud
  *
- * Copyright (c) 2014 Jean Guyomarc'h
+ * Copyright (c) 2014-2016 Jean Guyomarc'h
  */
 
 #include "pud_private.h"
@@ -402,4 +402,104 @@ const char *
 pud_upgrade2str(Pud_Upgrade upgrade)
 {
    return ((unsigned)upgrade < 52) ? _upgrades[upgrade].name : NULL;
+}
+
+Pud_Bool
+pud_allow_unit_valid_is(Pud_Allow flag)
+{
+   /*
+    * Flag must be non zero, bits 13 and 31 must not be set
+    */
+   return ((flag) && (!(flag & (1 << 13)) && (!(flag & (1 << 31)))));
+}
+
+Pud_Bool
+pud_allow_spell_valid_is(Pud_Allow flag)
+{
+   return ((flag) && (!(flag & 0xffe00000)) && (!(flag & (1 << 2))) && (!(flag & (1 << 12))));
+}
+
+typedef struct
+{
+   char *name;
+   Pud_Icon icons[2];
+} Alow_Unit;
+
+#define ALOW_UNIT(name_, icon1_, icon2_) \
+   { \
+      .name = name_, \
+      .icons = { \
+         icon1_, \
+         icon2_ \
+      } \
+   }
+
+#define ALOW_UNIT_UNUSED() \
+   { .name = NULL, .icons = { PUD_ICON_CANCEL, PUD_ICON_CANCEL } }
+
+static const Alow_Unit _alow_units[] =
+{
+   ALOW_UNIT("Footman / Grunt", PUD_ICON_FOOTMAN, PUD_ICON_GRUNT),
+   ALOW_UNIT("Peasant / Peon", PUD_ICON_PEASANT, PUD_ICON_PEON),
+   ALOW_UNIT("Ballista / Catapult", PUD_ICON_BALLISTA, PUD_ICON_CATAPULT),
+   ALOW_UNIT("Knight / Ogre", PUD_ICON_KNIGHT, PUD_ICON_OGRE),
+   ALOW_UNIT("Archer / Axethrower", PUD_ICON_ARCHER, PUD_ICON_AXETHROWER),
+   ALOW_UNIT("Mage / Death Knight", PUD_ICON_MAGE, PUD_ICON_DEATH_KNIGHT),
+   ALOW_UNIT("Human Tanker / Orc Tanker", PUD_ICON_HUMAN_TANKER, PUD_ICON_ORC_TANKER),
+   ALOW_UNIT("Elven Destroyer / Troll Destroyer", PUD_ICON_ELVEN_DESTROYER, PUD_ICON_TROLL_DESTROYER),
+   ALOW_UNIT("Human Transport / Orc Transport", PUD_ICON_HUMAN_TRANSPORT, PUD_ICON_ORC_TRANSPORT),
+   ALOW_UNIT("Battleship / Juggernaught", PUD_ICON_BATTLESHIP, PUD_ICON_JUGGERNAUGHT),
+   ALOW_UNIT("Gnomish Submarine / Giant Turtle", PUD_ICON_GNOMISH_SUBMARINE, PUD_ICON_GIANT_TURTLE),
+   ALOW_UNIT("Gnomish Flying Machine / Goblin Zepplin", PUD_ICON_GNOMISH_FLYING_MACHINE, PUD_ICON_GOBLIN_ZEPPLIN),
+   ALOW_UNIT("Gryphon Rider / Dragon", PUD_ICON_GRYPHON_RIDER, PUD_ICON_DRAGON),
+   ALOW_UNIT_UNUSED(),
+   ALOW_UNIT("Dwarven Demolition Squad / Goblin Sapper", PUD_ICON_DWARVES, PUD_ICON_GOBLIN_SAPPER),
+   ALOW_UNIT("Gryphon Aviary / Dragon Roost", PUD_ICON_GRYPHON_AVIARY, PUD_ICON_DRAGON_ROOST),
+   ALOW_UNIT("Farm / Pig Farm", PUD_ICON_FARM, PUD_ICON_PIG_FARM),
+   ALOW_UNIT("Human Barracks / Orc Barracks", PUD_ICON_HUMAN_BARRACKS, PUD_ICON_ORC_BARRACKS),
+   ALOW_UNIT("Elven Lumber Mill / Troll Lumber Mill", PUD_ICON_ELVEN_LUMBER_MILL, PUD_ICON_TROLL_LUMBER_MILL),
+   ALOW_UNIT("Stables / Ogre Mound", PUD_ICON_STABLES, PUD_ICON_OGRE_MOUND),
+   ALOW_UNIT("Mage Tower / Temple of the Damned", PUD_ICON_MAGE_TOWER, PUD_ICON_TEMPLE_OF_THE_DAMNED),
+   ALOW_UNIT("Human Foundry / Orc Foundry", PUD_ICON_HUMAN_FOUNDRY, PUD_ICON_ORC_FOUNDRY),
+   ALOW_UNIT("Human Refinery / Orc Refinery", PUD_ICON_HUMAN_REFINERY, PUD_ICON_ORC_REFINERY),
+   ALOW_UNIT("Gnomish Inventor / Goblin Alchemist", PUD_ICON_GNOMISH_INVENTOR, PUD_ICON_GOBLIN_ALCHEMIST),
+   ALOW_UNIT("Church / Altar of Storms", PUD_ICON_CHURCH, PUD_ICON_ALTAR_OF_STORMS),
+   ALOW_UNIT("Human Scout Tower / Orc Scout Tower", PUD_ICON_HUMAN_SCOUT_TOWER, PUD_ICON_ORC_SCOUT_TOWER),
+   ALOW_UNIT("Town Hall / Great Hall", PUD_ICON_TOWN_HALL, PUD_ICON_GREAT_HALL),
+   ALOW_UNIT("Keep / Stronghold", PUD_ICON_KEEP, PUD_ICON_STRONGHOLD),
+   ALOW_UNIT("Castle / Fortress", PUD_ICON_CASTLE, PUD_ICON_FORTRESS),
+   ALOW_UNIT("Human Blacksmith / Orc Blashsmith", PUD_ICON_HUMAN_BLACKSMITH, PUD_ICON_ORC_BLACKSMITH),
+   ALOW_UNIT("Human Shipyard / Orc Shipyard", PUD_ICON_HUMAN_SHIPYARD, PUD_ICON_ORC_SHIPYARD),
+   ALOW_UNIT_UNUSED()
+};
+
+static unsigned int
+_flag_to_index(Pud_Allow flag)
+{
+   unsigned int idx = 0;
+
+   while (flag != 0x0)
+     {
+        idx++;
+        flag >>= 1;
+     }
+   return idx - 1;
+}
+
+const char *
+pud_allow_unit2str(Pud_Allow flag)
+{
+   unsigned int idx;
+
+   idx = _flag_to_index(flag);
+   return _alow_units[idx].name;
+}
+
+const Pud_Icon *
+pud_allow_unit_icons_get(Pud_Allow flag)
+{
+   unsigned int idx;
+
+   idx = _flag_to_index(flag);
+   return _alow_units[idx].icons;
 }

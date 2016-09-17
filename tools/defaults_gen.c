@@ -26,7 +26,6 @@
 typedef enum
 {
    UDTA,
-   ALOW,
    UGRD
 } Type;
 
@@ -34,7 +33,7 @@ static void
 _usage(void)
 {
    fprintf(stderr, "*** Usage: defaults_gen <type> <file.pud>\n");
-   fprintf(stderr, "***   Type values: udta,alow,ugrd\n");
+   fprintf(stderr, "***   Type values: udta,ugrd\n");
 }
 
 
@@ -57,8 +56,6 @@ main(int    argc,
    file = argv[2];
    if (!strcasecmp(type, "udta"))
      t = UDTA;
-   else if (!strcasecmp(type, "alow"))
-     t = ALOW;
    else if (!strcasecmp(type, "ugrd"))
      t = UGRD;
    else
@@ -127,21 +124,6 @@ main(int    argc,
          W("};");
          W("");
          break; // End UDTA
-
-
-      case ALOW:
-
-#define GEN(name) GEN_STRUCT(alow, name)
-         GEN(unit_alow);
-         GEN(spell_start);
-         GEN(spell_alow);
-         GEN(spell_acq);
-         GEN(up_alow);
-         GEN(up_acq);
-#undef GEN
-
-         break; // End ALOW
-
 
       case UGRD:
 

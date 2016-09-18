@@ -346,5 +346,5 @@ pud_random_get(uint16_t tile)
 
 #undef GEN
 
-   return rands[rand() % count];
+   return (count == 0) ? rands[0] : rands[rand() % count];
 }

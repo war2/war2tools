@@ -410,16 +410,19 @@ pud_allow_unit_valid_is(Pud_Allow flag)
    /*
     * Flag must be non zero, bits 13 and 31 must not be set
     */
-   return ((flag & ~PUD_ALLOW_UNIT_MARK) &&
-           (!(flag & (1 << 13)) &&
-            ((flag & PUD_ALLOW_UNIT_MARK))));
+   return ((flag) &&
+           (!(flag & (1 << 13))) &&
+           (!(flag & (1 << 31))));
 }
 
 Pud_Bool
 pud_allow_spell_valid_is(Pud_Allow flag)
 {
-   return ((flag & ~PUD_ALLOW_SPELL_MARK) &&
-           (!(flag & 0xbff00000)) &&
+   /*
+    * Flag must be non zero, bits 2, 12 and from 20 to 31 must not be set
+    */
+   return ((flag) &&
+           (!(flag & 0xfff00000)) &&
            (!(flag & (1 << 2))) &&
            (!(flag & (1 << 12))));
 }
@@ -534,9 +537,8 @@ const char *
 pud_allow_unit2str(Pud_Allow flag)
 {
    unsigned int idx;
-   Pud_Allow flg = flag & ~PUD_ALLOW_UNIT_MARK;
 
-   idx = _flag_to_index(flg);
+   idx = _flag_to_index(flag);
    return _alow_units[idx].name;
 }
 
@@ -545,7 +547,7 @@ pud_allow_unit_icons_get(Pud_Allow flag)
 {
    unsigned int idx;
 
-   idx = _flag_to_index(flag & ~PUD_ALLOW_UNIT_MARK);
+   idx = _flag_to_index(flag);
    return _alow_units[idx].icons;
 }
 
@@ -554,7 +556,7 @@ pud_allow_spell2str(Pud_Allow flag)
 {
    unsigned int idx;
 
-   idx = _flag_to_index(flag & ~PUD_ALLOW_SPELL_MARK);
+   idx = _flag_to_index(flag);
    return _alow_spells[idx].name;
 }
 
@@ -563,6 +565,6 @@ pud_allow_spell_icon_get(Pud_Allow flag)
 {
    unsigned int idx;
 
-   idx = _flag_to_index(flag & ~PUD_ALLOW_SPELL_MARK);
+   idx = _flag_to_index(flag);
    return _alow_spells[idx].icon;
 }

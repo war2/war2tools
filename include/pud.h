@@ -581,7 +581,6 @@ typedef enum
 #define PUD_ALLOW_UNIT_BLACKSMITH                       ((uint_fast32_t)1 << (uint_fast32_t)29)
 #define PUD_ALLOW_UNIT_SHIPYARD                         ((uint_fast32_t)1 << (uint_fast32_t)30)
 /* Bit 31 is unused */
-#define PUD_ALLOW_UNIT_MARK                             ((uint_fast32_t)1 << (uint_fast32_t)31)
 
 
 /*
@@ -608,7 +607,6 @@ typedef enum
 #define PUD_ALLOW_SPELL_RUNES                           ((uint_fast32_t)1 << (uint_fast32_t)18)
 #define PUD_ALLOW_SPELL_DEATH_AND_DECAY                 ((uint_fast32_t)1 << (uint_fast32_t)19)
 /* Bits 20 to 31 are unused */
-#define PUD_ALLOW_SPELL_MARK                            ((uint_fast32_t)1 << (uint_fast32_t)30)
 
 typedef struct _Pud Pud;
 typedef struct _Pud_Unit_Data Pud_Unit_Data;

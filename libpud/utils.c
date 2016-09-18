@@ -364,7 +364,7 @@ static const Upgrade _upgrades[52] =
    UGRD(BALLISTA_2, "Ballista Projectiles (+2)"),
    UGRD(TRAIN_RANGERS, "Train Rangers"),
    UGRD(LONGBOW, "Long Bow"),
-   UGRD(RANGER_SCOUTING, "Scouting"),
+   UGRD(RANGER_SCOUTING, "Elven Scouting"),
    UGRD(RANGER_MARKSMANSHIP, "Marksmanship"),
    UGRD(TRAIN_BERSERKERS, "Train Berserkers"),
    UGRD(LIGHTER_AXES, "Lighter Axes"),

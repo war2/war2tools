@@ -313,6 +313,31 @@ See appendix E for possible use of "unusable" 7 players.
         00000000000x00000000000000000000        bit19: death and decay
                                           bit20-bit31: unused
 
+        upgrades bit order:
+        0000000000000000000000000000000x        bit0:  archer / troll weapons (level 1)
+        000000000000000000000000000000x0        bit1:  archer / troll weapons (level 2)
+        00000000000000000000000000000x00        bit2:  melee weapons (level 1)
+        0000000000000000000000000000x000        bit3:  melee weapons (level 2)
+        000000000000000000000000000x0000        bit4:  melee shields (level 1)
+        00000000000000000000000000x00000        bit5:  melee shields (level 2)
+        0000000000000000000000000x000000        bit6:  boat cannons (level 1)
+        000000000000000000000000x0000000        bit7:  boat cannons (level 2)
+        00000000000000000000000x00000000        bit8:  boat shiels (level 1)
+        0000000000000000000000x000000000        bit9:  boat shiels (level 2)
+        000000000000000000000x0000000000        bit10: unused
+        00000000000000000000x00000000000        bit11: unused
+        0000000000000000000x000000000000        bit12: ballista / catapult projectiles (level 1)
+        000000000000000000x0000000000000        bit13: ballista / catapult projectiles (level 2)
+        00000000000000000x00000000000000        bit14: unused
+        0000000000000000x000000000000000        bit15: unused
+        00000000000000x00000000000000000        bit16: Elven Rangers / Troll Berserkers
+        0000000000000x000000000000000000        bit17: Longbow / Light Axes
+        000000000000x0000000000000000000        bit18: Elven Scouting / Troll Scouting
+        00000000000x00000000000000000000        bit19: Marksmanship / Regeneration
+                                          bit20-bit31: unused
+
+
+
 8: Section 'UGRD', Upgrade Data
 
         word            use default data (0 no, 1 yes)
@@ -693,3 +718,4 @@ Credits:
 Daniel Lemberg.
 Simon Pelsser (Scorpions).
 Lasse Jensen.
+Jean Guyomarc'h

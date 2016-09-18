@@ -39,7 +39,7 @@ main(int    argc,
         goto end;
      }
 
-   if (idx >= 31)
+   if (idx > 31)
      {
         fprintf(stderr, "*** Index must be between 0 and 31 (both inclusive)\n");
         goto end;

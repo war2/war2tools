@@ -544,6 +544,8 @@ _ugrd_defaults_set(Pud *pud)
 void
 pud_alow_defaults_set(Pud *pud)
 {
+   unsigned int i;
+
    pud->default_allow = 1;
 
    /* Everything is allowed */
@@ -551,8 +553,20 @@ pud_alow_defaults_set(Pud *pud)
    memset(&pud->spell_alow, 0xff, sizeof(struct _alow));
    memset(&pud->up_alow, 0xff, sizeof(struct _alow));
 
-   /* We start with nothing */
+   /* We start with nothing, expect fireball and death coil */
    memset(&pud->spell_start, 0x00, sizeof(struct _alow));
+   for (i = 0; i < 8; i++)
+     {
+        pud->spell_start.players[i] |= PUD_ALLOW_SPELL_FIREBALL;
+        pud->spell_start.players[i] |= PUD_ALLOW_SPELL_DEATH_COIL;
+     }
+   for (i = 0; i < 7; i++)
+     {
+        pud->spell_start.unusable[i] |= PUD_ALLOW_SPELL_FIREBALL;
+        pud->spell_start.unusable[i] |= PUD_ALLOW_SPELL_DEATH_COIL;
+     }
+   pud->spell_start.neutral |= PUD_ALLOW_SPELL_FIREBALL;
+   pud->spell_start.neutral |= PUD_ALLOW_SPELL_DEATH_COIL;
 
    /* We are not researching anything */
    memset(&pud->spell_acq, 0x00, sizeof(struct _alow));

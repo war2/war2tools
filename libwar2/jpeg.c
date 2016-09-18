@@ -41,7 +41,11 @@ war2_jpeg_write(const char          *file,
    p = data_rgb;
 
    f = fopen(file, "wb");
-   if (!f) DIE_RETURN(PUD_FALSE, "Failed to open file [%s]", file);
+   if (!f)
+     {
+        free(data_rgb);
+        DIE_RETURN(PUD_FALSE, "Failed to open file [%s]", file);
+     }
 
    cinfo.err = jpeg_std_error(&jerr);
    jpeg_create_compress(&cinfo);

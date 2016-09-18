@@ -182,8 +182,8 @@ pud_open_new(const char    *file,
    return pud;
 
 err_free:
-   free(pud);
    free(pud->filename);
+   free(pud);
 err:
    return NULL;
 }

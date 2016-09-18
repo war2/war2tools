@@ -410,18 +410,23 @@ pud_allow_unit_valid_is(Pud_Allow flag)
    /*
     * Flag must be non zero, bits 13 and 31 must not be set
     */
-   return ((flag) && (!(flag & (1 << 13)) && (!(flag & (1 << 31)))));
+   return ((flag & ~PUD_ALLOW_UNIT_MARK) &&
+           (!(flag & (1 << 13)) &&
+            ((flag & PUD_ALLOW_UNIT_MARK))));
 }
 
 Pud_Bool
 pud_allow_spell_valid_is(Pud_Allow flag)
 {
-   return ((flag) && (!(flag & 0xffe00000)) && (!(flag & (1 << 2))) && (!(flag & (1 << 12))));
+   return ((flag & ~PUD_ALLOW_SPELL_MARK) &&
+           (!(flag & 0xbff00000)) &&
+           (!(flag & (1 << 2))) &&
+           (!(flag & (1 << 12))));
 }
 
 typedef struct
 {
-   char *name;
+   const char *name;
    Pud_Icon icons[2];
 } Alow_Unit;
 
@@ -473,6 +478,45 @@ static const Alow_Unit _alow_units[] =
    ALOW_UNIT_UNUSED()
 };
 
+typedef struct
+{
+   const char *name;
+   Pud_Icon icon;
+} Alow_Spell;
+
+#define ALOW_SPELL(name_, icon_) \
+   { \
+      .name = name_, \
+      .icon = icon_, \
+   }
+
+#define ALOW_SPELL_UNUSED() \
+   { .name = NULL, .icon = PUD_ICON_CANCEL }
+
+static const Alow_Spell _alow_spells[] =
+{
+   ALOW_SPELL("Holy Vision", PUD_ICON_HOLY_VISION),
+   ALOW_SPELL("Healing", PUD_ICON_HEALING),
+   ALOW_SPELL_UNUSED(),
+   ALOW_SPELL("Exorcism", PUD_ICON_EXORCISM),
+   ALOW_SPELL("Flame Shield", PUD_ICON_FLAME_SHIELD),
+   ALOW_SPELL("Fireball",  PUD_ICON_FIREBALL),
+   ALOW_SPELL("Slow",  PUD_ICON_SLOW),
+   ALOW_SPELL("Invisibility",  PUD_ICON_INVISIBILITY),
+   ALOW_SPELL("Polymorph",  PUD_ICON_POLYMORPH),
+   ALOW_SPELL("Blizzard",  PUD_ICON_BLIZZARD),
+   ALOW_SPELL("Eye of Kilrogg",  PUD_ICON_EYE_OF_KILROGG),
+   ALOW_SPELL("Bloodlust",  PUD_ICON_BLOODLUST),
+   ALOW_SPELL_UNUSED(),
+   ALOW_SPELL("Raise Dead",  PUD_ICON_RAISE_DEAD),
+   ALOW_SPELL("Death Coil",  PUD_ICON_DEATH_COIL),
+   ALOW_SPELL("Whirlwind",  PUD_ICON_WHIRLWIND),
+   ALOW_SPELL("Haste",  PUD_ICON_HASTE),
+   ALOW_SPELL("Unholy Armor",  PUD_ICON_UNHOLY_ARMOR),
+   ALOW_SPELL("Runes",  PUD_ICON_RUNES),
+   ALOW_SPELL("Death and Decay",  PUD_ICON_DEATH_AND_DECAY),
+};
+
 static unsigned int
 _flag_to_index(Pud_Allow flag)
 {
@@ -490,8 +534,9 @@ const char *
 pud_allow_unit2str(Pud_Allow flag)
 {
    unsigned int idx;
+   Pud_Allow flg = flag & ~PUD_ALLOW_UNIT_MARK;
 
-   idx = _flag_to_index(flag);
+   idx = _flag_to_index(flg);
    return _alow_units[idx].name;
 }
 
@@ -500,6 +545,24 @@ pud_allow_unit_icons_get(Pud_Allow flag)
 {
    unsigned int idx;
 
-   idx = _flag_to_index(flag);
+   idx = _flag_to_index(flag & ~PUD_ALLOW_UNIT_MARK);
    return _alow_units[idx].icons;
+}
+
+const char *
+pud_allow_spell2str(Pud_Allow flag)
+{
+   unsigned int idx;
+
+   idx = _flag_to_index(flag & ~PUD_ALLOW_SPELL_MARK);
+   return _alow_spells[idx].name;
+}
+
+Pud_Icon
+pud_allow_spell_icon_get(Pud_Allow flag)
+{
+   unsigned int idx;
+
+   idx = _flag_to_index(flag & ~PUD_ALLOW_SPELL_MARK);
+   return _alow_spells[idx].icon;
 }

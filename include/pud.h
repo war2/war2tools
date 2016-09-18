@@ -581,6 +581,7 @@ typedef enum
 #define PUD_ALLOW_UNIT_BLACKSMITH                       ((uint_fast32_t)1 << (uint_fast32_t)29)
 #define PUD_ALLOW_UNIT_SHIPYARD                         ((uint_fast32_t)1 << (uint_fast32_t)30)
 /* Bit 31 is unused */
+#define PUD_ALLOW_UNIT_MARK                             ((uint_fast32_t)1 << (uint_fast32_t)31)
 
 
 /*
@@ -596,7 +597,7 @@ typedef enum
 #define PUD_ALLOW_SPELL_INVISIBILITY                    ((uint_fast32_t)1 << (uint_fast32_t)7)
 #define PUD_ALLOW_SPELL_POLYMORPH                       ((uint_fast32_t)1 << (uint_fast32_t)8)
 #define PUD_ALLOW_SPELL_BLIZZARD                        ((uint_fast32_t)1 << (uint_fast32_t)9)
-#define PUD_ALLOW_SPELL_EYE_OF_KILREOGG                 ((uint_fast32_t)1 << (uint_fast32_t)10)
+#define PUD_ALLOW_SPELL_EYE_OF_KILROGG                  ((uint_fast32_t)1 << (uint_fast32_t)10)
 #define PUD_ALLOW_SPELL_BLOODLUST                       ((uint_fast32_t)1 << (uint_fast32_t)11)
 /* Bit 12 is unused */
 #define PUD_ALLOW_SPELL_RAISE_DEAD                      ((uint_fast32_t)1 << (uint_fast32_t)13)
@@ -607,6 +608,7 @@ typedef enum
 #define PUD_ALLOW_SPELL_RUNES                           ((uint_fast32_t)1 << (uint_fast32_t)18)
 #define PUD_ALLOW_SPELL_DEATH_AND_DECAY                 ((uint_fast32_t)1 << (uint_fast32_t)19)
 /* Bits 20 to 31 are unused */
+#define PUD_ALLOW_SPELL_MARK                            ((uint_fast32_t)1 << (uint_fast32_t)30)
 
 typedef struct _Pud Pud;
 typedef struct _Pud_Unit_Data Pud_Unit_Data;
@@ -868,7 +870,9 @@ Pud_Side pud_side_for_player(const Pud *pud, Pud_Player player);
 Pud_Bool pud_allow_unit_valid_is(Pud_Allow flag);
 Pud_Bool pud_allow_spell_valid_is(Pud_Allow flag);
 const char *pud_allow_unit2str(Pud_Allow flag);
+const char *pud_allow_spell2str(Pud_Allow flag);
 const Pud_Icon *pud_allow_unit_icons_get(Pud_Allow flag);
+Pud_Icon pud_allow_spell_icon_get(Pud_Allow flag);
 
 void pud_alow_defaults_set(Pud *pud);
 

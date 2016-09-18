@@ -21,7 +21,11 @@ pud_minimap_to_ppm(Pud        *pud,
    if (!map) DIE_RETURN(PUD_FALSE, "Failed to generate bitmap");
 
    f = fopen(file, "w");
-   if (!f) DIE_RETURN(PUD_FALSE, "Failed to open [%s]", file);
+   if (!f)
+     {
+        free(map);
+        DIE_RETURN(PUD_FALSE, "Failed to open [%s]", file);
+     }
 
    /* Write PPM header */
    fprintf(f,

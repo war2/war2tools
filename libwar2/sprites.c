@@ -383,6 +383,9 @@ war2_sprites_decode(War2_Data                *w2,
            case PUD_UNIT_DARK_PORTAL         : NEUTRAL_BUILDING_SWITCH(167, 184, 185, 513); break;
            case PUD_UNIT_RUNESTONE           : NEUTRAL_BUILDING_SWITCH(181, 186, 181, 514); break;
            case PUD_UNIT_CIRCLE_OF_POWER     : NEUTRAL_BUILDING_SWITCH(166, 166, 166, 525); break;
+
+           default:
+             DIE_RETURN(NULL, "Unhandled object 0x%x", object);
           }
      }
 

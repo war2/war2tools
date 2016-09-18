@@ -36,6 +36,7 @@ add_executable(defaults_gen defaults_gen.c)
 add_executable(random_gen random_gen.c)
 add_executable(tilemap tilemap.c ppm.c)
 add_executable(opensave opensave.c)
+add_executable(alow_ugrd_set alow_ugrd_set.c)
 
 if (EET_FOUND)
    add_executable(extract_sprites extract_sprites.c ppm.c)
@@ -48,6 +49,7 @@ target_link_libraries(defaults_gen ${LIBPUD_LIBRARIES})
 target_link_libraries(random_gen ${LIBPUD_LIBRARIES})
 target_link_libraries(tilemap ${LIBPUD_LIBRARIES})
 target_link_libraries(opensave ${LIBPUD_LIBRARIES})
+target_link_libraries(alow_ugrd_set ${LIBPUD_LIBRARIES})
 
 if (ECORE_FILE_FOUND)
 

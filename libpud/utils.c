@@ -427,6 +427,20 @@ pud_allow_spell_valid_is(Pud_Allow flag)
            (!(flag & (1 << 12))));
 }
 
+Pud_Bool
+pud_allow_upgrade_valid_is(Pud_Allow flag)
+{
+   /*
+    * Flag must be non zero, bits 10, 11, 14, 15 and from 20 to 31 must not be set
+    */
+   return ((flag) &&
+           (!(flag & 0xfff00000)) &&
+           (!(flag & (1 << 10))) &&
+           (!(flag & (1 << 11))) &&
+           (!(flag & (1 << 14))) &&
+           (!(flag & (1 << 15))));
+}
+
 typedef struct
 {
    const char *name;
@@ -520,6 +534,35 @@ static const Alow_Spell _alow_spells[] =
    ALOW_SPELL("Death and Decay",  PUD_ICON_DEATH_AND_DECAY),
 };
 
+/* Upgrades are handle the same way than units */
+typedef Alow_Unit Alow_Upgrade;
+#define ALOW_UGRD(...) ALOW_UNIT(__VA_ARGS__)
+#define ALOW_UGRD_UNUSED() ALOW_UNIT_UNUSED()
+
+static const Alow_Upgrade _alow_upgrades[] =
+{
+   ALOW_UGRD("Human Arrows / Orc Spears (+1)", PUD_ICON_ARROW_1, PUD_ICON_SPEAR_1),
+   ALOW_UGRD("Human Arrows / Orc Spears (+2)", PUD_ICON_ARROW_2, PUD_ICON_SPEAR_2),
+   ALOW_UGRD("Human Swords / Orc Axes (+1)", PUD_ICON_SWORD_1, PUD_ICON_AXE_1),
+   ALOW_UGRD("Human Swords / Orc Axes (+2)", PUD_ICON_SWORD_2, PUD_ICON_AXE_2),
+   ALOW_UGRD("Human Shields / Orc Shields (+1)", PUD_ICON_HUMAN_SHIELD_1, PUD_ICON_ORC_SHIELD_1),
+   ALOW_UGRD("Human Shields / Orc Shields (+2)", PUD_ICON_HUMAN_SHIELD_2, PUD_ICON_ORC_SHIELD_2),
+   ALOW_UGRD("Human Ship Cannons / Orc Ship Cannons (+1)", PUD_ICON_HUMAN_SHIP_CANNON_1, PUD_ICON_ORC_SHIP_CANNON_1),
+   ALOW_UGRD("Human Ship Cannons / Orc Ship Cannons (+2)", PUD_ICON_HUMAN_SHIP_CANNON_2, PUD_ICON_ORC_SHIP_CANNON_2),
+   ALOW_UGRD("Human Ship Armor / Orc Ship Armor (+1)", PUD_ICON_HUMAN_SHIP_ARMOR_1, PUD_ICON_ORC_SHIP_ARMOR_1),
+   ALOW_UGRD("Human Ship Armor / Orc Ship Armor (+2)", PUD_ICON_HUMAN_SHIP_ARMOR_2, PUD_ICON_ORC_SHIP_ARMOR_2),
+   ALOW_UNIT_UNUSED(),
+   ALOW_UNIT_UNUSED(),
+   ALOW_UGRD("Ballista Projectiles / Catapult Projectiles (+1)", PUD_ICON_BALLISTA_1, PUD_ICON_CATAPULT_1),
+   ALOW_UGRD("Ballista Projectiles / Catapult Projectiles (+2)", PUD_ICON_BALLISTA_2, PUD_ICON_CATAPULT_2),
+   ALOW_UNIT_UNUSED(),
+   ALOW_UNIT_UNUSED(),
+   ALOW_UGRD("Rangers / Berserkers", PUD_ICON_TRAIN_RANGERS, PUD_ICON_TRAIN_BERSERKERS),
+   ALOW_UGRD("Long Bow / Lighter Axes", PUD_ICON_LONGBOW, PUD_ICON_LIGHTER_AXES),
+   ALOW_UGRD("Elven Scouting / Berserker Scouting", PUD_ICON_RANGER_SCOUTING, PUD_ICON_BERSERKER_SCOUTING),
+   ALOW_UGRD("Marksmanship / Regeneration", PUD_ICON_RANGER_MARKSMANSHIP, PUD_ICON_BERSERKER_REGENERATION),
+};
+
 static unsigned int
 _flag_to_index(Pud_Allow flag)
 {
@@ -567,4 +610,22 @@ pud_allow_spell_icon_get(Pud_Allow flag)
 
    idx = _flag_to_index(flag);
    return _alow_spells[idx].icon;
+}
+
+const char *
+pud_allow_upgrade2str(Pud_Allow flag)
+{
+   unsigned int idx;
+
+   idx = _flag_to_index(flag);
+   return _alow_upgrades[idx].name;
+}
+
+const Pud_Icon *
+pud_allow_upgrade_icons_get(Pud_Allow flag)
+{
+   unsigned int idx;
+
+   idx = _flag_to_index(flag);
+   return _alow_upgrades[idx].icons;
 }

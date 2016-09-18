@@ -584,7 +584,7 @@ typedef enum
 
 
 /*
- * Allow unit spells
+ * Allow spells
  */
 #define PUD_ALLOW_SPELL_HOLY_VISION                     ((uint_fast32_t)1 << (uint_fast32_t)0)
 #define PUD_ALLOW_SPELL_HEALING                         ((uint_fast32_t)1 << (uint_fast32_t)1)
@@ -606,6 +606,32 @@ typedef enum
 #define PUD_ALLOW_SPELL_UNHOLY_ARMOR                    ((uint_fast32_t)1 << (uint_fast32_t)17)
 #define PUD_ALLOW_SPELL_RUNES                           ((uint_fast32_t)1 << (uint_fast32_t)18)
 #define PUD_ALLOW_SPELL_DEATH_AND_DECAY                 ((uint_fast32_t)1 << (uint_fast32_t)19)
+/* Bits 20 to 31 are unused */
+
+
+/*
+ * Allow upgrades
+ */
+#define PUD_ALLOW_UPGRADE_AXES_1                        ((uint_fast32_t)1 << (uint_fast32_t)0)
+#define PUD_ALLOW_UPGRADE_AXES_2                        ((uint_fast32_t)1 << (uint_fast32_t)1)
+#define PUD_ALLOW_UPGRADE_SWORDS_1                      ((uint_fast32_t)1 << (uint_fast32_t)2)
+#define PUD_ALLOW_UPGRADE_SWORDS_2                      ((uint_fast32_t)1 << (uint_fast32_t)3)
+#define PUD_ALLOW_UPGRADE_SHIELDS_1                     ((uint_fast32_t)1 << (uint_fast32_t)4)
+#define PUD_ALLOW_UPGRADE_SHIELDS_2                     ((uint_fast32_t)1 << (uint_fast32_t)5)
+#define PUD_ALLOW_UPGRADE_CANNONS_1                     ((uint_fast32_t)1 << (uint_fast32_t)6)
+#define PUD_ALLOW_UPGRADE_CANNONS_2                     ((uint_fast32_t)1 << (uint_fast32_t)7)
+#define PUD_ALLOW_UPGRADE_ARMOR_1                       ((uint_fast32_t)1 << (uint_fast32_t)8)
+#define PUD_ALLOW_UPGRADE_ARMOR_2                       ((uint_fast32_t)1 << (uint_fast32_t)9)
+/* Bit 10 is unused */
+/* Bit 11 is unused */
+#define PUD_ALLOW_UPGRADE_PROJECTILES_1                 ((uint_fast32_t)1 << (uint_fast32_t)12)
+#define PUD_ALLOW_UPGRADE_PROJECTILES_2                 ((uint_fast32_t)1 << (uint_fast32_t)13)
+/* Bit 14 is unused */
+/* Bit 15 is unused */
+#define PUD_ALLOW_UPGRADE_RANGERS_BERSERKERS            ((uint_fast32_t)1 << (uint_fast32_t)16)
+#define PUD_ALLOW_UPGRADE_LONG_RANGE                    ((uint_fast32_t)1 << (uint_fast32_t)17)
+#define PUD_ALLOW_UPGRADE_SCOUTING                      ((uint_fast32_t)1 << (uint_fast32_t)18)
+#define PUD_ALLOW_UPGRADE_MARKSMANSHIP_REGENERATION     ((uint_fast32_t)1 << (uint_fast32_t)19)
 /* Bits 20 to 31 are unused */
 
 typedef struct _Pud Pud;
@@ -867,10 +893,13 @@ Pud_Side pud_side_for_player(const Pud *pud, Pud_Player player);
 
 Pud_Bool pud_allow_unit_valid_is(Pud_Allow flag);
 Pud_Bool pud_allow_spell_valid_is(Pud_Allow flag);
+Pud_Bool pud_allow_upgrade_valid_is(Pud_Allow flag);
 const char *pud_allow_unit2str(Pud_Allow flag);
 const char *pud_allow_spell2str(Pud_Allow flag);
+const char *pud_allow_upgrade2str(Pud_Allow flag);
 const Pud_Icon *pud_allow_unit_icons_get(Pud_Allow flag);
 Pud_Icon pud_allow_spell_icon_get(Pud_Allow flag);
+const Pud_Icon *pud_allow_upgrade_icons_get(Pud_Allow flag);
 
 void pud_alow_defaults_set(Pud *pud);
 

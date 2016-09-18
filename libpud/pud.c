@@ -341,7 +341,6 @@ Pud_Bool
 pud_write(const Pud  *pud,
           const char *file)
 {
-   // FIXME f is never fclose()d on error
    PUD_SANITY_CHECK(pud, PUD_OPEN_MODE_W, PUD_FALSE);
 
    const Pud *p = pud; // Shortcut

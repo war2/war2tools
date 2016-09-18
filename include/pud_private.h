@@ -49,7 +49,10 @@ pud_mem_map_ok(Pud *pud)
 
 #define PUD_CHECK_FERROR(f, ret) \
    do { \
-      if (ferror(f)) DIE_RETURN(ret, "Error while accessing file: %s", strerror(errno)); \
+      if (ferror(f)) { \
+         fclose(f); \
+         DIE_RETURN(ret, "Error while accessing file: %s", strerror(errno)); \
+      } \
    } while (0)
 
 

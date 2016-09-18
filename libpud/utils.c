@@ -573,7 +573,7 @@ _flag_to_index(Pud_Allow flag)
         idx++;
         flag >>= 1;
      }
-   return idx - 1;
+   return (idx == 0) ? idx : idx - 1;
 }
 
 const char *

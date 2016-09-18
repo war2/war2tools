@@ -24,7 +24,7 @@ ppm_parse(const char *file,
    int v;
    unsigned char status = 0;
    char comment = 0;
-   int w, h;
+   int w = 0, h = 0;
    char col_st = 0;
 
    f = fopen(file, "r");

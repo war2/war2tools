@@ -600,12 +600,12 @@ pud_version_set(Pud      *pud,
 }
 
 void
-pud_description_set(Pud  *pud,
-                    char  descr[32])
+pud_description_set(Pud        *pud,
+                    const char  descr[32])
 {
    PUD_SANITY_CHECK(pud, PUD_OPEN_MODE_W, VOID);
    strncpy(pud->description, descr, 32);
-   pud->description[31] = 0; // If length is 32, will not be NUL terminated
+   pud->description[31] = '\0';
 }
 
 void

@@ -832,6 +832,7 @@ Pud_Owner pud_owner_convert(uint8_t code);
 Pud_Side pud_side_convert(uint8_t code);
 void pud_version_set(Pud *pud, uint16_t version);
 void pud_description_set(Pud *pud, const char descr[32]);
+const char *pud_description_get(const Pud *pud);
 void pud_tag_set(Pud *pud, uint32_t tag);
 Pud_Error pud_check(Pud *pud, Pud_Error_Description *err);
 Pud_Bool pud_defaults_set(Pud *pud);

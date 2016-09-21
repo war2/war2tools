@@ -608,6 +608,12 @@ pud_description_set(Pud        *pud,
    pud->description[31] = '\0';
 }
 
+const char *
+pud_description_get(const Pud *pud)
+{
+   return pud->description;
+}
+
 void
 pud_tag_set(Pud      *pud,
             uint32_t  tag)

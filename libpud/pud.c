@@ -872,28 +872,6 @@ pud_unit_oil_well_is(Pud_Unit unit)
            (unit == PUD_UNIT_ORC_OIL_WELL));
 }
 
-void
-pud_tiles_randomize(Pud *pud)
-{
-   PUD_SANITY_CHECK(pud, PUD_OPEN_MODE_W, VOID);
-
-   const uint16_t tiles[] = {
-      0x0050, 0x0051, 0x0052
-   };
-   const unsigned int count = sizeof(tiles) / sizeof(*tiles);
-   unsigned int i, j;
-   uint16_t tile;
-
-   for (j = 0; j < pud->map_h; j++)
-     {
-        for (i = 0; i < pud->map_w; i++)
-          {
-             tile = tiles[rand() % count];
-             pud_tile_set(pud, i, j, tile);
-          }
-     }
-}
-
 Pud_Color
 pud_color_for_player(Pud_Player player)
 {

@@ -7,9 +7,6 @@ if (PNG_FOUND)
    add_definitions(-DHAVE_PNG=1)
 endif()
 
-add_definitions(-Wall)
-add_definitions(-std=c99)
-
 add_library(libwar2 SHARED
    war2.c
    private.c

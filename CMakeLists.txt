@@ -1,13 +1,50 @@
 cmake_minimum_required(VERSION 3.0)
 project(war2tools C)
 
-add_definitions(-g)
-add_definitions(-Wall)
-add_definitions(-W)
-add_definitions(-Wshadow)
-add_definitions(-std=gnu99)
+include(cmake/check_compiler_warnings.cmake)
+
+add_definitions(-g) # FIXME
+add_definitions(-std=gnu99) # FIXME
 add_definitions(-D_BSD_SOURCE)
 add_definitions(-D_DEFAULT_SOURCE)
+
+check_compiler_warnings(
+    -Wall
+    -Wextra
+    -Winit-self
+    -Wfloat-equal
+    -Wunused
+    -Wunused-parameter
+    #-Wsign-conversion
+    -Wchar-subscripts
+    -Wdouble-promotion
+    -Wformat-security
+    -Wformat-nonliteral
+    -Wmissing-braces
+    -Wmissing-include-dirs
+    -Wparentheses
+    -Wsequence-point
+    -Wtrigraphs
+    -Wmaybe-uninitialized
+    -Wsuggest-final-types
+    -Wsuggest-final-methods
+    #-Wconversion
+    -Wlogical-op
+    -Wlogical-not-parentheses
+    -Wmemset-transposed-args
+    -Wsizeof-pointer-memaccess
+    -Wmissing-field-initializers
+    -Wmultichar
+    #-Wpacked
+    #-Wpacked-bitfield-compat
+    #-Wpadded
+    -Wredundant-decls
+    -Winline
+    -Winvalid-pch
+    -Woverlength-strings
+    -Wcast-align
+)
+
 
 set(LIBPUD_DESCRIPTION "Warcraft II PUD Manipulation Utilities")
 set(LIBPUD_VERSION_MAJOR 0)

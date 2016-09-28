@@ -19,10 +19,6 @@ include_directories(
    ${CMAKE_CURRENT_SOURCE_DIR}/../include
 )
 
-
-add_definitions(-Wall)
-add_definitions(-std=c99)
-
 add_library(libpud SHARED ${LIBPUD_SRC})
 add_library(libpud_static STATIC ${LIBPUD_SRC})
 

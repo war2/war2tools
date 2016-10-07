@@ -39,9 +39,9 @@ _pud_to_image(Pud *pud)
     CGColorSpaceRef colorspace;
     CGDataProviderRef data_provider;
     unsigned char *map;
-    int map_size;
+    unsigned int map_size;
     
-    map = pud_minimap_bitmap_generate(pud, &map_size);
+    map = pud_minimap_bitmap_generate(pud, &map_size, PUD_PIXEL_FORMAT_ARGB);
     if (NULL == map) {
         fprintf(stderr, "*** Failed to generate bitmap\n");
         return NULL;

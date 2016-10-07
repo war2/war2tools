@@ -750,6 +750,7 @@ struct _Pud
    unsigned int map_w;
    unsigned int map_h;
    unsigned int tiles; /* pud->map_w * pud->map_h */
+   unsigned int starting_points;
 
    /* Number of elements is in 'tiles' */
    uint16_t *tiles_map;

@@ -786,6 +786,7 @@ pud_check(Pud                   *pud,
           }
      }
 
+   pud->starting_points = starting_locations;
    ret = PUD_ERROR_NONE;
 end:
    if (err) err->type = ret;

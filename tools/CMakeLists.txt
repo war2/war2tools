@@ -13,20 +13,24 @@ link_directories(${CMAKE_CURRENT_BINARY_DIR}/../libwar2)
 
 if (EINA_FOUND)
    include_directories(${EINA_INCLUDE_DIRS})
+   link_directories(${EINA_LIBRARY_DIRS})
 endif ()
 
 if (EET_FOUND AND EMILE_FOUND)
    add_definitions(-DHAVE_EET=1)
    include_directories(${EET_INCLUDE_DIRS} ${EMILE_INCLUDE_DIRS})
+   link_directories(${EMILE_LIBRARY_DIRS} ${EET_LIBRARY_DIRS})
 endif ()
 
 if (ECORE_FILE_FOUND)
    include_directories(${ECORE_FILE_INCLUDE_DIRS})
+   link_directories(${ECORE_FILE_LIBRARY_DIRS})
 endif ()
 
 if (CAIRO_FOUND)
    add_definitions(-DHAVE_CAIRO=1)
    include_directories(${CAIRO_INCLUDE_DIRS})
+   link_directories(${CAIRO_LIBRARY_DIRS})
 endif ()
 
 add_executable(ppm_cmp ppm.c ppm_cmp.c)

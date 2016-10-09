@@ -5,9 +5,9 @@
  * Pud provides ways to manipulate PUD files.
  * PUD files are Warcraft II custom map files, that
  * can be loaded into Warcraft II and distributed among
- * players .
+ * players.
  *
- * Copyright (c) 2014 -2016 Jean Guyomarc'h
+ * Copyright (c) 2014 - 2016 Jean Guyomarc'h
  */
 
 #ifndef _PUD_H_
@@ -86,10 +86,14 @@ typedef enum
    PUD_DIMENSIONS_128_128 /**< 128x128 map */
 } Pud_Dimensions;
 
+/**
+ * @typedef Pud_Pixel_Format
+ * Type that holds different pixel formats
+ */
 typedef enum
 {
-   PUD_PIXEL_FORMAT_RGBA,
-   PUD_PIXEL_FORMAT_ARGB,
+   PUD_PIXEL_FORMAT_RGBA, /**< Pixels are 8 bits each, RGBA ordered */
+   PUD_PIXEL_FORMAT_ARGB, /**< Pixels are 8 bits each, ARGB ordered */
 } Pud_Pixel_Format;
 
 /**
@@ -110,20 +114,24 @@ typedef enum
    PUD_PLAYER_NEUTRAL   = 15 /** Neutral player */
 } Pud_Player;
 
+/**
+ * @typedef Pud_Upgrade
+ * Type that describes an upgrade
+ */
 typedef enum
 {
-   PUD_UPGRADE_SWORD_1          = 0,
-   PUD_UPGRADE_SWORD_2,
-   PUD_UPGRADE_AXE_1,
-   PUD_UPGRADE_AXE_2,
-   PUD_UPGRADE_ARROW_1,
-   PUD_UPGRADE_ARROW_2,
-   PUD_UPGRADE_SPEAR_1,
-   PUD_UPGRADE_SPEAR_2,
-   PUD_UPGRADE_HUMAN_SHIELD_1,
-   PUD_UPGRADE_HUMAN_SHIELD_2,
-   PUD_UPGRADE_ORC_SHIELD_1,
-   PUD_UPGRADE_ORC_SHIELD_2,
+   PUD_UPGRADE_SWORD_1 = 0, /**< Human melee level 1 */
+   PUD_UPGRADE_SWORD_2, /**< Human melee level 2 */
+   PUD_UPGRADE_AXE_1, /**< Orc melee level 1 */
+   PUD_UPGRADE_AXE_2, /**< Orc melee level 2 */
+   PUD_UPGRADE_ARROW_1, /**< Elven arrows level 1 */
+   PUD_UPGRADE_ARROW_2, /**< Elven arrows level 2 */
+   PUD_UPGRADE_SPEAR_1, /**< Troll axes level 1 */
+   PUD_UPGRADE_SPEAR_2, /**< Troll axes level 2 */
+   PUD_UPGRADE_HUMAN_SHIELD_1, /**< Human shield level 1 */
+   PUD_UPGRADE_HUMAN_SHIELD_2, /**< Human shield level 2 */
+   PUD_UPGRADE_ORC_SHIELD_1, /**< Orc shield level 1 */
+   PUD_UPGRADE_ORC_SHIELD_2, /**< Orc shield level 2 */
    PUD_UPGRADE_HUMAN_SHIP_CANNON_1,
    PUD_UPGRADE_HUMAN_SHIP_CANNON_2,
    PUD_UPGRADE_ORC_SHIP_CANNON_1,
@@ -166,6 +174,10 @@ typedef enum
    PUD_UPGRADE_DEATH_AND_DECAY
 } Pud_Upgrade;
 
+/**
+ * @typedef Pud_Icon
+ * Type that describes an icon
+ */
 typedef enum
 {
    PUD_ICON_PEASANT                              = 0,
@@ -325,6 +337,10 @@ typedef enum
    PUD_ICON_DEATH_AND_DECAY                      = 108,
 } Pud_Icon;
 
+/**
+ * @typedef Pud_Unit
+ * Type that describes a unit
+ */
 typedef enum
 {
    PUD_UNIT_FOOTMAN                     = 0x00,

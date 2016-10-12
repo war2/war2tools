@@ -45,6 +45,7 @@ check_compiler_warnings(
     -Wcast-align
 )
 
+include(CheckFunctionExists)
 
 set(LIBPUD_DESCRIPTION "Warcraft II PUD Manipulation Utilities")
 set(LIBPUD_VERSION_MAJOR 0)

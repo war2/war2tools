@@ -10,8 +10,8 @@
 /* It is such a heavy function I put it in a single file */
 
 void
-pud_print(Pud  *pud,
-          FILE *stream)
+pud_print(const Pud *pud,
+          FILE      *stream)
 {
    unsigned int i, j;
 

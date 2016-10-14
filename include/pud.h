@@ -842,7 +842,7 @@ Pud_Bool pud_parse(Pud *pud);
 void pud_verbose_set(Pud *pud, int lvl);
 Pud_Bool pud_section_is_optional(Pud_Section sec);
 uint32_t pud_go_to_section(Pud *pud, Pud_Section sec);
-void pud_print(Pud *pud, FILE *stream);
+void pud_print(const Pud *pud, FILE *stream);
 void pud_dimensions_to_size(Pud_Dimensions dim, unsigned int *x_ret, unsigned int *y_ret);
 Pud_Owner pud_owner_convert(uint8_t code);
 Pud_Side pud_side_convert(uint8_t code);

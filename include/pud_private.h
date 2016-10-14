@@ -124,26 +124,4 @@ const char *mode2str(Pud_Open_Mode mode);
 
 Pud_Bool pud_mem_map_ok(Pud *pud);
 
-
-Pud_Bool pud_parse_type(Pud *pud);
-Pud_Bool pud_parse_ver(Pud *pud);
-Pud_Bool pud_parse_desc(Pud *pud);
-Pud_Bool pud_parse_ownr(Pud *pud);
-Pud_Bool pud_parse_side(Pud *pud);
-Pud_Bool pud_parse_era(Pud *pud);
-Pud_Bool pud_parse_dim(Pud *pud);
-Pud_Bool pud_parse_udta(Pud *pud);
-Pud_Bool pud_parse_alow(Pud *pud);
-Pud_Bool pud_parse_ugrd(Pud *pud);
-Pud_Bool pud_parse_sgld(Pud *pud);
-Pud_Bool pud_parse_slbr(Pud *pud);
-Pud_Bool pud_parse_soil(Pud *pud);
-Pud_Bool pud_parse_aipl(Pud *pud);
-Pud_Bool pud_parse_mtxm(Pud *pud);
-Pud_Bool pud_parse_sqm(Pud *pud);
-Pud_Bool pud_parse_oilm(Pud *pud);
-Pud_Bool pud_parse_regm(Pud *pud);
-Pud_Bool pud_parse_unit(Pud *pud);
-
-
 #endif /* ! _PRIVATE_H_ */

@@ -858,9 +858,6 @@ void pud_era_set(Pud *pud, Pud_Era era);
 void pud_dimensions_set(Pud *pud, Pud_Dimensions dims);
 void pud_tag_generate(Pud *pud);
 
-void *pud_mmap(const char *file, size_t *size_ret);
-void pud_munmap(void *map, size_t size);
-
 unsigned char *pud_minimap_bitmap_generate(Pud *pud, unsigned int *size_ret, Pud_Pixel_Format pfmt);
 
 Pud_Bool pud_minimap_to_ppm(Pud *pud, const char *file);

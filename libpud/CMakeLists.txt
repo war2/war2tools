@@ -22,13 +22,6 @@ include_directories(
 add_library(libpud SHARED ${LIBPUD_SRC})
 add_library(libpud_static STATIC ${LIBPUD_SRC})
 
-check_function_exists(mmap HAVE_MMAP)
-
-if (HAVE_MMAP)
-   target_compile_definitions(libpud PRIVATE HAVE_MMAP=1)
-   target_compile_definitions(libpud_static PRIVATE HAVE_MMAP=1)
-endif ()
-
 # Disable the prefix because it is already in the name
 # The name cannot (?) be changed because there is another target called pud
 SET_TARGET_PROPERTIES(libpud PROPERTIES PREFIX "")

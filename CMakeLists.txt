@@ -81,6 +81,10 @@ add_custom_target(uninstall
    COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_SOURCE_DIR}/cmake/uninstall.cmake
 )
 
+check_function_exists(mmap HAVE_MMAP)
+
+add_definitions(-DHAVE_MMAP=1)
+
 add_subdirectory(libpud)
 add_subdirectory(libwar2)
 add_subdirectory(pc)

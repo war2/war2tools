@@ -5,6 +5,7 @@
  * Copyright (c) 2014 - 2016 Jean Guyomarc'h
  */
 
+#include "common.h"
 #include "pud_private.h"
 
 static const char * const _pud_sections[] =
@@ -115,7 +116,7 @@ _open(Pud           *pud,
    /* Close the file if was already open */
    if (pud->mem_map)
      {
-        pud_munmap(pud->mem_map, pud->mem_map_size);
+        common_file_munmap(pud->mem_map, pud->mem_map_size);
         pud->mem_map = NULL;
      }
    if (pud->filename) free(pud->filename);
@@ -129,7 +130,7 @@ _open(Pud           *pud,
    /* Open */
    if (mode & PUD_OPEN_MODE_R)
      {
-        pud->mem_map = pud_mmap(file, &(pud->mem_map_size));
+        pud->mem_map = common_file_mmap(file, &(pud->mem_map_size));
         if (pud->mem_map == NULL)
           DIE_GOTO(err_ff, "Failed to mmap() [%s] %s", file, strerror(errno));
 
@@ -225,7 +226,7 @@ void
 pud_close(Pud *pud)
 {
    if (!pud) return;
-   if (pud->mem_map) pud_munmap(pud->mem_map, pud->mem_map_size);
+   if (pud->mem_map) common_file_munmap(pud->mem_map, pud->mem_map_size);
    free(pud->filename);
    free(pud->units);
    free(pud->tiles_map);

@@ -6,6 +6,7 @@
  */
 
 #include "war2_private.h"
+#include "common.h"
 
 /*
  * I didn't find anywhere the specifications of .WAR files.
@@ -39,7 +40,7 @@ war2_open(const char *file,
    war2_verbosity_set(w2, verbosity);
 
    /* Map file */
-   w2->mem_map = pud_mmap(file, &(w2->mem_map_size));
+   w2->mem_map = common_file_mmap(file, &(w2->mem_map_size));
    if (!w2->mem_map) DIE_GOTO(err_free, "Failed to map file");
    w2->ptr = w2->mem_map;
    WAR2_VERBOSE(w2, 1, "File [%s] mapped size is %zu bytes", file, w2->mem_map_size);
@@ -90,7 +91,7 @@ war2_open(const char *file,
 err_free_all:
    free(w2->entries);
 err_unmap:
-   pud_munmap(w2->mem_map, w2->mem_map_size);
+   common_file_munmap(w2->mem_map, w2->mem_map_size);
 err_free:
    free(w2);
 err:
@@ -209,7 +210,7 @@ void
 war2_close(War2_Data *w2)
 {
    if (!w2) return;
-   pud_munmap(w2->mem_map, w2->mem_map_size);
+   common_file_munmap(w2->mem_map, w2->mem_map_size);
    free(w2->entries);
    free(w2);
 }

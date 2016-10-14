@@ -221,15 +221,6 @@ err:
    return NULL;
 }
 
-Pud_Bool
-pud_reopen(Pud           *pud,
-           const char    *file,
-           Pud_Open_Mode  mode)
-{
-   if ((!pud) || (!file)) DIE_RETURN(PUD_FALSE, "Invalid inputs");
-   return _open(pud, file, mode);
-}
-
 void
 pud_close(Pud *pud)
 {

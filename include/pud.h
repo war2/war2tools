@@ -838,7 +838,6 @@ void pud_shutdown(void);
 Pud *pud_open_new(const char *file, Pud_Open_Mode mode);
 Pud *pud_open(const char *file, Pud_Open_Mode mode);
 void pud_close(Pud *pud);
-Pud_Bool pud_reopen(Pud *pud, const char *file, Pud_Open_Mode mode);
 Pud_Bool pud_parse(Pud *pud);
 void pud_verbose_set(Pud *pud, int lvl);
 Pud_Bool pud_section_is_optional(Pud_Section sec);

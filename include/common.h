@@ -30,7 +30,12 @@
 # include <unistd.h>
 #endif
 
+#ifdef HAVE_ACCESS
+# include <unistd.h>
+#endif
+
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <errno.h>
 
@@ -72,13 +77,61 @@ err_close:
    return map;
 
 #else
-   fprintf(stderr,
-           "*** %s() is not implemented on your platform!\n"
-           "*** Please contact dev if you want support or add it by yourself.\n",
-           __func__);
-   return NULL;
-#endif
 
+   /*
+    * Fallback... mmap() will be damn better, but that for lame
+    * systems...
+    * I have a buffer, read the file in the buffer, and every time
+    * I copy the buffer (from the stack) to a persistant buffer
+    * in the heap, which is dynamically resized for every buffer
+    * read. Yes, that's lame, but that's platform agnostic...
+    * Cannot pre-alloc the heap buffer because I have no simple way
+    * to detect the size of the file. SEEK_SET (for fseek()) is not
+    * portable enough to be used... so no... no ftell() :/
+    * I believe this way is much faster than going through the file
+    * twice.
+    */
+
+   unsigned char *map = NULL, *tmp;
+   char buf[4096];
+   size_t size, total = 0;
+   FILE *f;
+
+   f = fopen(file, "r");
+   if (!f)
+     {
+        fprintf(stderr, "*** Failed to topen \"%s\"\n", file);
+        return NULL;
+     }
+
+   while ((!feof(f)) && (!ferror(f)))
+     {
+        size = fread(buf, sizeof(char), sizeof(buf), f);
+        if (!size) break;
+
+        total += size;
+        tmp = realloc(map, total);
+        if (!tmp)
+          {
+             fprintf(stderr, "*** realloc() failed\n");
+             free(map); map = NULL; /* set to NULL to return */
+             goto close;
+          }
+        map = tmp;
+        memcpy(map + total - size, buf, size);
+     }
+   if (ferror(f))
+     {
+        fprintf(stderr, "*** ferror() was raised\n");
+        free(map); map = NULL;
+        goto close;
+     }
+   if (size_ret) *size_ret = total;
+
+close:
+   fclose(f);
+   return map;
+#endif
 }
 
 static inline void
@@ -87,10 +140,35 @@ common_file_munmap(void *map, size_t size)
 #ifdef HAVE_MMAP
    munmap(map, size);
 #else
-   fprintf(stderr,
-           "*** %s() is not implemented on your platform!\n"
-           "*** Please contact dev if you want support or add it by yourself.\n",
-           __func__);
+   (void) size;
+   free(map);
+#endif
+}
+
+static inline int
+common_file_exists(const char *path)
+{
+   if (!path) return 0;
+
+#ifdef HAVE_ACCESS
+   return (access(path, F_OK) == 0) ? 1 : 0;
+#else
+
+   /*
+    * Fallback. Not very good, because it does not take
+    * account of access rights. fopen could fail for other
+    * reasons then a non-existant file. But that is just
+    * a fallback, so it should do...
+    */
+
+   FILE *f;
+   int ok;
+
+   f = fopen(path, "r");
+   ok = (f == NULL) ? 0 : 1;
+   fclose(f);
+   return ok;
+
 #endif
 }
 

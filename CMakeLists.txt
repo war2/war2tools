@@ -82,8 +82,14 @@ add_custom_target(uninstall
 )
 
 check_function_exists(mmap HAVE_MMAP)
+check_function_exists(access HAVE_ACCESS)
 
-add_definitions(-DHAVE_MMAP=1)
+if (HAVE_MMAP)
+   add_definitions(-DHAVE_MMAP=1)
+endif ()
+if (HAVE_ACCESS)
+   add_definitions(-DHAVE_ACCESS=1)
+endif ()
 
 add_subdirectory(libpud)
 add_subdirectory(libwar2)

@@ -40,8 +40,8 @@ typedef unsigned char Pud_Bool;
  */
 #define PUD_FALSE ((Pud_Bool)(0))
 
-#define PUD_VERSION_TOD  0x0011
-#define PUD_VERSION_BDP  0x0013
+#define PUD_VERSION_WAR2                0x11
+#define PUD_VERSION_BATTLE_NET_EDITION  0x13
 
 
 /**

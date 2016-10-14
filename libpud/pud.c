@@ -175,7 +175,7 @@ pud_open_new(const char    *file,
      DIE_GOTO(err_free, "Failed to set defaults");
 
    pud_tag_generate(pud);
-   pud_version_set(pud, PUD_VERSION_TOD);
+   pud_version_set(pud, PUD_VERSION_BATTLE_NET_EDITION);
    pud_description_set(pud, "");
    pud_era_set(pud, PUD_ERA_FOREST);
    pud_dimensions_set(pud, PUD_DIMENSIONS_32_32);

@@ -10,7 +10,7 @@
 static void _udta_defaults_set(Pud *pud);
 static void _ugrd_defaults_set(Pud *pud);
 
-Pud_Bool
+PUDAPI Pud_Bool
 pud_defaults_set(Pud *pud)
 {
    PUD_SANITY_CHECK(pud, PUD_OPEN_MODE_W, PUD_FALSE);
@@ -541,10 +541,12 @@ _ugrd_defaults_set(Pud *pud)
    memcpy(&(pud->upgrade[0]), &(ugrd[0]), sizeof(ugrd));
 }
 
-void
+PUDAPI void
 pud_alow_defaults_set(Pud *pud)
 {
    unsigned int i;
+
+   PUD_SANITY_CHECK(pud, PUD_OPEN_MODE_W, VOID);
 
    pud->default_allow = 1;
 

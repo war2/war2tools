@@ -39,7 +39,7 @@ sections_list(Pud  *pud,
      {
         if (vc == 4)
           {
-             if (pud_section_exists(buf))
+             if (pud_section_valid_is(buf))
                {
                   verified++;
                   fprintf(stream, "%s\n", buf);

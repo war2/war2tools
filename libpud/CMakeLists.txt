@@ -6,11 +6,9 @@ set(
    defaults.c
    img.c
    parse.c
-   print.c
    private.c
    tiles.c
    utils.c
-   mmap.c
    random.c
 )
 

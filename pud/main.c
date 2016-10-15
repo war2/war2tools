@@ -321,14 +321,11 @@ main(int    argc,
         pud = pud_open(file, PUD_OPEN_MODE_R);
         if (pud == NULL) ABORT(3, "Failed to create pud from [%s]", file);
 
-        /* Set verbosity level */
-        pud_verbose_set(pud, verbose);
-
         /* --tile-at */
         if (tile_at.enabled)
           {
              const unsigned int idx = (tile_at.y * pud->map_w) + tile_at.x;
-             w = pud_tile_at(pud, tile_at.x, tile_at.y);
+             w = pud_tile_get(pud, tile_at.x, tile_at.y);
              if (w == 0) ABORT(3, "Failed to parse tile");
              fprintf(stdout,
                      "ID.....: 0x%04x\n"
@@ -403,7 +400,7 @@ main(int    argc,
 
         /* -P,--print */
         if (print.enabled)
-          pud_print(pud, stdout);
+          pud_dump(pud, stdout);
 
         /* -s,--sections */
         if (sections.enabled)
@@ -411,7 +408,7 @@ main(int    argc,
              for (i = 0; i < 20; i++)
                {
                   if ((pud->sections & (1 << i)))
-                    fprintf(stdout, "%s\n", pud_section_at_index(i));
+                    fprintf(stdout, "%s\n", pud_section_to_string(i));
                }
           }
      }

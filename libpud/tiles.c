@@ -1600,6 +1600,6 @@ pud_tile_to_color(Pud_Era   era,
 
      }
 
-   ERR("Unhandled tile [0x%04x] for era %s", tile, pud_era2str(era));
+   ERR("Unhandled tile [0x%04x] for era %s", tile, pud_era_to_string(era));
    return color_make(0xff, 0x00, 0xff, 0xff); // Flashy to be seen (debug)
 }

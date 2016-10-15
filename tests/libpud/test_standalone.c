@@ -100,13 +100,13 @@ START_TEST(projectile2str)
 {
    fail_if(pud_init() != PUD_TRUE);
 
-   fail_if(pud_projectile2str(0) == NULL);
-   fail_if(pud_projectile2str(PUD_PROJECTILE_NONE) == NULL);
-   fail_if(pud_projectile2str(PUD_PROJECTILE_NONE + 1) != NULL);
-   fail_if(pud_projectile2str(-1) != NULL);
-   fail_if(strcmp("None", pud_projectile2str(PUD_PROJECTILE_NONE)) != 0);
-   fail_if(strcmp("Rune", pud_projectile2str(PUD_PROJECTILE_RUNE)) != 0);
-   fail_if(strcmp("Flame Shield (Self)", pud_projectile2str(PUD_PROJECTILE_FLAME_SHIELD_SELF)) != 0);
+   fail_if(pud_projectile_to_string(0) == NULL);
+   fail_if(pud_projectile_to_string(PUD_PROJECTILE_NONE) == NULL);
+   fail_if(pud_projectile_to_string(PUD_PROJECTILE_NONE + 1) != NULL);
+   fail_if(pud_projectile_to_string(-1) != NULL);
+   fail_if(strcmp("None", pud_projectile_to_string(PUD_PROJECTILE_NONE)) != 0);
+   fail_if(strcmp("Rune", pud_projectile_to_string(PUD_PROJECTILE_RUNE)) != 0);
+   fail_if(strcmp("Flame Shield (Self)", pud_projectile_to_string(PUD_PROJECTILE_FLAME_SHIELD_SELF)) != 0);
 
    pud_shutdown();
 }

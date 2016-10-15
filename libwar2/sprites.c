@@ -403,8 +403,8 @@ war2_sprites_decode(War2_Data                *w2,
      DIE_RETURN(NULL, "Invalid object [%u]", object);
    WAR2_VERBOSE(w2, 1, "Decoding entry [%i] for object [%u] (%s,%s)",
                 entries[1], object,
-                (type == WAR2_SPRITES_ICONS) ? "<ICON>" : pud_unit2str(object, PUD_FALSE),
-                pud_era2str(era));
+                (type == WAR2_SPRITES_ICONS) ? "<ICON>" : pud_unit_to_string(object, PUD_FALSE),
+                pud_era_to_string(era));
 
    /* Alloc */
    ud = calloc(1, sizeof(*ud));

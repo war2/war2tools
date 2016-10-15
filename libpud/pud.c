@@ -16,8 +16,14 @@ static const char * const _pud_sections[] =
    "MTXM", "SQM ", "OILM", "REGM", "UNIT"
 };
 
-Pud_Bool
-pud_section_exists(const char sec[4])
+PUDAPI const char *
+pud_section_to_string(Pud_Section section)
+{
+   return ((unsigned) section >= 20) ? NULL : _pud_sections[section];
+}
+
+PUDAPI Pud_Bool
+pud_section_valid_is(const char sec[4])
 {
    unsigned int i;
 
@@ -30,38 +36,24 @@ pud_section_exists(const char sec[4])
    return PUD_FALSE;
 }
 
-const char *
-pud_section_at_index(int idx)
-{
-   if ((unsigned int)idx >= 20) return NULL;
-   return _pud_sections[idx];
-}
-
-Pud_Bool
+PUDAPI Pud_Bool
 pud_init(void)
 {
    srand(time(NULL));
    return PUD_TRUE;
 }
 
-void
+PUDAPI void
 pud_shutdown(void)
 {
-}
-
-
-Pud_Bool
-pud_section_optional_is(Pud_Section sec)
-{
-   return ((sec == PUD_SECTION_ERAX) ||
-           (sec == PUD_SECTION_ALOW));
+   /* Nothing to do */
 }
 
 /*
  * TODO FIXME
  * Bad design (this file should not have been parsed like this)
  */
-uint32_t
+PUDAPI_INTERNAL uint32_t
 pud_go_to_section(Pud         *pud,
                   Pud_Section  sec)
 {
@@ -107,13 +99,13 @@ pud_go_to_section(Pud         *pud,
    return 0;
 }
 
-void
-pud_tag_generate(Pud *pud)
+PUDAPI uint32_t
+pud_tag_generate(void)
 {
-   pud->tag = rand() % UINT32_MAX;
+   return rand() % UINT32_MAX;
 }
 
-Pud *
+PUDAPI Pud *
 pud_open(const char    *file,
          Pud_Open_Mode  mode)
 {
@@ -161,8 +153,8 @@ pud_open(const char    *file,
              if (!pud_defaults_set(pud))
                DIE_GOTO(err, "Failed to set defaults");
 
-             pud_tag_generate(pud);
-             pud_version_set(pud, PUD_VERSION_BATTLE_NET_EDITION);
+             pud->tag = pud_tag_generate();
+             pud_version_set(pud, PUD_VERSION_WAR2);
              pud_description_set(pud, "");
              pud_era_set(pud, PUD_ERA_FOREST);
              pud_dimensions_set(pud, PUD_DIMENSIONS_32_32);
@@ -178,7 +170,7 @@ err:
    return NULL;
 }
 
-void
+PUDAPI void
 pud_close(Pud *pud)
 {
    if (!pud) return;
@@ -191,15 +183,7 @@ pud_close(Pud *pud)
    free(pud);
 }
 
-void
-pud_verbose_set(Pud *pud,
-                int  lvl)
-{
-   if (pud)
-     pud->verbose = lvl;
-}
-
-Pud_Bool
+PUDAPI Pud_Bool
 pud_parse(Pud *pud)
 {
    pud->sections = 0;
@@ -235,18 +219,7 @@ pud_parse(Pud *pud)
    return PUD_TRUE;
 }
 
-uint16_t
-pud_tile_at(const Pud *pud,
-            int        x,
-            int        y)
-{
-   if (((unsigned int)(x * y)) >= (unsigned int)pud->tiles)
-     DIE_RETURN(0, "Invalid coordinates %i,%i", x, y);
-
-   return pud->tiles_map[y * pud->map_w + x];
-}
-
-void
+PUDAPI void
 pud_era_set(Pud     *pud,
             Pud_Era  era)
 {
@@ -254,11 +227,11 @@ pud_era_set(Pud     *pud,
    pud->era = era;
 }
 
-void
+PUDAPI Pud_Bool
 pud_dimensions_set(Pud            *pud,
                    Pud_Dimensions  dims)
 {
-   PUD_SANITY_CHECK(pud, PUD_OPEN_MODE_W, VOID);
+   PUD_SANITY_CHECK(pud, PUD_OPEN_MODE_W, PUD_FALSE);
 
    size_t size;
    unsigned int i;
@@ -269,26 +242,34 @@ pud_dimensions_set(Pud            *pud,
 
    size = pud->tiles * sizeof(uint16_t);
 
+   /*
+    * FIXME realloc()s here do not handle failure properly.
+    * FIXME Memory always leak on failure!!!!! (unreachable).
+    */
+
    /* Set by default light ground */
    pud->tiles_map = realloc(pud->tiles_map, size);
-   if (!pud->tiles_map) DIE_RETURN(VOID, "Failed to allocate memory");
+   if (!pud->tiles_map) DIE_RETURN(PUD_FALSE, "Failed to allocate memory");
    for (i = 0; i < pud->tiles; i++)
      pud->tiles_map[i] = 0x0050;
 
    pud->action_map = realloc(pud->action_map, size);
-   if (!pud->action_map) DIE_RETURN(VOID, "Failed to allocate memory");
+   if (!pud->action_map) DIE_RETURN(PUD_FALSE, "Failed to allocate memory");
    memset(pud->action_map, 0, size);
 
    pud->movement_map = realloc(pud->movement_map, size);
-   if (!pud->movement_map) DIE_RETURN(VOID, "Failed to allocate memory");
+   if (!pud->movement_map) DIE_RETURN(PUD_FALSE, "Failed to allocate memory");
    memset(pud->movement_map, 0, size);
+
+   return PUD_TRUE;
 }
 
-Pud_Bool
+PUDAPI Pud_Bool
 pud_write(const Pud  *pud,
           const char *file)
 {
    PUD_SANITY_CHECK(pud, PUD_OPEN_MODE_W, PUD_FALSE);
+   if (!file) DIE_RETURN(PUD_FALSE, "Cannot write in NULL file");
 
    const Pud *p = pud; // Shortcut
    FILE *f;
@@ -537,7 +518,7 @@ pud_write(const Pud  *pud,
    return PUD_TRUE;
 }
 
-void
+PUDAPI void
 pud_version_set(Pud      *pud,
                 uint16_t  version)
 {
@@ -545,22 +526,23 @@ pud_version_set(Pud      *pud,
    pud->version = version;
 }
 
-void
+PUDAPI void
 pud_description_set(Pud        *pud,
                     const char  descr[32])
 {
    PUD_SANITY_CHECK(pud, PUD_OPEN_MODE_W, VOID);
-   strncpy(pud->description, descr, 32);
+   strncpy(pud->description, descr, 31);
    pud->description[31] = '\0';
 }
 
-const char *
+PUDAPI const char *
 pud_description_get(const Pud *pud)
 {
+   PUD_SANITY_CHECK(pud, PUD_OPEN_MODE_R, NULL);
    return pud->description;
 }
 
-void
+PUDAPI void
 pud_tag_set(Pud      *pud,
             uint32_t  tag)
 {
@@ -568,22 +550,22 @@ pud_tag_set(Pud      *pud,
    pud->tag = tag;
 }
 
-int
-pud_unit_add(Pud        *pud,
-             uint16_t    x,
-             uint16_t    y,
-             Pud_Player  owner,
-             Pud_Unit    type,
-             uint16_t    alter)
+PUDAPI Pud_Bool
+pud_unit_add(Pud          *pud,
+             unsigned int  x,
+             unsigned int  y,
+             Pud_Player    owner,
+             Pud_Unit      unit,
+             uint16_t      alter)
 {
-   PUD_SANITY_CHECK(pud, PUD_OPEN_MODE_W, -1);
+   PUD_SANITY_CHECK(pud, PUD_OPEN_MODE_W, PUD_FALSE);
 
    size_t size;
-   int nb;
+   unsigned int nb;
    void *ptr;
 
    /* Override alter value for unspecified cases */
-   if ((type != PUD_UNIT_GOLD_MINE) && (type != PUD_UNIT_OIL_PATCH))
+   if ((unit != PUD_UNIT_GOLD_MINE) && (unit != PUD_UNIT_OIL_PATCH))
      {
         //        if ((owner == PUD_OWNER_PASSIVE_COMPUTER) ||
         //            (owner == PUD_OWNER_RESCUE_PASSIVE))
@@ -595,7 +577,7 @@ pud_unit_add(Pud        *pud,
    const Pud_Unit_Data u = {
       .x     = x,
       .y     = y,
-      .type  = type,
+      .type  = unit,
       .owner = owner,
       .alter = alter
    };
@@ -607,44 +589,45 @@ pud_unit_add(Pud        *pud,
    nb = pud->units_count + 1;
    size = nb * sizeof(Pud_Unit_Data);
    ptr = realloc(pud->units, size);
-   if (ptr == NULL) DIE_RETURN(-1, "Failed to alloc memory");
+   /* On failure, keep the units as is */
+   if (ptr == NULL) DIE_RETURN(PUD_FALSE, "Failed to alloc memory");
    pud->units = ptr;
    memcpy(&(pud->units[pud->units_count]), &u, sizeof(Pud_Unit_Data));
 
    pud->units_count = nb;
 
-   return nb;
+   return PUD_TRUE;
 }
 
-Pud_Bool
-pud_tile_set(Pud      *pud,
-             uint16_t  x,
-             uint16_t  y,
-             uint16_t  tile)
+PUDAPI Pud_Bool
+pud_tile_set(Pud          *pud,
+             unsigned int  x,
+             unsigned int  y,
+             uint16_t      tile)
 {
    PUD_SANITY_CHECK(pud, PUD_OPEN_MODE_W, PUD_FALSE);
 
-   if ((x > pud->map_w - 1) || (y > pud->map_h - 1))
-     DIE_RETURN(PUD_FALSE, "Invalid indexes [%i][%i]", x, y);
+   if ((x >= pud->map_w) || (y >= pud->map_h))
+     DIE_RETURN(PUD_FALSE, "Invalid indexes (x=%u,y=%u)", x, y);
 
    pud->tiles_map[(y * pud->map_w) + x] = tile;
    return PUD_TRUE;
 }
 
-uint16_t
+PUDAPI uint16_t
 pud_tile_get(const Pud    *pud,
              unsigned int  x,
              unsigned int  y)
 {
    PUD_SANITY_CHECK(pud, PUD_OPEN_MODE_R, 0x0000);
 
-   if ((x > pud->map_w - 1) || (y > pud->map_h - 1))
+   if ((x >= pud->map_w) || (y >= pud->map_h))
      DIE_RETURN(0x0000, "Invalid indexes [%i][%i]", x, y);
 
    return pud->tiles_map[(y * pud->map_w) + x];
 }
 
-Pud_Error
+PUDAPI Pud_Error
 pud_check(Pud                   *pud,
           Pud_Error_Description *err)
 {
@@ -911,8 +894,8 @@ pud_unit_switch_side(Pud_Unit unit)
 }
 
 Pud_Side
-pud_side_for_player(const Pud *pud,
-                    Pud_Player player)
+pud_side_for_player_get(const Pud *pud,
+                        Pud_Player player)
 {
    return (player == PUD_PLAYER_NEUTRAL)
       ? PUD_SIDE_NEUTRAL

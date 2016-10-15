@@ -52,58 +52,55 @@ pud_side_convert(uint8_t code)
      }
 }
 
-void
+PUDAPI void
 pud_dimensions_to_size(Pud_Dimensions  dim,
-                       unsigned int   *x_ret,
-                       unsigned int   *y_ret)
+                       unsigned int   *w_ret,
+                       unsigned int   *h_ret)
 {
-   int x = 0, y = 0;
+   int w, h;
 
    switch (dim)
      {
       case PUD_DIMENSIONS_32_32:
-         x = 32;
-         y = 32;
+         w = 32; h = 32;
          break;
 
       case PUD_DIMENSIONS_64_64:
-         x = 64;
-         y = 64;
+         w = 64; h = 64;
          break;
 
       case PUD_DIMENSIONS_96_96:
-         x = 96;
-         y = 96;
+         w = 96; h = 96;
          break;
 
       case PUD_DIMENSIONS_128_128:
-         x = 128;
-         y = 128;
+         w = 128; h = 128;
          break;
 
       default:
+         w = 0; h = 0;
          break;
      }
 
-   if (x_ret) *x_ret = x;
-   if (y_ret) *y_ret = y;
+   if (w_ret) *w_ret = w;
+   if (h_ret) *h_ret = h;
 }
 
-const char *
-pud_color2str(Pud_Player color)
+PUDAPI const char *
+pud_color_to_string(Pud_Player color)
 {
-   const char *colors[] = {
-      "red", "blue", "green", "violet",
-      "orange", "black", "white", "yellow"
+   const char *const colors[] = {
+      "Red", "Blue", "Green", "Violet",
+      "Orange", "Black", "White", "Yellow"
    };
 
    return ((unsigned)color > PUD_PLAYER_YELLOW) ? NULL : colors[color];
 }
 
-const char *
-pud_era2str(Pud_Era era)
+PUDAPI const char *
+pud_era_to_string(Pud_Era era)
 {
-   const char *eras[] = {
+   const char *const eras[] = {
       "Forest", "Winter", "Wasteland", "Swamp"
    };
 
@@ -258,8 +255,8 @@ static const Unit _names[110] =
    UNIT(CRITTER_RED_PIG, "red_pig", "Red Pig"),
 };
 
-const char *
-pud_unit2str(Pud_Unit unit,
+PUDAPI const char *
+pud_unit_to_string(Pud_Unit unit,
              Pud_Bool pretty)
 {
    if ((unit < PUD_UNIT_FOOTMAN) && (unit > PUD_UNIT_CRITTER_RED_PIG))
@@ -267,7 +264,7 @@ pud_unit2str(Pud_Unit unit,
    return (pretty) ? _names[unit].pretty : _names[unit].name;
 }
 
-Pud_Icon
+PUDAPI Pud_Icon
 pud_unit_icon_get(Pud_Unit unit)
 {
    if ((unit < PUD_UNIT_FOOTMAN) && (unit > PUD_UNIT_CRITTER_RED_PIG))
@@ -276,7 +273,7 @@ pud_unit_icon_get(Pud_Unit unit)
 }
 
 
-static const char *_projectiles[0x1d + 1] =
+static const char *const _projectiles[0x1d + 1] =
 {
    "Lightning",
    "Griffon Hammer",
@@ -310,14 +307,14 @@ static const char *_projectiles[0x1d + 1] =
    "None",
 };
 
-const char *
-pud_projectile2str(Pud_Projectile proj)
+PUDAPI const char *
+pud_projectile_to_string(Pud_Projectile proj)
 {
    if ((unsigned)proj > 0x1d) return NULL;
    return _projectiles[proj];
 }
 
-Pud_Bool
+PUDAPI Pud_Bool
 pud_unit_hero_is(Pud_Unit unit)
 {
    return _names[unit].hero;
@@ -392,19 +389,19 @@ static const Upgrade _upgrades[52] =
    UGRD(DEATH_AND_DECAY, "Death and Decay"),
 };
 
-Pud_Icon
+PUDAPI Pud_Icon
 pud_upgrade_icon_get(Pud_Upgrade upgrade)
 {
    return ((unsigned)upgrade < 52) ? _upgrades[upgrade].icon : PUD_ICON_CANCEL;
 }
 
-const char *
-pud_upgrade2str(Pud_Upgrade upgrade)
+PUDAPI const char *
+pud_upgrade_to_string(Pud_Upgrade upgrade)
 {
    return ((unsigned)upgrade < 52) ? _upgrades[upgrade].name : NULL;
 }
 
-Pud_Bool
+PUDAPI Pud_Bool
 pud_allow_unit_valid_is(Pud_Allow flag)
 {
    /*
@@ -415,7 +412,7 @@ pud_allow_unit_valid_is(Pud_Allow flag)
            (!(flag & (1 << 31))));
 }
 
-Pud_Bool
+PUDAPI Pud_Bool
 pud_allow_spell_valid_is(Pud_Allow flag)
 {
    /*
@@ -427,7 +424,7 @@ pud_allow_spell_valid_is(Pud_Allow flag)
            (!(flag & (1 << 12))));
 }
 
-Pud_Bool
+PUDAPI Pud_Bool
 pud_allow_upgrade_valid_is(Pud_Allow flag)
 {
    /*
@@ -576,8 +573,8 @@ _flag_to_index(Pud_Allow flag)
    return (idx == 0) ? idx : idx - 1;
 }
 
-const char *
-pud_allow_unit2str(Pud_Allow flag)
+PUDAPI const char *
+pud_allow_unit_to_string(Pud_Allow flag)
 {
    unsigned int idx;
 
@@ -585,7 +582,7 @@ pud_allow_unit2str(Pud_Allow flag)
    return _alow_units[idx].name;
 }
 
-const Pud_Icon *
+PUDAPI const Pud_Icon *
 pud_allow_unit_icons_get(Pud_Allow flag)
 {
    unsigned int idx;
@@ -594,8 +591,8 @@ pud_allow_unit_icons_get(Pud_Allow flag)
    return _alow_units[idx].icons;
 }
 
-const char *
-pud_allow_spell2str(Pud_Allow flag)
+PUDAPI const char *
+pud_allow_spell_to_string(Pud_Allow flag)
 {
    unsigned int idx;
 
@@ -603,7 +600,7 @@ pud_allow_spell2str(Pud_Allow flag)
    return _alow_spells[idx].name;
 }
 
-Pud_Icon
+PUDAPI Pud_Icon
 pud_allow_spell_icon_get(Pud_Allow flag)
 {
    unsigned int idx;
@@ -612,8 +609,8 @@ pud_allow_spell_icon_get(Pud_Allow flag)
    return _alow_spells[idx].icon;
 }
 
-const char *
-pud_allow_upgrade2str(Pud_Allow flag)
+PUDAPI const char *
+pud_allow_upgrade_to_string(Pud_Allow flag)
 {
    unsigned int idx;
 
@@ -621,11 +618,227 @@ pud_allow_upgrade2str(Pud_Allow flag)
    return _alow_upgrades[idx].name;
 }
 
-const Pud_Icon *
+PUDAPI const Pud_Icon *
 pud_allow_upgrade_icons_get(Pud_Allow flag)
 {
    unsigned int idx;
 
    idx = _flag_to_index(flag);
    return _alow_upgrades[idx].icons;
+}
+
+PUDAPI void
+pud_dump(const Pud *pud,
+         FILE      *stream)
+{
+   unsigned int i, j;
+
+   if (!pud) DIE_RETURN(VOID, "Invalid PUD input (NULL)");
+   if (!stream) stream = stdout;
+
+   fprintf(stream, "Tag ID...............: 0x%x\n", pud->tag);
+   fprintf(stream, "Version..............: %x\n", pud->version);
+   fprintf(stream, "Description..........: %s\n", pud->description);
+   fprintf(stream, "Era..................: %s\n", pud_era_to_string(pud->era));
+   fprintf(stream, "Dimensions...........: %s\n", dim2str(pud->dims));
+   fprintf(stream, "Default ALOW.........: %i\n", pud->default_allow);
+   fprintf(stream, "Default UDTA.........: %i\n", pud->default_udta);
+   fprintf(stream, "Default UGRD.........: %i\n", pud->default_ugrd);
+
+   /* OWNR Section */
+   fprintf(stream, "Owners...............:\n");
+   for (i = 0; i < 8; i++)
+     fprintf(stream, "   player %i..........: 0x%02x\n", i + 1, pud->owner.players[i]);
+   for (i = 0; i < 7; i++)
+     fprintf(stream, "   unusable %i........: 0x%02x\n", i + 1, pud->owner.unusable[i]);
+   fprintf(stream, "   neutral...........: 0x%02x\n", pud->owner.neutral);
+
+   /* Side Section */
+   fprintf(stream, "Sides................:\n");
+   for (i = 0; i < 8; i++)
+     fprintf(stream, "   player %i..........: 0x%02x\n", i + 1, pud->side.players[i]);
+   for (i = 0; i < 7; i++)
+     fprintf(stream, "   unusable %i........: 0x%02x\n", i + 1, pud->side.unusable[i]);
+   fprintf(stream, "   neutral...........: 0x%02x\n", pud->side.neutral);
+
+   /* SGLD Section */
+   fprintf(stream, "Starting Gold........:\n");
+   for (i = 0; i < 8; i++)
+     fprintf(stream, "   player %i..........: %u\n", i + 1, pud->sgld.players[i]);
+   for (i = 0; i < 7; i++)
+     fprintf(stream, "   unusable %i........: %u\n", i + 1, pud->sgld.unusable[i]);
+   fprintf(stream, "   neutral...........: %u\n", pud->sgld.neutral);
+
+   /* SLBR section */
+   fprintf(stream, "Starting Lumber......:\n");
+   for (i = 0; i < 8; i++)
+     fprintf(stream, "   player %i..........: %u\n", i + 1, pud->slbr.players[i]);
+   for (i = 0; i < 7; i++)
+     fprintf(stream, "   unusable %i........: %u\n", i + 1, pud->slbr.unusable[i]);
+   fprintf(stream, "   neutral...........: %u\n", pud->slbr.neutral);
+
+   /* SOIL section */
+   fprintf(stream, "Starting Oil.........:\n");
+   for (i = 0; i < 8; i++)
+     fprintf(stream, "   player %i..........: %u\n", i + 1, pud->soil.players[i]);
+   for (i = 0; i < 7; i++)
+     fprintf(stream, "   unusable %i........: %u\n", i + 1, pud->soil.unusable[i]);
+   fprintf(stream, "   neutral...........: %u\n", pud->soil.neutral);
+
+   /* AI section */
+   fprintf(stream, "AI...................:\n");
+   for (i = 0; i < 8; i++)
+     fprintf(stream, "   player %i..........: 0x%02x\n", i + 1, pud->ai.players[i]);
+   for (i = 0; i < 7; i++)
+     fprintf(stream, "   unusable %i........: 0x%02x\n", i + 1, pud->ai.unusable[i]);
+   fprintf(stream, "   neutral...........: 0x%02x\n", pud->ai.neutral);
+
+   /* ALOW section - Units & Buildings */
+   fprintf(stream, "Allow Units..........:\n");
+   for (i = 0; i < 8; i++)
+     fprintf(stream, "   player %i..........: %s\n", i + 1, long2bin(pud->unit_alow.players[i]));
+   for (i = 0; i < 7; i++)
+     fprintf(stream, "   unusable %i........: %s\n", i + 1, long2bin(pud->unit_alow.unusable[i]));
+   fprintf(stream, "   neutral...........: %s\n", long2bin(pud->unit_alow.neutral));
+
+   /* ALOW section - Startup Spells */
+   fprintf(stream, "Startup Spells.......:\n");
+   for (i = 0; i < 8; i++)
+     fprintf(stream, "   player %i..........: %s\n", i + 1, long2bin(pud->spell_start.players[i]));
+   for (i = 0; i < 7; i++)
+     fprintf(stream, "   unusable %i........: %s\n", i + 1, long2bin(pud->spell_start.unusable[i]));
+   fprintf(stream, "   neutral...........: %s\n", long2bin(pud->spell_start.neutral));
+
+   /* ALOW section - Spells Allowed */
+   fprintf(stream, "Allow Spells.........:\n");
+   for (i = 0; i < 8; i++)
+     fprintf(stream, "   player %i..........: %s\n", i + 1, long2bin(pud->spell_alow.players[i]));
+   for (i = 0; i < 7; i++)
+     fprintf(stream, "   unusable %i........: %s\n", i + 1, long2bin(pud->spell_alow.unusable[i]));
+   fprintf(stream, "   neutral...........: %s\n", long2bin(pud->spell_alow.neutral));
+
+   /* ALOW section - Spells Researching */
+   fprintf(stream, "Searching Spells.....:\n");
+   for (i = 0; i < 8; i++)
+     fprintf(stream, "   player %i..........: %s\n", i + 1, long2bin(pud->spell_alow.players[i]));
+   for (i = 0; i < 7; i++)
+     fprintf(stream, "   unusable %i........: %s\n", i + 1, long2bin(pud->spell_alow.unusable[i]));
+   fprintf(stream, "   neutral...........: %s\n", long2bin(pud->spell_alow.neutral));
+
+   /* ALOW section - Upgrades allowed */
+   fprintf(stream, "Upgrades Allowed.....:\n");
+   for (i = 0; i < 8; i++)
+     fprintf(stream, "   player %i..........: %s\n", i + 1, long2bin(pud->up_alow.players[i]));
+   for (i = 0; i < 7; i++)
+     fprintf(stream, "   unusable %i........: %s\n", i + 1, long2bin(pud->up_alow.unusable[i]));
+   fprintf(stream, "   neutral...........: %s\n", long2bin(pud->up_alow.neutral));
+
+   /* ALOW section - Upgrades Researching */
+   fprintf(stream, "Searching Upgrades...:\n");
+   for (i = 0; i < 8; i++)
+     fprintf(stream, "   player %i..........: %s\n", i + 1, long2bin(pud->up_acq.players[i]));
+   for (i = 0; i < 7; i++)
+     fprintf(stream, "   unusable %i........: %s\n", i + 1, long2bin(pud->up_acq.unusable[i]));
+   fprintf(stream, "   neutral...........: %s\n", long2bin(pud->up_acq.neutral));
+
+   /* UGRD Section */
+   fprintf(stream, "Upgrades.............:\n");
+   for (i = 0; i < 52; i++)
+     {
+        fprintf(stream, "   Upgrade 0x%02x......:\n", i);
+        fprintf(stream, "      Time...........: %u\n", pud->upgrade[i].time);
+        fprintf(stream, "      Gold...........: %u\n", pud->upgrade[i].gold);
+        fprintf(stream, "      Lumber.........: %u\n", pud->upgrade[i].lumber);
+        fprintf(stream, "      Oil............: %u\n", pud->upgrade[i].oil);
+        fprintf(stream, "      Icon...........: %u\n", pud->upgrade[i].icon);
+        fprintf(stream, "      Group..........: 0x%02x\n", pud->upgrade[i].group);
+        fprintf(stream, "      Flags..........: %s\n", long2bin(pud->upgrade[i].flags));
+     }
+
+   /* Units */
+   fprintf(stream, "Units................: %u\n", pud->units_count);
+   for (i = 0; i < pud->units_count; i++)
+     {
+        fprintf(stream, "   Unit %04i.........:\n", i);
+        fprintf(stream, "      X,Y............: %i,%i\n", pud->units[i].x, pud->units[i].y);
+        fprintf(stream, "      Type...........: %s (0x%x)\n", pud_unit_to_string(pud->units[i].type, PUD_TRUE), pud->units[i].type);
+        fprintf(stream, "      Owner..........: 0x%x\n", pud->units[i].owner);
+        fprintf(stream, "      Alter..........: %u\n", pud->units[i].alter);
+     }
+
+   /* Unit data */
+   fprintf(stream, "Unit Data............:\n");
+   for (i = 0; i < 110; i++)
+     {
+        fprintf(stream, "   Unit 0x%02x.........: %s\n", i, pud_unit_to_string(i, PUD_TRUE));
+        fprintf(stream, "      Overlap........: %x\n", pud->unit_data[i].overlap_frames);
+        fprintf(stream, "      Sight..........: %u\n", pud->unit_data[i].sight);
+        fprintf(stream, "      Hit Points.....: %u\n", pud->unit_data[i].hp);
+        fprintf(stream, "      Build Time.....: %u\n", pud->unit_data[i].build_time);
+        fprintf(stream, "      Gold Cost......: %u\n", pud->unit_data[i].gold_cost);
+        fprintf(stream, "      Lumber Cost....: %u\n", pud->unit_data[i].lumber_cost);
+        fprintf(stream, "      Oil Cost.......: %u\n", pud->unit_data[i].oil_cost);
+        fprintf(stream, "      Width..........: %u\n", pud->unit_data[i].size_w);
+        fprintf(stream, "      Height.........: %u\n", pud->unit_data[i].size_h);
+        fprintf(stream, "      Box Width......: %u\n", pud->unit_data[i].box_w);
+        fprintf(stream, "      Box Height.....: %u\n", pud->unit_data[i].box_h);
+        fprintf(stream, "      Range..........: %u\n", pud->unit_data[i].range);
+        fprintf(stream, "      Cptr react rg..: %u\n", pud->unit_data[i].computer_react_range);
+        fprintf(stream, "      Hmn reac rg....: %u\n", pud->unit_data[i].human_react_range);
+        fprintf(stream, "      Armor..........: %u\n", pud->unit_data[i].armor);
+        fprintf(stream, "      Priority.......: %u\n", pud->unit_data[i].priority);
+        fprintf(stream, "      Basic Dmg......: %u\n", pud->unit_data[i].basic_damage);
+        fprintf(stream, "      Piercing Dmg...: %u\n", pud->unit_data[i].piercing_damage);
+        fprintf(stream, "      Missile........: %u\n", pud->unit_data[i].missile_weapon);
+        fprintf(stream, "      Type...........: %u\n", pud->unit_data[i].type);
+        fprintf(stream, "      Decay Rate.....: %u\n", pud->unit_data[i].decay_rate);
+        fprintf(stream, "      Annoy..........: %u\n", pud->unit_data[i].annoy);
+        fprintf(stream, "      Mouse 2 Btn....: %u\n", pud->unit_data[i].mouse_right_btn);
+        fprintf(stream, "      Point Value....: %u\n", pud->unit_data[i].point_value);
+        fprintf(stream, "      Can Target.....: %u\n", pud->unit_data[i].can_target);
+        fprintf(stream, "      Rect Sel.......: %i\n", pud->unit_data[i].rect_sel);
+        fprintf(stream, "      Has Magic......: %i\n", pud->unit_data[i].has_magic);
+        fprintf(stream, "      Weapons Ugrd...: %i\n", pud->unit_data[i].weapons_upgradable);
+        fprintf(stream, "      Armor Ugrd.....: %i\n", pud->unit_data[i].armor_upgradable);
+        fprintf(stream, "      Flags..........: %s\n", long2bin(pud->unit_data[i].flags));
+     }
+
+   /* Tiles map */
+   fprintf(stream, "Tiles Map (%s)\n", dim2str(pud->dims));
+   for (i = 0; i < pud->map_h; i++)
+     {
+        for (j = 0; j < pud->map_w; j++)
+          {
+             fprintf(stream, "0x%04x", pud->tiles_map[(i * pud->map_w) + j]);
+             if (j < pud->map_w - 1)
+               fprintf(stream, " ");
+          }
+        fprintf(stream, "\n");
+     }
+
+   /* Action map */
+   fprintf(stream, "Action Map (%s)\n", dim2str(pud->dims));
+   for (i = 0; i < pud->map_h; i++)
+     {
+        for (j = 0; j < pud->map_w; j++)
+          {
+             fprintf(stream, "0x%04x", pud->action_map[(i * pud->map_w) + j]);
+             if (j < pud->map_w - 1)
+               fprintf(stream, " ");
+          }
+        fprintf(stream, "\n");
+     }
+
+   /* Movement map */
+   fprintf(stream, "Movement Map (%s)\n", dim2str(pud->dims));
+   for (i = 0; i < pud->map_h; i++)
+     {
+        for (j = 0; j < pud->map_w; j++)
+          {
+             fprintf(stream, "0x%04x", pud->movement_map[(i * pud->map_w) + j]);
+             if (j < pud->map_w - 1)
+               fprintf(stream, " ");
+          }
+        fprintf(stream, "\n");
+     }
 }

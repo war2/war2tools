@@ -76,10 +76,10 @@ main(int    argc,
           {
              for (i = 0; i < w; i++)
                {
-                  word = pud_tile_at(pud, i, j);
+                  word = pud_tile_get(pud, i, j);
                   if (word == 0)
                     {
-                       fprintf(stderr, "*** pud_tile_at(%i, %i) failed\n", i, j);
+                       fprintf(stderr, "*** pud_tile_get(%i, %i) failed\n", i, j);
                        pud_close(pud);
                        free(ppm);
                        return 3;
@@ -116,10 +116,10 @@ main(int    argc,
    else
      {
         /* Do job for tile at X Y */
-        word = pud_tile_at(pud, x, y);
+        word = pud_tile_get(pud, x, y);
         if (word == 0)
           {
-             fprintf(stderr, "*** pud_tile_at() failed\n");
+             fprintf(stderr, "*** pud_tile_get() failed\n");
              pud_close(pud);
              free(ppm);
              return 3;

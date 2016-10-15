@@ -18,6 +18,16 @@
 #include "debug.h"
 #include "pud.h"
 
+#ifdef __GNUC__
+# if __GNUC__ >= 4
+#  define PUDAPI_INTERNAL __attribute__ ((visibility("hidden")))
+# else /* if __GNUC__ >= 4 */
+#  define PUDAPI_INTERNAL
+# endif /* if __GNUC__ >= 4 */
+#else /* ifdef __GNUC__ */
+# define PUDAPI_INTERNAL
+#endif /* ifdef __GNUC__ */
+
 
 static inline Pud_Bool
 pud_mem_map_ok(Pud *pud)
@@ -116,10 +126,10 @@ pud_mem_map_ok(Pud *pud)
 //                                 Private API                                //
 //============================================================================//
 
-const char *long2bin(uint32_t x);
-Pud_Color color_make(uint8_t r, uint8_t g, uint8_t b, uint8_t a);
-const char *dim2str(Pud_Dimensions dim);
-const char *mode2str(Pud_Open_Mode mode);
-
+PUDAPI_INTERNAL const char *long2bin(uint32_t x);
+PUDAPI_INTERNAL Pud_Color color_make(uint8_t r, uint8_t g, uint8_t b, uint8_t a);
+PUDAPI_INTERNAL const char *dim2str(Pud_Dimensions dim);
+PUDAPI_INTERNAL const char *mode2str(Pud_Open_Mode mode);
+PUDAPI_INTERNAL uint32_t pud_go_to_section(Pud *pud, Pud_Section sec);
 
 #endif /* ! _PRIVATE_H_ */

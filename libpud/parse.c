@@ -13,7 +13,7 @@
 
 #define HAS_SECTION(sec) pud->sections |= (1 << sec)
 
-Pud_Bool
+PUDAPI Pud_Bool
 pud_parse_type(Pud *pud)
 {
    PUD_SANITY_CHECK(pud, PUD_OPEN_MODE_R, 0);
@@ -43,7 +43,7 @@ pud_parse_type(Pud *pud)
    return PUD_TRUE;
 }
 
-Pud_Bool
+PUDAPI Pud_Bool
 pud_parse_ver(Pud *pud)
 {
    PUD_SANITY_CHECK(pud, PUD_OPEN_MODE_R, PUD_FALSE);
@@ -79,7 +79,7 @@ pud_parse_ver(Pud *pud)
    return PUD_TRUE;
 }
 
-Pud_Bool
+PUDAPI Pud_Bool
 pud_parse_desc(Pud *pud)
 {
    PUD_SANITY_CHECK(pud, PUD_OPEN_MODE_R, PUD_FALSE);
@@ -98,7 +98,7 @@ pud_parse_desc(Pud *pud)
    return PUD_TRUE;
 }
 
-Pud_Bool
+PUDAPI Pud_Bool
 pud_parse_ownr(Pud *pud)
 {
    PUD_SANITY_CHECK(pud, PUD_OPEN_MODE_R, PUD_FALSE);
@@ -123,7 +123,7 @@ pud_parse_ownr(Pud *pud)
    return PUD_TRUE;
 }
 
-Pud_Bool
+PUDAPI Pud_Bool
 pud_parse_side(Pud *pud)
 {
    PUD_SANITY_CHECK(pud, PUD_OPEN_MODE_R, PUD_FALSE);
@@ -148,7 +148,7 @@ pud_parse_side(Pud *pud)
    return PUD_TRUE;
 }
 
-Pud_Bool
+PUDAPI Pud_Bool
 pud_parse_era(Pud *pud)
 {
    PUD_SANITY_CHECK(pud, PUD_OPEN_MODE_R, PUD_FALSE);
@@ -201,7 +201,7 @@ pud_parse_era(Pud *pud)
    return PUD_TRUE;
 }
 
-Pud_Bool
+PUDAPI Pud_Bool
 pud_parse_dim(Pud *pud)
 {
    PUD_SANITY_CHECK(pud, PUD_OPEN_MODE_R, PUD_FALSE);
@@ -240,7 +240,7 @@ pud_parse_dim(Pud *pud)
    return PUD_TRUE;
 }
 
-Pud_Bool
+PUDAPI Pud_Bool
 pud_parse_udta(Pud *pud)
 {
    PUD_SANITY_CHECK(pud, PUD_OPEN_MODE_R, PUD_FALSE);
@@ -421,7 +421,7 @@ pud_parse_udta(Pud *pud)
    return PUD_TRUE;
 }
 
-Pud_Bool
+PUDAPI Pud_Bool
 pud_parse_alow(Pud *pud)
 {
    PUD_SANITY_CHECK(pud, PUD_OPEN_MODE_R, PUD_FALSE);
@@ -462,7 +462,7 @@ pud_parse_alow(Pud *pud)
    return PUD_TRUE;
 }
 
-Pud_Bool
+PUDAPI Pud_Bool
 pud_parse_ugrd(Pud *pud)
 {
    PUD_SANITY_CHECK(pud, PUD_OPEN_MODE_R, PUD_FALSE);
@@ -520,7 +520,7 @@ pud_parse_ugrd(Pud *pud)
    return PUD_TRUE;
 }
 
-Pud_Bool
+PUDAPI Pud_Bool
 pud_parse_sgld(Pud *pud)
 {
    PUD_SANITY_CHECK(pud, PUD_OPEN_MODE_R, PUD_FALSE);
@@ -542,7 +542,7 @@ pud_parse_sgld(Pud *pud)
    return PUD_TRUE;
 }
 
-Pud_Bool
+PUDAPI Pud_Bool
 pud_parse_slbr(Pud *pud)
 {
    PUD_SANITY_CHECK(pud, PUD_OPEN_MODE_R, PUD_FALSE);
@@ -564,7 +564,7 @@ pud_parse_slbr(Pud *pud)
    return PUD_TRUE;
 }
 
-Pud_Bool
+PUDAPI Pud_Bool
 pud_parse_soil(Pud *pud)
 {
    PUD_SANITY_CHECK(pud, PUD_OPEN_MODE_R, PUD_FALSE);
@@ -586,7 +586,7 @@ pud_parse_soil(Pud *pud)
    return PUD_TRUE;
 }
 
-Pud_Bool
+PUDAPI Pud_Bool
 pud_parse_aipl(Pud *pud)
 {
    PUD_SANITY_CHECK(pud, PUD_OPEN_MODE_R, PUD_FALSE);
@@ -608,7 +608,7 @@ pud_parse_aipl(Pud *pud)
    return PUD_TRUE;
 }
 
-Pud_Bool
+PUDAPI Pud_Bool
 pud_parse_mtxm(Pud *pud)
 {
    PUD_SANITY_CHECK(pud, PUD_OPEN_MODE_R, PUD_FALSE);
@@ -635,7 +635,7 @@ pud_parse_mtxm(Pud *pud)
    return PUD_TRUE;
 }
 
-Pud_Bool
+PUDAPI Pud_Bool
 pud_parse_sqm(Pud *pud)
 {
    PUD_SANITY_CHECK(pud, PUD_OPEN_MODE_R, PUD_FALSE);
@@ -662,7 +662,7 @@ pud_parse_sqm(Pud *pud)
    return PUD_TRUE;
 }
 
-Pud_Bool
+PUDAPI Pud_Bool
 pud_parse_oilm(Pud *pud)
 {
    PUD_SANITY_CHECK(pud, PUD_OPEN_MODE_R, PUD_FALSE);
@@ -687,7 +687,7 @@ pud_parse_oilm(Pud *pud)
    return PUD_TRUE;
 }
 
-Pud_Bool
+PUDAPI Pud_Bool
 pud_parse_regm(Pud *pud)
 {
    PUD_SANITY_CHECK(pud, PUD_OPEN_MODE_R, PUD_FALSE);
@@ -714,7 +714,7 @@ pud_parse_regm(Pud *pud)
    return PUD_TRUE;
 }
 
-Pud_Bool
+PUDAPI Pud_Bool
 pud_parse_unit(Pud *pud)
 {
    PUD_SANITY_CHECK(pud, PUD_OPEN_MODE_R, PUD_FALSE);

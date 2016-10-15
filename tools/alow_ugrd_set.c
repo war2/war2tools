@@ -67,7 +67,7 @@ main(int    argc,
    for (i = 0; i < 8; i++)
      {
         printf("Player %i (%s) => 0x%"PRIx32"\n",
-               i, pud_color2str(i), pud->up_alow.players[i]);
+               i, pud_color_to_string(i), pud->up_alow.players[i]);
      }
 
 

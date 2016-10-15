@@ -7,8 +7,8 @@
 
 #include "pud_private.h"
 
-unsigned char *
-pud_minimap_bitmap_generate(Pud              *pud,
+PUDAPI unsigned char *
+pud_minimap_bitmap_generate(const Pud        *pud,
                             unsigned int     *size_ret,
                             Pud_Pixel_Format  pfmt)
 {

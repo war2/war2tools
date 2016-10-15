@@ -23,6 +23,14 @@ pud_section_to_string(Pud_Section section)
 }
 
 PUDAPI Pud_Bool
+pud_section_has(const Pud   *pud,
+                Pud_Section  section)
+{
+   if (!pud) return PUD_FALSE;
+   return !!(pud->private->sections & (1 << section));
+}
+
+PUDAPI Pud_Bool
 pud_section_valid_is(const char sec[4])
 {
    unsigned int i;

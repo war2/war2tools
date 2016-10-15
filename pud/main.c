@@ -407,7 +407,7 @@ main(int    argc,
           {
              for (i = 0; i < 20; i++)
                {
-                  if ((pud->sections & (1 << i)))
+                  if (pud_section_has(pud, i))
                     fprintf(stdout, "%s\n", pud_section_to_string(i));
                }
           }

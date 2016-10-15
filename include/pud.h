@@ -1418,6 +1418,15 @@ PUDAPI unsigned char *pud_minimap_bitmap_generate(const Pud *pud, unsigned int *
 PUDAPI Pud_Bool pud_defaults_set(Pud *pud);
 
 /**
+ * Determine whether a Pud file has a section
+ *
+ * @param pud A valid pud handle
+ * @param section The section to query
+ * @return #PUD_TRUE if @c pud has @c section, #PUD_FALSE otherwise
+ */
+PUDAPI Pud_Bool pud_section_has(const Pud *pud, Pud_Section section);
+
+/**
  * @}
  */ /* End of Pud_File group */
 

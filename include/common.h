@@ -60,14 +60,14 @@ common_file_mmap(const char *file, size_t *size_ret)
    chk = fstat(fd, &s);
    if (chk < 0)
      {
-        fprintf(stderr,  "Failed to fstat(\"%s\")\n", file);
+        fprintf(stderr, "*** Failed to fstat(\"%s\")\n", file);
         goto err_close;
      }
    map = mmap(NULL, s.st_size, PROT_READ, MAP_FILE | MAP_PRIVATE, fd, 0);
    if (map == MAP_FAILED)
      {
         map = NULL;
-        fprintf(stderr, "Failed to mmap(): %s\n", strerror(errno));
+        fprintf(stderr, "*** Failed to mmap(): %s\n", strerror(errno));
         goto err_close;
      }
    if (size_ret) *size_ret = s.st_size;

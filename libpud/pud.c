@@ -107,88 +107,6 @@ pud_go_to_section(Pud         *pud,
    return 0;
 }
 
-
-static Pud_Bool
-_open(Pud           *pud,
-      const char    *file,
-      Pud_Open_Mode  mode)
-{
-   /* Close the file if was already open */
-   if (pud->mem_map)
-     {
-        common_file_munmap(pud->mem_map, pud->mem_map_size);
-        pud->mem_map = NULL;
-     }
-   if (pud->filename) free(pud->filename);
-
-   /* Copy the filename */
-   pud->filename = strdup(file); /* XXX Not a fan of strdup() ... */
-   if (!pud->filename) DIE_GOTO(err, "Failed to strdup [%s]", file);
-
-   pud->open_mode = mode;
-
-   /* Open */
-   if (mode & PUD_OPEN_MODE_R)
-     {
-        pud->mem_map = common_file_mmap(file, &(pud->mem_map_size));
-        if (pud->mem_map == NULL)
-          DIE_GOTO(err_ff, "Failed to mmap() [%s] %s", file, strerror(errno));
-
-        pud->ptr = pud->mem_map;
-     }
-   else
-     {
-        pud->mem_map = NULL;
-        pud->ptr = NULL;
-        pud->mem_map_size = 0;
-     }
-
-   return PUD_TRUE;
-
-err_ff:
-   free(pud->filename);
-   pud->filename = NULL;
-err:
-   return PUD_FALSE;
-}
-
-Pud *
-pud_open_new(const char    *file,
-             Pud_Open_Mode  mode)
-{
-   Pud *pud;
-
-   pud = calloc(1, sizeof(*pud));
-   if (!pud) DIE_GOTO(err, "Failed to alloc Pud: %s", strerror(errno));
-
-   pud->open_mode = mode;
-
-   if (file)
-     {
-        pud->filename = strdup(file);
-        if (!pud->filename)
-          DIE_GOTO(err_free, "Failed to strdup(\"%s\")", file);
-     }
-
-   /* Set defaults */
-   if (!pud_defaults_set(pud))
-     DIE_GOTO(err_free, "Failed to set defaults");
-
-   pud_tag_generate(pud);
-   pud_version_set(pud, PUD_VERSION_BATTLE_NET_EDITION);
-   pud_description_set(pud, "");
-   pud_era_set(pud, PUD_ERA_FOREST);
-   pud_dimensions_set(pud, PUD_DIMENSIONS_32_32);
-
-   return pud;
-
-err_free:
-   free(pud->filename);
-   free(pud);
-err:
-   return NULL;
-}
-
 void
 pud_tag_generate(Pud *pud)
 {
@@ -207,13 +125,55 @@ pud_open(const char    *file,
    pud = calloc(1, sizeof(Pud));
    if (!pud) DIE_GOTO(err, "Failed to alloc Pud: %s", strerror(errno));
 
-   /* Open */
-   if (!_open(pud, file, mode))
-     DIE_GOTO(err, "Failed to open PUD");
+   /* FIXME: remove this?? */
+   pud->filename = strdup(file);
+   if (!pud->filename) DIE_GOTO(err, "Failed to strdup(\"%s\")", file);
 
-   if (mode & PUD_OPEN_MODE_R)
-     if (!pud_parse(pud))
-       DIE_GOTO(err, "Failed to parse PUD");
+   /* Keep the open mode around */
+   pud->open_mode = mode;
+
+   /*
+    * +) If the file exists, and we are allowed to read from it,
+    * map it. Unless we have specified the NO_PARSE flag, parse
+    * it automatically.
+    *
+    * +) If the file is nonexistant, create it if write access
+    * was granted
+    */
+   if (common_file_exists(file))
+     {
+        if (mode & PUD_OPEN_MODE_R)
+          {
+             pud->mem_map = common_file_mmap(file, &pud->mem_map_size);
+             if (!pud->mem_map) DIE_GOTO(err, "Failed to map file \"%s\"", file);
+             pud->ptr = pud->mem_map;
+
+             if (!(mode & PUD_OPEN_MODE_NO_PARSE))
+               {
+                  if (!pud_parse(pud))
+                    DIE_GOTO(err, "Failed to parse pud file \"%s\"", file);
+               }
+          }
+     }
+   else
+     {
+        if (mode & PUD_OPEN_MODE_W)
+          {
+             /*
+              * Generate default PUD
+              */
+             if (!pud_defaults_set(pud))
+               DIE_GOTO(err, "Failed to set defaults");
+
+             pud_tag_generate(pud);
+             pud_version_set(pud, PUD_VERSION_BATTLE_NET_EDITION);
+             pud_description_set(pud, "");
+             pud_era_set(pud, PUD_ERA_FOREST);
+             pud_dimensions_set(pud, PUD_DIMENSIONS_32_32);
+          }
+        else
+          DIE_GOTO(err, "Cannot READ %s that does not exist", file);
+     }
 
    return pud;
 

@@ -511,7 +511,8 @@ typedef enum
 {
    PUD_OPEN_MODE_R = (1 << 0),
    PUD_OPEN_MODE_W = (1 << 1),
-   PUD_OPEN_MODE_RW = (PUD_OPEN_MODE_R | PUD_OPEN_MODE_W)
+   PUD_OPEN_MODE_RW = (PUD_OPEN_MODE_R | PUD_OPEN_MODE_W),
+   PUD_OPEN_MODE_NO_PARSE = (1 << 2),
 } Pud_Open_Mode;
 
 typedef enum
@@ -835,7 +836,6 @@ typedef struct
 Pud_Bool pud_init(void);
 void pud_shutdown(void);
 
-Pud *pud_open_new(const char *file, Pud_Open_Mode mode);
 Pud *pud_open(const char *file, Pud_Open_Mode mode);
 void pud_close(Pud *pud);
 Pud_Bool pud_parse(Pud *pud);

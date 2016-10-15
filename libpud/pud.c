@@ -125,10 +125,6 @@ pud_open(const char    *file,
    pud = calloc(1, sizeof(Pud));
    if (!pud) DIE_GOTO(err, "Failed to alloc Pud: %s", strerror(errno));
 
-   /* FIXME: remove this?? */
-   pud->filename = strdup(file);
-   if (!pud->filename) DIE_GOTO(err, "Failed to strdup(\"%s\")", file);
-
    /* Keep the open mode around */
    pud->open_mode = mode;
 
@@ -187,7 +183,6 @@ pud_close(Pud *pud)
 {
    if (!pud) return;
    if (pud->mem_map) common_file_munmap(pud->mem_map, pud->mem_map_size);
-   free(pud->filename);
    free(pud->units);
    free(pud->tiles_map);
    free(pud->action_map);
@@ -301,13 +296,12 @@ pud_write(const Pud  *pud,
    uint16_t w;
    uint32_t l;
    unsigned int i, j, map_len, units_len;
-   const char *savefile = (file) ? file : pud->filename;
 
    map_len = p->tiles * sizeof(uint16_t);
    units_len = p->units_count * sizeof(Pud_Unit_Data);
 
-   f = fopen(savefile, "wb");
-   if (!f) DIE_RETURN(PUD_FALSE, "Failed to open [%s]", savefile);
+   f = fopen(file, "wb");
+   if (!f) DIE_RETURN(PUD_FALSE, "Failed to open [%s]", file);
    setvbuf(f, NULL, _IOFBF, 0); /* Fully buffered */
 
 #define W8(val, nb) \

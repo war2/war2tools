@@ -717,7 +717,6 @@ struct _Pud
    unsigned char *mem_map;
    unsigned char *ptr;
    size_t         mem_map_size;
-   char          *filename;
 
    uint32_t       tag;
    uint16_t       version;

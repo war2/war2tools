@@ -883,7 +883,7 @@ struct _Pud
 
    Pud_Unit_Characteristics unit_data[110]; /* [defaults] */
 
-   uint16_t unkwown[508];
+   uint16_t obsolete_udta[508];
 
    /* Bitfield: is section X present? */
    uint32_t     sections;

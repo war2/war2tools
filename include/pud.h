@@ -934,6 +934,7 @@ Pud_Bool pud_parse_oilm(Pud *pud);
 Pud_Bool pud_parse_regm(Pud *pud);
 Pud_Bool pud_parse_unit(Pud *pud);
 
+Pud_Bool pud_section_exists(const char sec[4]);
 
 #ifdef __cplusplus
 }

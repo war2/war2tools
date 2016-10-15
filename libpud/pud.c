@@ -17,7 +17,7 @@ static const char * const _pud_sections[] =
 };
 
 Pud_Bool
-pud_section_exists(char sec[4])
+pud_section_exists(const char sec[4])
 {
    unsigned int i;
 

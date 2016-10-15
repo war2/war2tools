@@ -18,7 +18,6 @@
 #include "debug.h"
 #include "pud.h"
 
-Pud_Bool pud_section_exists(char sec[4]);
 
 static inline Pud_Bool
 pud_mem_map_ok(Pud *pud)

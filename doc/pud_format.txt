@@ -1,3 +1,7 @@
+/**
+ * @file pud_format.txt
+ */
+
 Sources:
 - http://cade.datamax.bg/war2x/pudspec.html
 - http://forum.war2.ru/index.php?topic=2272.5;wap2

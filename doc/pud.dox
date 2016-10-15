@@ -1,0 +1,49 @@
+/**
+ * @mainpage
+ *
+ * @section toc Table of Contents
+ *
+ * @li @ref overview
+ * @li @ref start
+ * @li @ref license
+ * @li @ref doc
+ *
+ * @section overview Overview
+ *
+ * This is libpud, a C library to manipulate PUD files.
+ * PUD files are Warcraft II User Map files. They can be
+ * edited with Blizzard's World Map Editor or third-parties tools.
+ *
+ * The libpud is split into several modules:
+ * @li @ref Pud_General
+ * @li @ref Pud_File
+ * @li @ref Pud_Parse
+ *
+ *
+ * @section start How to Start
+ *
+ * The little program below is a concise example that shows how to use the
+ * libpud. The program reads a PUD file provided by the command-line and
+ * prints its description. On most Blizzard's PUDs, this description might
+ * be empty.
+ *
+ * @include pud.c
+ *
+ *
+ * @section license License
+ *
+ * libpud is under the MIT License:
+ *
+ * @include LICENSE
+ *
+ *
+ * @section doc Pud Format Documentation
+ *
+ * The PUD format is not officially documented by Blizzard, but reverse-engineered
+ * bits are available here and there. war2tools, the umbrella project that provides
+ * the libpud tried to collect them all, and also completed those bits. The exhaustive
+ * documentation used by war2tools is described below. It may help you understand
+ * how to tweak the libpud, and how it actually works.
+ *
+ * @include pud_format.txt
+ */

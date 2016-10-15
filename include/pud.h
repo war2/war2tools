@@ -23,7 +23,6 @@
 
 /**
  * @file pud.h
- * @brief Warcraft II PUDs manipulation library
  *
  * Pud provides ways to manipulate PUD files.
  * PUD files are Warcraft II custom map files, that
@@ -574,7 +573,7 @@ typedef enum
 } Pud_Projectile;
 
 /**
- * @type Pud_Allow
+ * @typedef Pud_Allow
  * Type that holds permissions for a unit/upgrade/spell to be used,
  * researched by a HUMAN player (computers ignore this).
  * @since 1.0.0
@@ -913,16 +912,21 @@ struct _Pud_Color
    unsigned char a; /**< 8-bits alpha component */
 };
 
+/**
+ * @typedef Pud_Error
+ * Type that holds possible error values raised by pud_check()
+ * @see pud_check()
+ */
 typedef enum
 {
-   PUD_ERROR_NONE = 0,
-   PUD_ERROR_UNDEFINED,
-   PUD_ERROR_NOT_ENOUGH_START_LOCATIONS,
-   PUD_ERROR_TOO_MUCH_START_LOCATIONS,
-   PUD_ERROR_NOT_INITIALIZED,
-   PUD_ERROR_EMPTY_PLAYER,
-   PUD_ERROR_INVALID_PLAYER,
-   PUD_ERROR_NO_START_LOCATION,
+   PUD_ERROR_NONE = 0, /**< No error */
+   PUD_ERROR_UNDEFINED, /**< Undefined error */
+   PUD_ERROR_NOT_ENOUGH_START_LOCATIONS, /**< Not enough start location points */
+   PUD_ERROR_TOO_MUCH_START_LOCATIONS, /**< Too many start location points */
+   PUD_ERROR_NOT_INITIALIZED, /**< Pud file was not initialized */
+   PUD_ERROR_EMPTY_PLAYER, /**< A player has no units */
+   PUD_ERROR_INVALID_PLAYER, /**< Invalid player ID */
+   PUD_ERROR_NO_START_LOCATION, /**< There is no start location */
 } Pud_Error;
 
 typedef struct
@@ -1125,7 +1129,7 @@ PUDAPI const char *pud_allow_upgrade_to_string(Pud_Allow flag);
  * race.
  *
  * @param flag The unit allowed
- * @return A pointer on a array of EXACTLY TWO icons. #NULL on failure
+ * @return A pointer on a array of EXACTLY TWO icons. NULL on failure
  * @since 1.0.0
  */
 PUDAPI const Pud_Icon *pud_allow_unit_icons_get(Pud_Allow flag);
@@ -1147,7 +1151,7 @@ PUDAPI Pud_Icon pud_allow_spell_icon_get(Pud_Allow flag);
  * race.
  *
  * @param flag The upgrade allowed
- * @return A pointer on a array of EXACTLY TWO icons. #NULL on failure
+ * @return A pointer on a array of EXACTLY TWO icons. NULL on failure
  * @since 1.0.0
  */
 PUDAPI const Pud_Icon *pud_allow_upgrade_icons_get(Pud_Allow flag);
@@ -1156,7 +1160,7 @@ PUDAPI const Pud_Icon *pud_allow_upgrade_icons_get(Pud_Allow flag);
  * Get the litteral name of a pud section
  * 
  * @param section A pud section
- * @return #NULL if @c section is invalid, its name otherwise
+ * @return NULL if @c section is invalid, its name otherwise
  */
 PUDAPI const char *pud_section_to_string(Pud_Section section);
 
@@ -1187,7 +1191,7 @@ PUDAPI const char *pud_section_to_string(Pud_Section section);
  *
  * @param file The path to the PUD file to open.
  * @param mode Give the access rights and possible other behaviours
- * @return #NULL on failure, a valid handler otherwise.
+ * @return NULL on failure, a valid handler otherwise.
  * @see Pud_Open_Mode
  * @since 1.0.0
  */
@@ -1206,8 +1210,8 @@ PUDAPI void pud_close(Pud *pud);
 /**
  * Dump the internals of a valid Pud file into an IO stream
  *
- * @param A valid PUD handle
- * @param stream An IO stream. Defaults to #stdout is #NULL
+ * @param pud A valid PUD handle
+ * @param stream An IO stream. Defaults to stdout is NULL
  * @since 1.0.0
  */
 
@@ -1219,7 +1223,7 @@ PUDAPI void pud_dump(const Pud *pud, FILE *stream);
  * The description is a 32-bytes string. The description MUST
  * be NUL-terminated.
  *
- * @param A valid pud handle.
+ * @param pud A valid pud handle.
  * @return NULL if @c pud is NULL, a pointer to an array of 32 characters otherwise.
  * @since 1.0.0
  */
@@ -1319,7 +1323,7 @@ PUDAPI Pud_Bool pud_write(const Pud *pud, const char *file);
  * by @c err (if not NULL) a descriptive structure that allows debugging.
  *
  * @param pud A valid pud handle
- * @param err A pointer to the error reason. Ignored if #NULL
+ * @param err A pointer to the error reason. Ignored if NULL
  * @return An error code. #PUD_ERROR_NONE if everything is fine.
  * @since 1.0.0
  */
@@ -1401,9 +1405,9 @@ PUDAPI void pud_alow_defaults_set(Pud *pud);
  * bitmap to release the memory.
  *
  * @param pud A valid pud handle
- * @param size_ret Stores the size of the bitmap. Ignored if #NULL.
+ * @param size_ret Stores the size of the bitmap. Ignored if NULL.
  * @param pfmt The pixel format of the bitmap.
- * @return The bitmap holding the minimap. #NULL on failure.
+ * @return The bitmap holding the minimap. NULL on failure.
  * @since 1.0.0
  */
 PUDAPI unsigned char *pud_minimap_bitmap_generate(const Pud *pud, unsigned int *size_ret, Pud_Pixel_Format pfmt);
@@ -1483,7 +1487,7 @@ PUDAPI Pud_Unit pud_unit_switch_side(Pud_Unit unit);
  * By default, when opening a file with the #PUD_OPEN_MODE_R flag the pud file
  * is automatically parsed, unless #PUD_OPEN_MODE_NO_PARSE is specified.
  *
- * @param A valid Pud handle
+ * @param pud A valid Pud handle
  * @return #PUD_TRUE on success, #PUD_FALSE otherwise
  * @see pud_open()
  * @see Pud_Open_Mode
@@ -1493,7 +1497,7 @@ PUDAPI Pud_Bool pud_parse(Pud *pud);
 /**
  * Parse the TYPE section.
  *
- * @param pud a valid Pud handle
+ * @param pud A valid Pud handle
  * @return #PUD_TRUE on success, #PUD_FALSE on failure
  */
 PUDAPI Pud_Bool pud_parse_type(Pud *pud);
@@ -1501,7 +1505,7 @@ PUDAPI Pud_Bool pud_parse_type(Pud *pud);
 /**
  * Parse the VER  section.
  *
- * @param pud a valid Pud handle
+ * @param pud A valid Pud handle
  * @return #PUD_TRUE on success, #PUD_FALSE on failure
  */
 PUDAPI Pud_Bool pud_parse_ver(Pud *pud);
@@ -1509,7 +1513,7 @@ PUDAPI Pud_Bool pud_parse_ver(Pud *pud);
 /**
  * Parse the DESC section.
  *
- * @param pud a valid Pud handle
+ * @param pud A valid Pud handle
  * @return #PUD_TRUE on success, #PUD_FALSE on failure
  */
 PUDAPI Pud_Bool pud_parse_desc(Pud *pud);
@@ -1517,7 +1521,7 @@ PUDAPI Pud_Bool pud_parse_desc(Pud *pud);
 /**
  * Parse the OWNR section.
  *
- * @param pud a valid Pud handle
+ * @param pud A valid Pud handle
  * @return #PUD_TRUE on success, #PUD_FALSE on failure
  */
 PUDAPI Pud_Bool pud_parse_ownr(Pud *pud);
@@ -1533,7 +1537,7 @@ PUDAPI Pud_Bool pud_parse_side(Pud *pud);
 /**
  * Parse the ERA  and ERAX sections.
  *
- * @param pud a valid Pud handle
+ * @param pud A valid Pud handle
  * @return #PUD_TRUE on success, #PUD_FALSE on failure
  */
 PUDAPI Pud_Bool pud_parse_era(Pud *pud);
@@ -1541,7 +1545,7 @@ PUDAPI Pud_Bool pud_parse_era(Pud *pud);
 /**
  * Parse the DIM  section.
  *
- * @param pud a valid Pud handle
+ * @param pud A valid Pud handle
  * @return #PUD_TRUE on success, #PUD_FALSE on failure
  */
 PUDAPI Pud_Bool pud_parse_dim(Pud *pud);
@@ -1557,7 +1561,7 @@ PUDAPI Pud_Bool pud_parse_udta(Pud *pud);
 /**
  * Parse the ALOW section.
  *
- * @param pud a valid Pud handle
+ * @param pud A valid Pud handle
  * @return #PUD_TRUE on success, #PUD_FALSE on failure
  */
 PUDAPI Pud_Bool pud_parse_alow(Pud *pud);
@@ -1565,7 +1569,7 @@ PUDAPI Pud_Bool pud_parse_alow(Pud *pud);
 /**
  * Parse the UGRD section.
  *
- * @param pud a valid Pud handle
+ * @param pud A valid Pud handle
  * @return #PUD_TRUE on success, #PUD_FALSE on failure
  */
 PUDAPI Pud_Bool pud_parse_ugrd(Pud *pud);
@@ -1573,7 +1577,7 @@ PUDAPI Pud_Bool pud_parse_ugrd(Pud *pud);
 /**
  * Parse the SGLD section.
  *
- * @param pud a valid Pud handle
+ * @param pud A valid Pud handle
  * @return #PUD_TRUE on success, #PUD_FALSE on failure
  */
 PUDAPI Pud_Bool pud_parse_sgld(Pud *pud);
@@ -1581,7 +1585,7 @@ PUDAPI Pud_Bool pud_parse_sgld(Pud *pud);
 /**
  * Parse the SLBR section.
  *
- * @param pud a valid Pud handle
+ * @param pud A valid Pud handle
  * @return #PUD_TRUE on success, #PUD_FALSE on failure
  */
 PUDAPI Pud_Bool pud_parse_slbr(Pud *pud);
@@ -1589,7 +1593,7 @@ PUDAPI Pud_Bool pud_parse_slbr(Pud *pud);
 /**
  * Parse the SOIL section.
  *
- * @param pud a valid Pud handle
+ * @param pud A valid Pud handle
  * @return #PUD_TRUE on success, #PUD_FALSE on failure
  */
 PUDAPI Pud_Bool pud_parse_soil(Pud *pud);
@@ -1597,7 +1601,7 @@ PUDAPI Pud_Bool pud_parse_soil(Pud *pud);
 /**
  * Parse the AIPL section.
  *
- * @param pud a valid Pud handle
+ * @param pud A valid Pud handle
  * @return #PUD_TRUE on success, #PUD_FALSE on failure
  */
 PUDAPI Pud_Bool pud_parse_aipl(Pud *pud);
@@ -1605,7 +1609,7 @@ PUDAPI Pud_Bool pud_parse_aipl(Pud *pud);
 /**
  * Parse the MTXM section.
  *
- * @param pud a valid Pud handle
+ * @param pud A valid Pud handle
  * @return #PUD_TRUE on success, #PUD_FALSE on failure
  */
 PUDAPI Pud_Bool pud_parse_mtxm(Pud *pud);
@@ -1613,7 +1617,7 @@ PUDAPI Pud_Bool pud_parse_mtxm(Pud *pud);
 /**
  * Parse the SQM  section.
  *
- * @param pud a valid Pud handle
+ * @param pud A valid Pud handle
  * @return #PUD_TRUE on success, #PUD_FALSE on failure
  */
 PUDAPI Pud_Bool pud_parse_sqm(Pud *pud);
@@ -1621,7 +1625,7 @@ PUDAPI Pud_Bool pud_parse_sqm(Pud *pud);
 /**
  * Parse the OILM section.
  *
- * @param pud a valid Pud handle
+ * @param pud A valid Pud handle
  * @return #PUD_TRUE on success, #PUD_FALSE on failure
  */
 PUDAPI Pud_Bool pud_parse_oilm(Pud *pud);
@@ -1629,7 +1633,7 @@ PUDAPI Pud_Bool pud_parse_oilm(Pud *pud);
 /**
  * Parse the REGM section.
  *
- * @param pud a valid Pud handle
+ * @param pud A valid Pud handle
  * @return #PUD_TRUE on success, #PUD_FALSE on failure
  */
 PUDAPI Pud_Bool pud_parse_regm(Pud *pud);
@@ -1637,7 +1641,7 @@ PUDAPI Pud_Bool pud_parse_regm(Pud *pud);
 /**
  * Parse the UNIT section.
  *
- * @param pud a valid Pud handle
+ * @param pud A valid Pud handle
  * @return #PUD_TRUE on success, #PUD_FALSE on failure
  */
 PUDAPI Pud_Bool pud_parse_unit(Pud *pud);

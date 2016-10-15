@@ -1,4 +1,5 @@
 #include "pud.h"
+#include <stdlib.h>
 #include <inttypes.h>
 
 static inline uint_fast32_t

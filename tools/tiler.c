@@ -6,6 +6,7 @@
  */
 
 #include <pud.h>
+#include <string.h>
 #include "../include/debug.h"
 
 static void

@@ -839,7 +839,7 @@ Pud *pud_open(const char *file, Pud_Open_Mode mode);
 void pud_close(Pud *pud);
 Pud_Bool pud_parse(Pud *pud);
 void pud_verbose_set(Pud *pud, int lvl);
-Pud_Bool pud_section_is_optional(Pud_Section sec);
+Pud_Bool pud_section_optional_is(Pud_Section sec);
 uint32_t pud_go_to_section(Pud *pud, Pud_Section sec);
 void pud_print(const Pud *pud, FILE *stream);
 void pud_dimensions_to_size(Pud_Dimensions dim, unsigned int *x_ret, unsigned int *y_ret);

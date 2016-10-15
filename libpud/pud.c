@@ -51,7 +51,7 @@ pud_shutdown(void)
 
 
 Pud_Bool
-pud_section_is_optional(Pud_Section sec)
+pud_section_optional_is(Pud_Section sec)
 {
    return ((sec == PUD_SECTION_ERAX) ||
            (sec == PUD_SECTION_ALOW));

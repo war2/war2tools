@@ -52,7 +52,7 @@ main(int    argc,
         return 1;
      }
 
-   pud_init();
+   if (!pud_init()) return 1;
 
    pud = pud_open(file, PUD_OPEN_MODE_W);
    if (!pud) DIE_RETURN(2, "Failed to open [%s]", file);

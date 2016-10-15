@@ -229,7 +229,7 @@ war2_sprites_decode(War2_Data                *w2,
    War2_Sprites_Descriptor ud;
    unsigned int entries[2] = { 0, 0 };
    War2_Sprites type;
-   Pud_Side side;
+   Pud_Side side = PUD_SIDE_NEUTRAL;
 
    if (object == WAR2_SPRITES_ICONS)
      type = WAR2_SPRITES_ICONS;

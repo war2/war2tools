@@ -135,7 +135,7 @@ _sprites_entries_parse(War2_Data                *w2,
    memcpy(&max_w, &(ptr[2]), sizeof(uint16_t));
    memcpy(&max_h, &(ptr[4]), sizeof(uint16_t));
 
-   max_size = max_w * max_h;
+   max_size = (size_t)max_w * (size_t)max_h;
    img = malloc(max_size * sizeof(unsigned char));
    img_rgba = malloc(max_size * sizeof(Pud_Color));
 

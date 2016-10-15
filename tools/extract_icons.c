@@ -55,20 +55,21 @@ _close(void)
    free(_cairo.png);
 }
 
-static void
+static inline void
 _usage(FILE *s)
 {
    fprintf(s, "*** Usage: extract_icons <maindat.war>\n");
 }
 
 static void
-_icons_cb(const Pud_Color               *tile,
+_icons_cb(void                          *data EINA_UNUSED,
+          const Pud_Color               *tile,
           int                            x EINA_UNUSED,
           int                            y EINA_UNUSED,
-          int                            w,
-          int                            h,
+          unsigned int                   w,
+          unsigned int                   h,
           const War2_Sprites_Descriptor *ts EINA_UNUSED,
-          int                            img_nb)
+          uint16_t                       img_nb)
 {
    Eina_Tmpstr *file;
    int fd;
@@ -106,6 +107,7 @@ main(int    argc,
    const char *file;
    int ret = EXIT_FAILURE;
    char buf[1024];
+   Pud_Bool chk;
    struct {
       Pud_Era era;
       const char *str;
@@ -129,16 +131,15 @@ main(int    argc,
    ecore_file_init();
    war2_init();
 
-   w2 = war2_open(file, 0);
+   w2 = war2_open(file);
    if (!w2) goto deinit;
 
    for (i = 0; i < EINA_C_ARRAY_LENGTH(eras); i++)
      {
         _open(eras[i].str);
-        ud = war2_sprites_decode(w2, PUD_PLAYER_RED, eras[i].era,
-                                 WAR2_SPRITES_ICONS, _icons_cb);
-        if (!ud) DIE_RETURN(2, "Failed to decode tileset %s", eras[i].str);
-        war2_sprites_descriptor_free(ud); \
+        chk = war2_sprites_decode(w2, PUD_PLAYER_RED, eras[i].era,
+                                 WAR2_SPRITES_ICONS, _icons_cb, NULL);
+        if (!chk) DIE_RETURN(2, "Failed to decode tileset %s", eras[i].str);
         _close();
      }
 

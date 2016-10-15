@@ -10,6 +10,7 @@
 static void
 _tile_decode(War2_Tileset_Descriptor  *ts,
              War2_Tileset_Decode_Func  func,
+             void                     *func_data,
              unsigned char            *ptr,
              unsigned char            *data,
              unsigned char            *map,
@@ -62,14 +63,15 @@ _tile_decode(War2_Tileset_Descriptor  *ts,
           }
      }
    if (memcmp(&(img[0]), &black, 3))
-     func(img, 32, 32, ts, tile);
+     func(func_data, img, 32, 32, ts, tile);
 }
 
 static Pud_Bool
 _ts_entries_parse(War2_Data                *w2,
                   War2_Tileset_Descriptor  *ts,
                   const unsigned int       *entries,
-                  War2_Tileset_Decode_Func  func)
+                  War2_Tileset_Decode_Func  func,
+                  void                     *func_data)
 {
    unsigned char *ptr, *data, *map;
    size_t size, map_size;
@@ -113,7 +115,7 @@ _ts_entries_parse(War2_Data                *w2,
         for (i = 0; i <= 0xf; i++)
           {
              tile = (j * 0x10) + i;
-             _tile_decode(ts, func, ptr, data, map, tile);
+             _tile_decode(ts, func, func_data, ptr, data, map, tile);
           }
      }
 
@@ -124,7 +126,7 @@ _ts_entries_parse(War2_Data                *w2,
              for (k = 0x0; k <= 0xf; k++)
                {
                   tile = (j * 0x100) + (i * 0x10) + k;
-                  _tile_decode(ts, func, ptr, data, map, tile);
+                  _tile_decode(ts, func, func_data, ptr, data, map, tile);
                }
           }
      }
@@ -178,10 +180,11 @@ _ts_entries_parse(War2_Data                *w2,
    return PUD_TRUE;
 }
 
-War2_Tileset_Descriptor *
+PUDAPI unsigned int
 war2_tileset_decode(War2_Data                *w2,
                     Pud_Era                   era,
-                    War2_Tileset_Decode_Func  func)
+                    War2_Tileset_Decode_Func  func,
+                    void                     *data)
 {
    /* Last 3 entries are unknown (cf. doc) */
    const unsigned int forest[] = { 2, 3, 4, 5/*, 6, 7, 8*/ };
@@ -189,12 +192,10 @@ war2_tileset_decode(War2_Data                *w2,
    const unsigned int winter[] = { 18, 19, 20, 21/*, 22, 23, 24*/ };
    const unsigned int swamp[] = { 438, 439, 440, 441/*, 442, 443, 444*/ };
    const unsigned int *entries;
-   War2_Tileset_Descriptor *ts;
+   War2_Tileset_Descriptor ts;
+   unsigned int tiles;
 
-   /* Alloc */
-   ts = calloc(1, sizeof(War2_Tileset_Descriptor));
-   if (!ts) DIE_RETURN(NULL, "Failed to allocate memory");
-   ts->era = era;
+   ts.era = era;
 
    switch (era)
      {
@@ -204,13 +205,7 @@ war2_tileset_decode(War2_Data                *w2,
       case PUD_ERA_SWAMP:     entries = swamp;     break;
      }
 
-   _ts_entries_parse(w2, ts, entries, func);
+   _ts_entries_parse(w2, &ts, entries, func, data);
 
-   return ts;
-}
-
-void
-war2_tileset_descriptor_free(War2_Tileset_Descriptor *ts)
-{
-   free(ts);
+   return ts.tiles;
 }

@@ -100,7 +100,8 @@ static Pud_Bool
 _sprites_entries_parse(War2_Data                *w2,
                        War2_Sprites_Descriptor  *ud,
                        const unsigned int       *entries,
-                       War2_Sprites_Decode_Func  func)
+                       War2_Sprites_Decode_Func  func,
+                       void                     *func_data)
 {
    unsigned char *ptr;
    uint16_t count, i, oline, max_w, max_h;
@@ -191,7 +192,7 @@ _sprites_entries_parse(War2_Data                *w2,
           img_rgba[k] = ud->palette[img[k]];
 
         _sprites_colorize(img_rgba, size, ud->color);
-        func(img_rgba, x, y, w, h, ud, i);
+        func(func_data, img_rgba, x, y, w, h, ud, i);
      }
 
    free(img_rgba);
@@ -201,33 +202,31 @@ _sprites_entries_parse(War2_Data                *w2,
    return PUD_TRUE;
 }
 
-War2_Sprites_Descriptor *
-war2_sprites_decode_entry(War2_Data *w2,
+PUDAPI Pud_Bool
+war2_sprites_decode_entry(War2_Data                *w2,
                           Pud_Player                player_color,
                           unsigned int              entry,
-                          War2_Sprites_Decode_Func  func)
+                          War2_Sprites_Decode_Func  func,
+                          void                     *data)
 {
-   War2_Sprites_Descriptor *ud;
-   unsigned int entries[2] = { 2, entry };
+   War2_Sprites_Descriptor ud;
+   const unsigned int entries[2] = { 2, entry };
 
-   ud = calloc(1, sizeof(*ud));
-   if (!ud) DIE_RETURN(NULL, "Failed to allocate memory");
-   ud->color = player_color;
-   ud->object = entry;
+   ud.color = player_color;
+   ud.object = entry;
 
-   _sprites_entries_parse(w2, ud, entries, func);
-
-   return ud;
+   return _sprites_entries_parse(w2, &ud, entries, func, data);
 }
 
-War2_Sprites_Descriptor *
+PUDAPI Pud_Bool
 war2_sprites_decode(War2_Data                *w2,
                     Pud_Player                player_color,
                     Pud_Era                   era,
                     unsigned int              object,
-                    War2_Sprites_Decode_Func  func)
+                    War2_Sprites_Decode_Func  func,
+                    void                     *data)
 {
-   War2_Sprites_Descriptor *ud;
+   War2_Sprites_Descriptor ud;
    unsigned int entries[2] = { 0, 0 };
    War2_Sprites type;
    Pud_Side side;
@@ -385,7 +384,7 @@ war2_sprites_decode(War2_Data                *w2,
            case PUD_UNIT_CIRCLE_OF_POWER     : NEUTRAL_BUILDING_SWITCH(166, 166, 166, 525); break;
 
            default:
-             DIE_RETURN(NULL, "Unhandled object 0x%x", object);
+             DIE_RETURN(PUD_FALSE, "Unhandled object 0x%x", object);
           }
      }
 
@@ -398,35 +397,24 @@ war2_sprites_decode(War2_Data                *w2,
       case PUD_ERA_SWAMP:     entries[0] = 438; if (type == WAR2_SPRITES_ICONS) entries[1] = 471; break;
      }
 
-   /* Check object is valid (assigned entriy) */
+   /* Check object is valid (assigned entry) */
    if (entries[1] == 0)
-     DIE_RETURN(NULL, "Invalid object [%u]", object);
+     DIE_RETURN(PUD_FALSE, "Invalid object [%u]", object);
    WAR2_VERBOSE(w2, 1, "Decoding entry [%i] for object [%u] (%s,%s)",
                 entries[1], object,
                 (type == WAR2_SPRITES_ICONS) ? "<ICON>" : pud_unit_to_string(object, PUD_FALSE),
                 pud_era_to_string(era));
 
-   /* Alloc */
-   ud = calloc(1, sizeof(*ud));
-   if (!ud) DIE_RETURN(NULL, "Failed to allocate memory");
-   ud->era = era;
-   ud->color = player_color;
-   ud->object = object;
-   ud->sprite_type = type;
-   ud->side = side;
+   ud.era = era;
+   ud.color = player_color;
+   ud.object = object;
+   ud.sprite_type = type;
+   ud.side = side;
 
-   _sprites_entries_parse(w2, ud, entries, func);
-
-   return ud;
+   return _sprites_entries_parse(w2, &ud, entries, func, data);
 }
 
-void
-war2_sprites_descriptor_free(War2_Sprites_Descriptor *ud)
-{
-   free(ud);
-}
-
-void
+PUDAPI void
 war2_sprites_color_convert(Pud_Player     from,
                            Pud_Player     to,
                            unsigned char  in_r,

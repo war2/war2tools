@@ -153,13 +153,14 @@ _str2color(const char *str)
 }
 
 static void
-_war2_entry_cb(const Pud_Color               *img,
+_war2_entry_cb(void                          *data,
+               const Pud_Color               *img,
                int                            x,
                int                            y,
-               int                            w,
-               int                            h,
+               unsigned int                   w,
+               unsigned int                   h,
                const War2_Sprites_Descriptor *ud,
-               int                            img_nb)
+               uint16_t                       img_nb)
 {
    char file[4096];
    Pud_Bool chk = PUD_FALSE;
@@ -298,8 +299,9 @@ main(int    argc,
             sections.enabled)
           ABORT(1, "Invalid option when --war,-W is specified");
 
-        w2 = war2_open(file, verbose);
+        w2 = war2_open(file);
         if (w2 == NULL) ABORT(3, "Failed to create War2_Data from [%s]", file);
+        war2_verbosity_set(w2, verbose);
 
         if (sprite.enabled)
           {
@@ -308,8 +310,7 @@ main(int    argc,
              if (out.jpeg + out.ppm + out.png != 1)
                ABORT(1, "You must use one of --jpeg,--ppm,--png.");
 
-             ud = war2_sprites_decode_entry(w2, sprite.color, sprite.entry, _war2_entry_cb);
-             war2_sprites_descriptor_free(ud);
+             war2_sprites_decode_entry(w2, sprite.color, sprite.entry, _war2_entry_cb, NULL);
           }
      }
    else

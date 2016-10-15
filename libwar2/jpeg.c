@@ -11,10 +11,10 @@
 # include <jpeglib.h>
 #endif
 
-Pud_Bool
+PUDAPI Pud_Bool
 war2_jpeg_write(const char          *file,
-                int                  w,
-                int                  h,
+                unsigned int         w,
+                unsigned int         h,
                 const unsigned char *data)
 {
 #if HAVE_JPEG

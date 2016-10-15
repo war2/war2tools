@@ -1,9 +1,9 @@
 #include "war2.h"
 
-Pud_Bool
+PUDAPI Pud_Bool
 war2_ppm_write(const char          *file,
-               int                  w,
-               int                  h,
+               unsigned int         w,
+               unsigned int         h,
                const unsigned char *data)
 {
    const int size = w * h * 4;

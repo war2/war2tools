@@ -21,6 +21,22 @@
 #include "war2.h"
 
 
+struct _War2_Data
+{
+   unsigned char *mem_map;
+   size_t         mem_map_size;
+   unsigned char *ptr;
+
+   uint32_t     magic;
+   uint16_t     fid;
+
+   uint16_t        entries_count;
+   unsigned char **entries;
+
+   int verbose;
+};
+
+
 #define FAIL(ret_) return ret_
 #define ECHAP(lab_) goto lab_
 

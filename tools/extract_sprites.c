@@ -18,13 +18,14 @@
 static Eet_File *_ef = NULL;
 
 static void
-_unit_cb(const Pud_Color               *sprite,
+_unit_cb(void                          *fdata  EINA_UNUSED,
+         const Pud_Color               *sprite,
          int                            x      EINA_UNUSED,
          int                            y      EINA_UNUSED,
-         int                            w,
-         int                            h,
+         unsigned int                   w,
+         unsigned int                   h,
          const War2_Sprites_Descriptor *ud,
-         int                            img_nb)
+         uint16_t                       img_nb)
 {
    static const Pud_Unit aliases[] = {
       PUD_UNIT_UTHER_LIGHTBRINGER,      PUD_UNIT_KNIGHT,
@@ -41,7 +42,9 @@ _unit_cb(const Pud_Color               *sprite,
       PUD_UNIT_DENTARG,                 PUD_UNIT_OGRE,
       PUD_UNIT_GUL_DAN,                 PUD_UNIT_DEATH_KNIGHT,
       PUD_UNIT_TERON_GOREFIEND,         PUD_UNIT_DEATH_KNIGHT,
-      PUD_UNIT_DEATHWING,               PUD_UNIT_DRAGON
+      PUD_UNIT_DEATHWING,               PUD_UNIT_DRAGON,
+      PUD_UNIT_ATTACK_PEASANT,          PUD_UNIT_PEASANT,
+      PUD_UNIT_ATTACK_PEON,             PUD_UNIT_PEON,
    };
    static const unsigned int aliases_count = SIZEOF_ARRAY(aliases);
 
@@ -153,13 +156,14 @@ _unit_cb(const Pud_Color               *sprite,
 }
 
 static void
-_building_cb(const Pud_Color               *sprite,
+_building_cb(void                          *fdata  EINA_UNUSED,
+             const Pud_Color               *sprite,
              int                            x      EINA_UNUSED,
              int                            y      EINA_UNUSED,
-             int                            w,
-             int                            h,
+             unsigned int                   w,
+             unsigned int                   h,
              const War2_Sprites_Descriptor *ud,
-             int                            img_nb)
+             uint16_t                       img_nb)
 {
    void *data;
    int bytes;
@@ -312,14 +316,12 @@ main(int    argc,
 
 #define GEN_UNIT(unit_, era_) \
    do { \
-      ud = war2_sprites_decode(w2, PUD_PLAYER_RED, era_, unit_, _unit_cb); \
-      war2_sprites_descriptor_free(ud); \
+      war2_sprites_decode(w2, PUD_PLAYER_RED, era_, unit_, _unit_cb, NULL); \
    } while (0)
 
 #define GEN_BUILDING(unit_, era_) \
    do { \
-      ud = war2_sprites_decode(w2, PUD_PLAYER_RED, era_, unit_, _building_cb); \
-      war2_sprites_descriptor_free(ud); \
+      war2_sprites_decode(w2, PUD_PLAYER_RED, era_, unit_, _building_cb, NULL); \
    } while (0)
 
    if (argc != 2)
@@ -330,8 +332,9 @@ main(int    argc,
 
    war2_init();
    eet_init();
-   w2 = war2_open(argv[1], 2);
+   w2 = war2_open(argv[1]);
    if (!w2) return 2;
+   war2_verbosity_set(w2, 2);
 
 
    /*=========================*

@@ -14,36 +14,36 @@
  * and hexdump.
  */
 
-Pud_Bool
+PUDAPI Pud_Bool
 war2_init(void)
 {
-   return pud_init();
+   return PUD_TRUE;
 }
 
-void
+PUDAPI void
 war2_shutdown(void)
 {
-   pud_shutdown();
+   /* Nothing to do */
 }
 
-War2_Data *
-war2_open(const char *file,
-          int         verbosity)
+PUDAPI War2_Data *
+war2_open(const char *file)
 {
    War2_Data *w2;
    int i;
    uint32_t l;
 
+   /* Safety check the input */
+   if (!file) DIE_GOTO(err, "NULL input file");
+
    /* Allocate memory and set verbosity */
    w2 = calloc(1, sizeof(War2_Data));
    if (!w2) DIE_GOTO(err, "Failed to allocate memory");
-   war2_verbosity_set(w2, verbosity);
 
    /* Map file */
    w2->mem_map = common_file_mmap(file, &(w2->mem_map_size));
    if (!w2->mem_map) DIE_GOTO(err_free, "Failed to map file");
    w2->ptr = w2->mem_map;
-   WAR2_VERBOSE(w2, 1, "File [%s] mapped size is %zu bytes", file, w2->mem_map_size);
 
    /* Read magic */
    w2->magic = READ32(w2, ECHAP(err_unmap));
@@ -60,11 +60,9 @@ war2_open(const char *file,
 
    /* Get the entries */
    w2->entries_count = READ16(w2, ECHAP(err_unmap));
-   WAR2_VERBOSE(w2, 1, "File [%s] has [%u] entries", file, w2->entries_count);
 
    /* File ID */
    w2->fid = READ16(w2, ECHAP(err_unmap));
-   WAR2_VERBOSE(w2, 1, "File [%s] has ID [0x%04x]", file, w2->fid);
 
    /* Allocate entries table */
    w2->entries = calloc(w2->entries_count, sizeof(unsigned char *));
@@ -83,7 +81,6 @@ war2_open(const char *file,
              continue;
           }
         w2->entries[i] = w2->mem_map + l;
-        WAR2_VERBOSE(w2, 3, "Entry %i has offset of %u", i, l);
      }
 
    return w2;
@@ -98,7 +95,7 @@ err:
    return NULL;
 }
 
-unsigned char *
+PUDAPI unsigned char *
 war2_palette_extract(War2_Data    *w2,
                      unsigned int  entry)
 {
@@ -117,7 +114,7 @@ war2_palette_extract(War2_Data    *w2,
 }
 
 
-unsigned char *
+PUDAPI unsigned char *
 war2_entry_extract(War2_Data    *w2,
                    unsigned int  entry,
                    size_t       *size_ret)
@@ -206,7 +203,7 @@ fail:
    return NULL;
 }
 
-void
+PUDAPI void
 war2_close(War2_Data *w2)
 {
    if (!w2) return;
@@ -215,7 +212,7 @@ war2_close(War2_Data *w2)
    free(w2);
 }
 
-void
+PUDAPI void
 war2_verbosity_set(War2_Data *w2,
                    int        level)
 {

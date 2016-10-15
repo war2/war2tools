@@ -120,11 +120,12 @@ _era2str(Pud_Era era)
 }
 
 static void
-_export_tile_png(const Pud_Color    *tile,
-                 int                 w,
-                 int                 h,
+_export_tile_png(void               *func_data EINA_UNUSED,
+                 const Pud_Color    *tile,
+                 unsigned int        w,
+                 unsigned int        h,
                  const War2_Tileset_Descriptor *ts,
-                 int                 img_nb)
+                 uint16_t            img_nb)
 {
    char buf[1024], buf2[1024], buf3[1024];
 
@@ -140,11 +141,12 @@ _export_tile_png(const Pud_Color    *tile,
 
 #ifdef HAVE_CAIRO
 static void
-_export_tile_atlas(const Pud_Color *tile,
-                   int w,
-                   int h,
+_export_tile_atlas(void *func_data EINA_UNUSED,
+                   const Pud_Color *tile,
+                   unsigned int w,
+                   unsigned int h,
                    const War2_Tileset_Descriptor *ts EINA_UNUSED,
-                   int img_nb)
+                   uint16_t img_nb)
 {
    Eina_Tmpstr *file;
    int fd;
@@ -192,11 +194,12 @@ _export_tile_atlas(const Pud_Color *tile,
 
 #ifdef HAVE_EET
 static void
-_export_tile_eet(const Pud_Color    *tile,
-                 int                 w,
-                 int                 h,
+_export_tile_eet(void *func_data EINA_UNUSED,
+                 const Pud_Color    *tile,
+                 unsigned int        w,
+                 unsigned int        h,
                  const War2_Tileset_Descriptor *ts EINA_UNUSED,
-                 int                 img_nb)
+                 uint16_t                 img_nb)
 {
    char key[8];
    unsigned char *data;
@@ -239,9 +242,9 @@ main(int    argc,
      char **argv)
 {
    War2_Data *w2;
-   War2_Tileset_Descriptor *ts;
    const char *file;
    const char *type;
+   unsigned int tiles;
    int verbose;
    int ret = EXIT_FAILURE;
    char buf[1024];
@@ -276,8 +279,9 @@ main(int    argc,
    ecore_file_init();
    war2_init();
 
-   w2 = war2_open(file, verbose);
+   w2 = war2_open(file);
    if (!w2) return 1;
+   war2_verbosity_set(w2, verbose);
 
    switch (_export_type)
      {
@@ -310,27 +314,23 @@ main(int    argc,
 
 
    _open("forest");
-   ts = war2_tileset_decode(w2, PUD_ERA_FOREST, func);
-   if (!ts) DIE_RETURN(2, "Failed to decode tileset FOREST");
-   war2_tileset_descriptor_free(ts);
+   tiles = war2_tileset_decode(w2, PUD_ERA_FOREST, func, NULL);
+   if (!tiles) DIE_RETURN(2, "Failed to decode tileset FOREST");
    _close();
 
    _open("winter");
-   ts = war2_tileset_decode(w2, PUD_ERA_WINTER, func);
-   if (!ts) DIE_RETURN(2, "Failed to decode tileset WINTER");
-   war2_tileset_descriptor_free(ts);
+   tiles = war2_tileset_decode(w2, PUD_ERA_WINTER, func, NULL);
+   if (!tiles) DIE_RETURN(2, "Failed to decode tileset WINTER");
    _close();
 
    _open("wasteland");
-   ts = war2_tileset_decode(w2, PUD_ERA_WASTELAND, func);
-   if (!ts) DIE_RETURN(2, "Failed to decode tileset WASTELAND");
-   war2_tileset_descriptor_free(ts);
+   tiles = war2_tileset_decode(w2, PUD_ERA_WASTELAND, func, NULL);
+   if (!tiles) DIE_RETURN(2, "Failed to decode tileset WASTELAND");
    _close();
 
    _open("swamp");
-   ts = war2_tileset_decode(w2, PUD_ERA_SWAMP, func);
-   if (!ts) DIE_RETURN(2, "Failed to decode tileset SWAMP");
-   war2_tileset_descriptor_free(ts);
+   tiles = war2_tileset_decode(w2, PUD_ERA_SWAMP, func, NULL);
+   if (!tiles) DIE_RETURN(2, "Failed to decode tileset SWAMP");
    _close();
 
    printf("Output is in %s/tiles/%s\n", getcwd(buf, sizeof(buf)), dest);

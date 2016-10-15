@@ -759,6 +759,16 @@ typedef struct _Pud_Unit_Data Pud_Unit_Data;
 typedef struct _Pud_Unit_Characteristics Pud_Unit_Characteristics;
 typedef struct _Pud_Upgrade_Characteristics Pud_Upgrade_Characteristics;
 
+/**
+ * @typedef Pud_Private
+ * Internal data of the Pud structure. It is not meant to be public.
+ * Don't touch it, don't even think of accessing it.
+ * If you really want to get into trouble, get the pud_private.h file
+ * from the sources to access the internals.
+ * @since 1.0.0
+ */
+typedef struct _Pud_Private Pud_Private;
+
 struct _Pud_Upgrade_Characteristics
 {
    uint8_t           time;
@@ -822,10 +832,7 @@ struct _Pud_Unit_Data
  */
 struct _Pud
 {
-   Pud_Open_Mode  open_mode;
-   unsigned char *mem_map;
-   unsigned char *ptr;
-   size_t         mem_map_size;
+   Pud_Private *private; /**< Internals, private and opaque data. Don't touch ;-) */
 
    uint32_t       tag;
    uint16_t       version;
@@ -884,21 +891,6 @@ struct _Pud
    Pud_Unit_Characteristics unit_data[110]; /* [defaults] */
 
    uint16_t obsolete_udta[508];
-
-   /* Bitfield: is section X present? */
-   uint32_t     sections;
-
-   /* Cache */
-   uint8_t       current_section;
-
-   Pud_Bool has_erax;
-
-   unsigned int  verbose;
-   unsigned int  init           : 1; /* set by defaults */
-   unsigned int  default_allow  : 1; /* [defaults] */
-   unsigned int  default_udta   : 1; /* [defaults] */
-   unsigned int  default_ugrd   : 1; /* [defaults] */
-   unsigned int  extension_pack : 1;
 };
 
 /**

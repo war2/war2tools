@@ -69,14 +69,14 @@ pud_go_to_section(Pud         *pud,
 
    /* If the section to search for is before the current section,
     * rewind the file to catch it. If it is after, do nothing */
-   if (sec <= pud->current_section)
-     pud->ptr = pud->mem_map;
+   if (sec <= pud->private->current_section)
+     pud->private->ptr = pud->private->mem_map;
 
    /* Tell the PUD we are pointing at the last section.
     * In case of success the pud will be pointing at the section
     * it had to go.
     * On failure, it will have to rewind itself on next call */
-   pud->current_section = PUD_SECTION_UNIT;
+   pud->private->current_section = PUD_SECTION_UNIT;
 
    READBUF(pud, buf, char, 4, FAIL(0));
 
@@ -85,7 +85,7 @@ pud_go_to_section(Pud         *pud,
         if (!strncmp(buf, sec_str, 4))
           {
              /* Update current section */
-             pud->current_section = sec;
+             pud->private->current_section = sec;
 
              l = READ32(pud, FAIL(0));
              return l;
@@ -105,6 +105,23 @@ pud_tag_generate(void)
    return rand() % UINT32_MAX;
 }
 
+static Pud_Private *
+_private_new(void)
+{
+   return calloc(1, sizeof(Pud_Private));
+}
+
+static void
+_private_free(Pud_Private *priv)
+{
+   if (priv)
+     {
+        if (priv->mem_map)
+          common_file_munmap(priv->mem_map, priv->mem_map_size);
+        free(priv);
+     }
+}
+
 PUDAPI Pud *
 pud_open(const char    *file,
          Pud_Open_Mode  mode)
@@ -117,8 +134,11 @@ pud_open(const char    *file,
    pud = calloc(1, sizeof(Pud));
    if (!pud) DIE_GOTO(err, "Failed to alloc Pud: %s", strerror(errno));
 
+   pud->private = _private_new();
+   if (!pud->private) DIE_GOTO(err, "Failed to create private structure");
+
    /* Keep the open mode around */
-   pud->open_mode = mode;
+   pud->private->open_mode = mode;
 
    /*
     * +) If the file exists, and we are allowed to read from it,
@@ -132,9 +152,9 @@ pud_open(const char    *file,
      {
         if (mode & PUD_OPEN_MODE_R)
           {
-             pud->mem_map = common_file_mmap(file, &pud->mem_map_size);
-             if (!pud->mem_map) DIE_GOTO(err, "Failed to map file \"%s\"", file);
-             pud->ptr = pud->mem_map;
+             pud->private->mem_map = common_file_mmap(file, &pud->private->mem_map_size);
+             if (!pud->private->mem_map) DIE_GOTO(err, "Failed to map file \"%s\"", file);
+             pud->private->ptr = pud->private->mem_map;
 
              if (!(mode & PUD_OPEN_MODE_NO_PARSE))
                {
@@ -174,7 +194,7 @@ PUDAPI void
 pud_close(Pud *pud)
 {
    if (!pud) return;
-   if (pud->mem_map) common_file_munmap(pud->mem_map, pud->mem_map_size);
+   _private_free(pud->private);
    free(pud->units);
    free(pud->tiles_map);
    free(pud->action_map);
@@ -186,7 +206,7 @@ pud_close(Pud *pud)
 PUDAPI Pud_Bool
 pud_parse(Pud *pud)
 {
-   pud->sections = 0;
+   pud->private->sections = 0;
 
 #define PARSE_SEC(sec) \
    if (!pud_parse_ ## sec(pud)) DIE_RETURN(PUD_FALSE, "Failed to parse " #sec)
@@ -214,7 +234,7 @@ pud_parse(Pud *pud)
 #undef PARSE_SEC
 
    /* Is assumed valid */
-   pud->init = 1;
+   pud->private->init = 1;
 
    return PUD_TRUE;
 }
@@ -371,7 +391,7 @@ pud_write(const Pud  *pud,
    W16(p->era, 1);
 
    /* Section ERAX */
-   if (p->has_erax)
+   if (p->private->has_erax)
      {
         WISEC(PUD_SECTION_ERAX, 2);
         W16(p->era, 1);
@@ -384,7 +404,7 @@ pud_write(const Pud  *pud,
 
    /* Section UDTA */
    WISEC(PUD_SECTION_UDTA, 5696);
-   WI16(p->default_udta, 1);
+   WI16(p->private->default_udta, 1);
    for (i = 0; i < 110; i++) W16(p->unit_data[i].overlap_frames, 1);
    for (i = 0; i < 508; i++) W16(p->obsolete_udta[i], 1);
    for (i = 0; i < 110; i++) W32(p->unit_data[i].sight, 1);
@@ -426,7 +446,7 @@ pud_write(const Pud  *pud,
    // WI16(0, 127); // Obsolete data (do not print!!)
 
    /* Section ALOW */
-   if (p->default_allow == 0)
+   if (p->private->default_allow == 0)
      {
         WISEC(PUD_SECTION_ALOW, 384);
         fwrite(&p->unit_alow, sizeof(uint32_t), 16, f);
@@ -440,7 +460,7 @@ pud_write(const Pud  *pud,
 
    /* Section UGRD */
    WISEC(PUD_SECTION_UGRD, 782);
-   WI16(p->default_ugrd, 1);
+   WI16(p->private->default_ugrd, 1);
    for (i = 0; i < 52; i++) W8(p->upgrade[i].time, 1);
    for (i = 0; i < 52; i++) W16(p->upgrade[i].gold, 1);
    for (i = 0; i < 52; i++) W16(p->upgrade[i].lumber, 1);
@@ -641,7 +661,7 @@ pud_check(Pud                   *pud,
    memset(players_units, 0, sizeof(players_units));
    memset(players_start_loc, 0, sizeof(players_start_loc));
 
-   if (!pud->init)
+   if (!pud->private->init)
      {
         ret = PUD_ERROR_NOT_INITIALIZED;
         goto end;

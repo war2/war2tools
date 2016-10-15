@@ -28,11 +28,33 @@
 # define PUDAPI_INTERNAL
 #endif /* ifdef __GNUC__ */
 
+struct _Pud_Private
+{
+   Pud_Open_Mode  open_mode;
+   unsigned char *mem_map;
+   unsigned char *ptr;
+   size_t         mem_map_size;
+
+   /* Bitfield: is section X present? */
+   uint32_t     sections;
+
+   /* Cache */
+   uint8_t       current_section;
+
+   Pud_Bool has_erax;
+
+   unsigned int  verbose;
+   Pud_Bool init; /* set by defaults */
+   Pud_Bool default_allow; /* [defaults] */
+   Pud_Bool default_udta; /* [defaults] */
+   Pud_Bool default_ugrd; /* [defaults] */
+};
+
 
 static inline Pud_Bool
 pud_mem_map_ok(Pud *pud)
 {
-   return (pud->ptr < pud->mem_map + pud->mem_map_size);
+   return (pud->private->ptr < pud->private->mem_map + pud->private->mem_map_size);
 }
 
 /* Visual hint when returning nothing */
@@ -40,7 +62,7 @@ pud_mem_map_ok(Pud *pud)
 
 #define PUD_VERBOSE(pud, lvl, msg, ...) \
    do { \
-      if (pud->verbose >= lvl) { \
+      if (pud->private->verbose >= lvl) { \
          fprintf(stdout, "-- " msg "\n", ## __VA_ARGS__); \
       } \
    } while (0)
@@ -50,9 +72,9 @@ pud_mem_map_ok(Pud *pud)
       if (!(pud)) { \
          DIE_RETURN(__VA_ARGS__, "Invalid PUD input [%p]", pud); \
       } \
-      if (!(pud->open_mode & (mode))) { \
+      if (!(pud->private->open_mode & (mode))) { \
          DIE_RETURN(__VA_ARGS__, "PUD open mode is [%02x] expected [%02x]", \
-                    pud->open_mode, mode); \
+                    pud->private->open_mode, mode); \
       } \
    } while (0)
 
@@ -77,8 +99,8 @@ pud_mem_map_ok(Pud *pud)
     ERR("Read outside of memory map!"); \
     __VA_ARGS__; \
     } \
-    memcpy(&(x__[0]), p->ptr, size__); \
-    p->ptr += size__; \
+    memcpy(&(x__[0]), p->private->ptr, size__); \
+    p->private->ptr += size__; \
     x__[0]; \
     })
 
@@ -90,8 +112,8 @@ pud_mem_map_ok(Pud *pud)
     ERR("Read outside of memory map!"); \
     __VA_ARGS__; \
     } \
-    memcpy(&(x__[0]), p->ptr, size__); \
-    p->ptr += size__; \
+    memcpy(&(x__[0]), p->private->ptr, size__); \
+    p->private->ptr += size__; \
     x__[0]; \
     })
 
@@ -103,8 +125,8 @@ pud_mem_map_ok(Pud *pud)
     ERR("Read outside of memory map!"); \
     __VA_ARGS__; \
     } \
-    memcpy(&(x__[0]), p->ptr, size__); \
-    p->ptr += size__; \
+    memcpy(&(x__[0]), p->private->ptr, size__); \
+    p->private->ptr += size__; \
     x__[0]; \
     })
 
@@ -116,8 +138,8 @@ pud_mem_map_ok(Pud *pud)
          ERR("Read outside of memory map!"); \
          __VA_ARGS__; \
       } \
-      memcpy(ptr__, p->ptr, size__); \
-      p->ptr += size__; \
+      memcpy(ptr__, p->private->ptr, size__); \
+      p->private->ptr += size__; \
    } while (0)
 
 

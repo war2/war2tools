@@ -32,8 +32,8 @@ pud_defaults_set(Pud *pud)
    for (i = 0; i < 7; i++) pud->soil.unusable[i] = 1000;
    pud->soil.neutral = 1000;
 
-   pud->default_udta = 1;
-   pud->default_ugrd = 1;
+   pud->private->default_udta = 1;
+   pud->private->default_ugrd = 1;
 
    /* AI */
    for (i = 0; i < 8; i++) pud->ai.players[i] = 0x00;
@@ -56,7 +56,7 @@ pud_defaults_set(Pud *pud)
    pud_alow_defaults_set(pud);
 
    /* Most of the fields are assumed valid */
-   pud->init = 1;
+   pud->private->init = 1;
 
    return PUD_TRUE;
 }
@@ -548,7 +548,7 @@ pud_alow_defaults_set(Pud *pud)
 
    PUD_SANITY_CHECK(pud, PUD_OPEN_MODE_W, VOID);
 
-   pud->default_allow = 1;
+   pud->private->default_allow = 1;
 
    /* Everything is allowed */
    memset(&pud->unit_alow, 0xff, sizeof(struct _alow));

@@ -641,9 +641,9 @@ pud_dump(const Pud *pud,
    fprintf(stream, "Description..........: %s\n", pud->description);
    fprintf(stream, "Era..................: %s\n", pud_era_to_string(pud->era));
    fprintf(stream, "Dimensions...........: %s\n", dim2str(pud->dims));
-   fprintf(stream, "Default ALOW.........: %i\n", pud->default_allow);
-   fprintf(stream, "Default UDTA.........: %i\n", pud->default_udta);
-   fprintf(stream, "Default UGRD.........: %i\n", pud->default_ugrd);
+   fprintf(stream, "Default ALOW.........: %i\n", pud->private->default_allow);
+   fprintf(stream, "Default UDTA.........: %i\n", pud->private->default_udta);
+   fprintf(stream, "Default UGRD.........: %i\n", pud->private->default_ugrd);
 
    /* OWNR Section */
    fprintf(stream, "Owners...............:\n");

@@ -11,7 +11,7 @@
  * Parsing of individual sections is here
  */
 
-#define HAS_SECTION(sec) pud->sections |= (1 << sec)
+#define HAS_SECTION(sec) pud->private->sections |= (1 << sec)
 
 PUDAPI Pud_Bool
 pud_parse_type(Pud *pud)
@@ -59,23 +59,6 @@ pud_parse_ver(Pud *pud)
    w = READ16(pud, FAIL(PUD_FALSE));
 
    pud->version = w;
-   switch (w)
-     {
-      case 0x0011:
-         pud->extension_pack = 0;
-         break;
-
-      case 0x013:
-         pud->extension_pack = 1;
-         break;
-
-      default:
-         fprintf(stderr, "*** Unknown version 0x%04x."
-                 " Defaults to extension pack\n", w);
-         pud->extension_pack = 1;
-         break;
-     }
-
    return PUD_TRUE;
 }
 
@@ -159,7 +142,7 @@ pud_parse_era(Pud *pud)
    chk = pud_go_to_section(pud, PUD_SECTION_ERAX);
    if (!chk) // Optional section, use ERA by default
      {
-        pud->has_erax = PUD_FALSE;
+        pud->private->has_erax = PUD_FALSE;
         PUD_VERBOSE(pud, 2, "Failed to find ERAX. Trying with ERA...");
         chk = pud_go_to_section(pud, PUD_SECTION_ERA);
         if (!chk) DIE_RETURN(PUD_FALSE, "Failed to reach section ERA");
@@ -168,7 +151,7 @@ pud_parse_era(Pud *pud)
      }
    else
      {
-        pud->has_erax = PUD_TRUE;
+        pud->private->has_erax = PUD_TRUE;
         PUD_VERBOSE(pud, 2, "At section ERAX (size = %u)", chk);
         HAS_SECTION(PUD_SECTION_ERAX);
      }
@@ -232,10 +215,10 @@ pud_parse_dim(Pud *pud)
 
    /* Override permissions because pud_dimensions_set() is
     * damn convenient to use */
-   mode = pud->open_mode;
-   pud->open_mode = PUD_OPEN_MODE_W;
+   mode = pud->private->open_mode;
+   pud->private->open_mode = PUD_OPEN_MODE_W;
    pud_dimensions_set(pud, dim);
-   pud->open_mode = mode;
+   pud->private->open_mode = mode;
 
    return PUD_TRUE;
 }
@@ -258,7 +241,7 @@ pud_parse_udta(Pud *pud)
 
    /* Use default data */
    READBUF(pud, wb, uint16_t, 1, FAIL(PUD_FALSE));
-   pud->default_udta = !!wb[0];
+   pud->private->default_udta = !!wb[0];
 
    /* Overlap frames */
    READBUF(pud, wb, uint16_t, 110, FAIL(PUD_FALSE));
@@ -439,12 +422,12 @@ pud_parse_alow(Pud *pud)
    const int ptrs_count = sizeof(ptrs) / sizeof(void *);
    int i;
 
-   pud->default_allow = 0; // Reset before checking
+   pud->private->default_allow = 0; // Reset before checking
    chk = pud_go_to_section(pud, PUD_SECTION_ALOW);
    if (!chk)
      {
         PUD_VERBOSE(pud, 2, "Section ALOW (optional) not present. Skipping...");
-        pud->default_allow = 1;
+        pud->private->default_allow = 1;
         return PUD_TRUE;
      }
    PUD_VERBOSE(pud, 2, "At section ALOW (size = %u)", chk);
@@ -480,7 +463,7 @@ pud_parse_ugrd(Pud *pud)
 
    /* Use default data */
    READBUF(pud, wb, uint16_t, 1, FAIL(PUD_FALSE));
-   pud->default_ugrd = !!wb[0];
+   pud->private->default_ugrd = !!wb[0];
 
    /* Upgrade time */
    READBUF(pud, bb, uint8_t, 52, FAIL(PUD_FALSE));

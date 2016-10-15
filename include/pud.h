@@ -859,8 +859,6 @@ void pud_tag_generate(Pud *pud);
 
 unsigned char *pud_minimap_bitmap_generate(Pud *pud, unsigned int *size_ret, Pud_Pixel_Format pfmt);
 
-Pud_Bool pud_minimap_to_ppm(Pud *pud, const char *file);
-
 const char *pud_section_at_index(int idx);
 
 const char *pud_unit2str(Pud_Unit unit, Pud_Bool pretty);

@@ -22,5 +22,6 @@ Pud_Bool pud_png_write(const char *file, int w, int h, const unsigned char *data
 
 Pud_Bool pud_minimap_to_jpeg(Pud *pud, const char *file);
 Pud_Bool pud_minimap_to_png(Pud *pud, const char *file);
+Pud_Bool pud_minimap_to_ppm(Pud *pud, const char *file);
 
 #endif /* ! _PUDUTILS_H_ */

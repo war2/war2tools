@@ -15,6 +15,7 @@
  * edited with Blizzard's World Map Editor or third-parties tools.
  *
  * The libpud is split into several modules:
+ * @li @ref Pud_Types
  * @li @ref Pud_General
  * @li @ref Pud_File
  * @li @ref Pud_Parse

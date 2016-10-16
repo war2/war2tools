@@ -24,12 +24,10 @@
 /**
  * @file pud.h
  *
- * Pud provides ways to manipulate PUD files.
+ * The libpud provides ways to manipulate PUD files.
  * PUD files are Warcraft II custom map files, that
  * can be loaded into Warcraft II and distributed among
  * players.
- *
- * Copyright (c) 2014 - 2016 Jean Guyomarc'h
  */
 
 #ifndef __LIBPUD_PUD_H__
@@ -41,6 +39,15 @@ extern "C" { /* } For dump editors */
 #include <stdint.h>
 #include <stddef.h>
 #include <stdio.h>
+
+
+/**
+ * @defgroup Pud_Types Pud Types
+ *
+ * Types and enumeration values used by the libpud.
+ *
+ * @{
+ */
 
 
 #ifdef _WIN32
@@ -998,6 +1005,10 @@ typedef struct
 
    } data; /**< Error reason */
 } Pud_Error_Description;
+
+/**
+ * @}
+ */ /* End of group Pud_Types */
 
 /**
  *

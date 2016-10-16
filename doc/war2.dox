@@ -1,0 +1,52 @@
+/**
+ * @mainpage
+ *
+ * @section toc Table of Contents
+ *
+ * @li @ref overview
+ * @li @ref start
+ * @li @ref license
+ * @li @ref doc
+ *
+ * @section overview Overview
+ *
+ * This is libwar2, a C library to extract Warcraft II data.
+ * Blizzard ships a file named MAINDAT.WAR with Warcraft II. This file
+ * contains a whole bunch of very useful data, such as the tilesets, units
+ * and buildings sprites, animations, cinematics, soundtracks, etc.
+ * The purpose of this library is to extract those data from the MAINDAT.WAR
+ * file.
+ *
+ * Libwar2 depends on the libpud.
+ *
+ * The libwar2 is split into several modules:
+ * @li @ref War2_Types
+ * @li @ref War2_Core
+ *
+ *
+ * @section start How to Start
+ *
+ * The little program below is a concise example that shows how to use the
+ * libwar2. This program opens MAINDAT.WAR and decodes the sprites of the
+ * dragon unit.
+ *
+ * @include war2.c
+ *
+ *
+ * @section license License
+ *
+ * libwar2 is under the MIT License:
+ *
+ * @include LICENSE
+ *
+ *
+ * @section doc MAINDAT.WAR Format Documentation
+ *
+ * The MAINDAT.WAR format is not officially documented by Blizzard, but reverse-engineered
+ * bits are available here and there. war2tools, the umbrella project that provides
+ * the libwar2 tried to collect them all, and also completed those bits.
+ * This documentation is available below
+ *
+ * @include icon_banks.txt
+ * @include tile_maps.txt
+ */

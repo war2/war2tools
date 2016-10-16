@@ -20,14 +20,123 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
+/**
+ * @file war2.h
+ *
+ * Libwar2 provides warcraft 2 data files manipulation.
+ */
+
 #ifndef _WAR2_H_
 #define _WAR2_H_
 #ifdef __cplusplus
 extern "C" { /* } For dumb editors */
 #endif
 
-#include "pud.h"
+#include <pud.h>
 
+/**
+ * @defgroup War2_Types Libwar2 Types
+ *
+ * Types and enumeration values used by the libwar2
+ * @{
+ */
+
+/**
+ * @typedef War2_Data
+ * Opaque type that handles warcraft 2 data
+ * @since 1.0.0
+ */
+typedef struct _War2_Data War2_Data;
+
+/**
+ * @typedef War2_Sprites
+ * Holds values for different types of sprites
+ * @since 1.0.0
+ */
+typedef enum
+{
+   WAR2_SPRITES_UNITS     = 0x100, /**< Units sprites */
+   WAR2_SPRITES_BUILDINGS = 0x101, /**< Buildings sprites */
+   WAR2_SPRITES_ICONS     = 0x102, /**< Icons sprites */
+   WAR2_SPRITES_SYSTEM    = 0x103  /**< System sprites (i.e. start locations) */
+} War2_Sprites;
+
+/**
+ * Type that holds information about a current tileset decoding
+ * @since 1.0.0
+ */
+typedef struct
+{
+   Pud_Color     palette[256]; /**< Color palette used */
+   Pud_Era       era; /**< Current era */
+   unsigned int  tiles; /**< Total amount of decoded tiles */
+} War2_Tileset_Descriptor;
+
+/**
+ * Type that holds information about a current sprite deconding
+ * @since 1.0.0
+ */
+typedef struct
+{
+   Pud_Color    palette[256]; /**< Color palette used */
+   Pud_Player   color; /**< Color of the sprite */
+   Pud_Era      era; /**< Era of the sprite */
+   Pud_Side     side; /**< Side (when appliable) */
+   unsigned int object; /**< Decoded object */
+   War2_Sprites sprite_type; /**< Sprite type */
+} War2_Sprites_Descriptor;
+
+/**
+ * @typedef War2_Tileset_Decode_Func
+ * Callback used for each tile to be decoded
+ * @param data User provided data
+ * @param tile The bitmap of the tile
+ * @param w The width of the bitmap @c tile
+ * @param h The height of the bitmap @c tile
+ * @param ts Information about the decoding
+ * @param tile_id The tile identifier
+ * @since 1.0.0
+ */
+typedef void (*War2_Tileset_Decode_Func)(void *data,
+                                         const Pud_Color *tile,
+                                         unsigned int w,
+                                         unsigned int h,
+                                         const War2_Tileset_Descriptor *ts,
+                                         uint16_t tile_id);
+
+/**
+ * @typedef War2_Sprites_Decode_Func
+ * Callback used fir each sprite to be decoded
+ * @param data User provided data
+ * @param sprite The bitmap of the sprite
+ * @param x X origin of the sprite
+ * @param y Y origin of the sprite
+ * @param w The width of the bitmap @c sprite
+ * @param h The height of the bitmap @c sprite
+ * @param sd Sprite descriptor of the current decoding
+ * @param sprite_type Identifier of the currently decoded sprite
+ * @since 1.0.0
+ */
+typedef void (*War2_Sprites_Decode_Func)(void *data,
+                                         const Pud_Color *sprite,
+                                         int x,
+                                         int y,
+                                         unsigned int w,
+                                         unsigned int h,
+                                         const War2_Sprites_Descriptor *sd,
+                                         uint16_t sprite_id);
+
+/**
+ * @}
+ */ /* End of War2_Types group */
+
+
+/**
+ * @defgroup War2_Core Core Functions
+ *
+ * Core Functions provided by libwar2
+ * @{
+ */
 
 /**
  * Init libwar2 internal resources
@@ -48,100 +157,6 @@ PUDAPI Pud_Bool war2_init(void);
  * @since 1.0.0
  */
 PUDAPI void war2_shutdown(void);
-
-/**
- * @typedef War2_Data
- * Opaque type that handles warcraft 2 data
- */
-typedef struct _War2_Data War2_Data;
-
-/**
- * @typedef War2_Tileset_Descriptor
- * Type that holds information about a current tileset decoding
- */
-typedef struct _War2_Tileset_Descriptor War2_Tileset_Descriptor;
-
-/**
- * @typedef War2_Sprites_Descriptor
- * Type that holds information about a current sprite deconding
- */
-typedef struct _War2_Sprites_Descriptor War2_Sprites_Descriptor;
-
-/**
- * @typedef War2_Sprites
- * Holds values for different types of sprites
- */
-typedef enum
-{
-   WAR2_SPRITES_UNITS     = 0x100, /**< Units sprites */
-   WAR2_SPRITES_BUILDINGS = 0x101, /**< Buildings sprites */
-   WAR2_SPRITES_ICONS     = 0x102, /**< Icons sprites */
-   WAR2_SPRITES_SYSTEM    = 0x103  /**< System sprites (i.e. start locations) */
-} War2_Sprites;
-
-
-/**
- * @struct _War2_Tileset_Descriptor
- * Structure that gives information about a current tileset decoding
- */
-struct _War2_Tileset_Descriptor
-{
-   Pud_Color     palette[256]; /**< Color palette used */
-   Pud_Era       era; /**< Current era */
-   unsigned int  tiles; /**< Total amount of decoded tiles */
-};
-
-/**
- * @struct _War2_Sprites_Descriptor
- * Structure that gives information about a current sprite decoding
- */
-struct _War2_Sprites_Descriptor
-{
-   Pud_Color    palette[256]; /**< Color palette used */
-   Pud_Player   color; /**< Color of the sprite */
-   Pud_Era      era; /**< Era of the sprite */
-   Pud_Side     side; /**< Side (when appliable) */
-   unsigned int object; /**< Decoded object */
-   War2_Sprites sprite_type; /**< Sprite type */
-};
-
-/**
- * @typedef War2_Tileset_Decode_Func
- * Callback used for each tile to be decoded
- * @param data User provided data
- * @param tile The bitmap of the tile
- * @param w The width of the bitmap @c tile
- * @param h The height of the bitmap @c tile
- * @param ts Information about the decoding
- * @param tile_id The tile identifier
- */
-typedef void (*War2_Tileset_Decode_Func)(void *data,
-                                         const Pud_Color *tile,
-                                         unsigned int w,
-                                         unsigned int h,
-                                         const War2_Tileset_Descriptor *ts,
-                                         uint16_t tile_id);
-
-/**
- * @typedef War2_Sprites_Decode_Func
- * Callback used fir each sprite to be decoded
- * @param data User provided data
- * @parap sprite The bitmap of the sprite
- * @param x X origin of the sprite
- * @param y Y origin of the sprite
- * @param w The width of the bitmap @c sprite
- * @param h The height of the bitmap @c sprite
- * @param sd Sprite descriptor of the current decoding
- * @param sprite_type Identifier of the currently decoded sprite
- */
-typedef void (*War2_Sprites_Decode_Func)(void *data,
-                                         const Pud_Color *sprite,
-                                         int x,
-                                         int y,
-                                         unsigned int w,
-                                         unsigned int h,
-                                         const War2_Sprites_Descriptor *sd,
-                                         uint16_t sprite_id);
 
 /**
  * Open a Warcraft 2 data file (i.e. MAINDAT.WAR)
@@ -180,6 +195,7 @@ PUDAPI void war2_verbosity_set(War2_Data *w2, int level);
  * @param entry The ID of the entry to extract
  * @param size_ret Used to return the size of the extracted data
  * @return The contents of the entry @c entry. NULL on failure
+ * @since 1.0.0
  */
 PUDAPI unsigned char *war2_entry_extract(War2_Data *w2, unsigned int entry, size_t *size_ret);
 
@@ -191,6 +207,7 @@ PUDAPI unsigned char *war2_entry_extract(War2_Data *w2, unsigned int entry, size
  * @param w2 A valid handle to Warcraft 2 data file
  * @param entry The ID of the entry to extract
  * @return The palette in the entry @c entry. NULL on failure
+ * @since 1.0.0
  */
 PUDAPI unsigned char *war2_palette_extract(War2_Data *w2, unsigned int entry);
 
@@ -202,6 +219,7 @@ PUDAPI unsigned char *war2_palette_extract(War2_Data *w2, unsigned int entry);
  * @param func A user callback to be called for each decoded tile
  * @param data A user data passed to @c func
  * @return How many tiles were decoded
+ * @since 1.0.0
  */
 PUDAPI unsigned int war2_tileset_decode(War2_Data *w2, Pud_Era era, War2_Tileset_Decode_Func func, void *data);
 
@@ -216,6 +234,7 @@ PUDAPI unsigned int war2_tileset_decode(War2_Data *w2, Pud_Era era, War2_Tileset
  * @param func User callback to be called for each decoded sprite
  * @param data User data passed to @c func
  * @return PUD_TRUE on success, PUD_FALSE on failure
+ * @since 1.0.0
  */
 PUDAPI Pud_Bool
 war2_sprites_decode(War2_Data                *w2,
@@ -230,12 +249,14 @@ war2_sprites_decode(War2_Data                *w2,
  *
  * @param w2 A valid handle to Warcraft 2 data file
  * @param player_color The color of the sprites
+ * @param entry The entry to decode
  * @param func User callback to be called for each decoded sprite
  * @param data User data passed to @c func
  * @return PUD_TRUE on success, PUD_FALSE on failure
+ * @since 1.0.0
  */
 PUDAPI Pud_Bool
-war2_sprites_decode_entry(War2_Data *w2,
+war2_sprites_decode_entry(War2_Data                *w2,
                           Pud_Player                player_color,
                           unsigned int              entry,
                           War2_Sprites_Decode_Func  func,
@@ -307,6 +328,7 @@ PUDAPI Pud_Bool war2_ppm_write(const char          *file,
  * @warning In many functions, passing NULL in a return by address indicates
  * the return address will be ignored. It is NOT the case in this function.
  * If you pass NULL as @c out_r, @c out_g, @c out_b, your program will crash!
+ * @since 1.0.0
  */
 PUDAPI void
 war2_sprites_color_convert(Pud_Player     from,
@@ -317,6 +339,10 @@ war2_sprites_color_convert(Pud_Player     from,
                            unsigned char *out_r,
                            unsigned char *out_g,
                            unsigned char *out_b);
+
+/**
+ * @}
+ */ /* End of War2_Core group */
 
 
 #ifdef __cplusplus

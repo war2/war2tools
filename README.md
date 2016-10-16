@@ -1,6 +1,11 @@
 war2tools
 =========
 
+<a href="https://scan.coverity.com/projects/jeanguyomarch-war2tools">
+  <img alt="Coverity Scan Build Status"
+       src="https://scan.coverity.com/projects/6937/badge.svg"/>
+</a>
+
 This repository contains tools to manipulate PUD files. PUDs are Warcraft II map files.
 The build system used is `cmake`:
 

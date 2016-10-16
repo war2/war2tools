@@ -340,7 +340,7 @@ typedef struct
 {
    const char *name;
    Pud_Icon icon;
-} Upgrade;
+} upgrades;
 
 #define UGRD(ugrd_, name_) \
    [PUD_UPGRADE_ ## ugrd_] = { \
@@ -348,7 +348,7 @@ typedef struct
       .icon = PUD_ICON_ ## ugrd_, \
    }
 
-static const Upgrade _upgrades[52] =
+static const upgrades _upgrades[52] =
 {
    UGRD(SWORD_1, "Human Swords (+1)"),
    UGRD(SWORD_2, "Human Swords (+2)"),
@@ -405,15 +405,15 @@ static const Upgrade _upgrades[52] =
 };
 
 PUDAPI Pud_Icon
-pud_upgrade_icon_get(Pud_Upgrade upgrade)
+pud_upgrade_icon_get(Pud_Upgrade upgrades)
 {
-   return ((unsigned)upgrade < 52) ? _upgrades[upgrade].icon : PUD_ICON_CANCEL;
+   return ((unsigned)upgrades < 52) ? _upgrades[upgrades].icon : PUD_ICON_CANCEL;
 }
 
 PUDAPI const char *
-pud_upgrade_to_string(Pud_Upgrade upgrade)
+pud_upgrade_to_string(Pud_Upgrade upgrades)
 {
-   return ((unsigned)upgrade < 52) ? _upgrades[upgrade].name : NULL;
+   return ((unsigned)upgrades < 52) ? _upgrades[upgrades].name : NULL;
 }
 
 PUDAPI Pud_Bool
@@ -760,14 +760,14 @@ pud_dump(const Pud *pud,
    fprintf(stream, "Upgrades.............:\n");
    for (i = 0; i < 52; i++)
      {
-        fprintf(stream, "   Upgrade 0x%02x......:\n", i);
-        fprintf(stream, "      Time...........: %u\n", pud->upgrade[i].time);
-        fprintf(stream, "      Gold...........: %u\n", pud->upgrade[i].gold);
-        fprintf(stream, "      Lumber.........: %u\n", pud->upgrade[i].lumber);
-        fprintf(stream, "      Oil............: %u\n", pud->upgrade[i].oil);
-        fprintf(stream, "      Icon...........: %u\n", pud->upgrade[i].icon);
-        fprintf(stream, "      Group..........: 0x%02x\n", pud->upgrade[i].group);
-        fprintf(stream, "      Flags..........: %s\n", long2bin(pud->upgrade[i].flags));
+        fprintf(stream, "   upgrades 0x%02x......:\n", i);
+        fprintf(stream, "      Time...........: %u\n", pud->upgrades[i].time);
+        fprintf(stream, "      Gold...........: %u\n", pud->upgrades[i].gold);
+        fprintf(stream, "      Lumber.........: %u\n", pud->upgrades[i].lumber);
+        fprintf(stream, "      Oil............: %u\n", pud->upgrades[i].oil);
+        fprintf(stream, "      Icon...........: %u\n", pud->upgrades[i].icon);
+        fprintf(stream, "      Group..........: 0x%02x\n", pud->upgrades[i].group);
+        fprintf(stream, "      Flags..........: %s\n", long2bin(pud->upgrades[i].flags));
      }
 
    /* Units */
@@ -786,36 +786,36 @@ pud_dump(const Pud *pud,
    for (i = 0; i < 110; i++)
      {
         fprintf(stream, "   Unit 0x%02x.........: %s\n", i, pud_unit_to_string(i, PUD_TRUE));
-        fprintf(stream, "      Overlap........: %x\n", pud->unit_data[i].overlap_frames);
-        fprintf(stream, "      Sight..........: %u\n", pud->unit_data[i].sight);
-        fprintf(stream, "      Hit Points.....: %u\n", pud->unit_data[i].hp);
-        fprintf(stream, "      Build Time.....: %u\n", pud->unit_data[i].build_time);
-        fprintf(stream, "      Gold Cost......: %u\n", pud->unit_data[i].gold_cost);
-        fprintf(stream, "      Lumber Cost....: %u\n", pud->unit_data[i].lumber_cost);
-        fprintf(stream, "      Oil Cost.......: %u\n", pud->unit_data[i].oil_cost);
-        fprintf(stream, "      Width..........: %u\n", pud->unit_data[i].size_w);
-        fprintf(stream, "      Height.........: %u\n", pud->unit_data[i].size_h);
-        fprintf(stream, "      Box Width......: %u\n", pud->unit_data[i].box_w);
-        fprintf(stream, "      Box Height.....: %u\n", pud->unit_data[i].box_h);
-        fprintf(stream, "      Range..........: %u\n", pud->unit_data[i].range);
-        fprintf(stream, "      Cptr react rg..: %u\n", pud->unit_data[i].computer_react_range);
-        fprintf(stream, "      Hmn reac rg....: %u\n", pud->unit_data[i].human_react_range);
-        fprintf(stream, "      Armor..........: %u\n", pud->unit_data[i].armor);
-        fprintf(stream, "      Priority.......: %u\n", pud->unit_data[i].priority);
-        fprintf(stream, "      Basic Dmg......: %u\n", pud->unit_data[i].basic_damage);
-        fprintf(stream, "      Piercing Dmg...: %u\n", pud->unit_data[i].piercing_damage);
-        fprintf(stream, "      Missile........: %u\n", pud->unit_data[i].missile_weapon);
-        fprintf(stream, "      Type...........: %u\n", pud->unit_data[i].type);
-        fprintf(stream, "      Decay Rate.....: %u\n", pud->unit_data[i].decay_rate);
-        fprintf(stream, "      Annoy..........: %u\n", pud->unit_data[i].annoy);
-        fprintf(stream, "      Mouse 2 Btn....: %u\n", pud->unit_data[i].mouse_right_btn);
-        fprintf(stream, "      Point Value....: %u\n", pud->unit_data[i].point_value);
-        fprintf(stream, "      Can Target.....: %u\n", pud->unit_data[i].can_target);
-        fprintf(stream, "      Rect Sel.......: %i\n", pud->unit_data[i].rect_sel);
-        fprintf(stream, "      Has Magic......: %i\n", pud->unit_data[i].has_magic);
-        fprintf(stream, "      Weapons Ugrd...: %i\n", pud->unit_data[i].weapons_upgradable);
-        fprintf(stream, "      Armor Ugrd.....: %i\n", pud->unit_data[i].armor_upgradable);
-        fprintf(stream, "      Flags..........: %s\n", long2bin(pud->unit_data[i].flags));
+        fprintf(stream, "      Overlap........: %x\n", pud->units_descr[i].overlap_frames);
+        fprintf(stream, "      Sight..........: %u\n", pud->units_descr[i].sight);
+        fprintf(stream, "      Hit Points.....: %u\n", pud->units_descr[i].hp);
+        fprintf(stream, "      Build Time.....: %u\n", pud->units_descr[i].build_time);
+        fprintf(stream, "      Gold Cost......: %u\n", pud->units_descr[i].gold_cost);
+        fprintf(stream, "      Lumber Cost....: %u\n", pud->units_descr[i].lumber_cost);
+        fprintf(stream, "      Oil Cost.......: %u\n", pud->units_descr[i].oil_cost);
+        fprintf(stream, "      Width..........: %u\n", pud->units_descr[i].size_w);
+        fprintf(stream, "      Height.........: %u\n", pud->units_descr[i].size_h);
+        fprintf(stream, "      Box Width......: %u\n", pud->units_descr[i].box_w);
+        fprintf(stream, "      Box Height.....: %u\n", pud->units_descr[i].box_h);
+        fprintf(stream, "      Range..........: %u\n", pud->units_descr[i].range);
+        fprintf(stream, "      Cptr react rg..: %u\n", pud->units_descr[i].computer_react_range);
+        fprintf(stream, "      Hmn reac rg....: %u\n", pud->units_descr[i].human_react_range);
+        fprintf(stream, "      Armor..........: %u\n", pud->units_descr[i].armor);
+        fprintf(stream, "      Priority.......: %u\n", pud->units_descr[i].priority);
+        fprintf(stream, "      Basic Dmg......: %u\n", pud->units_descr[i].basic_damage);
+        fprintf(stream, "      Piercing Dmg...: %u\n", pud->units_descr[i].piercing_damage);
+        fprintf(stream, "      Missile........: %u\n", pud->units_descr[i].missile_weapon);
+        fprintf(stream, "      Type...........: %u\n", pud->units_descr[i].type);
+        fprintf(stream, "      Decay Rate.....: %u\n", pud->units_descr[i].decay_rate);
+        fprintf(stream, "      Annoy..........: %u\n", pud->units_descr[i].annoy);
+        fprintf(stream, "      Mouse 2 Btn....: %u\n", pud->units_descr[i].mouse_right_btn);
+        fprintf(stream, "      Point Value....: %u\n", pud->units_descr[i].point_value);
+        fprintf(stream, "      Can Target.....: %u\n", pud->units_descr[i].can_target);
+        fprintf(stream, "      Rect Sel.......: %i\n", pud->units_descr[i].rect_sel);
+        fprintf(stream, "      Has Magic......: %i\n", pud->units_descr[i].has_magic);
+        fprintf(stream, "      Weapons Ugrd...: %i\n", pud->units_descr[i].weapons_upgradable);
+        fprintf(stream, "      Armor Ugrd.....: %i\n", pud->units_descr[i].armor_upgradable);
+        fprintf(stream, "      Flags..........: %s\n", long2bin(pud->units_descr[i].flags));
      }
 
    /* Tiles map */

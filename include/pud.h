@@ -68,7 +68,7 @@ extern "C" { /* } For dump editors */
 /**
  * @typedef Pud_Bool
  * Boolean type that can take two values among
- * #PUD_TRUE and #PUD_FALSE
+ * PUD_TRUE and PUD_FALSE
  * @since 1.0.0
  */
 typedef unsigned char Pud_Bool;
@@ -190,46 +190,46 @@ typedef enum
    PUD_UPGRADE_HUMAN_SHIELD_2, /**< Human shield level 2 */
    PUD_UPGRADE_ORC_SHIELD_1, /**< Orc shield level 1 */
    PUD_UPGRADE_ORC_SHIELD_2, /**< Orc shield level 2 */
-   PUD_UPGRADE_HUMAN_SHIP_CANNON_1,
-   PUD_UPGRADE_HUMAN_SHIP_CANNON_2,
-   PUD_UPGRADE_ORC_SHIP_CANNON_1,
-   PUD_UPGRADE_ORC_SHIP_CANNON_2,
-   PUD_UPGRADE_HUMAN_SHIP_ARMOR_1,
-   PUD_UPGRADE_HUMAN_SHIP_ARMOR_2,
-   PUD_UPGRADE_ORC_SHIP_ARMOR_1,
-   PUD_UPGRADE_ORC_SHIP_ARMOR_2,
-   PUD_UPGRADE_CATAPULT_1,
-   PUD_UPGRADE_CATAPULT_2,
-   PUD_UPGRADE_BALLISTA_1,
-   PUD_UPGRADE_BALLISTA_2,
-   PUD_UPGRADE_TRAIN_RANGERS,
-   PUD_UPGRADE_LONGBOW,
-   PUD_UPGRADE_RANGER_SCOUTING,
-   PUD_UPGRADE_RANGER_MARKSMANSHIP,
-   PUD_UPGRADE_TRAIN_BERSERKERS,
-   PUD_UPGRADE_LIGHTER_AXES,
-   PUD_UPGRADE_BERSERKER_SCOUTING,
-   PUD_UPGRADE_BERSERKER_REGENERATION,
-   PUD_UPGRADE_TRAIN_OGRE_MAGES,
-   PUD_UPGRADE_TRAIN_PALADINS,
-   PUD_UPGRADE_HOLY_VISION,
-   PUD_UPGRADE_HEALING,
-   PUD_UPGRADE_EXORCISM,
-   PUD_UPGRADE_FLAME_SHIELD,
-   PUD_UPGRADE_FIREBALL,
-   PUD_UPGRADE_SLOW,
-   PUD_UPGRADE_INVISIBILITY,
-   PUD_UPGRADE_POLYMORPH,
-   PUD_UPGRADE_BLIZZARD,
-   PUD_UPGRADE_EYE_OF_KILROGG,
-   PUD_UPGRADE_BLOODLUST,
-   PUD_UPGRADE_RAISE_DEAD,
-   PUD_UPGRADE_DEATH_COIL,
-   PUD_UPGRADE_WHIRLWIND,
-   PUD_UPGRADE_HASTE,
-   PUD_UPGRADE_UNHOLY_ARMOR,
-   PUD_UPGRADE_RUNES,
-   PUD_UPGRADE_DEATH_AND_DECAY
+   PUD_UPGRADE_HUMAN_SHIP_CANNON_1, /**< Human ship cannon level 1 */
+   PUD_UPGRADE_HUMAN_SHIP_CANNON_2, /**< Human ship cannon level 2 */
+   PUD_UPGRADE_ORC_SHIP_CANNON_1, /**< Orc ship cannon level 1 */
+   PUD_UPGRADE_ORC_SHIP_CANNON_2, /**< Orc ship cannon level 2 */
+   PUD_UPGRADE_HUMAN_SHIP_ARMOR_1, /**< Human ship armor level 1 */
+   PUD_UPGRADE_HUMAN_SHIP_ARMOR_2, /**< Human ship armor level 2 */
+   PUD_UPGRADE_ORC_SHIP_ARMOR_1, /**< Orc ship armor level 1 */
+   PUD_UPGRADE_ORC_SHIP_ARMOR_2, /**< Orc ship armor level 2 */
+   PUD_UPGRADE_CATAPULT_1, /**< Catapult projectiles level 1 */
+   PUD_UPGRADE_CATAPULT_2, /**< Catapult projectiles level 2 */
+   PUD_UPGRADE_BALLISTA_1, /**< Ballista projectiles level 1 */
+   PUD_UPGRADE_BALLISTA_2, /**< Ballista projectiles level 2 */
+   PUD_UPGRADE_TRAIN_RANGERS, /**< Research Train Elven Rangers */
+   PUD_UPGRADE_LONGBOW, /**< Research upgrade elven longbow */
+   PUD_UPGRADE_RANGER_SCOUTING, /**< Research ranger scouting */
+   PUD_UPGRADE_RANGER_MARKSMANSHIP, /**< Research ranger marksmanship */
+   PUD_UPGRADE_TRAIN_BERSERKERS, /**< Reseach train berserkers */
+   PUD_UPGRADE_LIGHTER_AXES, /**< Research lighter axes */
+   PUD_UPGRADE_BERSERKER_SCOUTING, /**< Research berserkers scouting */
+   PUD_UPGRADE_BERSERKER_REGENERATION, /**< Research berserkers regeneration */
+   PUD_UPGRADE_TRAIN_OGRE_MAGES, /**< Reasearch train ogre mage */
+   PUD_UPGRADE_TRAIN_PALADINS, /**< Research train paladins */
+   PUD_UPGRADE_HOLY_VISION, /**< Holy vision */
+   PUD_UPGRADE_HEALING, /**< Healing */
+   PUD_UPGRADE_EXORCISM, /**< Exorcism */
+   PUD_UPGRADE_FLAME_SHIELD, /**< Flame shield */
+   PUD_UPGRADE_FIREBALL, /**< Fireball */
+   PUD_UPGRADE_SLOW, /**< Slowness */
+   PUD_UPGRADE_INVISIBILITY, /**< Invisibility */
+   PUD_UPGRADE_POLYMORPH, /**< Polymorph */
+   PUD_UPGRADE_BLIZZARD, /**< Blizzard */
+   PUD_UPGRADE_EYE_OF_KILROGG, /**< Eye of Kilxlrogg */
+   PUD_UPGRADE_BLOODLUST, /**< Bloodlust */
+   PUD_UPGRADE_RAISE_DEAD, /**< Raise dead */
+   PUD_UPGRADE_DEATH_COIL, /**< Death coil */
+   PUD_UPGRADE_WHIRLWIND, /**< Whilrwind */
+   PUD_UPGRADE_HASTE, /**< Haste */
+   PUD_UPGRADE_UNHOLY_ARMOR, /**< Unholy armor */
+   PUD_UPGRADE_RUNES, /**< Deadly runes */
+   PUD_UPGRADE_DEATH_AND_DECAY /**< Death and Decay */
 } Pud_Upgrade;
 
 /**
@@ -514,7 +514,7 @@ typedef enum
     * Hey, why not zero?? Because zero is taken by the
     * damn footman!
     */
-   PUD_UNIT_NONE                        = 0x7f
+   PUD_UNIT_NONE                        = 0x7f, /**< Sentinel value for an invalid unit */
 } Pud_Unit;
 
 
@@ -750,13 +750,30 @@ typedef enum
 /**
  * @typedef Pud
  * Handle to manipulate a pud file.
- * Create a valid handle with pud_open()
  * @since 1.0.0
  */
 typedef struct _Pud Pud;
-typedef struct _Pud_Unit_Data Pud_Unit_Data;
-typedef struct _Pud_Unit_Characteristics Pud_Unit_Characteristics;
-typedef struct _Pud_Upgrade_Characteristics Pud_Upgrade_Characteristics;
+
+/**
+ * @typedef Pud_Unit_Info
+ * This type describes the placement of a unit on a map
+ * @since 1.0.0
+ */
+typedef struct _Pud_Unit_Info Pud_Unit_Info;
+
+/**
+ * @typedef Pud_Unit_Description
+ * Description of a unit's characteristics
+ * @since 1.0.0
+ */
+typedef struct _Pud_Unit_Description Pud_Unit_Description;
+
+/**
+ * @typedef Pud_Upgrade_Description
+ * Description of an upgrade's characteristics
+ * @since 1.0.0
+ */
+typedef struct _Pud_Upgrade_Description Pud_Upgrade_Description;
 
 /**
  * @typedef Pud_Private
@@ -768,59 +785,72 @@ typedef struct _Pud_Upgrade_Characteristics Pud_Upgrade_Characteristics;
  */
 typedef struct _Pud_Private Pud_Private;
 
-struct _Pud_Upgrade_Characteristics
+/**
+ * @struct _Pud_Upgrade_Description
+ * @since 1.0.0
+ */
+struct _Pud_Upgrade_Description
 {
-   uint8_t           time;
-   uint16_t          gold;
-   uint16_t          lumber;
-   uint16_t          oil;
-   uint16_t          icon;
-   uint16_t          group;
-   uint32_t          flags;
+   uint8_t           time; /**< Time taken for a research */
+   uint16_t          gold; /**< Cost of gold */
+   uint16_t          lumber; /**< Cost of lumber */
+   uint16_t          oil; /**< Cost of oil */
+   uint16_t          icon; /**< Icon of the reseach */
+   uint16_t          group; /**< To which group the research applies to */
+   uint32_t          flags; /**< What does the upgrade give */
 };
 
-struct _Pud_Unit_Characteristics
+/**
+ * @struct _Pud_Unit_Description
+ * @since 1.0.0
+ */
+struct _Pud_Unit_Description
 {
-   uint32_t     sight;
-   uint16_t     hp;
-   uint8_t      build_time;
-   uint8_t      gold_cost;
-   uint8_t      lumber_cost;
-   uint8_t      oil_cost;
-   uint8_t      range;
-   uint8_t      computer_react_range;
-   uint8_t      human_react_range;
-   uint8_t      armor;
-   uint8_t      basic_damage;
-   uint8_t      piercing_damage;
-   uint8_t      decay_rate;
-   uint8_t      annoy;
-   uint8_t      has_magic;
-   uint8_t      weapons_upgradable;
-   uint8_t      armor_upgradable;
+   uint32_t     sight; /**< Sight (vision) */
+   uint16_t     hp; /**< Hit points */
+   uint8_t      build_time; /**< Construction time */
+   uint8_t      gold_cost; /**< Gold cost */
+   uint8_t      lumber_cost; /**< Lumber cost */
+   uint8_t      oil_cost; /**< Oil cost */
+   uint8_t      range; /**< Attack range */
+   uint8_t      computer_react_range; /**< React range of the computer */
+   uint8_t      human_react_range; /**< React range of a human controlled unit */
+   uint8_t      armor; /**< Armor */
+   uint8_t      basic_damage; /**< Basic damage */
+   uint8_t      piercing_damage; /**< Piercing damage */
+   uint8_t      decay_rate; /**< Decay rate */
+   uint8_t      annoy; /**< Annoyance factor */
+   uint8_t      has_magic; /**< Does the unit has magic? */
+   uint8_t      weapons_upgradable; /**< Are the weapons upgradable? */
+   uint8_t      armor_upgradable; /**< Are the armor upgradable? */
 
-   uint8_t      missile_weapon;
-   uint8_t      type;
-   uint8_t      mouse_right_btn;
-   uint8_t      rect_sel;
-   uint8_t      priority;
-   uint16_t     point_value;
-   uint8_t      can_target;
-   uint32_t     flags;
-   uint16_t     overlap_frames;
-   uint16_t     size_w;
-   uint16_t     size_h;
-   uint16_t     box_w;
-   uint16_t     box_h;
+   uint8_t      missile_weapon; /**< Is the weapon a missile? */
+   uint8_t      type; /**< Type of unit */
+   uint8_t      mouse_right_btn; /**< Effect of the right button */
+   uint8_t      rect_sel; /**< Selection rectangle */
+   uint8_t      priority; /**< Unit priority */
+   uint16_t     point_value; /**< Point value */
+   uint8_t      can_target; /**< Can it target units */
+   uint32_t     flags; /**< Unit flags */
+   uint16_t     overlap_frames; /**< Overlap frames */
+   uint16_t     size_w; /**< Width */
+   uint16_t     size_h; /**< Height */
+   uint16_t     box_w; /**< Box width */
+   uint16_t     box_h; /**< Box height */
 };
 
-struct _Pud_Unit_Data
+/**
+ * @struct _Pud_Unit_Info
+ * Placement of a unit on a map, and general owner information
+ * @since 1.0.0
+ */
+struct _Pud_Unit_Info
 {
-   uint16_t x;
-   uint16_t y;
-   uint8_t  type;
-   uint8_t  owner;
-   uint16_t alter;
+   uint16_t x; /**< X coordinate of the cell it resides */
+   uint16_t y; /**< Y coordinate of the cell it resides */
+   uint8_t  type; /**< Type of unit @see Pud_Unit */
+   uint8_t  owner; /**< Owner @see Pud_Owner */
+   uint16_t alter; /**< Special value. Used by resources providers and neutrals */
 };
 
 
@@ -833,63 +863,105 @@ struct _Pud
 {
    Pud_Private *private; /**< Internals, private and opaque data. Don't touch ;-) */
 
-   uint32_t       tag;
-   uint16_t       version;
-   char           description[32];
-   uint8_t        era;
-   Pud_Dimensions dims;
+   uint32_t       tag;  /**< Identifier of the pud file */
+   uint16_t       version; /**< Version of Warcraft 2 that could read this Pud */
+   char           description[32]; /**< Description of the Pud */
+   uint8_t        era; /**< Era @see Pud_Era */
+   Pud_Dimensions dims; /**< Dimensions of the map */
 
+   /**
+    * Owners for each players.
+    *
+    * Each of the fiels within this structure are of type Pud_Owner
+    * This structure is affected by the War2 defaults.
+    * @see Pud_Owner
+    * @since 1.0.0
+    */
    struct {
-      uint8_t players[8];
-      uint8_t unusable[7];
-      uint8_t neutral;
-   } owner; /* [defaults] */
+      uint8_t players[8]; /**< Real players (from 1 to 8) */
+      uint8_t unusable[7]; /**< Phantom players */
+      uint8_t neutral; /**< Neutral player (critters, dark portal, gold mine, ...) */
+   } owner;
 
+   /**
+    * Sides that each player has
+    *
+    * Each of the fiels within this structure are of type Pud_Side_
+    * This structure is affected by the War2 defaults.
+    * @see Pud_Side
+    * @since 1.0.0
+    */
    struct {
-      uint8_t players[8];
-      uint8_t unusable[7];
-      uint8_t neutral;
-   } side; /* [defaults] */
+      uint8_t players[8]; /**< Real players (from 1 to 8) */
+      uint8_t unusable[7]; /**< Phantom players */
+      uint8_t neutral; /**< Neutral player (critters, dark portal, gold mine, ...) */
+   } side;
 
+   /**
+    * Starting resources
+    *
+    * This structure is affected by the War2 defaults.
+    * @since 1.0.0
+    */
    struct {
-      uint16_t players[8];
-      uint16_t unusable[7];
-      uint16_t neutral;
-   } sgld, slbr, soil; /* [defaults] */
+      uint16_t players[8]; /**< Real players (from 1 to 8) */
+      uint16_t unusable[7]; /**< Phantom players */
+      uint16_t neutral; /**< Neutral player (critters, dark portal, gold mine, ...) */
+   } sgld, /**< Starting gold */
+     slbr, /**< Starting lumber */
+     soil; /**< Starting oil */
 
+   /**
+    * Artificial Intelligence (AI) of computers
+    *
+    * Each of the fiels within this structure are of type Pud_AI
+    * This structure is affected by the War2 defaults.
+    * @see Pud_AI
+    * @since 1.0.0
+    */
    struct {
-      uint8_t players[8];
-      uint8_t unusable[7];
-      uint8_t neutral;
-   } ai; /* [defaults] */
+      uint8_t players[8]; /**< Real players (from 1 to 8) */
+      uint8_t unusable[7]; /**< Phantom players */
+      uint8_t neutral; /**< Neutral player (critters, dark portal, gold mine, ...) */
+   } ai;
 
-   struct _alow {
-      Pud_Allow players[8];
-      Pud_Allow unusable[7];
-      Pud_Allow neutral;
-   } unit_alow, spell_start, spell_alow, spell_acq, up_alow, up_acq; /* [defaults] */
+   /**
+    * Allowed flags for each player
+    *
+    * This structure is affected by the War2 defaults.
+    * @since 1.0.0
+    */
+   struct {
+      Pud_Allow players[8]; /**< Real players (from 1 to 8) */
+      Pud_Allow unusable[7]; /**< Phantom players */
+      Pud_Allow neutral; /**< Neutral player (critters, dark portal, gold mine, ...) */
 
-   Pud_Upgrade_Characteristics upgrade[52]; /* [defaults] */
+   } unit_alow, /**< Allowed units */
+     spell_start, /**< Starting spells */
+     spell_alow, /**< Allowed spells */
+     spell_acq, /**< Currently acquiring spells */
+     up_alow, /**< Allowed upgrades */
+     up_acq;  /**< Currently acquiring upgrades */
 
-   /* Cache values */
-   unsigned int map_w;
-   unsigned int map_h;
-   unsigned int tiles; /* pud->map_w * pud->map_h */
-   unsigned int starting_points;
+   Pud_Upgrade_Description upgrades[52]; /**< Upgrades description */
+
+   unsigned int map_w; /**< Width of the map */
+   unsigned int map_h; /**< Height of the map */
+   unsigned int tiles; /**< Count of tiles. Equals to map_w*map_h */
+   unsigned int starting_points; /**< How many starting locations */
 
    /* Number of elements is in 'tiles' */
-   uint16_t *tiles_map;
-   uint16_t *action_map;
-   uint16_t *movement_map;
-   uint8_t *oil_map;
+   uint16_t *tiles_map; /**< The tiles map */
+   uint16_t *action_map; /**< The action map */
+   uint16_t *movement_map; /**< The movement map */
+   uint8_t *oil_map; /**< Oil concentration map (obsolete, used in BETA) */
 
-   Pud_Unit_Data *units;
+   Pud_Unit_Info *units; /**< List of units on the map */
+   unsigned int units_count; /**< Count of units */
 
-   unsigned int units_count;
+   Pud_Unit_Description units_descr[110]; /**< Characteristics of units */
 
-   Pud_Unit_Characteristics unit_data[110]; /* [defaults] */
-
-   uint16_t obsolete_udta[508];
+   uint16_t obsolete_udta[508]; /**< Obsolete data in the UDTA section */
 };
 
 /**
@@ -929,16 +1001,42 @@ typedef enum
    PUD_ERROR_NO_START_LOCATION, /**< There is no start location */
 } Pud_Error;
 
+/**
+ * @typedef Pud_Error_Description
+ * Description of an error
+ *
+ * @see Pud_Error
+ * @see pud_check()
+ * @since 1.0.0
+ */
 typedef struct
 {
-   Pud_Error type;
+   Pud_Error type; /**< Error code */
+
+   /**
+    * Reason of an error to occur.
+    *
+    * The fields to be accessed depend on the error code @c type.
+    *
+    * @li PUD_ERROR_NONE: NONE
+    * @li PUD_ERROR_UNDEFINED: NONE
+    * @li PUD_ERROR_NOT_INITIALIZED: NONE
+    * @li PUD_ERROR_NOT_ENOUGH_START_LOCATIONS: @c count: how may start locations
+    * @li PUD_ERROR_TOO_MUCH_START_LOCATIONS: @c unit: where is the extra start location
+    * @li PUD_ERROR_EMPTY_PLAYER: @c player: the player with no units
+    * @li PUD_ERROR_INVALID_PLAYER: @c unit: unit with invalid player ID
+    * @li PUD_ERROR_NO_START_LOCATION: @c player: player with no start location
+    *
+    * @see Pud_Error
+    * @since 1.0.0
+    */
    union {
 
-      Pud_Player player;
-      unsigned int count;
-      const Pud_Unit_Data *unit;
+      Pud_Player player; /**< Faultive player */
+      unsigned int count; /**< Numeric value for overflow/underflow */
+      const Pud_Unit_Info *unit; /**< Faultive unit */
 
-   } data;
+   } data; /**< Error reason */
 } Pud_Error_Description;
 
 /**
@@ -960,7 +1058,7 @@ typedef struct
  * in undefined behaviour. Use pud_shutdown() to ensure potential resources
  * allocated by this function are properly released.
  *
- * @return #PUD_TRUE on success, #PUD_FALSE on failure
+ * @return PUD_TRUE on success, PUD_FALSE on failure
  * @note This function initializes the libc pseudo-random number generator.
  * @see pud_shutdown()
  * @since 1.0.0
@@ -983,7 +1081,7 @@ PUDAPI void pud_shutdown(void);
  * Determines if the PUD section is actually valid.
  *
  * @param sec The 4-bytes string section
- * @return #PUD_TRUE if valid, #PUD_FALSE otherwise
+ * @return PUD_TRUE if valid, PUD_FALSE otherwise
  * @since 1.0.0
  */
 PUDAPI Pud_Bool pud_section_valid_is(const char sec[4]);
@@ -1003,7 +1101,7 @@ PUDAPI uint32_t pud_tag_generate(void);
  * Describe a Warcraft 2 unit
  *
  * @param unit The unit to be described
- * @param pretty If #PUD_FALSE, will return a compact identifier. If #PUD_FALSE,
+ * @param pretty If PUD_FALSE, will return a compact identifier. If PUD_FALSE,
  *               will return a complete string.
  * @return The description of @c unit according the @c pretty.
  * @since 1.0.0
@@ -1071,7 +1169,7 @@ PUDAPI void pud_dimensions_to_size(Pud_Dimensions dim, unsigned int *w_ret, unsi
  * Tell if the Pud_Allow Unit is valid
  *
  * @param flag The Pud_Allow combination of flags
- * @return #PUD_TRUE if valid, #PUD_FALSE otherwise
+ * @return PUD_TRUE if valid, PUD_FALSE otherwise
  * @since 1.0.0
  */
 PUDAPI Pud_Bool pud_allow_unit_valid_is(Pud_Allow flag);
@@ -1080,7 +1178,7 @@ PUDAPI Pud_Bool pud_allow_unit_valid_is(Pud_Allow flag);
  * Tell if the Pud_Allow Spell is valid
  *
  * @param flag The Pud_Allow combination of flags
- * @return #PUD_TRUE if valid, #PUD_FALSE otherwise
+ * @return PUD_TRUE if valid, PUD_FALSE otherwise
  * @since 1.0.0
  */
 PUDAPI Pud_Bool pud_allow_spell_valid_is(Pud_Allow flag);
@@ -1089,7 +1187,7 @@ PUDAPI Pud_Bool pud_allow_spell_valid_is(Pud_Allow flag);
  * Tell if the Pud_Allow Upgrade is valid
  *
  * @param flag The Pud_Allow combination of flags
- * @return #PUD_TRUE if valid, #PUD_FALSE otherwise
+ * @return PUD_TRUE if valid, PUD_FALSE otherwise
  * @since 1.0.0
  */
 PUDAPI Pud_Bool pud_allow_upgrade_valid_is(Pud_Allow flag);
@@ -1158,7 +1256,7 @@ PUDAPI const Pud_Icon *pud_allow_upgrade_icons_get(Pud_Allow flag);
 
 /**
  * Get the litteral name of a pud section
- * 
+ *
  * @param section A pud section
  * @return NULL if @c section is invalid, its name otherwise
  */
@@ -1185,7 +1283,7 @@ PUDAPI const char *pud_section_to_string(Pud_Section section);
  * If the file is invalid and the read mode is chosen, this function will fail.
  * If the file is invalid, but only the write-only mode is chosen, a valid
  * handle will be returned.
- * Using the #PUD_OPEN_MODE_NO_PARSE with a read mode allows the file NOT to be
+ * Using the PUD_OPEN_MODE_NO_PARSE with a read mode allows the file NOT to be
  * parsed. It must be handled by the developer manually, but with a finer
  * granularity. The default behaviour being parsing by default.
  *
@@ -1284,7 +1382,7 @@ PUDAPI void pud_era_set(Pud *pud, Pud_Era era);
  *
  * @param pud A valid pud handle
  * @param dims The dimensions of the map
- * @return #PUD_TRUE on success, #PUD_FALSE on failure
+ * @return PUD_TRUE on success, PUD_FALSE on failure
  * @since 1.0.0
  */
 PUDAPI Pud_Bool pud_dimensions_set(Pud *pud, Pud_Dimensions dims);
@@ -1300,7 +1398,7 @@ PUDAPI Pud_Bool pud_dimensions_set(Pud *pud, Pud_Dimensions dims);
  *
  * @param pud A valid pud handle
  * @param file The path where to write @c pud
- * @return #PUD_TRUE on success, #PUD_FALSE on failure.
+ * @return PUD_TRUE on success, PUD_FALSE on failure.
  * @see pud_check()
  * @since 1.0.0
  */
@@ -1324,7 +1422,7 @@ PUDAPI Pud_Bool pud_write(const Pud *pud, const char *file);
  *
  * @param pud A valid pud handle
  * @param err A pointer to the error reason. Ignored if NULL
- * @return An error code. #PUD_ERROR_NONE if everything is fine.
+ * @return An error code. PUD_ERROR_NONE if everything is fine.
  * @since 1.0.0
  */
 PUDAPI Pud_Error pud_check(Pud *pud, Pud_Error_Description *err);
@@ -1341,7 +1439,7 @@ PUDAPI Pud_Error pud_check(Pud *pud, Pud_Error_Description *err);
  * @param x The X coordinate of the cell
  * @param y The Y coordinate of the cell
  * @param tile The tile to set
- * @return #PUD_TRUE on success, #PUD_FALSE on failure
+ * @return PUD_TRUE on success, PUD_FALSE on failure
  * @since 1.0.0
  */
 PUDAPI Pud_Bool pud_tile_set(Pud *pud, unsigned int x, unsigned int y, uint16_t tile);
@@ -1370,7 +1468,7 @@ PUDAPI uint16_t pud_tile_get(const Pud *pud, unsigned int x, unsigned int y);
  * @param unit The unit to add
  * @param alter This value depends on the unit type. Refer to the Pud format
  * documentation for more details.
- * @return #PUD_TRUE on success, #PUD_FALSE on failure
+ * @return PUD_TRUE on success, PUD_FALSE on failure
  * @since 1.0.0
  */
 PUDAPI Pud_Bool pud_unit_add(Pud *pud, unsigned int x, unsigned int y, Pud_Player owner, Pud_Unit unit, uint16_t alter);
@@ -1416,7 +1514,7 @@ PUDAPI unsigned char *pud_minimap_bitmap_generate(const Pud *pud, unsigned int *
  * Write defaults UDTA, UGRD, ALOW, SGLD, SLBR, SOIL, AIPL, SIDE, OWNR.
  *
  * @param pud A valid pud handle
- * @return #PUD_TRUE on success, #PUD_FALSE otherwise
+ * @return PUD_TRUE on success, PUD_FALSE otherwise
  * @since 1.0.0
  */
 PUDAPI Pud_Bool pud_defaults_set(Pud *pud);
@@ -1426,7 +1524,7 @@ PUDAPI Pud_Bool pud_defaults_set(Pud *pud);
  *
  * @param pud A valid pud handle
  * @param section The section to query
- * @return #PUD_TRUE if @c pud has @c section, #PUD_FALSE otherwise
+ * @return PUD_TRUE if @c pud has @c section, PUD_FALSE otherwise
  */
 PUDAPI Pud_Bool pud_section_has(const Pud *pud, Pud_Section section);
 
@@ -1484,11 +1582,11 @@ PUDAPI Pud_Unit pud_unit_switch_side(Pud_Unit unit);
 /**
  * Parse a previously opened Pud file.
  *
- * By default, when opening a file with the #PUD_OPEN_MODE_R flag the pud file
- * is automatically parsed, unless #PUD_OPEN_MODE_NO_PARSE is specified.
+ * By default, when opening a file with the PUD_OPEN_MODE_R flag the pud file
+ * is automatically parsed, unless PUD_OPEN_MODE_NO_PARSE is specified.
  *
  * @param pud A valid Pud handle
- * @return #PUD_TRUE on success, #PUD_FALSE otherwise
+ * @return PUD_TRUE on success, PUD_FALSE otherwise
  * @see pud_open()
  * @see Pud_Open_Mode
  */
@@ -1498,7 +1596,7 @@ PUDAPI Pud_Bool pud_parse(Pud *pud);
  * Parse the TYPE section.
  *
  * @param pud A valid Pud handle
- * @return #PUD_TRUE on success, #PUD_FALSE on failure
+ * @return PUD_TRUE on success, PUD_FALSE on failure
  */
 PUDAPI Pud_Bool pud_parse_type(Pud *pud);
 
@@ -1506,7 +1604,7 @@ PUDAPI Pud_Bool pud_parse_type(Pud *pud);
  * Parse the VER  section.
  *
  * @param pud A valid Pud handle
- * @return #PUD_TRUE on success, #PUD_FALSE on failure
+ * @return PUD_TRUE on success, PUD_FALSE on failure
  */
 PUDAPI Pud_Bool pud_parse_ver(Pud *pud);
 
@@ -1514,7 +1612,7 @@ PUDAPI Pud_Bool pud_parse_ver(Pud *pud);
  * Parse the DESC section.
  *
  * @param pud A valid Pud handle
- * @return #PUD_TRUE on success, #PUD_FALSE on failure
+ * @return PUD_TRUE on success, PUD_FALSE on failure
  */
 PUDAPI Pud_Bool pud_parse_desc(Pud *pud);
 
@@ -1522,7 +1620,7 @@ PUDAPI Pud_Bool pud_parse_desc(Pud *pud);
  * Parse the OWNR section.
  *
  * @param pud A valid Pud handle
- * @return #PUD_TRUE on success, #PUD_FALSE on failure
+ * @return PUD_TRUE on success, PUD_FALSE on failure
  */
 PUDAPI Pud_Bool pud_parse_ownr(Pud *pud);
 
@@ -1530,7 +1628,7 @@ PUDAPI Pud_Bool pud_parse_ownr(Pud *pud);
  * Parse the SIDE section.
  *
  * @param pud a valid Pud handle
- * @return #PUD_TRUE on success, #PUD_FALSE on failure
+ * @return PUD_TRUE on success, PUD_FALSE on failure
  */
 PUDAPI Pud_Bool pud_parse_side(Pud *pud);
 
@@ -1538,7 +1636,7 @@ PUDAPI Pud_Bool pud_parse_side(Pud *pud);
  * Parse the ERA  and ERAX sections.
  *
  * @param pud A valid Pud handle
- * @return #PUD_TRUE on success, #PUD_FALSE on failure
+ * @return PUD_TRUE on success, PUD_FALSE on failure
  */
 PUDAPI Pud_Bool pud_parse_era(Pud *pud);
 
@@ -1546,7 +1644,7 @@ PUDAPI Pud_Bool pud_parse_era(Pud *pud);
  * Parse the DIM  section.
  *
  * @param pud A valid Pud handle
- * @return #PUD_TRUE on success, #PUD_FALSE on failure
+ * @return PUD_TRUE on success, PUD_FALSE on failure
  */
 PUDAPI Pud_Bool pud_parse_dim(Pud *pud);
 
@@ -1554,7 +1652,7 @@ PUDAPI Pud_Bool pud_parse_dim(Pud *pud);
  * Parse the UDTA section.
  *
  * @param pud a valid Pud handle
- * @return #PUD_TRUE on success, #PUD_FALSE on failure
+ * @return PUD_TRUE on success, PUD_FALSE on failure
  */
 PUDAPI Pud_Bool pud_parse_udta(Pud *pud);
 
@@ -1562,7 +1660,7 @@ PUDAPI Pud_Bool pud_parse_udta(Pud *pud);
  * Parse the ALOW section.
  *
  * @param pud A valid Pud handle
- * @return #PUD_TRUE on success, #PUD_FALSE on failure
+ * @return PUD_TRUE on success, PUD_FALSE on failure
  */
 PUDAPI Pud_Bool pud_parse_alow(Pud *pud);
 
@@ -1570,7 +1668,7 @@ PUDAPI Pud_Bool pud_parse_alow(Pud *pud);
  * Parse the UGRD section.
  *
  * @param pud A valid Pud handle
- * @return #PUD_TRUE on success, #PUD_FALSE on failure
+ * @return PUD_TRUE on success, PUD_FALSE on failure
  */
 PUDAPI Pud_Bool pud_parse_ugrd(Pud *pud);
 
@@ -1578,7 +1676,7 @@ PUDAPI Pud_Bool pud_parse_ugrd(Pud *pud);
  * Parse the SGLD section.
  *
  * @param pud A valid Pud handle
- * @return #PUD_TRUE on success, #PUD_FALSE on failure
+ * @return PUD_TRUE on success, PUD_FALSE on failure
  */
 PUDAPI Pud_Bool pud_parse_sgld(Pud *pud);
 
@@ -1586,7 +1684,7 @@ PUDAPI Pud_Bool pud_parse_sgld(Pud *pud);
  * Parse the SLBR section.
  *
  * @param pud A valid Pud handle
- * @return #PUD_TRUE on success, #PUD_FALSE on failure
+ * @return PUD_TRUE on success, PUD_FALSE on failure
  */
 PUDAPI Pud_Bool pud_parse_slbr(Pud *pud);
 
@@ -1594,7 +1692,7 @@ PUDAPI Pud_Bool pud_parse_slbr(Pud *pud);
  * Parse the SOIL section.
  *
  * @param pud A valid Pud handle
- * @return #PUD_TRUE on success, #PUD_FALSE on failure
+ * @return PUD_TRUE on success, PUD_FALSE on failure
  */
 PUDAPI Pud_Bool pud_parse_soil(Pud *pud);
 
@@ -1602,7 +1700,7 @@ PUDAPI Pud_Bool pud_parse_soil(Pud *pud);
  * Parse the AIPL section.
  *
  * @param pud A valid Pud handle
- * @return #PUD_TRUE on success, #PUD_FALSE on failure
+ * @return PUD_TRUE on success, PUD_FALSE on failure
  */
 PUDAPI Pud_Bool pud_parse_aipl(Pud *pud);
 
@@ -1610,7 +1708,7 @@ PUDAPI Pud_Bool pud_parse_aipl(Pud *pud);
  * Parse the MTXM section.
  *
  * @param pud A valid Pud handle
- * @return #PUD_TRUE on success, #PUD_FALSE on failure
+ * @return PUD_TRUE on success, PUD_FALSE on failure
  */
 PUDAPI Pud_Bool pud_parse_mtxm(Pud *pud);
 
@@ -1618,7 +1716,7 @@ PUDAPI Pud_Bool pud_parse_mtxm(Pud *pud);
  * Parse the SQM  section.
  *
  * @param pud A valid Pud handle
- * @return #PUD_TRUE on success, #PUD_FALSE on failure
+ * @return PUD_TRUE on success, PUD_FALSE on failure
  */
 PUDAPI Pud_Bool pud_parse_sqm(Pud *pud);
 
@@ -1626,7 +1724,7 @@ PUDAPI Pud_Bool pud_parse_sqm(Pud *pud);
  * Parse the OILM section.
  *
  * @param pud A valid Pud handle
- * @return #PUD_TRUE on success, #PUD_FALSE on failure
+ * @return PUD_TRUE on success, PUD_FALSE on failure
  */
 PUDAPI Pud_Bool pud_parse_oilm(Pud *pud);
 
@@ -1634,7 +1732,7 @@ PUDAPI Pud_Bool pud_parse_oilm(Pud *pud);
  * Parse the REGM section.
  *
  * @param pud A valid Pud handle
- * @return #PUD_TRUE on success, #PUD_FALSE on failure
+ * @return PUD_TRUE on success, PUD_FALSE on failure
  */
 PUDAPI Pud_Bool pud_parse_regm(Pud *pud);
 
@@ -1642,7 +1740,7 @@ PUDAPI Pud_Bool pud_parse_regm(Pud *pud);
  * Parse the UNIT section.
  *
  * @param pud A valid Pud handle
- * @return #PUD_TRUE on success, #PUD_FALSE on failure
+ * @return PUD_TRUE on success, PUD_FALSE on failure
  */
 PUDAPI Pud_Bool pud_parse_unit(Pud *pud);
 

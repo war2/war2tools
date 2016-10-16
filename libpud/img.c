@@ -30,7 +30,7 @@ pud_minimap_bitmap_generate(const Pud        *pud,
    PUD_SANITY_CHECK(pud, PUD_OPEN_MODE_R, NULL);
 
    unsigned char *map;
-   Pud_Unit_Data *u;
+   Pud_Unit_Info *u;
    Pud_Color c;
    unsigned int i, j, k;
    int idx;
@@ -65,8 +65,8 @@ pud_minimap_bitmap_generate(const Pud        *pud,
         u = &(pud->units[i]);
         c = pud_color_for_unit(u->type, u->owner);
 
-        w = pud->unit_data[u->type].size_w;
-        h = pud->unit_data[u->type].size_h;
+        w = pud->units_descr[u->type].size_w;
+        h = pud->units_descr[u->type].size_h;
 
         for (j = 0; j < w; j++)
           {

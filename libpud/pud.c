@@ -322,7 +322,7 @@ pud_write(const Pud  *pud,
    unsigned int i, j, map_len, units_len;
 
    map_len = p->tiles * sizeof(uint16_t);
-   units_len = p->units_count * sizeof(Pud_Unit_Data);
+   units_len = p->units_count * sizeof(Pud_Unit_Info);
 
    f = fopen(file, "wb");
    if (!f) DIE_RETURN(PUD_FALSE, "Failed to open [%s]", file);
@@ -428,44 +428,44 @@ pud_write(const Pud  *pud,
    /* Section UDTA */
    WISEC(PUD_SECTION_UDTA, 5696);
    WI16(p->private->default_udta, 1);
-   for (i = 0; i < 110; i++) W16(p->unit_data[i].overlap_frames, 1);
+   for (i = 0; i < 110; i++) W16(p->units_descr[i].overlap_frames, 1);
    for (i = 0; i < 508; i++) W16(p->obsolete_udta[i], 1);
-   for (i = 0; i < 110; i++) W32(p->unit_data[i].sight, 1);
-   for (i = 0; i < 110; i++) W16(p->unit_data[i].hp, 1);
-   for (i = 0; i < 110; i++) W8(p->unit_data[i].has_magic, 1);
-   for (i = 0; i < 110; i++) W8(p->unit_data[i].build_time, 1);
-   for (i = 0; i < 110; i++) W8(p->unit_data[i].gold_cost, 1);
-   for (i = 0; i < 110; i++) W8(p->unit_data[i].lumber_cost, 1);
-   for (i = 0; i < 110; i++) W8(p->unit_data[i].oil_cost, 1);
+   for (i = 0; i < 110; i++) W32(p->units_descr[i].sight, 1);
+   for (i = 0; i < 110; i++) W16(p->units_descr[i].hp, 1);
+   for (i = 0; i < 110; i++) W8(p->units_descr[i].has_magic, 1);
+   for (i = 0; i < 110; i++) W8(p->units_descr[i].build_time, 1);
+   for (i = 0; i < 110; i++) W8(p->units_descr[i].gold_cost, 1);
+   for (i = 0; i < 110; i++) W8(p->units_descr[i].lumber_cost, 1);
+   for (i = 0; i < 110; i++) W8(p->units_descr[i].oil_cost, 1);
    // FIXME I think the words are switched!
    for (i = 0; i < 110; i++)
      {
-        l = ((p->unit_data[i].size_w << 16) & 0xffff0000) | (p->unit_data[i].size_h & 0x0000ffff);
+        l = ((p->units_descr[i].size_w << 16) & 0xffff0000) | (p->units_descr[i].size_h & 0x0000ffff);
         W32(l, 1);
      }
    for (i = 0; i < 110; i++)
      {
-        l = ((p->unit_data[i].box_w << 16) & 0xffff0000) | (p->unit_data[i].box_h & 0x0000ffff);
+        l = ((p->units_descr[i].box_w << 16) & 0xffff0000) | (p->units_descr[i].box_h & 0x0000ffff);
         W32(l, 1);
      }
-   for (i = 0; i < 110; i++) W8(p->unit_data[i].range, 1);
-   for (i = 0; i < 110; i++) W8(p->unit_data[i].computer_react_range, 1);
-   for (i = 0; i < 110; i++) W8(p->unit_data[i].human_react_range, 1);
-   for (i = 0; i < 110; i++) W8(p->unit_data[i].armor, 1);
-   for (i = 0; i < 110; i++) WI8(p->unit_data[i].rect_sel, 1);
-   for (i = 0; i < 110; i++) W8(p->unit_data[i].priority, 1);
-   for (i = 0; i < 110; i++) W8(p->unit_data[i].basic_damage, 1);
-   for (i = 0; i < 110; i++) W8(p->unit_data[i].piercing_damage, 1);
-   for (i = 0; i < 110; i++) WI8(p->unit_data[i].weapons_upgradable, 1);
-   for (i = 0; i < 110; i++) WI8(p->unit_data[i].armor_upgradable, 1);
-   for (i = 0; i < 110; i++) W8(p->unit_data[i].missile_weapon, 1);
-   for (i = 0; i < 110; i++) W8(p->unit_data[i].type, 1);
-   for (i = 0; i < 110; i++) W8(p->unit_data[i].decay_rate, 1);
-   for (i = 0; i < 110; i++) W8(p->unit_data[i].annoy, 1);
-   for (i = 0; i < 58; i++) W8(p->unit_data[i].mouse_right_btn, 1);
-   for (i = 0; i < 110; i++) W16(p->unit_data[i].point_value, 1);
-   for (i = 0; i < 110; i++) W8(p->unit_data[i].can_target, 1);
-   for (i = 0; i < 110; i++) W32(p->unit_data[i].flags, 1);
+   for (i = 0; i < 110; i++) W8(p->units_descr[i].range, 1);
+   for (i = 0; i < 110; i++) W8(p->units_descr[i].computer_react_range, 1);
+   for (i = 0; i < 110; i++) W8(p->units_descr[i].human_react_range, 1);
+   for (i = 0; i < 110; i++) W8(p->units_descr[i].armor, 1);
+   for (i = 0; i < 110; i++) WI8(p->units_descr[i].rect_sel, 1);
+   for (i = 0; i < 110; i++) W8(p->units_descr[i].priority, 1);
+   for (i = 0; i < 110; i++) W8(p->units_descr[i].basic_damage, 1);
+   for (i = 0; i < 110; i++) W8(p->units_descr[i].piercing_damage, 1);
+   for (i = 0; i < 110; i++) WI8(p->units_descr[i].weapons_upgradable, 1);
+   for (i = 0; i < 110; i++) WI8(p->units_descr[i].armor_upgradable, 1);
+   for (i = 0; i < 110; i++) W8(p->units_descr[i].missile_weapon, 1);
+   for (i = 0; i < 110; i++) W8(p->units_descr[i].type, 1);
+   for (i = 0; i < 110; i++) W8(p->units_descr[i].decay_rate, 1);
+   for (i = 0; i < 110; i++) W8(p->units_descr[i].annoy, 1);
+   for (i = 0; i < 58; i++) W8(p->units_descr[i].mouse_right_btn, 1);
+   for (i = 0; i < 110; i++) W16(p->units_descr[i].point_value, 1);
+   for (i = 0; i < 110; i++) W8(p->units_descr[i].can_target, 1);
+   for (i = 0; i < 110; i++) W32(p->units_descr[i].flags, 1);
    // WI16(0, 127); // Obsolete data (do not print!!)
 
    /* Section ALOW */
@@ -484,13 +484,13 @@ pud_write(const Pud  *pud,
    /* Section UGRD */
    WISEC(PUD_SECTION_UGRD, 782);
    WI16(p->private->default_ugrd, 1);
-   for (i = 0; i < 52; i++) W8(p->upgrade[i].time, 1);
-   for (i = 0; i < 52; i++) W16(p->upgrade[i].gold, 1);
-   for (i = 0; i < 52; i++) W16(p->upgrade[i].lumber, 1);
-   for (i = 0; i < 52; i++) W16(p->upgrade[i].oil, 1);
-   for (i = 0; i < 52; i++) W16(p->upgrade[i].icon, 1);
-   for (i = 0; i < 52; i++) W16(p->upgrade[i].group, 1);
-   for (i = 0; i < 52; i++) W32(p->upgrade[i].flags, 1);
+   for (i = 0; i < 52; i++) W8(p->upgrades[i].time, 1);
+   for (i = 0; i < 52; i++) W16(p->upgrades[i].gold, 1);
+   for (i = 0; i < 52; i++) W16(p->upgrades[i].lumber, 1);
+   for (i = 0; i < 52; i++) W16(p->upgrades[i].oil, 1);
+   for (i = 0; i < 52; i++) W16(p->upgrades[i].icon, 1);
+   for (i = 0; i < 52; i++) W16(p->upgrades[i].group, 1);
+   for (i = 0; i < 52; i++) W32(p->upgrades[i].flags, 1);
 
    /* Section SIDE */
    WISEC(PUD_SECTION_SIDE, 16);
@@ -617,7 +617,7 @@ pud_unit_add(Pud          *pud,
         //          alter = 1;
      }
 
-   const Pud_Unit_Data u = {
+   const Pud_Unit_Info u = {
       .x     = x,
       .y     = y,
       .type  = unit,
@@ -630,12 +630,12 @@ pud_unit_add(Pud          *pud,
 
    /* TODO Optimise memory allocation because it is not great */
    nb = pud->units_count + 1;
-   size = nb * sizeof(Pud_Unit_Data);
+   size = nb * sizeof(Pud_Unit_Info);
    ptr = realloc(pud->units, size);
    /* On failure, keep the units as is */
    if (ptr == NULL) DIE_RETURN(PUD_FALSE, "Failed to alloc memory");
    pud->units = ptr;
-   memcpy(&(pud->units[pud->units_count]), &u, sizeof(Pud_Unit_Data));
+   memcpy(&(pud->units[pud->units_count]), &u, sizeof(Pud_Unit_Info));
 
    pud->units_count = nb;
 
@@ -676,7 +676,7 @@ pud_check(Pud                   *pud,
 {
    unsigned int i;
    unsigned int starting_locations = 0;
-   const Pud_Unit_Data *u;
+   const Pud_Unit_Info *u;
    Pud_Error ret = PUD_ERROR_UNDEFINED;
    unsigned int players_units[16];
    Pud_Bool players_start_loc[16];

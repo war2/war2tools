@@ -82,7 +82,7 @@ pud_defaults_set(Pud *pud)
 static void
 _ugrd_defaults_set(Pud *pud)
 {
-   const Pud_Upgrade_Characteristics ugrd[52] = {
+   const Pud_Upgrade_Description ugrd[52] = {
       [0] = {
          .time = 200,
          .gold = 800,
@@ -553,7 +553,7 @@ _ugrd_defaults_set(Pud *pud)
       }
    };
 
-   memcpy(&(pud->upgrade[0]), &(ugrd[0]), sizeof(ugrd));
+   memcpy(&(pud->upgrades[0]), &(ugrd[0]), sizeof(ugrd));
 }
 
 PUDAPI void
@@ -566,12 +566,12 @@ pud_alow_defaults_set(Pud *pud)
    pud->private->default_allow = 1;
 
    /* Everything is allowed */
-   memset(&pud->unit_alow, 0xff, sizeof(struct _alow));
-   memset(&pud->spell_alow, 0xff, sizeof(struct _alow));
-   memset(&pud->up_alow, 0xff, sizeof(struct _alow));
+   memset(&pud->unit_alow, 0xff, sizeof(pud->unit_alow));
+   memset(&pud->spell_alow, 0xff, sizeof(pud->spell_alow));
+   memset(&pud->up_alow, 0xff, sizeof(pud->up_alow));
 
    /* We start with nothing, expect fireball and death coil */
-   memset(&pud->spell_start, 0x00, sizeof(struct _alow));
+   memset(&pud->spell_start, 0x00, sizeof(pud->spell_start));
    for (i = 0; i < 8; i++)
      {
         pud->spell_start.players[i] |= PUD_ALLOW_SPELL_FIREBALL;
@@ -586,8 +586,8 @@ pud_alow_defaults_set(Pud *pud)
    pud->spell_start.neutral |= PUD_ALLOW_SPELL_DEATH_COIL;
 
    /* We are not researching anything */
-   memset(&pud->spell_acq, 0x00, sizeof(struct _alow));
-   memset(&pud->up_acq, 0x00, sizeof(struct _alow));
+   memset(&pud->spell_acq, 0x00, sizeof(pud->spell_acq));
+   memset(&pud->up_acq, 0x00, sizeof(pud->up_acq));
 }
 
 /* UDTA defaults are generated with tools/defaults_gen */
@@ -595,7 +595,7 @@ pud_alow_defaults_set(Pud *pud)
 static void
 _udta_defaults_set(Pud *pud)
 {
-   const Pud_Unit_Characteristics udata[110] = {
+   const Pud_Unit_Description udata[110] = {
       [0] = {
          .overlap_frames = 0,
          .sight = 4,
@@ -4118,5 +4118,5 @@ _udta_defaults_set(Pud *pud)
       }
    };
 
-   memcpy(&(pud->unit_data[0]), &(udata[0]), sizeof(udata));
+   memcpy(&(pud->units_descr[0]), &(udata[0]), sizeof(udata));
 }

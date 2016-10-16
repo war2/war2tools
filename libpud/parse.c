@@ -261,7 +261,7 @@ pud_parse_udta(Pud *pud)
    /* Overlap frames */
    READBUF(pud, wb, uint16_t, 110, FAIL(PUD_FALSE));
    for (i = 0; i < 110; i++)
-     pud->unit_data[i].overlap_frames = wb[i];
+     pud->units_descr[i].overlap_frames = wb[i];
 
    /* Obsolete data */
    READBUF(pud, pud->obsolete_udta, uint16_t, 508, FAIL(PUD_FALSE));
@@ -269,145 +269,145 @@ pud_parse_udta(Pud *pud)
    /* Sight (why the hell is it on 32 bits!?) */
    READBUF(pud, lb, uint32_t, 110, FAIL(PUD_FALSE));
    for (i = 0; i < 110; i++)
-     pud->unit_data[i].sight = lb[i];
+     pud->units_descr[i].sight = lb[i];
 
    /* Hit points */
    READBUF(pud, wb, uint16_t, 110, FAIL(PUD_FALSE));
    for (i = 0; i < 110; i++)
-     pud->unit_data[i].hp = wb[i];
+     pud->units_descr[i].hp = wb[i];
 
    /* Magic */
    READBUF(pud, bb, uint8_t, 110, FAIL(PUD_FALSE));
    for (i = 0; i < 110; i++)
-     pud->unit_data[i].has_magic = !!bb[i];
+     pud->units_descr[i].has_magic = !!bb[i];
 
    /* Build time */
    READBUF(pud, bb, uint8_t, 110, FAIL(PUD_FALSE));
    for (i = 0; i < 110; i++)
-     pud->unit_data[i].build_time = bb[i];
+     pud->units_descr[i].build_time = bb[i];
 
    /* Gold cost */
    READBUF(pud, bb, uint8_t, 110, FAIL(PUD_FALSE));
    for (i = 0; i < 110; i++)
-     pud->unit_data[i].gold_cost = bb[i];
+     pud->units_descr[i].gold_cost = bb[i];
 
    /* Lumber cost */
    READBUF(pud, bb, uint8_t, 110, FAIL(PUD_FALSE));
    for (i = 0; i < 110; i++)
-     pud->unit_data[i].lumber_cost = bb[i];
+     pud->units_descr[i].lumber_cost = bb[i];
 
    /* Oil cost */
    READBUF(pud, bb, uint8_t, 110, FAIL(PUD_FALSE));
    for (i = 0; i < 110; i++)
-     pud->unit_data[i].oil_cost = bb[i];
+     pud->units_descr[i].oil_cost = bb[i];
 
    /* Unit size */
    READBUF(pud, lb, uint32_t, 110, FAIL(PUD_FALSE));
    for (i = 0; i < 110; i++)
      {
-        pud->unit_data[i].size_w = (lb[i] >> 16) & 0x0000ffff;
-        pud->unit_data[i].size_h = lb[i] & 0x0000ffff;
+        pud->units_descr[i].size_w = (lb[i] >> 16) & 0x0000ffff;
+        pud->units_descr[i].size_h = lb[i] & 0x0000ffff;
      }
 
    /* Unit box */
    READBUF(pud, lb, uint32_t, 110, FAIL(PUD_FALSE));
    for (i = 0; i < 110; i++)
      {
-        pud->unit_data[i].box_w = (lb[i] >> 16) & 0x0000ffff;
-        pud->unit_data[i].box_h = lb[i] & 0x0000ffff;
+        pud->units_descr[i].box_w = (lb[i] >> 16) & 0x0000ffff;
+        pud->units_descr[i].box_h = lb[i] & 0x0000ffff;
      }
 
    /* Attack range */
    READBUF(pud, bb, uint8_t, 110, FAIL(PUD_FALSE));
    for (i = 0; i < 110; i++)
-     pud->unit_data[i].range = bb[i];
+     pud->units_descr[i].range = bb[i];
 
    /* React range (computer) */
    READBUF(pud, bb, uint8_t, 110, FAIL(PUD_FALSE));
    for (i = 0; i < 110; i++)
-     pud->unit_data[i].computer_react_range = bb[i];
+     pud->units_descr[i].computer_react_range = bb[i];
 
    /* React range (human) */
    READBUF(pud, bb, uint8_t, 110, FAIL(PUD_FALSE));
    for (i = 0; i < 110; i++)
-     pud->unit_data[i].human_react_range = bb[i];
+     pud->units_descr[i].human_react_range = bb[i];
 
    /* Armor */
    READBUF(pud, bb, uint8_t, 110, FAIL(PUD_FALSE));
    for (i = 0; i < 110; i++)
-     pud->unit_data[i].armor = bb[i];
+     pud->units_descr[i].armor = bb[i];
 
    /* Selectable via rectangle */
    READBUF(pud, bb, uint8_t, 110, FAIL(PUD_FALSE));
    for (i = 0; i < 110; i++)
-     pud->unit_data[i].rect_sel = !!bb[i];
+     pud->units_descr[i].rect_sel = !!bb[i];
 
    /* Priority */
    READBUF(pud, bb, uint8_t, 110, FAIL(PUD_FALSE));
    for (i = 0; i < 110; i++)
-     pud->unit_data[i].priority = bb[i];
+     pud->units_descr[i].priority = bb[i];
 
    /* Basic damage */
    READBUF(pud, bb, uint8_t, 110, FAIL(PUD_FALSE));
    for (i = 0; i < 110; i++)
-     pud->unit_data[i].basic_damage = bb[i];
+     pud->units_descr[i].basic_damage = bb[i];
 
    /* Piercing damage */
    READBUF(pud, bb, uint8_t, 110, FAIL(PUD_FALSE));
    for (i = 0; i < 110; i++)
-     pud->unit_data[i].piercing_damage = bb[i];
+     pud->units_descr[i].piercing_damage = bb[i];
 
    /* Weapons upgradable */
    READBUF(pud, bb, uint8_t, 110, FAIL(PUD_FALSE));
    for (i = 0; i < 110; i++)
-     pud->unit_data[i].weapons_upgradable = !!bb[i];
+     pud->units_descr[i].weapons_upgradable = !!bb[i];
 
    /* Armor upgradable */
    READBUF(pud, bb, uint8_t, 110, FAIL(PUD_FALSE));
    for (i = 0; i < 110; i++)
-     pud->unit_data[i].armor_upgradable = !!bb[i];
+     pud->units_descr[i].armor_upgradable = !!bb[i];
 
    /* Missile weapon */
    READBUF(pud, bb, uint8_t, 110, FAIL(PUD_FALSE));
    for (i = 0; i < 110; i++)
-     pud->unit_data[i].missile_weapon = bb[i];
+     pud->units_descr[i].missile_weapon = bb[i];
 
    /* Unit type */
    READBUF(pud, bb, uint8_t, 110, FAIL(PUD_FALSE));
    for (i = 0; i < 110; i++)
-     pud->unit_data[i].type = bb[i];
+     pud->units_descr[i].type = bb[i];
 
    /* Decay rate */
    READBUF(pud, bb, uint8_t, 110, FAIL(PUD_FALSE));
    for (i = 0; i < 110; i++)
-     pud->unit_data[i].decay_rate = bb[i];
+     pud->units_descr[i].decay_rate = bb[i];
 
    /* Annoy computer factor */
    READBUF(pud, bb, uint8_t, 110, FAIL(PUD_FALSE));
    for (i = 0; i < 110; i++)
-     pud->unit_data[i].annoy = bb[i];
+     pud->units_descr[i].annoy = bb[i];
 
    /* 2nd mouse button action */
    READBUF(pud, bb, uint8_t, 58, FAIL(PUD_FALSE));
    for (i = 0; i < 58; i++)
-     pud->unit_data[i].mouse_right_btn = bb[i];
+     pud->units_descr[i].mouse_right_btn = bb[i];
    for (; i < 110; i++)
-     pud->unit_data[i].mouse_right_btn = 0xff;
+     pud->units_descr[i].mouse_right_btn = 0xff;
 
    /* Point value for killing unit */
    READBUF(pud, wb, uint16_t, 110, FAIL(PUD_FALSE));
    for (i = 0; i < 110; i++)
-     pud->unit_data[i].point_value = wb[i];
+     pud->units_descr[i].point_value = wb[i];
 
    /* Can target */
    READBUF(pud, bb, uint8_t, 110, FAIL(PUD_FALSE));
    for (i = 0; i < 110; i++)
-     pud->unit_data[i].can_target = bb[i];
+     pud->units_descr[i].can_target = bb[i];
 
    /* Flags */
    READBUF(pud, lb, uint32_t, 110, FAIL(PUD_FALSE));
    for (i = 0; i < 110; i++)
-     pud->unit_data[i].flags = lb[i];
+     pud->units_descr[i].flags = lb[i];
 
    /* Obsolete */
    if (chk == 5950)
@@ -426,7 +426,7 @@ pud_parse_alow(Pud *pud)
 
    uint32_t chk;
    uint32_t buf[16];
-   struct _alow *ptrs[] = {
+   typeof(pud->unit_alow) *ptrs[] = {
       &(pud->unit_alow),
       &(pud->spell_start),
       &(pud->spell_alow),
@@ -480,40 +480,40 @@ pud_parse_ugrd(Pud *pud)
    READBUF(pud, wb, uint16_t, 1, FAIL(PUD_FALSE));
    pud->private->default_ugrd = !!wb[0];
 
-   /* Upgrade time */
+   /* upgrades time */
    READBUF(pud, bb, uint8_t, 52, FAIL(PUD_FALSE));
    for (i = 0; i < 52; i++)
-     pud->upgrade[i].time = bb[i];
+     pud->upgrades[i].time = bb[i];
 
    /* Gold cost */
    READBUF(pud, wb, uint16_t, 52, FAIL(PUD_FALSE));
    for (i = 0; i < 52; i++)
-     pud->upgrade[i].gold = wb[i];
+     pud->upgrades[i].gold = wb[i];
 
    /* Lumber cost */
    READBUF(pud, wb, uint16_t, 52, FAIL(PUD_FALSE));
    for (i = 0; i < 52; i++)
-     pud->upgrade[i].lumber = wb[i];
+     pud->upgrades[i].lumber = wb[i];
 
    /* Oil cost */
    READBUF(pud, wb, uint16_t, 52, FAIL(PUD_FALSE));
    for (i = 0; i < 52; i++)
-     pud->upgrade[i].oil = wb[i];
+     pud->upgrades[i].oil = wb[i];
 
    /* Icon */
    READBUF(pud, wb, uint16_t, 52, FAIL(PUD_FALSE));
    for (i = 0; i < 52; i++)
-     pud->upgrade[i].icon = wb[i];
+     pud->upgrades[i].icon = wb[i];
 
    /* Group */
    READBUF(pud, wb, uint16_t, 52, FAIL(PUD_FALSE));
    for (i = 0; i < 52; i++)
-     pud->upgrade[i].group = wb[i];
+     pud->upgrades[i].group = wb[i];
 
    /* Flags */
    READBUF(pud, lb, uint32_t, 52, FAIL(PUD_FALSE));
    for (i = 0; i < 52; i++)
-     pud->upgrade[i].flags = lb[i];
+     pud->upgrades[i].flags = lb[i];
 
    return PUD_TRUE;
 }
@@ -719,7 +719,7 @@ pud_parse_unit(Pud *pud)
 
    uint32_t chk;
    int units, size, i;
-   Pud_Unit_Data *u;
+   Pud_Unit_Info *u;
 
    chk = pud_go_to_section(pud, PUD_SECTION_UNIT);
    if (!chk) DIE_RETURN(PUD_FALSE, "Failed to reach section UNIT");
@@ -727,7 +727,7 @@ pud_parse_unit(Pud *pud)
    HAS_SECTION(PUD_SECTION_UNIT);
    units = chk / 8;
 
-   size = sizeof(Pud_Unit_Data) * units;
+   size = sizeof(Pud_Unit_Info) * units;
    pud->units = realloc(pud->units, size);
    if (!pud->units) DIE_RETURN(PUD_FALSE, "Failed to allocate memory");
    memset(pud->units, 0, size);

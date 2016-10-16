@@ -78,13 +78,13 @@ main(int    argc,
      {
       case UDTA:
 
-         W("const Pud_Unit_Characteristics udata[110] = {");
+         W("const Pud_Unit_Description udata[110] = {");
          for (i = 0; i < 110; i++)
            {
               W("  [%i] = {", i);
 
-#define GEN(field) W("   ."#field" = %u,", pud->unit_data[i].field)
-#define GEN_STOP(field) W("   ."#field" = %u", pud->unit_data[i].field)
+#define GEN(field) W("   ."#field" = %u,", pud->units_descr[i].field)
+#define GEN_STOP(field) W("   ."#field" = %u", pud->units_descr[i].field)
               GEN(overlap_frames);
               GEN(sight);
               GEN(hp);
@@ -128,14 +128,14 @@ main(int    argc,
 
       case UGRD:
 
-         W("const Pud_Upgrade_Characteristics ugrd[52] = {");
+         W("const Pud_Upgrade_Description ugrd[52] = {");
 
          for (i = 0; i < 52; i++)
            {
               W("  [%i] = {", i);
 
-#define GEN(field) W("   ."#field" = %u,", pud->upgrade[i].field)
-#define GEN_STOP(field) W("   ."#field" = %u", pud->upgrade[i].field)
+#define GEN(field) W("   ."#field" = %u,", pud->upgrades[i].field)
+#define GEN_STOP(field) W("   ."#field" = %u", pud->upgrades[i].field)
               GEN(time);
               GEN(gold);
               GEN(lumber);

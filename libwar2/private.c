@@ -26,7 +26,7 @@ PUDAPI_INTERNAL void
 war2_palette_convert(const unsigned char *ptr,
                      Pud_Color            palette[256])
 {
-   unsigned char *p;
+   const unsigned char *p;
    unsigned int i;
 
    /* I don't know why this is the bitshift needed (no doc so no explaination)

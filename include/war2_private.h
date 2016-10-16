@@ -32,8 +32,16 @@
 #include <time.h>
 
 #include "pud.h"
+#include "pud_private.h"
 #include "debug.h"
 #include "war2.h"
+
+#undef FAIL
+#undef ECHAP
+#undef READ8
+#undef READ16
+#undef READ32
+#undef READBUF
 
 
 struct _War2_Data

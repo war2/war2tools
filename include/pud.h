@@ -66,7 +66,6 @@ extern "C" { /* } For dump editors */
 
 
 /**
- * @typedef Pud_Bool
  * Boolean type that can take two values among
  * PUD_TRUE and PUD_FALSE
  * @since 1.0.0
@@ -748,34 +747,6 @@ typedef enum
 
 
 /**
- * @typedef Pud
- * Handle to manipulate a pud file.
- * @since 1.0.0
- */
-typedef struct _Pud Pud;
-
-/**
- * @typedef Pud_Unit_Info
- * This type describes the placement of a unit on a map
- * @since 1.0.0
- */
-typedef struct _Pud_Unit_Info Pud_Unit_Info;
-
-/**
- * @typedef Pud_Unit_Description
- * Description of a unit's characteristics
- * @since 1.0.0
- */
-typedef struct _Pud_Unit_Description Pud_Unit_Description;
-
-/**
- * @typedef Pud_Upgrade_Description
- * Description of an upgrade's characteristics
- * @since 1.0.0
- */
-typedef struct _Pud_Upgrade_Description Pud_Upgrade_Description;
-
-/**
  * @typedef Pud_Private
  * Internal data of the Pud structure. It is not meant to be public.
  * Don't touch it, don't even think of accessing it.
@@ -786,10 +757,10 @@ typedef struct _Pud_Upgrade_Description Pud_Upgrade_Description;
 typedef struct _Pud_Private Pud_Private;
 
 /**
- * @struct _Pud_Upgrade_Description
+ * Description of an upgrade's characteristics
  * @since 1.0.0
  */
-struct _Pud_Upgrade_Description
+typedef struct
 {
    uint8_t           time; /**< Time taken for a research */
    uint16_t          gold; /**< Cost of gold */
@@ -798,13 +769,13 @@ struct _Pud_Upgrade_Description
    uint16_t          icon; /**< Icon of the reseach */
    uint16_t          group; /**< To which group the research applies to */
    uint32_t          flags; /**< What does the upgrade give */
-};
+} Pud_Upgrade_Description;
 
 /**
- * @struct _Pud_Unit_Description
+ * Description of a unit's characteristics
  * @since 1.0.0
  */
-struct _Pud_Unit_Description
+typedef struct
 {
    uint32_t     sight; /**< Sight (vision) */
    uint16_t     hp; /**< Hit points */
@@ -837,29 +808,27 @@ struct _Pud_Unit_Description
    uint16_t     size_h; /**< Height */
    uint16_t     box_w; /**< Box width */
    uint16_t     box_h; /**< Box height */
-};
+} Pud_Unit_Description;
 
 /**
- * @struct _Pud_Unit_Info
- * Placement of a unit on a map, and general owner information
+ * This type describes the placement of a unit on a map
  * @since 1.0.0
  */
-struct _Pud_Unit_Info
+typedef struct
 {
    uint16_t x; /**< X coordinate of the cell it resides */
    uint16_t y; /**< Y coordinate of the cell it resides */
    uint8_t  type; /**< Type of unit @see Pud_Unit */
    uint8_t  owner; /**< Owner @see Pud_Owner */
    uint16_t alter; /**< Special value. Used by resources providers and neutrals */
-};
+} Pud_Unit_Info;
 
 
 /**
- * @struct _Pud
- * Public data of a Pud file's contents.
+ * Handle to manipulate a pud file.
  * @since 1.0.0
  */
-struct _Pud
+typedef struct
 {
    Pud_Private *private; /**< Internals, private and opaque data. Don't touch ;-) */
 
@@ -962,27 +931,19 @@ struct _Pud
    Pud_Unit_Description units_descr[110]; /**< Characteristics of units */
 
    uint16_t obsolete_udta[508]; /**< Obsolete data in the UDTA section */
-};
+} Pud;
 
 /**
- * @typedef Pud_Color
  * Type that holds a 32-bits color
  * @since 1.0.0
  */
-typedef struct _Pud_Color Pud_Color;
-
-/**
- * @struct _Pud_Color
- * Public data for a 32-bits color.
- * @since 1.0.0
- */
-struct _Pud_Color
+typedef struct
 {
    unsigned char r; /**< 8-bits red component */
    unsigned char g; /**< 8-bits green component */
    unsigned char b; /**< 8-bits blue component */
    unsigned char a; /**< 8-bits alpha component */
-};
+} Pud_Color;
 
 /**
  * @typedef Pud_Error
@@ -1002,7 +963,6 @@ typedef enum
 } Pud_Error;
 
 /**
- * @typedef Pud_Error_Description
  * Description of an error
  *
  * @see Pud_Error

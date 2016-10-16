@@ -26,8 +26,8 @@
  * Libwar2 provides warcraft 2 data files manipulation.
  */
 
-#ifndef _WAR2_H_
-#define _WAR2_H_
+#ifndef __LIBWAR2_WAR2_H__
+#define __LIBWAR2_WAR2_H__
 #ifdef __cplusplus
 extern "C" { /* } For dumb editors */
 #endif
@@ -348,4 +348,4 @@ war2_sprites_color_convert(Pud_Player     from,
 #ifdef __cplusplus
 }
 #endif
-#endif /* ! _WAR2_H_ */
+#endif /* ! __LIBWAR2_WAR2_H__ */

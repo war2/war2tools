@@ -1277,6 +1277,60 @@ PUDAPI Pud *pud_open(const char *file, Pud_Open_Mode mode);
 PUDAPI void pud_close(Pud *pud);
 
 /**
+ * Determine if the pud file uses the default ALOW section
+ *
+ * @param pud A valid PUD handle
+ * @return PUD_TRUE if uses default ALOW, PUD_FALSE otherwise
+ * @since 1.0.0
+ */
+PUDAPI Pud_Bool pud_default_alow_get(const Pud *pud);
+
+/**
+ * Determine if the pud file uses the default UDTA section
+ *
+ * @param pud A valid PUD handle
+ * @return PUD_TRUE if uses default UDTA, PUD_FALSE otherwise
+ * @since 1.0.0
+ */
+PUDAPI Pud_Bool pud_default_udta_get(const Pud *pud);
+
+/**
+ * Determine if the pud file uses the default UGRD section
+ *
+ * @param pud A valid PUD handle
+ * @return PUD_TRUE if uses default UGRD, PUD_FALSE otherwise
+ * @since 1.0.0
+ */
+PUDAPI Pud_Bool pud_default_ugrd_get(const Pud *pud);
+
+/**
+ * Override whether we should use or not the default ALOW section
+ *
+ * @param pud A valid PUD handle
+ * @param use_default PUD_TRUE to use defaults, PUD_FALSE to use custom
+ * @since 1.0.0
+ */
+PUDAPI void pud_default_alow_override(Pud *pud, Pud_Bool use_default);
+
+/**
+ * Override whether we should use or not the default UGRD section
+ *
+ * @param pud A valid PUD handle
+ * @param use_default PUD_TRUE to use defaults, PUD_FALSE to use custom
+ * @since 1.0.0
+ */
+PUDAPI void pud_default_ugrd_override(Pud *pud, Pud_Bool use_default);
+
+/**
+ * Override whether we should use or not the default UDTA section
+ *
+ * @param pud A valid PUD handle
+ * @param use_default PUD_TRUE to use defaults, PUD_FALSE to use custom
+ * @since 1.0.0
+ */
+PUDAPI void pud_default_udta_override(Pud *pud, Pud_Bool use_default);
+
+/**
  * Dump the internals of a valid Pud file into an IO stream
  *
  * @param pud A valid PUD handle

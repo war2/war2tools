@@ -21,10 +21,6 @@ START_TEST(open)
 
    fail_if(pud_init() != PUD_TRUE);
 
-   /* NULL file should NOT be accepted at all */
-   p = pud_open(files[F_NULL], PUD_OPEN_MODE_RW);
-   fail_if(p != NULL);
-
    /* EMPTY file cannot be READ from. WO is ok */
    p = pud_open(files[F_EMPTY], PUD_OPEN_MODE_R);
    fail_if(p != NULL);

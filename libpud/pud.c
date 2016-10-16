@@ -151,8 +151,6 @@ pud_open(const char    *file,
 {
    Pud *pud;
 
-   if (file == NULL) DIE_RETURN(NULL, "NULL input file");
-
    /* RST memory */
    pud = calloc(1, sizeof(Pud));
    if (!pud) DIE_GOTO(err, "Failed to alloc Pud: %s", strerror(errno));
@@ -943,4 +941,49 @@ pud_side_for_player_get(const Pud *pud,
    return (player == PUD_PLAYER_NEUTRAL)
       ? PUD_SIDE_NEUTRAL
       : pud->side.players[player];
+}
+
+PUDAPI Pud_Bool
+pud_default_alow_get(const Pud *pud)
+{
+   PUD_SANITY_CHECK(pud, PUD_OPEN_MODE_R, PUD_FALSE);
+   return pud->private->default_allow;
+}
+
+PUDAPI Pud_Bool
+pud_default_udta_get(const Pud *pud)
+{
+   PUD_SANITY_CHECK(pud, PUD_OPEN_MODE_R, PUD_FALSE);
+   return pud->private->default_udta;
+}
+
+PUDAPI Pud_Bool
+pud_default_ugrd_get(const Pud *pud)
+{
+   PUD_SANITY_CHECK(pud, PUD_OPEN_MODE_R, PUD_FALSE);
+   return pud->private->default_ugrd;
+}
+
+PUDAPI void
+pud_default_alow_override(Pud      *pud,
+                          Pud_Bool  use_default)
+{
+   PUD_SANITY_CHECK(pud, PUD_OPEN_MODE_W, VOID);
+   pud->private->default_allow = !!use_default;
+}
+
+PUDAPI void
+pud_default_ugrd_override(Pud      *pud,
+                          Pud_Bool  use_default)
+{
+   PUD_SANITY_CHECK(pud, PUD_OPEN_MODE_W, VOID);
+   pud->private->default_ugrd = !!use_default;
+}
+
+PUDAPI void
+pud_default_udta_override(Pud      *pud,
+                          Pud_Bool  use_default)
+{
+   PUD_SANITY_CHECK(pud, PUD_OPEN_MODE_W, VOID);
+   pud->private->default_udta = !!use_default;
 }

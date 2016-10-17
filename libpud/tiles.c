@@ -23,9 +23,9 @@
 #include "pud_private.h"
 #include "pud.h"
 
-Pud_Color
-pud_tile_to_color(Pud_Era   era,
-                  uint16_t  tile)
+PUDAPI Pud_Color
+pud_minimap_tile_to_color(Pud_Era  era,
+                          uint16_t tile)
 {
    switch (era)
      {

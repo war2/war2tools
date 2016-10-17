@@ -1261,29 +1261,144 @@ PUDAPI Pud_Side pud_side_convert(uint8_t code);
  */
 PUDAPI Pud_Bool pud_unit_building_is(Pud_Unit unit);
 
+/**
+ * Tell whether a unit is a start location or not
+ *
+ * @param unit The unit to query
+ * @return PUD_TRUE if @p unit is a start location, PUD_FALSE otherwise
+ * @since 1.0.0
+ */
 PUDAPI Pud_Bool pud_unit_start_location_is(Pud_Unit unit);
+
+/**
+ * Tell whether a unit is a flying unit or not
+ *
+ * @param unit The unit to query
+ * @return PUD_TRUE if @p unit is a flying unit, PUD_FALSE otherwise
+ * @since 1.0.0
+ */
 PUDAPI Pud_Bool pud_unit_flying_is(Pud_Unit unit);
+
+/**
+ * Tell whether a unit is an underwater unit or not
+ *
+ * @param unit The unit to query
+ * @return PUD_TRUE if @p unit is an underwater unit, PUD_FALSE otherwise
+ * @since 1.0.0
+ */
 PUDAPI Pud_Bool pud_unit_underwater_is(Pud_Unit unit);
+
+/**
+ * Tell whether a unit is a land unit or not
+ *
+ * @param unit The unit to query
+ * @return PUD_TRUE if @p unit is a land unit, PUD_FALSE otherwise
+ * @since 1.0.0
+ */
 PUDAPI Pud_Bool pud_unit_land_is(Pud_Unit unit);
+
+/**
+ * Tell whether a unit is a marine unit or not
+ *
+ * @param unit The unit to query
+ * @return PUD_TRUE if @p unit is a marine unit, PUD_FALSE otherwise
+ * @since 1.0.0
+ */
 PUDAPI Pud_Bool pud_unit_marine_is(Pud_Unit unit);
+
+/**
+ * Tell whether a unit is always passive or not
+ *
+ * @param unit The unit to query
+ * @return PUD_TRUE if @p unit is always passive, PUD_FALSE otherwise
+ * @since 1.0.0
+ */
 PUDAPI Pud_Bool pud_unit_always_passive_is(Pud_Unit unit);
+
+/**
+ * Tell whether a unit is an oil well or not
+ *
+ * @param unit The unit to query
+ * @return PUD_TRUE if @p unit is an oil well, PUD_FALSE otherwise
+ * @since 1.0.0
+ */
 PUDAPI Pud_Bool pud_unit_oil_well_is(Pud_Unit unit);
+
+/**
+ * Tell whether a unit is a coast building or not
+ *
+ * @param unit The unit to query
+ * @return PUD_TRUE if @p unit is  a coast building, PUD_FALSE otherwise
+ * @since 1.0.0
+ */
 PUDAPI Pud_Bool pud_unit_coast_building_is(Pud_Unit unit);
+
+/**
+ * Tell whether a unit is a boat or not
+ *
+ * @param unit The unit to query
+ * @return PUD_TRUE if @p unit is a boat, PUD_FALSE otherwise
+ * @since 1.0.0
+ */
 PUDAPI Pud_Bool pud_unit_boat_is(Pud_Unit unit);
 
+/**
+ * Tell whether a unit is a hero or not
+ *
+ * @param unit The unit to query
+ * @return PUD_TRUE if @p unit is a hero, PUD_FALSE otherwise
+ * @since 1.0.0
+ */
 PUDAPI Pud_Bool pud_unit_hero_is(Pud_Unit unit);
 
-PUDAPI Pud_Color pud_tile_to_color(Pud_Era era, uint16_t tile);
-PUDAPI Pud_Color pud_color_for_player(Pud_Player player);
-PUDAPI Pud_Color pud_gold_mine_color_get(void);
-PUDAPI Pud_Color pud_oil_patch_color_get(void);
-PUDAPI Pud_Color pud_color_for_unit(Pud_Unit unit, Pud_Player player);
-
+/**
+ * Get the side commonly associated to a unit
+ *
+ * @param The unit to query
+ * @return The side of @p unit
+ * @since 1.0.0
+ */
 PUDAPI Pud_Side pud_unit_side_get(Pud_Unit unit);
 
-PUDAPI uint8_t pud_random_get(uint16_t tile);
+/**
+ * Get a random tile for a given tile code
+ *
+ * Tiles are 16-bits words. The least significant 4-bits are used
+ * to provide different variations of one tile. This function looks
+ * at the 12 most significant bits, and return randomized, VALID
+ * 4 least significant bits for the tile
+ *
+ * @param tile_base The characteristics of a tile
+ * @return The least significant bits
+ * @since 1.0.0
+ */
+PUDAPI uint8_t pud_random_tile_get(uint16_t tile_base);
+
+/**
+ * Get the icon of a given unit
+ *
+ * @param unit The unit to query
+ * @return The icon associated to @p unit
+ * @since 1.0.0
+ */
 PUDAPI Pud_Icon pud_unit_icon_get(Pud_Unit unit);
+
+/**
+ * Tell wether the provided unit is valid or not
+ *
+ * @param unit The unit to query
+ * @return PUD_TRUE if @p unit is valid, PUD_FALSE otherwise
+ * @since 1.0.0
+ */
 PUDAPI Pud_Bool pud_unit_valid_is(Pud_Unit unit);
+
+/**
+ * Get the counterpart unit of another
+ *
+ * @param unit The unit to query
+ * @return The counterpart unit of @p unit. @p unit if it has no counterpart
+ * @since 1.0.0
+ */
 PUDAPI Pud_Unit pud_unit_switch_side(Pud_Unit unit);
 
 
@@ -1575,6 +1690,66 @@ PUDAPI Pud_Side pud_side_for_player_get(const Pud *pud, Pud_Player player);
 PUDAPI void pud_alow_defaults_set(Pud *pud);
 
 /**
+ * Write defaults UDTA, UGRD, ALOW, SGLD, SLBR, SOIL, AIPL, SIDE, OWNR.
+ *
+ * @param pud A valid pud handle
+ * @return PUD_TRUE on success, PUD_FALSE otherwise
+ * @since 1.0.0
+ */
+PUDAPI Pud_Bool pud_defaults_set(Pud *pud);
+
+/**
+ * Determine whether a Pud file has a section
+ *
+ * @param pud A valid pud handle
+ * @param section The section to query
+ * @return PUD_TRUE if @c pud has @c section, PUD_FALSE otherwise
+ * @since 1.0.0
+ */
+PUDAPI Pud_Bool pud_section_has(const Pud *pud, Pud_Section section);
+
+/**
+ * @}
+ */ /* End of Pud_File group */
+
+
+/**
+ * @defgroup Pud_Minimap Minimap Functions
+ *
+ * Functions that allow minimap generation from an existing pud
+ * @{
+ */
+
+/**
+ * Get the minimap color associated with a tile for a given era
+ *
+ * @param era The era of the tile
+ * @param tile The tile ID to query
+ * @return The color of @p tile in era @p era
+ * @since 1.0.0
+ */
+PUDAPI Pud_Color pud_minimap_tile_to_color(Pud_Era era, uint16_t tile);
+
+/**
+ * Get the minimap color associated with a player
+ *
+ * @param player The player to query
+ * @return The color of @p player
+ * @since 1.0.0
+ */
+PUDAPI Pud_Color pud_minimap_color_for_player(Pud_Player player);
+
+/**
+ * Get the color of a unit belonging to a given player
+ *
+ * @param unit The unit to query
+ * @param player The player who owns @p unit
+ * @return The color of @p unit controlled by @p player
+ * @since 1.0.0
+ */
+PUDAPI Pud_Color pud_minimap_color_for_unit(Pud_Unit unit, Pud_Player player);
+
+/**
  * Generate a bitmap of the minimap for a given Pud
  *
  * @note The returned memory is malloc()ed, and is NOT managed by libpud.
@@ -1590,26 +1765,9 @@ PUDAPI void pud_alow_defaults_set(Pud *pud);
 PUDAPI unsigned char *pud_minimap_bitmap_generate(const Pud *pud, unsigned int *size_ret, Pud_Pixel_Format pfmt);
 
 /**
- * Write defaults UDTA, UGRD, ALOW, SGLD, SLBR, SOIL, AIPL, SIDE, OWNR.
- *
- * @param pud A valid pud handle
- * @return PUD_TRUE on success, PUD_FALSE otherwise
- * @since 1.0.0
- */
-PUDAPI Pud_Bool pud_defaults_set(Pud *pud);
-
-/**
- * Determine whether a Pud file has a section
- *
- * @param pud A valid pud handle
- * @param section The section to query
- * @return PUD_TRUE if @c pud has @c section, PUD_FALSE otherwise
- */
-PUDAPI Pud_Bool pud_section_has(const Pud *pud, Pud_Section section);
-
-/**
  * @}
- */ /* End of Pud_File group */
+ */ /* End of Pud_Minimap group */
+
 
 /**
  * @defgroup Pud_Parse Pud Advanced Parsing Functions

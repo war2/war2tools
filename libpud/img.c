@@ -52,7 +52,7 @@ pud_minimap_bitmap_generate(const Pud        *pud,
 
    for (i = 0, idx = 0; i < pud->tiles; i++, idx += 4)
      {
-        c = pud_tile_to_color(era, pud->tiles_map[i]);
+        c = pud_minimap_tile_to_color(era, pud->tiles_map[i]);
 
         map[idx + delta[pfmt][0]] = c.r;
         map[idx + delta[pfmt][1]] = c.g;
@@ -63,7 +63,7 @@ pud_minimap_bitmap_generate(const Pud        *pud,
    for (i = 0; i < pud->units_count; i++)
      {
         u = &(pud->units[i]);
-        c = pud_color_for_unit(u->type, u->owner);
+        c = pud_minimap_color_for_unit(u->type, u->owner);
 
         w = pud->units_descr[u->type].size_w;
         h = pud->units_descr[u->type].size_h;

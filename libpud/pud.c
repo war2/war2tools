@@ -844,7 +844,7 @@ pud_unit_oil_well_is(Pud_Unit unit)
 }
 
 PUDAPI Pud_Color
-pud_color_for_player(Pud_Player player)
+pud_minimap_color_for_player(Pud_Player player)
 {
    switch (player)
      {
@@ -863,29 +863,28 @@ pud_color_for_player(Pud_Player player)
    return color_make(0xff, 0x00, 0xff, 0xff);
 }
 
-PUDAPI Pud_Color
+static inline Pud_Color
 pud_gold_mine_color_get(void)
 {
    return color_make(0xff, 0xff, 0x00, 0xff);
 }
 
-PUDAPI Pud_Color
+static inline Pud_Color
 pud_oil_patch_color_get(void)
 {
    return color_make(0x00, 0x00, 0x00, 0xff);
 }
 
 PUDAPI Pud_Color
-pud_color_for_unit(Pud_Unit   unit,
-                   Pud_Player player)
+pud_minimap_color_for_unit(Pud_Unit   unit,
+                           Pud_Player player)
 {
-
    if (unit == PUD_UNIT_GOLD_MINE)
      return pud_gold_mine_color_get();
    else if (unit == PUD_UNIT_OIL_PATCH)
      return pud_oil_patch_color_get();
    else
-     return pud_color_for_player(player);
+     return pud_minimap_color_for_player(player);
 }
 
 PUDAPI Pud_Side

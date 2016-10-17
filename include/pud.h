@@ -1230,8 +1230,62 @@ PUDAPI const Pud_Icon *pud_allow_upgrade_icons_get(Pud_Allow flag);
  *
  * @param section A pud section
  * @return NULL if @c section is invalid, its name otherwise
+ * @since 1.0.0
  */
 PUDAPI const char *pud_section_to_string(Pud_Section section);
+
+/**
+ * Convert a byte value into a pud owner
+ *
+ * @param code A byte describing the owner
+ * @return The owner for the given code @p code
+ * @since 1.0.0
+ */
+PUDAPI Pud_Owner pud_owner_convert(uint8_t code);
+
+/**
+ * Convery a byte value into a pud side
+ *
+ * @param code A byte describing the side
+ * @return The side for @p code
+ * @since 1.0.0
+ */
+PUDAPI Pud_Side pud_side_convert(uint8_t code);
+
+/**
+ * Tell if the unit is a building or not
+ *
+ * @param unit The unit to query
+ * @return PUD_TRUE if @p unit is a building, PUD_FALSE otherwise
+ * @since 1.0.0
+ */
+PUDAPI Pud_Bool pud_unit_building_is(Pud_Unit unit);
+
+PUDAPI Pud_Bool pud_unit_start_location_is(Pud_Unit unit);
+PUDAPI Pud_Bool pud_unit_flying_is(Pud_Unit unit);
+PUDAPI Pud_Bool pud_unit_underwater_is(Pud_Unit unit);
+PUDAPI Pud_Bool pud_unit_land_is(Pud_Unit unit);
+PUDAPI Pud_Bool pud_unit_marine_is(Pud_Unit unit);
+PUDAPI Pud_Bool pud_unit_always_passive_is(Pud_Unit unit);
+PUDAPI Pud_Bool pud_unit_oil_well_is(Pud_Unit unit);
+PUDAPI Pud_Bool pud_unit_coast_building_is(Pud_Unit unit);
+PUDAPI Pud_Bool pud_unit_boat_is(Pud_Unit unit);
+
+PUDAPI Pud_Bool pud_unit_hero_is(Pud_Unit unit);
+
+PUDAPI Pud_Color pud_tile_to_color(Pud_Era era, uint16_t tile);
+PUDAPI Pud_Color pud_color_for_player(Pud_Player player);
+PUDAPI Pud_Color pud_gold_mine_color_get(void);
+PUDAPI Pud_Color pud_oil_patch_color_get(void);
+PUDAPI Pud_Color pud_color_for_unit(Pud_Unit unit, Pud_Player player);
+
+PUDAPI Pud_Side pud_unit_side_get(Pud_Unit unit);
+
+PUDAPI uint8_t pud_random_get(uint16_t tile);
+PUDAPI Pud_Icon pud_unit_icon_get(Pud_Unit unit);
+PUDAPI Pud_Bool pud_unit_valid_is(Pud_Unit unit);
+PUDAPI Pud_Unit pud_unit_switch_side(Pud_Unit unit);
+
 
 
 /**
@@ -1556,38 +1610,6 @@ PUDAPI Pud_Bool pud_section_has(const Pud *pud, Pud_Section section);
 /**
  * @}
  */ /* End of Pud_File group */
-
-PUDAPI Pud_Owner pud_owner_convert(uint8_t code);
-PUDAPI Pud_Side pud_side_convert(uint8_t code);
-
-
-
-PUDAPI Pud_Bool pud_unit_building_is(Pud_Unit unit);
-
-PUDAPI Pud_Bool pud_unit_start_location_is(Pud_Unit unit);
-PUDAPI Pud_Bool pud_unit_flying_is(Pud_Unit unit);
-PUDAPI Pud_Bool pud_unit_underwater_is(Pud_Unit unit);
-PUDAPI Pud_Bool pud_unit_land_is(Pud_Unit unit);
-PUDAPI Pud_Bool pud_unit_marine_is(Pud_Unit unit);
-PUDAPI Pud_Bool pud_unit_always_passive_is(Pud_Unit unit);
-PUDAPI Pud_Bool pud_unit_oil_well_is(Pud_Unit unit);
-PUDAPI Pud_Bool pud_unit_coast_building_is(Pud_Unit unit);
-PUDAPI Pud_Bool pud_unit_boat_is(Pud_Unit unit);
-
-PUDAPI Pud_Bool pud_unit_hero_is(Pud_Unit unit);
-
-PUDAPI Pud_Color pud_tile_to_color(Pud_Era era, uint16_t tile);
-PUDAPI Pud_Color pud_color_for_player(Pud_Player player);
-PUDAPI Pud_Color pud_gold_mine_color_get(void);
-PUDAPI Pud_Color pud_oil_patch_color_get(void);
-PUDAPI Pud_Color pud_color_for_unit(Pud_Unit unit, Pud_Player player);
-
-PUDAPI Pud_Side pud_unit_side_get(Pud_Unit unit);
-
-PUDAPI uint8_t pud_random_get(uint16_t tile);
-PUDAPI Pud_Icon pud_unit_icon_get(Pud_Unit unit);
-PUDAPI Pud_Bool pud_unit_valid_is(Pud_Unit unit);
-PUDAPI Pud_Unit pud_unit_switch_side(Pud_Unit unit);
 
 /**
  * @defgroup Pud_Parse Pud Advanced Parsing Functions

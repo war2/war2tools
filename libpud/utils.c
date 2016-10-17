@@ -22,7 +22,7 @@
 
 #include "pud_private.h"
 
-Pud_Owner
+PUDAPI Pud_Owner
 pud_owner_convert(uint8_t code)
 {
    switch (code)
@@ -51,7 +51,7 @@ pud_owner_convert(uint8_t code)
      }
 }
 
-Pud_Side
+PUDAPI Pud_Side
 pud_side_convert(uint8_t code)
 {
    switch (code)

@@ -763,20 +763,20 @@ end:
    return ret;
 }
 
-Pud_Bool
+PUDAPI Pud_Bool
 pud_unit_building_is(Pud_Unit unit)
 {
    return ((unit >= PUD_UNIT_FARM) && (unit <= PUD_UNIT_RUNESTONE) &&
            (unit != PUD_UNIT_HUMAN_START) && (unit != PUD_UNIT_ORC_START));
 }
 
-Pud_Bool
+PUDAPI Pud_Bool
 pud_unit_start_location_is(Pud_Unit unit)
 {
    return ((unit == PUD_UNIT_HUMAN_START) || (unit == PUD_UNIT_ORC_START));
 }
 
-Pud_Bool
+PUDAPI Pud_Bool
 pud_unit_flying_is(Pud_Unit unit)
 {
    return ((unit == PUD_UNIT_GNOMISH_FLYING_MACHINE) ||
@@ -788,7 +788,7 @@ pud_unit_flying_is(Pud_Unit unit)
            (unit == PUD_UNIT_KURDRAN_AND_SKY_REE));
 }
 
-Pud_Bool
+PUDAPI Pud_Bool
 pud_unit_land_is(Pud_Unit unit)
 {
    return ((!pud_unit_underwater_is(unit)) &&
@@ -796,14 +796,14 @@ pud_unit_land_is(Pud_Unit unit)
            (!pud_unit_flying_is(unit)));
 }
 
-Pud_Bool
+PUDAPI Pud_Bool
 pud_unit_underwater_is(Pud_Unit unit)
 {
    return ((unit == PUD_UNIT_GNOMISH_SUBMARINE) ||
            (unit == PUD_UNIT_GIANT_TURTLE));
 }
 
-Pud_Bool
+PUDAPI Pud_Bool
 pud_unit_marine_is(Pud_Unit unit)
 {
    return ((pud_unit_underwater_is(unit)) ||
@@ -811,14 +811,14 @@ pud_unit_marine_is(Pud_Unit unit)
            (pud_unit_oil_well_is(unit)));
 }
 
-Pud_Bool
+PUDAPI Pud_Bool
 pud_unit_boat_is(Pud_Unit unit)
 {
    return ((unit >= PUD_UNIT_HUMAN_TANKER) &&
            (unit <= PUD_UNIT_JUGGERNAUGHT));
 }
 
-Pud_Bool
+PUDAPI Pud_Bool
 pud_unit_coast_building_is(Pud_Unit unit)
 {
    return ((unit == PUD_UNIT_ORC_SHIPYARD) ||
@@ -829,13 +829,13 @@ pud_unit_coast_building_is(Pud_Unit unit)
            (unit == PUD_UNIT_ORC_REFINERY));
 }
 
-Pud_Bool
+PUDAPI Pud_Bool
 pud_unit_always_passive_is(Pud_Unit unit)
 {
    return (unit == PUD_UNIT_CRITTER);
 }
 
-Pud_Bool
+PUDAPI Pud_Bool
 pud_unit_oil_well_is(Pud_Unit unit)
 {
    return ((unit == PUD_UNIT_OIL_PATCH) ||
@@ -843,7 +843,7 @@ pud_unit_oil_well_is(Pud_Unit unit)
            (unit == PUD_UNIT_ORC_OIL_WELL));
 }
 
-Pud_Color
+PUDAPI Pud_Color
 pud_color_for_player(Pud_Player player)
 {
    switch (player)
@@ -863,19 +863,19 @@ pud_color_for_player(Pud_Player player)
    return color_make(0xff, 0x00, 0xff, 0xff);
 }
 
-Pud_Color
+PUDAPI Pud_Color
 pud_gold_mine_color_get(void)
 {
    return color_make(0xff, 0xff, 0x00, 0xff);
 }
 
-Pud_Color
+PUDAPI Pud_Color
 pud_oil_patch_color_get(void)
 {
    return color_make(0x00, 0x00, 0x00, 0xff);
 }
 
-Pud_Color
+PUDAPI Pud_Color
 pud_color_for_unit(Pud_Unit   unit,
                    Pud_Player player)
 {
@@ -888,7 +888,7 @@ pud_color_for_unit(Pud_Unit   unit,
      return pud_color_for_player(player);
 }
 
-Pud_Side
+PUDAPI Pud_Side
 pud_unit_side_get(Pud_Unit unit)
 {
    switch (unit)
@@ -910,7 +910,7 @@ pud_unit_side_get(Pud_Unit unit)
    return (unit % 2 == 0) ? PUD_SIDE_HUMAN : PUD_SIDE_ORC;
 }
 
-Pud_Bool
+PUDAPI Pud_Bool
 pud_unit_valid_is(Pud_Unit unit)
 {
    const unsigned u = (unsigned)unit;
@@ -919,7 +919,7 @@ pud_unit_valid_is(Pud_Unit unit)
             (u != 0x30) && (u != 0x36)));
 }
 
-Pud_Unit
+PUDAPI Pud_Unit
 pud_unit_switch_side(Pud_Unit unit)
 {
    if (pud_unit_hero_is(unit) ||
@@ -934,7 +934,7 @@ pud_unit_switch_side(Pud_Unit unit)
    else return unit - 1; /* Orc to Human */
 }
 
-Pud_Side
+PUDAPI Pud_Side
 pud_side_for_player_get(const Pud *pud,
                         Pud_Player player)
 {

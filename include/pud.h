@@ -1055,7 +1055,7 @@ PUDAPI void pud_shutdown(void);
  * @return PUD_TRUE if valid, PUD_FALSE otherwise
  * @since 1.0.0
  */
-PUDAPI Pud_Bool pud_section_valid_is(const char sec[4]);
+PUDAPI Pud_Bool pud_section_valid_is(const char *sec);
 
 /**
  * Generates a random tag for a PUD map.
@@ -1531,7 +1531,7 @@ PUDAPI const char *pud_description_get(const Pud *pud);
  * @param descr The description to be set.
  * @since 1.0.0
  */
-PUDAPI void pud_description_set(Pud *pud, const char descr[32]);
+PUDAPI void pud_description_set(Pud *pud, const char *descr);
 
 /**
  * Set the Warcraft 2 compatible version for the Pud

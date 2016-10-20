@@ -46,10 +46,11 @@ pud_section_has(const Pud   *pud,
 }
 
 PUDAPI Pud_Bool
-pud_section_valid_is(const char sec[4])
+pud_section_valid_is(const char *sec)
 {
    unsigned int i;
 
+   if (!sec) return PUD_FALSE;
    for (i = 0; i < sizeof(_pud_sections) / sizeof(_pud_sections[0]); i++)
      {
         if (!strncmp(sec, _pud_sections[i], 4))
@@ -569,11 +570,14 @@ pud_version_set(Pud      *pud,
 
 PUDAPI void
 pud_description_set(Pud        *pud,
-                    const char  descr[32])
+                    const char *descr)
 {
    PUD_SANITY_CHECK(pud, PUD_OPEN_MODE_W, VOID);
-   strncpy(pud->description, descr, 31);
-   pud->description[31] = '\0';
+   if (descr)
+     {
+        strncpy(pud->description, descr, 31);
+        pud->description[31] = '\0';
+     }
 }
 
 PUDAPI const char *

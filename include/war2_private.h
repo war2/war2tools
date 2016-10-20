@@ -125,7 +125,8 @@ struct _War2_Data
 static inline Pud_Bool
 war2_mem_map_ok(War2_Data *w2)
 {
-   return (w2->ptr < w2->mem_map + w2->mem_map_size);
+   return (w2->ptr < w2->mem_map + w2->mem_map_size)
+      ? PUD_TRUE : PUD_FALSE;
 }
 
 PUDAPI_INTERNAL void war2_palette_convert(const unsigned char *ptr, Pud_Color palette[256]);

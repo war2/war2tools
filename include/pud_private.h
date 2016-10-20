@@ -70,7 +70,8 @@ struct _Pud_Private
 static inline Pud_Bool
 pud_mem_map_ok(Pud *pud)
 {
-   return (pud->private->ptr < pud->private->mem_map + pud->private->mem_map_size);
+   return (pud->private->ptr < pud->private->mem_map + pud->private->mem_map_size)
+      ? PUD_TRUE : PUD_FALSE;
 }
 
 /* Visual hint when returning nothing */

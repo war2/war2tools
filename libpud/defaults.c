@@ -47,8 +47,8 @@ pud_defaults_set(Pud *pud)
    for (i = 0; i < 7; i++) pud->soil.unusable[i] = 1000;
    pud->soil.neutral = 1000;
 
-   pud->private->default_udta = 1;
-   pud->private->default_ugrd = 1;
+   pud->private->default_udta = PUD_TRUE;
+   pud->private->default_ugrd = PUD_TRUE;
 
    /* AI */
    for (i = 0; i < 8; i++) pud->ai.players[i] = 0x00;
@@ -71,7 +71,7 @@ pud_defaults_set(Pud *pud)
    pud_alow_defaults_set(pud);
 
    /* Most of the fields are assumed valid */
-   pud->private->init = 1;
+   pud->private->init = PUD_TRUE;
 
    return PUD_TRUE;
 }

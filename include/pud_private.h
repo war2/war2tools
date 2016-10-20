@@ -88,10 +88,9 @@ pud_mem_map_ok(Pud *pud)
    do { \
       if (!(pud)) { \
          DIE_RETURN(__VA_ARGS__, "Invalid PUD input [%p]", pud); \
-      } \
-      if (!(pud->private->open_mode & (mode))) { \
+      } else if (((pud)->private->open_mode & (mode)) != (mode)) { \
          DIE_RETURN(__VA_ARGS__, "PUD open mode is [%02x] expected [%02x]", \
-                    pud->private->open_mode, mode); \
+                    (pud)->private->open_mode, mode); \
       } \
    } while (0)
 

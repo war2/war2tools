@@ -168,7 +168,6 @@ pud_mem_map_ok(Pud *pud)
 
 PUDAPI_INTERNAL const char *long2bin(uint32_t x);
 PUDAPI_INTERNAL Pud_Color color_make(uint8_t r, uint8_t g, uint8_t b, uint8_t a);
-PUDAPI_INTERNAL const char *dim2str(Pud_Dimensions dim);
 PUDAPI_INTERNAL const char *mode2str(Pud_Open_Mode mode);
 PUDAPI_INTERNAL uint32_t pud_go_to_section(Pud *pud, Pud_Section sec);
 

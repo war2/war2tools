@@ -1080,6 +1080,15 @@ PUDAPI uint32_t pud_tag_generate(void);
 PUDAPI const char *pud_unit_to_string(Pud_Unit unit, Pud_Bool pretty);
 
 /**
+ * Describe Pud Dimenstions
+ *
+ * @param dims The dimenstions to be described
+ * @return The description of @c dims
+ * @since 1.0.0
+ */
+PUDAPI const char *pud_dimensions_to_string(Pud_Dimensions dims);
+
+/**
  * Describe a Pud era
  *
  * @param era The era to be described

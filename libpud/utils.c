@@ -102,6 +102,19 @@ pud_dimensions_to_size(Pud_Dimensions  dim,
 }
 
 PUDAPI const char *
+pud_dimensions_to_string(Pud_Dimensions dims)
+{
+   const char *const strings[] = {
+      [PUD_DIMENSIONS_UNDEFINED] = "UNDEFINED",
+      [PUD_DIMENSIONS_32_32] = "32 x 32",
+      [PUD_DIMENSIONS_64_64] = "64 x 64",
+      [PUD_DIMENSIONS_96_96] = "96 x 96",
+      [PUD_DIMENSIONS_128_128] = "128 x 128",
+   };
+   return ((unsigned)dims > PUD_DIMENSIONS_128_128) ? NULL : strings[dims];
+}
+
+PUDAPI const char *
 pud_color_to_string(Pud_Player color)
 {
    const char *const colors[] = {
@@ -655,7 +668,7 @@ pud_dump(const Pud *pud,
    fprintf(stream, "Version..............: %x\n", pud->version);
    fprintf(stream, "Description..........: %s\n", pud->description);
    fprintf(stream, "Era..................: %s\n", pud_era_to_string(pud->era));
-   fprintf(stream, "Dimensions...........: %s\n", dim2str(pud->dims));
+   fprintf(stream, "Dimensions...........: %s\n", pud_dimensions_to_string(pud->dims));
    fprintf(stream, "Default ALOW.........: %i\n", pud->private->default_allow);
    fprintf(stream, "Default UDTA.........: %i\n", pud->private->default_udta);
    fprintf(stream, "Default UGRD.........: %i\n", pud->private->default_ugrd);
@@ -819,7 +832,7 @@ pud_dump(const Pud *pud,
      }
 
    /* Tiles map */
-   fprintf(stream, "Tiles Map (%s)\n", dim2str(pud->dims));
+   fprintf(stream, "Tiles Map (%s)\n", pud_dimensions_to_string(pud->dims));
    for (i = 0; i < pud->map_h; i++)
      {
         for (j = 0; j < pud->map_w; j++)
@@ -832,7 +845,7 @@ pud_dump(const Pud *pud,
      }
 
    /* Action map */
-   fprintf(stream, "Action Map (%s)\n", dim2str(pud->dims));
+   fprintf(stream, "Action Map (%s)\n", pud_dimensions_to_string(pud->dims));
    for (i = 0; i < pud->map_h; i++)
      {
         for (j = 0; j < pud->map_w; j++)
@@ -845,7 +858,7 @@ pud_dump(const Pud *pud,
      }
 
    /* Movement map */
-   fprintf(stream, "Movement Map (%s)\n", dim2str(pud->dims));
+   fprintf(stream, "Movement Map (%s)\n", pud_dimensions_to_string(pud->dims));
    for (i = 0; i < pud->map_h; i++)
      {
         for (j = 0; j < pud->map_w; j++)

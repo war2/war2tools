@@ -563,7 +563,7 @@ pud_alow_defaults_set(Pud *pud)
 
    PUD_SANITY_CHECK(pud, PUD_OPEN_MODE_W, VOID);
 
-   pud->private->default_allow = 1;
+   pud->private->default_allow = PUD_TRUE;
 
    /* Everything is allowed */
    memset(&pud->unit_alow, 0xff, sizeof(pud->unit_alow));

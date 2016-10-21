@@ -3,8 +3,6 @@ project(war2tools C)
 
 include(cmake/check_compiler_warnings.cmake)
 
-add_definitions(-g) # FIXME
-add_definitions(-std=gnu99) # FIXME
 add_definitions(-D_BSD_SOURCE)
 add_definitions(-D_DEFAULT_SOURCE)
 

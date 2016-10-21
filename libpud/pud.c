@@ -276,33 +276,33 @@ pud_dimensions_set(Pud            *pud,
    PUD_SANITY_CHECK(pud, PUD_OPEN_MODE_W, PUD_FALSE);
 
    size_t size;
-   unsigned int i;
+   unsigned int i, tiles;
+   void *ptr;
 
-   pud->dims = dims;
    pud_dimensions_to_size(dims, &(pud->map_w), &(pud->map_h));
-   pud->tiles = pud->map_w * pud->map_h;
+   tiles = pud->map_w * pud->map_h;
 
-   size = pud->tiles * sizeof(uint16_t);
-
-   /*
-    * FIXME realloc()s here do not handle failure properly.
-    * FIXME Memory always leak on failure!!!!! (unreachable).
-    */
+   size = tiles * sizeof(uint16_t);
 
    /* Set by default light ground */
-   pud->tiles_map = realloc(pud->tiles_map, size);
-   if (!pud->tiles_map) DIE_RETURN(PUD_FALSE, "Failed to allocate memory");
-   for (i = 0; i < pud->tiles; i++)
+   ptr = realloc(pud->tiles_map, size);
+   if (!ptr) DIE_RETURN(PUD_FALSE, "Failed to allocate memory");
+   pud->tiles_map = ptr;
+   for (i = 0; i < tiles; i++)
      pud->tiles_map[i] = 0x0050;
 
-   pud->action_map = realloc(pud->action_map, size);
-   if (!pud->action_map) DIE_RETURN(PUD_FALSE, "Failed to allocate memory");
+   ptr = realloc(pud->action_map, size);
+   if (!ptr) DIE_RETURN(PUD_FALSE, "Failed to allocate memory");
+   pud->action_map = ptr;
    memset(pud->action_map, 0, size);
 
-   pud->movement_map = realloc(pud->movement_map, size);
-   if (!pud->movement_map) DIE_RETURN(PUD_FALSE, "Failed to allocate memory");
+   ptr = realloc(pud->movement_map, size);
+   if (!ptr) DIE_RETURN(PUD_FALSE, "Failed to allocate memory");
+   pud->movement_map = ptr;
    memset(pud->movement_map, 0, size);
 
+   pud->tiles = tiles;
+   pud->dims = dims;
    return PUD_TRUE;
 }
 

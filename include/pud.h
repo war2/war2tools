@@ -1325,6 +1325,42 @@ PUDAPI Pud_Bool pud_unit_always_passive_is(Pud_Unit unit);
 PUDAPI Pud_Bool pud_unit_oil_well_is(Pud_Unit unit);
 
 /**
+ * Tell whether a unit is a resource collector or not
+ *
+ * @param unit The unit to query
+ * @return PUD_TRUE if @p unit is a resource collector, PUD_FALSE otherwise
+ * @since 1.0.0
+ */
+PUDAPI Pud_Bool pud_unit_resource_collector_is(Pud_Unit unit);
+
+/**
+ * Tell whether a unit is a gold collector or not
+ *
+ * @param unit The unit to query
+ * @return PUD_TRUE if @p unit is a gold collector, PUD_FALSE otherwise
+ * @since 1.0.0
+ */
+PUDAPI Pud_Bool pud_unit_gold_collector_is(Pud_Unit unit);
+
+/**
+ * Tell whether a unit is a lumber collector or not
+ *
+ * @param unit The unit to query
+ * @return PUD_TRUE if @p unit is a lumber collector, PUD_FALSE otherwise
+ * @since 1.0.0
+ */
+PUDAPI Pud_Bool pud_unit_lumber_collector_is(Pud_Unit unit);
+
+/**
+ * Tell whether a unit is a oil collector or not
+ *
+ * @param unit The unit to query
+ * @return PUD_TRUE if @p unit is a oil collector, PUD_FALSE otherwise
+ * @since 1.0.0
+ */
+PUDAPI Pud_Bool pud_unit_oil_collector_is(Pud_Unit unit);
+
+/**
  * Tell whether a unit is a coast building or not
  *
  * @param unit The unit to query

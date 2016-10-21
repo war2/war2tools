@@ -816,6 +816,49 @@ pud_unit_marine_is(Pud_Unit unit)
 }
 
 PUDAPI Pud_Bool
+pud_unit_resource_collector_is(Pud_Unit unit)
+{
+   /*
+    * WARNING: This function does not study gold
+    * collectors because this check is already performed
+    * by pud_unit_lumber_collector_is(), as gold collectors
+    * are a subset of lumber collectors.
+    */
+   return (pud_unit_lumber_collector_is(unit) ||
+           pud_unit_oil_collector_is(unit));
+}
+
+PUDAPI Pud_Bool
+pud_unit_gold_collector_is(Pud_Unit unit)
+{
+   return ((unit == PUD_UNIT_GREAT_HALL) ||
+           (unit == PUD_UNIT_TOWN_HALL) ||
+           (unit == PUD_UNIT_STRONGHOLD) ||
+           (unit == PUD_UNIT_KEEP) ||
+           (unit == PUD_UNIT_CASTLE) ||
+           (unit == PUD_UNIT_FORTRESS));
+}
+
+PUDAPI Pud_Bool
+pud_unit_oil_collector_is(Pud_Unit unit)
+{
+   return ((unit == PUD_UNIT_HUMAN_SHIPYARD) ||
+           (unit == PUD_UNIT_ORC_SHIPYARD) ||
+           (unit == PUD_UNIT_HUMAN_REFINERY) ||
+           (unit == PUD_UNIT_ORC_REFINERY));
+}
+
+PUDAPI Pud_Bool
+pud_unit_lumber_collector_is(Pud_Unit unit)
+{
+   /* We check for gold collectors because a gold collector
+    * can also collect lumber */
+   return (pud_unit_gold_collector_is(unit) ||
+           (unit == PUD_UNIT_TROLL_LUMBER_MILL) ||
+           (unit == PUD_UNIT_ELVEN_LUMBER_MILL));
+}
+
+PUDAPI Pud_Bool
 pud_unit_boat_is(Pud_Unit unit)
 {
    return ((unit >= PUD_UNIT_HUMAN_TANKER) &&

@@ -5,7 +5,7 @@ if (PNG_FOUND)
    add_definitions(-DHAVE_PNG=1)
 endif()
 
-add_library(libwar2 SHARED
+add_library(libwar2
    war2.c
    private.c
    tileset.c
@@ -28,4 +28,5 @@ target_link_libraries(${LIBWAR2_LIBRARIES})
 install(
    TARGETS libwar2
    LIBRARY DESTINATION lib
+   ARCHIVE DESTINATION lib
 )

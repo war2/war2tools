@@ -1,5 +1,3 @@
-set(BUILD_SHARED_LIBS true)
-
 set(
    LIBPUD_SRC
    pud.c
@@ -18,12 +16,10 @@ include_directories(
 )
 
 add_library(libpud SHARED ${LIBPUD_SRC})
-add_library(libpud_static STATIC ${LIBPUD_SRC})
 
 # Disable the prefix because it is already in the name
 # The name cannot (?) be changed because there is another target called pud
 SET_TARGET_PROPERTIES(libpud PROPERTIES PREFIX "")
-SET_TARGET_PROPERTIES(libpud_static PROPERTIES OUTPUT_NAME libpud PREFIX "")
 
 install(
    TARGETS libpud

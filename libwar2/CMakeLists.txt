@@ -1,5 +1,3 @@
-set(BUILD_SHARED_LIBS true)
-
 if (JPEG_FOUND)
    add_definitions(-DHAVE_JPEG=1)
 endif()

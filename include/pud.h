@@ -1399,7 +1399,7 @@ PUDAPI Pud_Bool pud_unit_hero_is(Pud_Unit unit);
 /**
  * Get the side commonly associated to a unit
  *
- * @param The unit to query
+ * @param unit The unit to query
  * @return The side of @p unit
  * @since 1.0.0
  */

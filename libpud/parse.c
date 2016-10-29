@@ -742,6 +742,7 @@ pud_parse_unit(Pud *pud)
         pud->units[i].alter = READ16(pud, ECHAP(err));
      }
 
+   pud->starting_points = 0;
    for (i = 0; i < units; i++)
      {
         u = &(pud->units[i]);

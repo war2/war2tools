@@ -1,5 +1,4 @@
-set(
-   LIBPUD_SRC
+add_library(libpud
    pud.c
    defaults.c
    img.c
@@ -10,12 +9,10 @@ set(
    random.c
 )
 
-include_directories(
-   ${CMAKE_CURRENT_SOURCE_DIR}
-   ${CMAKE_CURRENT_SOURCE_DIR}/../include
+target_include_directories(libpud
+   PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}
+   PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../include
 )
-
-add_library(libpud ${LIBPUD_SRC})
 
 # Disable the prefix because it is already in the name
 # The name cannot (?) be changed because there is another target called pud

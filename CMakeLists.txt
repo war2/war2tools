@@ -3,6 +3,8 @@ project(war2tools C)
 
 include(cmake/check_compiler_warnings.cmake)
 
+set(BUILD_SHARED_LIBS ON)
+
 add_definitions(-D_BSD_SOURCE)
 add_definitions(-D_DEFAULT_SOURCE)
 

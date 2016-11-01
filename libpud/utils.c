@@ -287,7 +287,7 @@ PUDAPI const char *
 pud_unit_to_string(Pud_Unit unit,
              Pud_Bool pretty)
 {
-   if ((unit < PUD_UNIT_FOOTMAN) && (unit > PUD_UNIT_CRITTER_RED_PIG))
+   if ((unit < PUD_UNIT_FOOTMAN) || (unit > PUD_UNIT_CRITTER_RED_PIG))
      return NULL;
    return (pretty) ? _names[unit].pretty : _names[unit].name;
 }
@@ -295,7 +295,7 @@ pud_unit_to_string(Pud_Unit unit,
 PUDAPI Pud_Icon
 pud_unit_icon_get(Pud_Unit unit)
 {
-   if ((unit < PUD_UNIT_FOOTMAN) && (unit > PUD_UNIT_CRITTER_RED_PIG))
+   if ((unit < PUD_UNIT_FOOTMAN) || (unit > PUD_UNIT_CRITTER_RED_PIG))
      return PUD_ICON_CANCEL;
    return _names[unit].icon;
 }

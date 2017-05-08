@@ -145,7 +145,7 @@ _unit_cb(void                          *fdata  EINA_UNUSED,
    /* Quick and dirty debug */
    char nopath[128];
    snprintf(nopath, 128, "%s.png", key);
-   for (int i = 0; i < (int)strlen(nopath); i++)
+   for (i = 0; i < strlen(nopath); i++)
      if (nopath[i] == '/') nopath[i] = '_';
    war2_png_write(nopath, w, h, (unsigned char *)sprite);
 #endif

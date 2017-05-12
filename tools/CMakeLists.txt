@@ -82,7 +82,9 @@ if (CAIRO_FOUND)
       ${CAIRO_LIBRARIES}
    )
 endif ()
-target_link_libraries(extract_tiles ${EXTRACT_TILES_LIBRARIES})
+if (ECORE_FILE_FOUND)
+   target_link_libraries(extract_tiles ${EXTRACT_TILES_LIBRARIES})
+endif ()
 
 if (EET_FOUND)
    target_link_libraries(extract_sprites ${LIBWAR2_LIBRARIES} ${EET_LIBRARIES} ${EMILE_LIBRARIES} ${EINA_LIBRARIES} ${CAIRO_LIBRARIES} ${ECORE_FILE_LIBRARIES})

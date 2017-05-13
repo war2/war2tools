@@ -42,7 +42,7 @@ pud_section_has(const Pud   *pud,
                 Pud_Section  section)
 {
    if (!pud) return PUD_FALSE;
-   return !!(pud->private->sections & (1 << section));
+   return !!(pud->private_data->sections & (1 << section));
 }
 
 PUDAPI Pud_Bool
@@ -93,14 +93,14 @@ pud_go_to_section(Pud         *pud,
 
    /* If the section to search for is before the current section,
     * rewind the file to catch it. If it is after, do nothing */
-   if (sec <= pud->private->current_section)
-     pud->private->ptr = pud->private->mem_map;
+   if (sec <= pud->private_data->current_section)
+     pud->private_data->ptr = pud->private_data->mem_map;
 
    /* Tell the PUD we are pointing at the last section.
     * In case of success the pud will be pointing at the section
     * it had to go.
     * On failure, it will have to rewind itself on next call */
-   pud->private->current_section = PUD_SECTION_UNIT;
+   pud->private_data->current_section = PUD_SECTION_UNIT;
 
    READBUF(pud, buf, char, 4, FAIL(0));
 
@@ -109,7 +109,7 @@ pud_go_to_section(Pud         *pud,
         if (!strncmp(buf, sec_str, 4))
           {
              /* Update current section */
-             pud->private->current_section = sec;
+             pud->private_data->current_section = sec;
 
              l = READ32(pud, FAIL(0));
              return l;
@@ -156,11 +156,11 @@ pud_open(const char    *file,
    pud = calloc(1, sizeof(Pud));
    if (!pud) DIE_GOTO(err, "Failed to alloc Pud: %s", strerror(errno));
 
-   pud->private = _private_new();
-   if (!pud->private) DIE_GOTO(err, "Failed to create private structure");
+   pud->private_data = _private_new();
+   if (!pud->private_data) DIE_GOTO(err, "Failed to create private structure");
 
    /* Keep the open mode around */
-   pud->private->open_mode = mode;
+   pud->private_data->open_mode = mode;
 
    /*
     * +) If the file exists, and we are allowed to read from it,
@@ -174,9 +174,9 @@ pud_open(const char    *file,
      {
         if (mode & PUD_OPEN_MODE_R)
           {
-             pud->private->mem_map = common_file_mmap(file, &pud->private->mem_map_size);
-             if (!pud->private->mem_map) DIE_GOTO(err, "Failed to map file \"%s\"", file);
-             pud->private->ptr = pud->private->mem_map;
+             pud->private_data->mem_map = common_file_mmap(file, &pud->private_data->mem_map_size);
+             if (!pud->private_data->mem_map) DIE_GOTO(err, "Failed to map file \"%s\"", file);
+             pud->private_data->ptr = pud->private_data->mem_map;
 
              if (!(mode & PUD_OPEN_MODE_NO_PARSE))
                {
@@ -216,7 +216,7 @@ PUDAPI void
 pud_close(Pud *pud)
 {
    if (!pud) return;
-   _private_free(pud->private);
+   _private_free(pud->private_data);
    free(pud->units);
    free(pud->tiles_map);
    free(pud->action_map);
@@ -228,7 +228,7 @@ pud_close(Pud *pud)
 PUDAPI Pud_Bool
 pud_parse(Pud *pud)
 {
-   pud->private->sections = 0;
+   pud->private_data->sections = 0;
 
 #define PARSE_SEC(sec) \
    if (!pud_parse_ ## sec(pud)) DIE_RETURN(PUD_FALSE, "Failed to parse " #sec)
@@ -256,7 +256,7 @@ pud_parse(Pud *pud)
 #undef PARSE_SEC
 
    /* Is assumed valid */
-   pud->private->init = 1;
+   pud->private_data->init = 1;
 
    return PUD_TRUE;
 }
@@ -413,7 +413,7 @@ pud_write(const Pud  *pud,
    W16(p->era, 1);
 
    /* Section ERAX */
-   if (p->private->has_erax)
+   if (p->private_data->has_erax)
      {
         WISEC(PUD_SECTION_ERAX, 2);
         W16(p->era, 1);
@@ -426,7 +426,7 @@ pud_write(const Pud  *pud,
 
    /* Section UDTA */
    WISEC(PUD_SECTION_UDTA, 5696);
-   WI16(p->private->default_udta, 1);
+   WI16(p->private_data->default_udta, 1);
    for (i = 0; i < 110; i++) W16(p->units_descr[i].overlap_frames, 1);
    for (i = 0; i < 508; i++) W16(p->obsolete_udta[i], 1);
    for (i = 0; i < 110; i++) W32(p->units_descr[i].sight, 1);
@@ -468,7 +468,7 @@ pud_write(const Pud  *pud,
    // WI16(0, 127); // Obsolete data (do not print!!)
 
    /* Section ALOW */
-   if (p->private->default_allow == 0)
+   if (p->private_data->default_allow == 0)
      {
         WISEC(PUD_SECTION_ALOW, 384);
         fwrite(&p->unit_alow, sizeof(uint32_t), 16, f);
@@ -482,7 +482,7 @@ pud_write(const Pud  *pud,
 
    /* Section UGRD */
    WISEC(PUD_SECTION_UGRD, 782);
-   WI16(p->private->default_ugrd, 1);
+   WI16(p->private_data->default_ugrd, 1);
    for (i = 0; i < 52; i++) W8(p->upgrades[i].time, 1);
    for (i = 0; i < 52; i++) W16(p->upgrades[i].gold, 1);
    for (i = 0; i < 52; i++) W16(p->upgrades[i].lumber, 1);
@@ -686,7 +686,7 @@ pud_check(Pud                   *pud,
    memset(players_units, 0, sizeof(players_units));
    memset(players_start_loc, 0, sizeof(players_start_loc));
 
-   if (!pud->private->init)
+   if (!pud->private_data->init)
      {
         ret = PUD_ERROR_NOT_INITIALIZED;
         goto end;
@@ -993,21 +993,21 @@ PUDAPI Pud_Bool
 pud_default_alow_get(const Pud *pud)
 {
    PUD_SANITY_CHECK(pud, PUD_OPEN_MODE_R, PUD_FALSE);
-   return pud->private->default_allow;
+   return pud->private_data->default_allow;
 }
 
 PUDAPI Pud_Bool
 pud_default_udta_get(const Pud *pud)
 {
    PUD_SANITY_CHECK(pud, PUD_OPEN_MODE_R, PUD_FALSE);
-   return pud->private->default_udta;
+   return pud->private_data->default_udta;
 }
 
 PUDAPI Pud_Bool
 pud_default_ugrd_get(const Pud *pud)
 {
    PUD_SANITY_CHECK(pud, PUD_OPEN_MODE_R, PUD_FALSE);
-   return pud->private->default_ugrd;
+   return pud->private_data->default_ugrd;
 }
 
 PUDAPI void
@@ -1015,7 +1015,7 @@ pud_default_alow_override(Pud      *pud,
                           Pud_Bool  use_default)
 {
    PUD_SANITY_CHECK(pud, PUD_OPEN_MODE_W, VOID);
-   pud->private->default_allow = !!use_default;
+   pud->private_data->default_allow = !!use_default;
 }
 
 PUDAPI void
@@ -1023,7 +1023,7 @@ pud_default_ugrd_override(Pud      *pud,
                           Pud_Bool  use_default)
 {
    PUD_SANITY_CHECK(pud, PUD_OPEN_MODE_W, VOID);
-   pud->private->default_ugrd = !!use_default;
+   pud->private_data->default_ugrd = !!use_default;
 }
 
 PUDAPI void
@@ -1031,5 +1031,5 @@ pud_default_udta_override(Pud      *pud,
                           Pud_Bool  use_default)
 {
    PUD_SANITY_CHECK(pud, PUD_OPEN_MODE_W, VOID);
-   pud->private->default_udta = !!use_default;
+   pud->private_data->default_udta = !!use_default;
 }

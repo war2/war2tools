@@ -70,7 +70,8 @@ struct _Pud_Private
 static inline Pud_Bool
 pud_mem_map_ok(Pud *pud)
 {
-   return (pud->private->ptr < pud->private->mem_map + pud->private->mem_map_size)
+   const Pud_Private *const priv = pud->private_data;
+   return (priv->ptr < priv->mem_map + priv->mem_map_size)
       ? PUD_TRUE : PUD_FALSE;
 }
 
@@ -79,7 +80,7 @@ pud_mem_map_ok(Pud *pud)
 
 #define PUD_VERBOSE(pud, lvl, msg, ...) \
    do { \
-      if (pud->private->verbose >= lvl) { \
+      if (pud->private_data->verbose >= lvl) { \
          fprintf(stdout, "-- " msg "\n", ## __VA_ARGS__); \
       } \
    } while (0)
@@ -88,9 +89,9 @@ pud_mem_map_ok(Pud *pud)
    do { \
       if (!(pud)) { \
          DIE_RETURN(__VA_ARGS__, "Invalid PUD input [%p]", pud); \
-      } else if (((pud)->private->open_mode & (mode)) != (mode)) { \
+      } else if (((pud)->private_data->open_mode & (mode)) != (mode)) { \
          DIE_RETURN(__VA_ARGS__, "PUD open mode is [%02x] expected [%02x]", \
-                    (pud)->private->open_mode, mode); \
+                    (pud)->private_data->open_mode, mode); \
       } \
    } while (0)
 
@@ -115,8 +116,8 @@ pud_mem_map_ok(Pud *pud)
     ERR("Read outside of memory map!"); \
     __VA_ARGS__; \
     } \
-    memcpy(&(x__[0]), p->private->ptr, size__); \
-    p->private->ptr += size__; \
+    memcpy(&(x__[0]), p->private_data->ptr, size__); \
+    p->private_data->ptr += size__; \
     x__[0]; \
     })
 
@@ -128,8 +129,8 @@ pud_mem_map_ok(Pud *pud)
     ERR("Read outside of memory map!"); \
     __VA_ARGS__; \
     } \
-    memcpy(&(x__[0]), p->private->ptr, size__); \
-    p->private->ptr += size__; \
+    memcpy(&(x__[0]), p->private_data->ptr, size__); \
+    p->private_data->ptr += size__; \
     x__[0]; \
     })
 
@@ -141,8 +142,8 @@ pud_mem_map_ok(Pud *pud)
     ERR("Read outside of memory map!"); \
     __VA_ARGS__; \
     } \
-    memcpy(&(x__[0]), p->private->ptr, size__); \
-    p->private->ptr += size__; \
+    memcpy(&(x__[0]), p->private_data->ptr, size__); \
+    p->private_data->ptr += size__; \
     x__[0]; \
     })
 
@@ -154,8 +155,8 @@ pud_mem_map_ok(Pud *pud)
          ERR("Read outside of memory map!"); \
          __VA_ARGS__; \
       } \
-      memcpy(ptr__, p->private->ptr, size__); \
-      p->private->ptr += size__; \
+      memcpy(ptr__, p->private_data->ptr, size__); \
+      p->private_data->ptr += size__; \
    } while (0)
 
 

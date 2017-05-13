@@ -837,7 +837,7 @@ typedef struct
  */
 typedef struct
 {
-   Pud_Private *private; /**< Internals, private and opaque data. Don't touch ;-) */
+   Pud_Private *private_data; /**< Internals, private and opaque data. Don't touch ;-) */
 
    uint32_t       tag;  /**< Identifier of the pud file */
    uint16_t       version; /**< Version of Warcraft 2 that could read this Pud */

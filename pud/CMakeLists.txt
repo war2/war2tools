@@ -9,7 +9,7 @@ target_include_directories(
    pud
    PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}
    PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/../include
-   PUBLIC ${PUD_INCLUDES_DIR}
+   PUBLIC ${PUD_INCLUDE_DIR}
 )
 
 target_link_libraries(pud ${PUD_LIBRARIES})

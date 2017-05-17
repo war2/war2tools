@@ -104,7 +104,7 @@ err_close:
         return NULL;
      }
 
-   while ((!feof(f)) && (!ferror(f)))
+   do
      {
         size = fread(buf, sizeof(char), sizeof(buf), f);
         if (!size) break;
@@ -120,6 +120,8 @@ err_close:
         map = tmp;
         memcpy(map + total - size, buf, size);
      }
+   while ((!feof(f)) && (!ferror(f)));
+
    if (ferror(f))
      {
         fprintf(stderr, "*** ferror() was raised\n");

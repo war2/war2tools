@@ -47,7 +47,7 @@ static Cairo_Ctx _cairo;
 #endif
 
 static void
-_open(const char *era)
+_open_era(const char *era)
 {
    char my_getcwd[1024];
    char my_path2[1024];
@@ -66,8 +66,6 @@ _open(const char *era)
    else if (_export_type == ATLAS)
      {
 #ifdef HAVE_CAIRO
-        int bytes;
-
         _cairo.img = cairo_image_surface_create(CAIRO_FORMAT_ARGB32,
                                                 0x10 * TILE_H,
                                                 14 * 9 * TILE_W + 0xc * TILE_W);
@@ -76,14 +74,14 @@ _open(const char *era)
         snprintf(my_path2, sizeof(my_path2),
                  "%s/tiles/atlas", getcwd(my_getcwd, sizeof(my_getcwd)));
         ecore_file_mkpath(my_path2);
-        bytes = snprintf(my_path, sizeof(my_path), "%s/%s.png", my_path2, era);
-        _cairo.png = strndup(my_path, bytes);
+        snprintf(my_path, sizeof(my_path), "%s/%s.png", my_path2, era);
+        _cairo.png = strdup(my_path);
 #endif
      }
 }
 
 static void
-_close(void)
+_close_current_era(void)
 {
    if (_export_type == EET)
      {
@@ -313,25 +311,25 @@ main(int    argc,
      }
 
 
-   _open("forest");
+   _open_era("forest");
    tiles = war2_tileset_decode(w2, PUD_ERA_FOREST, func, NULL);
    if (!tiles) DIE_RETURN(2, "Failed to decode tileset FOREST");
-   _close();
+   _close_current_era();
 
-   _open("winter");
+   _open_era("winter");
    tiles = war2_tileset_decode(w2, PUD_ERA_WINTER, func, NULL);
    if (!tiles) DIE_RETURN(2, "Failed to decode tileset WINTER");
-   _close();
+   _close_current_era();
 
-   _open("wasteland");
+   _open_era("wasteland");
    tiles = war2_tileset_decode(w2, PUD_ERA_WASTELAND, func, NULL);
    if (!tiles) DIE_RETURN(2, "Failed to decode tileset WASTELAND");
-   _close();
+   _close_current_era();
 
-   _open("swamp");
+   _open_era("swamp");
    tiles = war2_tileset_decode(w2, PUD_ERA_SWAMP, func, NULL);
    if (!tiles) DIE_RETURN(2, "Failed to decode tileset SWAMP");
-   _close();
+   _close_current_era();
 
    printf("Output is in %s/tiles/%s\n", getcwd(buf, sizeof(buf)), dest);
 

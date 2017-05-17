@@ -26,13 +26,11 @@ static Cairo_Ctx _cairo;
 #define ICON_H 38
 
 static void
-_open(const char *era)
+_open_era_file(const char *era)
 {
    char my_getcwd[1024];
    char my_path2[1024];
    char my_path[1024];
-
-   int bytes;
 
    _cairo.img = cairo_image_surface_create(CAIRO_FORMAT_ARGB32,
                                            ICON_W,
@@ -42,12 +40,12 @@ _open(const char *era)
    snprintf(my_path2, sizeof(my_path2),
             "%s/icons", getcwd(my_getcwd, sizeof(my_getcwd)));
    ecore_file_mkpath(my_path2);
-   bytes = snprintf(my_path, sizeof(my_path), "%s/%s.png", my_path2, era);
-   _cairo.png = strndup(my_path, bytes);
+   snprintf(my_path, sizeof(my_path), "%s/%s.png", my_path2, era);
+   _cairo.png = strdup(my_path);
 }
 
 static void
-_close(void)
+_close_file(void)
 {
    cairo_surface_write_to_png(_cairo.img, _cairo.png);
    cairo_destroy(_cairo.cr);
@@ -136,11 +134,11 @@ main(int    argc,
 
    for (i = 0; i < EINA_C_ARRAY_LENGTH(eras); i++)
      {
-        _open(eras[i].str);
+        _open_era_file(eras[i].str);
         chk = war2_sprites_decode(w2, PUD_PLAYER_RED, eras[i].era,
                                  WAR2_SPRITES_ICONS, _icons_cb, NULL);
         if (!chk) DIE_RETURN(2, "Failed to decode tileset %s", eras[i].str);
-        _close();
+        _close_file();
      }
 
    printf("Output is in %s/icons/\n", getcwd(buf, sizeof(buf)));

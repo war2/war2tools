@@ -5,9 +5,8 @@
  */
 
 #include "ppm.h"
-#include "pud_private.h"
 #include "war2.h"
-#include <Eina.h>
+
 #include <Eet.h>
 #include <cairo.h>
 #include <Ecore_File.h>

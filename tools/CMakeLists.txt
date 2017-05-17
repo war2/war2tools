@@ -1,5 +1,6 @@
 pkg_check_modules(EINA eina)
 pkg_check_modules(EET eet)
+pkg_check_modules(EVIL evil)
 pkg_check_modules(ECORE_FILE ecore-file)
 pkg_check_modules(EMILE emile)
 pkg_check_modules(CAIRO cairo)
@@ -14,6 +15,11 @@ link_directories(${CMAKE_CURRENT_BINARY_DIR}/../libwar2)
 if (EINA_FOUND)
    include_directories(${EINA_INCLUDE_DIRS})
    link_directories(${EINA_LIBRARY_DIRS})
+endif ()
+
+if (EVIL_FOUND)
+   include_directories(${EVIL_INCLUDE_DIRS})
+   link_directories(${EVIL_LIBRARY_DIRS})
 endif ()
 
 if (EET_FOUND AND EMILE_FOUND)
@@ -60,6 +66,7 @@ if (ECORE_FILE_FOUND)
    LIST(APPEND EXTRACT_TILES_LIBRARIES
       ${LIBWAR2_LIBRARIES}
       ${ECORE_FILE_LIBRARIES}
+      ${EVIL_LIBRARIES}
    )
    add_executable(extract_tiles extract_tiles.c)
 endif ()
@@ -87,7 +94,15 @@ if (ECORE_FILE_FOUND)
 endif ()
 
 if (EET_FOUND)
-   target_link_libraries(extract_sprites ${LIBWAR2_LIBRARIES} ${EET_LIBRARIES} ${EMILE_LIBRARIES} ${EINA_LIBRARIES} ${CAIRO_LIBRARIES} ${ECORE_FILE_LIBRARIES})
+   target_link_libraries(extract_sprites
+      ${LIBWAR2_LIBRARIES}
+      ${EET_LIBRARIES}
+      ${EMILE_LIBRARIES}
+      ${EINA_LIBRARIES}
+      ${CAIRO_LIBRARIES}
+      ${ECORE_FILE_LIBRARIES}
+      ${EVIL_LIBRARIES}
+   )
    target_link_libraries(data_to_sprite ${EET_LIBRARIES} -lm)
 endif ()
 
@@ -96,6 +111,6 @@ if (CAIRO_FOUND AND EET_FOUND AND ECORE_FILE_FOUND)
    target_link_libraries(extract_icons
       ${LIBPUD_LIBRARIES} ${LIBWAR2_LIBRARIES}
       ${EINA_LIBRARIES} ${EET_LIBRARIES} ${ECORE_FILE_LIBRARIES}
-      ${CAIRO_LIBRARIES}
+      ${CAIRO_LIBRARIES} ${EVIL_LIBRARIES}
    )
 endif ()

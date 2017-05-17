@@ -27,6 +27,6 @@ target_link_libraries(${LIBWAR2_LIBRARIES})
 
 install(
    TARGETS libwar2
-   LIBRARY DESTINATION lib
-   ARCHIVE DESTINATION lib
+   RUNTIME DESTINATION bin COMPONENT runtime
+   ARCHIVE DESTINATION lib COMPONENT devel
 )

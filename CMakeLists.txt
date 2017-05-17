@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.0)
 project(war2tools C)
 
 include(cmake/check_compiler_warnings.cmake)
+include(cmake/check_function.cmake)
 
 set(BUILD_SHARED_LIBS ON)
 
@@ -45,7 +46,6 @@ check_compiler_warnings(
     -Wcast-align
 )
 
-include(CheckFunctionExists)
 
 set(LIBPUD_DESCRIPTION "Warcraft II PUD Manipulation Utilities")
 set(LIBPUD_VERSION_MAJOR 0)
@@ -81,15 +81,11 @@ add_custom_target(uninstall
    COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_SOURCE_DIR}/cmake/uninstall.cmake
 )
 
-check_function_exists(mmap HAVE_MMAP)
-check_function_exists(access HAVE_ACCESS)
+check_function(mmap)
+check_function(access)
+check_function(strndup)
 
-if (HAVE_MMAP)
-   add_definitions(-DHAVE_MMAP=1)
-endif ()
-if (HAVE_ACCESS)
-   add_definitions(-DHAVE_ACCESS=1)
-endif ()
+
 
 add_subdirectory(libpud)
 add_subdirectory(libwar2)

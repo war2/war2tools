@@ -7,6 +7,17 @@
 
 #include "pudutils.h"
 
+#ifndef HAVE_STRNDUP
+static char *
+strndup(const char *str, size_t size)
+{
+  char *const mem = malloc(size + 1);
+  memcpy(mem, str, size);
+  mem[size] = '\0';
+  return mem;
+}
+#endif
+
 static const struct option _options[] =
 {
      {"output",   required_argument,    0, 'o'},

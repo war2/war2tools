@@ -97,7 +97,7 @@ err_close:
    size_t size, total = 0;
    FILE *f;
 
-   f = fopen(file, "r");
+   f = fopen(file, "rb");
    if (!f)
      {
         fprintf(stderr, "*** Failed to topen \"%s\"\n", file);

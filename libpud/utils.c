@@ -137,26 +137,29 @@ pud_era_to_string(Pud_Era era)
 
 typedef struct
 {
-   const char *name;
-   const char *pretty;
-   Pud_Icon icon;
-   Pud_Bool hero;
+   const char *const name;
+   const char *const pretty;
+   const Pud_Icon icon;
+   const Pud_Bool hero;
+   const unsigned int size;
 } Unit;
 
-#define UNIT(suffix_, name_, pretty_) \
+#define UNIT(suffix_, name_, pretty_, size_) \
    [PUD_UNIT_ ## suffix_] = { \
       .name = name_, \
       .pretty = pretty_, \
       .icon = PUD_ICON_ ## suffix_, \
       .hero = PUD_FALSE, \
+      .size = size_, \
    }
 
-#define HERO(suffix_, name_, pretty_) \
+#define HERO(suffix_, name_, pretty_, size_) \
    [PUD_UNIT_ ## suffix_] = { \
       .name = name_, \
       .pretty = pretty_, \
       .icon = PUD_ICON_ ## suffix_, \
       .hero = PUD_TRUE, \
+      .size = size_, \
    }
 
 #define UNIT_START_LOCATION(suffix_, name_, pretty_) \
@@ -165,122 +168,126 @@ typedef struct
       .pretty = pretty_, \
       .icon = PUD_ICON_CANCEL, \
       .hero = PUD_FALSE, \
+      .size = 1, \
    }
 
-#define UNIT_START_LOCATION(suffix_, name_, pretty_) \
-   [PUD_UNIT_ ## suffix_] = { \
-      .name = name_, \
-      .pretty = pretty_, \
-      .icon = PUD_ICON_CANCEL, \
-      .hero = PUD_FALSE, \
-   }
+#define UNITx1(suffix_, name_, pretty_) UNIT(suffix_, name_, pretty_, 1)
+#define UNITx2(suffix_, name_, pretty_) UNIT(suffix_, name_, pretty_, 2)
+#define UNITx3(suffix_, name_, pretty_) UNIT(suffix_, name_, pretty_, 3)
+#define UNITx4(suffix_, name_, pretty_) UNIT(suffix_, name_, pretty_, 4)
+
+#define HEROx1(suffix_, name_, pretty_) HERO(suffix_, name_, pretty_, 1)
+#define HEROx2(suffix_, name_, pretty_) HERO(suffix_, name_, pretty_, 2)
+#define HEROx3(suffix_, name_, pretty_) HERO(suffix_, name_, pretty_, 3)
+#define HEROx4(suffix_, name_, pretty_) HERO(suffix_, name_, pretty_, 4)
+
 
 static const Unit _names[110] =
 {
-   UNIT(FOOTMAN, "footman", "Footman"),
-   UNIT(GRUNT, "grunt", "Grunt"),
-   UNIT(PEASANT, "peasant", "Peasant"),
-   UNIT(PEON, "peon", "Peon"),
-   UNIT(BALLISTA, "ballista", "Ballista"),
-   UNIT(CATAPULT, "catapult", "Catapult"),
-   UNIT(KNIGHT, "knight", "Knight"),
-   UNIT(OGRE, "ogre", "Ogre"),
-   UNIT(ARCHER, "archer", "Archer"),
-   UNIT(AXETHROWER, "axethrower", "Axethrower"),
-   UNIT(MAGE, "mage", "Mage"),
-   UNIT(DEATH_KNIGHT, "death_knight", "Death Knight"),
-   UNIT(PALADIN, "paladin", "Paladin"),
-   UNIT(OGRE_MAGE, "ogre_mage", "Ogre Mage"),
-   UNIT(DWARVES, "dwarves", "Dwarven Demolition Squad"),
-   UNIT(GOBLIN_SAPPER, "goblin_sapper", "Goblin Sapper"),
-   UNIT(ATTACK_PEASANT, "attack_peasant", "Peasant (Attack)"),
-   UNIT(ATTACK_PEON, "attack_peon", "Peon (Attack)"),
-   UNIT(RANGER, "ranger", "Elven Ranger"),
-   UNIT(BERSERKER, "berserker", "Berserker"),
-   HERO(ALLERIA, "alleria", "Alleria"),
-   HERO(TERON_GOREFIEND, "teron_gorefiend", "Teron Gorefiend"),
-   HERO(KURDRAN_AND_SKY_REE, "kurdran_and_sky_ree", "Kurdran and Sky'ree"),
-   HERO(DENTARG, "dentarg", "Dentarg"),
-   HERO(KHADGAR, "khadgar", "Khadgar"),
-   HERO(GROM_HELLSCREAM, "grom_hellscream", "Grom Hellscream"),
-   UNIT(HUMAN_TANKER, "human_tanker", "Human Tanker"),
-   UNIT(ORC_TANKER, "orc_tanker", "Orc Tanker"),
-   UNIT(HUMAN_TRANSPORT, "human_transport", "Human Transport"),
-   UNIT(ORC_TRANSPORT, "orc_transport", "Orc Transport"),
-   UNIT(ELVEN_DESTROYER, "elven_destroyer", "Elven Destroyer"),
-   UNIT(TROLL_DESTROYER, "troll_destroyer", "Troll Destroyer"),
-   UNIT(BATTLESHIP, "battleship", "Battleship"),
-   UNIT(JUGGERNAUGHT, "juggernaught", "Juggernaught"),
-   HERO(DEATHWING, "deathwing", "Deathwing"),
-   UNIT(GNOMISH_SUBMARINE, "gnomish_submarine", "Gnomish Submarine"),
-   UNIT(GIANT_TURTLE, "giant_turtle", "Giant Turtle"),
-   UNIT(GNOMISH_FLYING_MACHINE, "gnomish_flying_machine", "Gnomish Flying Machine"),
-   UNIT(GOBLIN_ZEPPLIN, "goblin_zepplin", "Goblin Zepplin"),
-   UNIT(GRYPHON_RIDER, "gryphon_rider", "Gryphon Rider"),
-   UNIT(DRAGON, "dragon", "Dragon"),
-   HERO(TURALYON, "turalyon", "Turalyon"),
-   UNIT(EYE_OF_KILROGG, "eye_of_kilrogg", "Eye of Kilrogg"),
-   HERO(DANATH, "danath", "Danath"),
-   HERO(KARGATH_BLADEFIST, "kargath_bladefist", "Kargath Bladefist"),
-   HERO(CHO_GALL, "cho_gall", "Cho'gall"),
-   HERO(LOTHAR, "lothar", "Lothar"),
-   HERO(GUL_DAN, "gul_dan", "Gul'dan"),
-   HERO(UTHER_LIGHTBRINGER, "uther_lightbringer", "Uther Lightbringer"),
-   HERO(ZUL_JIN, "zul_jin", "Zul'jin"),
-   UNIT(SKELETON, "skeleton", "Skeleton"),
-   UNIT(DAEMON, "daemon", "Daemon"),
-   UNIT(CRITTER, "critter", "Critter"),
-   UNIT(FARM, "farm", "Farm"),
-   UNIT(PIG_FARM, "pig_farm", "Pig Farm"),
-   UNIT(HUMAN_BARRACKS, "human_barracks", "Human Barracks"),
-   UNIT(ORC_BARRACKS, "orc_barracks", "Orc Barracks"),
-   UNIT(CHURCH, "church", "Church"),
-   UNIT(ALTAR_OF_STORMS, "altar_of_storms", "Altar of Storms"),
-   UNIT(HUMAN_SCOUT_TOWER, "human_scout_tower", "Human Scout_Tower"),
-   UNIT(ORC_SCOUT_TOWER, "orc_scout_tower", "Orc Scout Tower"),
-   UNIT(STABLES, "stables", "Stables"),
-   UNIT(OGRE_MOUND, "ogre_mound", "Ogre Mound"),
-   UNIT(GNOMISH_INVENTOR, "gnomish_inventor", "Gnomish Inventor"),
-   UNIT(GOBLIN_ALCHEMIST, "goblin_alchemist", "Goblin Alchemist"),
-   UNIT(GRYPHON_AVIARY, "gryphon_aviary", "Gryphon Aviary"),
-   UNIT(DRAGON_ROOST, "dragon_roost", "Dragon Roost"),
-   UNIT(HUMAN_SHIPYARD, "human_shipyard", "Human Shipyard"),
-   UNIT(ORC_SHIPYARD, "orc_shipyard", "Orc Shipyard"),
-   UNIT(TOWN_HALL, "town_hall", "Town Hall"),
-   UNIT(GREAT_HALL, "great_hall", "Great Hall"),
-   UNIT(ELVEN_LUMBER_MILL, "elven_lumber_mill", "Elven Lumber Mill"),
-   UNIT(TROLL_LUMBER_MILL, "troll_lumber_mill", "Troll Lumber Mill"),
-   UNIT(HUMAN_FOUNDRY, "human_foundry", "Human Foundry"),
-   UNIT(ORC_FOUNDRY, "orc_foundry", "Orc Foundry"),
-   UNIT(MAGE_TOWER, "mage_tower", "Mage Tower"),
-   UNIT(TEMPLE_OF_THE_DAMNED, "temple_of_the_damned", "Temple of the Damned"),
-   UNIT(HUMAN_BLACKSMITH, "human_blacksmith", "Human Blacksmith"),
-   UNIT(ORC_BLACKSMITH, "orc_blacksmith", "Orc Blacksmith"),
-   UNIT(HUMAN_REFINERY, "human_refinery", "Human Refinery"),
-   UNIT(ORC_REFINERY, "orc_refinery", "Orc Refinery"),
-   UNIT(HUMAN_OIL_WELL, "human_oil_well", "Human Oil Well"),
-   UNIT(ORC_OIL_WELL, "orc_oil_well", "Orc Oil Well"),
-   UNIT(KEEP, "keep", "Keep"),
-   UNIT(STRONGHOLD, "stronghold", "Stronghold"),
-   UNIT(CASTLE, "castle", "Castle"),
-   UNIT(FORTRESS, "fortress", "Fortress"),
-   UNIT(GOLD_MINE, "gold_mine", "Gold Mine"),
-   UNIT(OIL_PATCH, "oil_patch", "Oil Patch"),
+   UNITx1(FOOTMAN, "footman", "Footman"),
+   UNITx1(GRUNT, "grunt", "Grunt"),
+   UNITx1(PEASANT, "peasant", "Peasant"),
+   UNITx1(PEON, "peon", "Peon"),
+   UNITx1(BALLISTA, "ballista", "Ballista"),
+   UNITx1(CATAPULT, "catapult", "Catapult"),
+   UNITx1(KNIGHT, "knight", "Knight"),
+   UNITx1(OGRE, "ogre", "Ogre"),
+   UNITx1(ARCHER, "archer", "Archer"),
+   UNITx1(AXETHROWER, "axethrower", "Axethrower"),
+   UNITx1(MAGE, "mage", "Mage"),
+   UNITx1(DEATH_KNIGHT, "death_knight", "Death Knight"),
+   UNITx1(PALADIN, "paladin", "Paladin"),
+   UNITx1(OGRE_MAGE, "ogre_mage", "Ogre Mage"),
+   UNITx1(DWARVES, "dwarves", "Dwarven Demolition Squad"),
+   UNITx1(GOBLIN_SAPPER, "goblin_sapper", "Goblin Sapper"),
+   UNITx1(ATTACK_PEASANT, "attack_peasant", "Peasant (Attack)"),
+   UNITx1(ATTACK_PEON, "attack_peon", "Peon (Attack)"),
+   UNITx1(RANGER, "ranger", "Elven Ranger"),
+   UNITx1(BERSERKER, "berserker", "Berserker"),
+   HEROx1(ALLERIA, "alleria", "Alleria"),
+   HEROx1(TERON_GOREFIEND, "teron_gorefiend", "Teron Gorefiend"),
+   HEROx2(KURDRAN_AND_SKY_REE, "kurdran_and_sky_ree", "Kurdran and Sky'ree"),
+   HEROx1(DENTARG, "dentarg", "Dentarg"),
+   HEROx1(KHADGAR, "khadgar", "Khadgar"),
+   HEROx1(GROM_HELLSCREAM, "grom_hellscream", "Grom Hellscream"),
+   UNITx2(HUMAN_TANKER, "human_tanker", "Human Tanker"),
+   UNITx2(ORC_TANKER, "orc_tanker", "Orc Tanker"),
+   UNITx2(HUMAN_TRANSPORT, "human_transport", "Human Transport"),
+   UNITx2(ORC_TRANSPORT, "orc_transport", "Orc Transport"),
+   UNITx2(ELVEN_DESTROYER, "elven_destroyer", "Elven Destroyer"),
+   UNITx2(TROLL_DESTROYER, "troll_destroyer", "Troll Destroyer"),
+   UNITx2(BATTLESHIP, "battleship", "Battleship"),
+   UNITx2(JUGGERNAUGHT, "juggernaught", "Juggernaught"),
+   HEROx3(DEATHWING, "deathwing", "Deathwing"),
+   UNITx2(GNOMISH_SUBMARINE, "gnomish_submarine", "Gnomish Submarine"),
+   UNITx2(GIANT_TURTLE, "giant_turtle", "Giant Turtle"),
+   UNITx2(GNOMISH_FLYING_MACHINE, "gnomish_flying_machine", "Gnomish Flying Machine"),
+   UNITx2(GOBLIN_ZEPPLIN, "goblin_zepplin", "Goblin Zepplin"),
+   UNITx2(GRYPHON_RIDER, "gryphon_rider", "Gryphon Rider"),
+   UNITx3(DRAGON, "dragon", "Dragon"),
+   HEROx1(TURALYON, "turalyon", "Turalyon"),
+   UNITx1(EYE_OF_KILROGG, "eye_of_kilrogg", "Eye of Kilrogg"),
+   HEROx1(DANATH, "danath", "Danath"),
+   HEROx1(KARGATH_BLADEFIST, "kargath_bladefist", "Kargath Bladefist"),
+   HEROx1(CHO_GALL, "cho_gall", "Cho'gall"),
+   HEROx1(LOTHAR, "lothar", "Lothar"),
+   HEROx1(GUL_DAN, "gul_dan", "Gul'dan"),
+   HEROx1(UTHER_LIGHTBRINGER, "uther_lightbringer", "Uther Lightbringer"),
+   HEROx1(ZUL_JIN, "zul_jin", "Zul'jin"),
+   UNITx1(SKELETON, "skeleton", "Skeleton"),
+   UNITx1(DAEMON, "daemon", "Daemon"),
+   UNITx1(CRITTER, "critter", "Critter"),
+   UNITx2(FARM, "farm", "Farm"),
+   UNITx2(PIG_FARM, "pig_farm", "Pig Farm"),
+   UNITx3(HUMAN_BARRACKS, "human_barracks", "Human Barracks"),
+   UNITx3(ORC_BARRACKS, "orc_barracks", "Orc Barracks"),
+   UNITx3(CHURCH, "church", "Church"),
+   UNITx3(ALTAR_OF_STORMS, "altar_of_storms", "Altar of Storms"),
+   UNITx1(HUMAN_SCOUT_TOWER, "human_scout_tower", "Human Scout_Tower"),
+   UNITx1(ORC_SCOUT_TOWER, "orc_scout_tower", "Orc Scout Tower"),
+   UNITx3(STABLES, "stables", "Stables"),
+   UNITx3(OGRE_MOUND, "ogre_mound", "Ogre Mound"),
+   UNITx3(GNOMISH_INVENTOR, "gnomish_inventor", "Gnomish Inventor"),
+   UNITx3(GOBLIN_ALCHEMIST, "goblin_alchemist", "Goblin Alchemist"),
+   UNITx3(GRYPHON_AVIARY, "gryphon_aviary", "Gryphon Aviary"),
+   UNITx3(DRAGON_ROOST, "dragon_roost", "Dragon Roost"),
+   UNITx3(HUMAN_SHIPYARD, "human_shipyard", "Human Shipyard"),
+   UNITx3(ORC_SHIPYARD, "orc_shipyard", "Orc Shipyard"),
+   UNITx4(TOWN_HALL, "town_hall", "Town Hall"),
+   UNITx4(GREAT_HALL, "great_hall", "Great Hall"),
+   UNITx3(ELVEN_LUMBER_MILL, "elven_lumber_mill", "Elven Lumber Mill"),
+   UNITx3(TROLL_LUMBER_MILL, "troll_lumber_mill", "Troll Lumber Mill"),
+   UNITx3(HUMAN_FOUNDRY, "human_foundry", "Human Foundry"),
+   UNITx3(ORC_FOUNDRY, "orc_foundry", "Orc Foundry"),
+   UNITx3(MAGE_TOWER, "mage_tower", "Mage Tower"),
+   UNITx3(TEMPLE_OF_THE_DAMNED, "temple_of_the_damned", "Temple of the Damned"),
+   UNITx3(HUMAN_BLACKSMITH, "human_blacksmith", "Human Blacksmith"),
+   UNITx3(ORC_BLACKSMITH, "orc_blacksmith", "Orc Blacksmith"),
+   UNITx3(HUMAN_REFINERY, "human_refinery", "Human Refinery"),
+   UNITx3(ORC_REFINERY, "orc_refinery", "Orc Refinery"),
+   UNITx3(HUMAN_OIL_WELL, "human_oil_well", "Human Oil Well"),
+   UNITx3(ORC_OIL_WELL, "orc_oil_well", "Orc Oil Well"),
+   UNITx4(KEEP, "keep", "Keep"),
+   UNITx4(STRONGHOLD, "stronghold", "Stronghold"),
+   UNITx4(CASTLE, "castle", "Castle"),
+   UNITx4(FORTRESS, "fortress", "Fortress"),
+   UNITx3(GOLD_MINE, "gold_mine", "Gold Mine"),
+   UNITx3(OIL_PATCH, "oil_patch", "Oil Patch"),
    UNIT_START_LOCATION(HUMAN_START, "human_start", "Human Start Location"),
    UNIT_START_LOCATION(ORC_START, "orc_start", "Orc Start Location"),
-   UNIT(HUMAN_GUARD_TOWER, "human_guard_tower", "Human Guard Tower"),
-   UNIT(ORC_GUARD_TOWER, "orc_guard_tower", "Orc Guard Tower"),
-   UNIT(HUMAN_CANNON_TOWER, "human_cannon_tower", "Human Cannon Tower"),
-   UNIT(ORC_CANNON_TOWER, "orc_cannon_tower", "Orc Cannon Tower"),
-   UNIT(CIRCLE_OF_POWER, "circle_of_power", "Circle of Power"),
-   UNIT(DARK_PORTAL, "dark_portal", "Dark Portal"),
-   UNIT(RUNESTONE, "runestone", "Runestone"),
-   UNIT(HUMAN_WALL, "human_wall", "Human Wall"),
-   UNIT(ORC_WALL, "orc_wall", "Orc Wall"),
-   UNIT(CRITTER_SHEEP, "sheep", "Sheep"),
-   UNIT(CRITTER_PIG, "pig", "Pig"),
-   UNIT(CRITTER_SEAL, "seal", "Seal"),
-   UNIT(CRITTER_RED_PIG, "red_pig", "Red Pig"),
+   UNITx2(HUMAN_GUARD_TOWER, "human_guard_tower", "Human Guard Tower"),
+   UNITx2(ORC_GUARD_TOWER, "orc_guard_tower", "Orc Guard Tower"),
+   UNITx2(HUMAN_CANNON_TOWER, "human_cannon_tower", "Human Cannon Tower"),
+   UNITx2(ORC_CANNON_TOWER, "orc_cannon_tower", "Orc Cannon Tower"),
+   UNITx2(CIRCLE_OF_POWER, "circle_of_power", "Circle of Power"),
+   UNITx4(DARK_PORTAL, "dark_portal", "Dark Portal"),
+   UNITx2(RUNESTONE, "runestone", "Runestone"),
+   UNITx1(HUMAN_WALL, "human_wall", "Human Wall"),
+   UNITx1(ORC_WALL, "orc_wall", "Orc Wall"),
+   UNITx1(CRITTER_SHEEP, "sheep", "Sheep"),
+   UNITx1(CRITTER_PIG, "pig", "Pig"),
+   UNITx1(CRITTER_SEAL, "seal", "Seal"),
+   UNITx1(CRITTER_RED_PIG, "red_pig", "Red Pig"),
 };
 
 PUDAPI const char *
@@ -300,6 +307,13 @@ pud_unit_icon_get(Pud_Unit unit)
    return _names[unit].icon;
 }
 
+PUDAPI unsigned int
+pud_unit_size_get(Pud_Unit unit)
+{
+   if ((unit < PUD_UNIT_FOOTMAN) || (unit > PUD_UNIT_CRITTER_RED_PIG))
+     return 0;
+   return _names[unit].size;
+}
 
 static const char *const _projectiles[0x1d + 1] =
 {

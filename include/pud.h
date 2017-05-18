@@ -1080,6 +1080,18 @@ PUDAPI uint32_t pud_tag_generate(void);
 PUDAPI const char *pud_unit_to_string(Pud_Unit unit, Pud_Bool pretty);
 
 /**
+ * Get the size (in game cells) of a unit.
+ *
+ * Since units are squared in Warcraft II, this function only returns the
+ * length (in game cells) of one edge of the square.
+ *
+ * @param[in] unit The unit to be described
+ * @return The size of @p unit. 0 if @p unit is invalid.
+ * @since 1.0.0
+ */
+PUDAPI unsigned int pud_unit_size_get(Pud_Unit unit);
+
+/**
  * Describe Pud Dimenstions
  *
  * @param dims The dimenstions to be described

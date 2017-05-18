@@ -61,6 +61,15 @@ target_link_libraries(tilemap ${LIBPUD_LIBRARIES})
 target_link_libraries(opensave ${LIBPUD_LIBRARIES})
 target_link_libraries(alow_ugrd_set ${LIBPUD_LIBRARIES})
 
+if (CAIRO_FOUND AND EINA_FOUND AND ECORE_FILE_FOUND)
+   add_executable(gen_sprites_data gen_sprites_data.c)
+   target_link_libraries(gen_sprites_data
+      ${LIBWAR2_LIBRARIES} ${CAIRO_LIBRARIES}
+      ${EINA_LIBRARIES} ${EVIL_LIBRARIES}
+      ${ECORE_FILE_LIBRARIES}
+   )
+endif ()
+
 if (ECORE_FILE_FOUND)
 
    LIST(APPEND EXTRACT_TILES_LIBRARIES

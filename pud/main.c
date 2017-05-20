@@ -21,6 +21,7 @@ strndup(const char *str, size_t size)
 static const struct option _options[] =
 {
      {"output",   required_argument,    0, 'o'},
+     {"ui",       required_argument,    0, 'U'},
      {"tile-at",  required_argument,    0, 't'},
      {"sprite",   required_argument,    0, 'S'},
      {"ppm",      no_argument,          0, 'p'},
@@ -59,6 +60,7 @@ _usage(FILE *stream)
            "    -t | --tile-at <x,y>  Gets the tile ID at x,y\n"
            "    -R | --regm           Writes the action map\n"
            "    -Q | --sqm            Writes the movement map\n"
+           "    -U | --ui <entry>     Extract an UI image from a War2 file.\n"
            "    -s | --sections       Gets sections in the PUD file.\n"
            "    -C | --cursor <entry> Extract the cursor for the specified entry.\n"
            "    -S | --sprite <entry> Extract the graphic entry specified. Only when -W is enabled.\n"
@@ -79,7 +81,7 @@ static struct  {
    unsigned int enabled : 1;
 } tile_at;
 
-static struct _out {
+static struct {
    char         *file;
    unsigned int  ppm     : 1;
    unsigned int  jpeg    : 1;
@@ -90,6 +92,11 @@ static struct _out {
 static struct {
    unsigned int enabled : 1;
 } print;
+
+static struct {
+   unsigned int enabled;
+   unsigned int entry;
+} ui;
 
 static struct {
    unsigned int enabled : 1;
@@ -171,6 +178,21 @@ _str2color(const char *str)
 }
 
 static void
+_check_output_enabled(void)
+{
+   if (!out.enabled)
+     {
+        fprintf(stderr, "*** You must use -o with this option\n");
+        exit(1);
+     }
+   if (out.jpeg + out.ppm + out.png != 1)
+     {
+        fprintf(stderr, "*** You must use one of --jpeg,--ppm,--png\n");
+        exit(1);
+     }
+}
+
+static void
 _write_output(const Pud_Color *img,
               unsigned int w,
               unsigned int h,
@@ -234,7 +256,7 @@ main(int    argc,
    /* Getopt */
    while (1)
      {
-        c = getopt_long(argc, argv, "o:pjsS:hgWPRQvt:C:", _options, &opt_idx);
+        c = getopt_long(argc, argv, "o:pjsS:hgWPRQvt:C:U:", _options, &opt_idx);
         if (c == -1) break;
 
         switch (c)
@@ -246,6 +268,11 @@ main(int    argc,
            case 'h':
               _usage(stdout);
               return 0;
+
+           case 'U':
+              ui.enabled = 1;
+              ui.entry = strtol(optarg, &ptr, 10);
+              break;
 
            case 'S':
               sprite.enabled = 1;
@@ -334,11 +361,7 @@ main(int    argc,
 
         if (sprite.enabled)
           {
-             if (!out.enabled)
-               ABORT(1, "You must use -o with this option");
-             if (out.jpeg + out.ppm + out.png != 1)
-               ABORT(1, "You must use one of --jpeg,--ppm,--png.");
-
+             _check_output_enabled();
              war2_sprites_decode_entry(w2, sprite.color, sprite.entry, _war2_entry_cb, NULL);
           }
         else if (cursor.enabled)
@@ -346,13 +369,20 @@ main(int    argc,
              unsigned int w, h;
              Pud_Color *img;
 
-             if (!out.enabled)
-               ABORT(1, "You must use -o with this option");
-             if (out.jpeg + out.ppm + out.png != 1)
-               ABORT(1, "You must use one of --jpeg,--ppm,--png.");
+             _check_output_enabled();
 
              img = war2_cursors_decode(w2, cursor.entry, NULL, NULL, &w, &h);
              _write_output(img, w, h, cursor.entry);
+             free(img);
+          }
+        else if (ui.enabled)
+          {
+             Pud_Color *img;
+             unsigned int w, h;
+
+             _check_output_enabled();
+             img = war2_ui_decode(w2, ui.entry, &w, &h);
+             _write_output(img, w, h, ui.entry);
              free(img);
           }
      }

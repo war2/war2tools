@@ -289,6 +289,23 @@ war2_cursors_decode(War2_Data *w2,
                     unsigned int *h);
 
 /**
+ * Decode a user interface (UI element)
+ *
+ * @param[in] w2 A valid handle to Warcract 2 data file
+ * @param[in] entry An assumed valid entry to an UI item
+ * @param[out] w The width of the image
+ * @param[out] h The height of the image
+ * @return The decoded image for the UI element. NULL on failure.
+ *         The caller must free() the returned value to release memory.
+ * @since 1.0.0
+ */
+PUDAPI Pud_Color *
+war2_ui_decode(War2_Data *w2,
+               unsigned int entry,
+               unsigned int *w,
+               unsigned int *h);
+
+/**
  * Write a bitmap as a PNG image on the filesystem.
  *
  * If libwar2 was NOT compiled with PNG support, this function will always

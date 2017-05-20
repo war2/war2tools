@@ -10,6 +10,7 @@ add_library(libwar2
    private.c
    tileset.c
    sprites.c
+   cursors.c
    png.c
    jpeg.c
    ppm.c

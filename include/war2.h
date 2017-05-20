@@ -86,6 +86,7 @@ typedef struct
    War2_Sprites sprite_type; /**< Sprite type */
 } War2_Sprites_Descriptor;
 
+
 /**
  * @typedef War2_Tileset_Decode_Func
  * Callback used for each tile to be decoded
@@ -125,6 +126,7 @@ typedef void (*War2_Sprites_Decode_Func)(void *data,
                                          unsigned int h,
                                          const War2_Sprites_Descriptor *sd,
                                          uint16_t sprite_id);
+
 
 /**
  * @}
@@ -261,6 +263,27 @@ war2_sprites_decode_entry(War2_Data                *w2,
                           unsigned int              entry,
                           War2_Sprites_Decode_Func  func,
                           void                     *data);
+
+/**
+ * Decode a cursor from an entry
+ *
+ * @param[in] w2 A valid handle to Warcract 2 data file
+ * @param[in] entry An assumed valid entry to a cursor
+ * @param[out] x The hot X position of the decoded cursor
+ * @param[out] y The hot Y position of the decoded cursor
+ * @param[out] w The width of the cursor
+ * @param[out] h The height of the cursor
+ * @return The bitmap of the cursor. NULL on failure. The caller MUST call
+ *         free() on the returned value to release the memory.
+ * @since 1.0.0
+ */
+PUDAPI Pud_Color *
+war2_cursors_decode(War2_Data *w2,
+                    unsigned int entry,
+                    int *x,
+                    int *y,
+                    unsigned int *w,
+                    unsigned int *h);
 
 /**
  * Write a bitmap as a PNG image on the filesystem.

@@ -30,6 +30,7 @@ static const struct option _options[] =
      {"regm",     no_argument,          0, 'R'},
      {"sqm",      no_argument,          0, 'Q'},
      {"sections", no_argument,          0, 's'},
+     {"cursor",   required_argument,    0, 'C'},
      {"war",      no_argument,          0, 'W'},
      {"verbose",  no_argument,          0, 'v'},
      {"help",     no_argument,          0, 'h'},
@@ -59,6 +60,7 @@ _usage(FILE *stream)
            "    -R | --regm           Writes the action map\n"
            "    -Q | --sqm            Writes the movement map\n"
            "    -s | --sections       Gets sections in the PUD file.\n"
+           "    -C | --cursor <entry> Extract the cursor for the specified entry.\n"
            "    -S | --sprite <entry> Extract the graphic entry specified. Only when -W is enabled.\n"
            "                  <color> An output file (with -o) and type (-p,-j,-g) must be provided.\n"
            "                          Color must be a string (red, blue, ...). Arguments must be\n"
@@ -77,7 +79,7 @@ static struct  {
    unsigned int enabled : 1;
 } tile_at;
 
-static struct {
+static struct _out {
    char         *file;
    unsigned int  ppm     : 1;
    unsigned int  jpeg    : 1;
@@ -99,6 +101,11 @@ static struct {
    Pud_Player   color;
    /*Pud_Era      era;*/
 } sprite;
+
+static struct {
+   unsigned int enabled;
+   unsigned int entry;
+} cursor;
 
 static struct {
    unsigned int enabled : 1;
@@ -164,6 +171,38 @@ _str2color(const char *str)
 }
 
 static void
+_write_output(const Pud_Color *img,
+              unsigned int w,
+              unsigned int h,
+              unsigned int id)
+{
+   char file[4096];
+   Pud_Bool chk = PUD_FALSE;
+
+   if (out.png)
+     {
+        snprintf(file, sizeof(file), "%s_%u.png", out.file, id);
+        chk = war2_png_write(file, w, h, (const unsigned char *)img);
+     }
+   else if (out.jpeg)
+     {
+        snprintf(file, sizeof(file), "%s_%u.jpg", out.file, id);
+        chk = war2_jpeg_write(file, w, h, (const unsigned char *)img);
+     }
+   else if (out.ppm)
+     {
+        snprintf(file, sizeof(file), "%s_%u.ppm", out.file, id);
+        chk = war2_ppm_write(file, w, h, (const unsigned char *)img);
+     }
+   if (!chk)
+     {
+        fprintf(stderr, "*** Failed to save to [%s]", file);
+        exit(2);
+     }
+   printf("Saving image at '%s'\n", file);
+}
+
+static void
 _war2_entry_cb(void                          *data,
                const Pud_Color               *img,
                int                            x,
@@ -173,35 +212,9 @@ _war2_entry_cb(void                          *data,
                const War2_Sprites_Descriptor *ud,
                uint16_t                       img_nb)
 {
-   char file[4096];
-   Pud_Bool chk = PUD_FALSE;
-
-   if (out.png)
-     {
-        snprintf(file, sizeof(file), "%s_%i.png", out.file, img_nb);
-        chk = war2_png_write(file, w, h, (const unsigned char *)img);
-     }
-   else if (out.jpeg)
-     {
-        snprintf(file, sizeof(file), "%s_%i.jpg", out.file, img_nb);
-        chk = war2_jpeg_write(file, w, h, (const unsigned char *)img);
-     }
-   else if (out.ppm)
-     {
-        snprintf(file, sizeof(file), "%s_%i.ppm", out.file, img_nb);
-        chk = war2_ppm_write(file, w, h, (const unsigned char *)img);
-     }
-   if (!chk)
-     {
-        fprintf(stderr, "*** Failed to save to [%s]", file);
-        exit(2);
-     }
-   printf("Saving sprite %i at \"%s\". X,Y,W,H = %i,%i,%i,%i\n",
-          img_nb, file, x, y, w, h);
-
+   _write_output(img, w, h, img_nb);
    (void) ud;
 }
-
 
 int
 main(int    argc,
@@ -221,7 +234,7 @@ main(int    argc,
    /* Getopt */
    while (1)
      {
-        c = getopt_long(argc, argv, "o:pjsS:hgWPRQvt:", _options, &opt_idx);
+        c = getopt_long(argc, argv, "o:pjsS:hgWPRQvt:C:", _options, &opt_idx);
         if (c == -1) break;
 
         switch (c)
@@ -238,6 +251,11 @@ main(int    argc,
               sprite.enabled = 1;
               sprite.entry = strtol(optarg, &ptr, 10);
               sprite.color = _str2color(ptr + 1);
+              break;
+
+           case 'C':
+              cursor.enabled = 1;
+              cursor.entry = strtol(optarg, &ptr, 10);
               break;
 
            case 'R':
@@ -322,6 +340,20 @@ main(int    argc,
                ABORT(1, "You must use one of --jpeg,--ppm,--png.");
 
              war2_sprites_decode_entry(w2, sprite.color, sprite.entry, _war2_entry_cb, NULL);
+          }
+        else if (cursor.enabled)
+          {
+             unsigned int w, h;
+             Pud_Color *img;
+
+             if (!out.enabled)
+               ABORT(1, "You must use -o with this option");
+             if (out.jpeg + out.ppm + out.png != 1)
+               ABORT(1, "You must use one of --jpeg,--ppm,--png.");
+
+             img = war2_cursors_decode(w2, cursor.entry, NULL, NULL, &w, &h);
+             _write_output(img, w, h, cursor.entry);
+             free(img);
           }
      }
    else

@@ -366,12 +366,14 @@ main(int    argc,
           }
         else if (cursor.enabled)
           {
+             int hotx, hoty;
              unsigned int w, h;
              Pud_Color *img;
 
              _check_output_enabled();
 
-             img = war2_cursors_decode(w2, cursor.entry, NULL, NULL, &w, &h);
+             img = war2_cursors_decode(w2, cursor.entry, &hotx, &hoty, &w, &h);
+             printf("hotx: %i, hoty: %i\n", hotx, hoty);
              _write_output(img, w, h, cursor.entry);
              free(img);
           }

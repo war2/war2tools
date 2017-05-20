@@ -118,9 +118,6 @@ _unit_process(const Unit *u, unsigned int object, Eina_Strbuf *table)
       "   %s = {\n"
       "      name = \"%s\",\n"
       "      size = %u,\n"
-      "      movement_speed = <TODO BY HAND>,\n"
-      "      attack_speed = <TODO BY HAND>,\n"
-      "      sprites_movement = <TODO BY HAND>,\n"
       "      sprites = {\n",
       pud_unit_to_string(object, PUD_FALSE),
       pud_unit_to_string(object, PUD_TRUE),
@@ -158,7 +155,7 @@ _unit_process(const Unit *u, unsigned int object, Eina_Strbuf *table)
    eina_strbuf_append_printf(
       table,
       "      },\n" /* end of sprites */
-      "   }\n"     /* end of unit */
+      "   },\n"     /* end of unit */
    );
 
 

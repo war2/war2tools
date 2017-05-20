@@ -7,7 +7,6 @@ endif()
 
 add_library(libwar2
    war2.c
-   private.c
    tileset.c
    sprites.c
    cursors.c

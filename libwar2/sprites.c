@@ -24,7 +24,6 @@
 
 #define RLE_REPEAT (1 << 6)
 #define RLE_LEAVE  (1 << 7)
-#define PALETTE_ALPHA 0
 
 typedef struct
 {
@@ -112,11 +111,11 @@ _sprites_colorize(Pud_Color    *sprite,
 
 
 static Pud_Bool
-_sprites_entries_parse(War2_Data                *w2,
-                       War2_Sprites_Descriptor  *ud,
-                       const unsigned int       *entries,
-                       War2_Sprites_Decode_Func  func,
-                       void                     *func_data)
+_sprites_entry_parse(War2_Data                *w2,
+                     War2_Sprites_Descriptor  *ud,
+                     unsigned int              entry,
+                     War2_Sprites_Decode_Func  func,
+                     void                     *func_data)
 {
    unsigned char *ptr;
    uint16_t count, i, oline, max_w, max_h;
@@ -126,6 +125,7 @@ _sprites_entries_parse(War2_Data                *w2,
    unsigned int offset, l, pcount, k;
    unsigned char *img = NULL, *pimg, *rows, *o;
    Pud_Color *img_rgba = NULL;
+   const Pud_Color *const palette = war2_palette_get(w2, ud->era);
 
    /* If no callback has been specified, do nothing */
    if (!func)
@@ -134,16 +134,7 @@ _sprites_entries_parse(War2_Data                *w2,
         return PUD_TRUE;
      }
 
-   /* Palette */
-   ptr = war2_palette_extract(w2, entries[0]);
-   if (!ptr) DIE_RETURN(PUD_FALSE, "Failed to get palette");
-   war2_palette_convert(ptr, ud->palette);
-   free(ptr);
-
-   /* Set alpha */
-   ud->palette[PALETTE_ALPHA].a = 0x00;
-
-   ptr = war2_entry_extract(w2, entries[1], &size);
+   ptr = war2_entry_extract(w2, entry, &size);
    if (!ptr) DIE_RETURN(PUD_FALSE, "Failed to extract entry");
 
    memcpy(&count, &(ptr[0]), sizeof(uint16_t));
@@ -181,7 +172,7 @@ _sprites_entries_parse(War2_Data                *w2,
                     {
                        /* Leave (c \ RLE_LEAVE) pixels transparent */
                        c &= 0x7f;
-                       memset(&(pimg[pcount]), PALETTE_ALPHA, c);
+                       memset(&(pimg[pcount]), 0, c);
                        pcount += c;
                     }
                   else if (c & RLE_REPEAT)
@@ -204,7 +195,7 @@ _sprites_entries_parse(War2_Data                *w2,
 
         size = w * h;
         for (k = 0; k < size; ++k)
-          img_rgba[k] = ud->palette[img[k]];
+          img_rgba[k] = palette[img[k]];
 
         _sprites_colorize(img_rgba, size, ud->color);
         func(func_data, img_rgba, x, y, w, h, ud, i);
@@ -225,12 +216,11 @@ war2_sprites_decode_entry(War2_Data                *w2,
                           void                     *data)
 {
    War2_Sprites_Descriptor ud;
-   const unsigned int entries[2] = { 2, entry };
 
    ud.color = player_color;
    ud.object = entry;
 
-   return _sprites_entries_parse(w2, &ud, entries, func, data);
+   return _sprites_entry_parse(w2, &ud, entry, func, data);
 }
 
 PUDAPI Pud_Bool
@@ -242,7 +232,7 @@ war2_sprites_decode(War2_Data                *w2,
                     void                     *data)
 {
    War2_Sprites_Descriptor ud;
-   unsigned int entries[2] = { 0, 0 };
+   unsigned int entry = 0;
    War2_Sprites type;
    Pud_Side side = PUD_SIDE_NEUTRAL;
 
@@ -252,19 +242,19 @@ war2_sprites_decode(War2_Data                *w2,
      {
         switch (object)
           {
-#define ORC_UNIT(val_) entries[1] = val_; type = WAR2_SPRITES_UNITS;  side = PUD_SIDE_ORC
-#define HUMAN_UNIT(val_) entries[1] = val_; type = WAR2_SPRITES_UNITS; side = PUD_SIDE_HUMAN
-#define NEUTRAL_UNIT(val_) entries[1] = val_; type = WAR2_SPRITES_UNITS; side = PUD_SIDE_NEUTRAL
-#define ORC_START(val_) entries[1] = val_; type = WAR2_SPRITES_SYSTEM; side = PUD_SIDE_ORC
-#define HUMAN_START(val_) entries[1] = val_; type = WAR2_SPRITES_SYSTEM; side = PUD_SIDE_HUMAN
+#define ORC_UNIT(val_) entry = val_; type = WAR2_SPRITES_UNITS;  side = PUD_SIDE_ORC
+#define HUMAN_UNIT(val_) entry = val_; type = WAR2_SPRITES_UNITS; side = PUD_SIDE_HUMAN
+#define NEUTRAL_UNIT(val_) entry = val_; type = WAR2_SPRITES_UNITS; side = PUD_SIDE_NEUTRAL
+#define ORC_START(val_) entry = val_; type = WAR2_SPRITES_SYSTEM; side = PUD_SIDE_ORC
+#define HUMAN_START(val_) entry = val_; type = WAR2_SPRITES_SYSTEM; side = PUD_SIDE_HUMAN
 
 #define ORC_UNIT_SWITCH(a_, b_, c_, d_) \
                { \
                   switch (era) { \
-                   case PUD_ERA_FOREST:    entries[1] = a_; break; \
-                   case PUD_ERA_WINTER:    entries[1] = b_; break; \
-                   case PUD_ERA_WASTELAND: entries[1] = c_; break; \
-                   case PUD_ERA_SWAMP:     entries[1] = d_; break; \
+                   case PUD_ERA_FOREST:    entry = a_; break; \
+                   case PUD_ERA_WINTER:    entry = b_; break; \
+                   case PUD_ERA_WASTELAND: entry = c_; break; \
+                   case PUD_ERA_SWAMP:     entry = d_; break; \
                   } \
                   type = WAR2_SPRITES_UNITS; side = PUD_SIDE_ORC; \
                }
@@ -272,10 +262,10 @@ war2_sprites_decode(War2_Data                *w2,
 #define HUMAN_UNIT_SWITCH(a_, b_, c_, d_) \
                { \
                   switch (era) { \
-                   case PUD_ERA_FOREST:    entries[1] = a_; break; \
-                   case PUD_ERA_WINTER:    entries[1] = b_; break; \
-                   case PUD_ERA_WASTELAND: entries[1] = c_; break; \
-                   case PUD_ERA_SWAMP:     entries[1] = d_; break; \
+                   case PUD_ERA_FOREST:    entry = a_; break; \
+                   case PUD_ERA_WINTER:    entry = b_; break; \
+                   case PUD_ERA_WASTELAND: entry = c_; break; \
+                   case PUD_ERA_SWAMP:     entry = d_; break; \
                   } \
                   type = WAR2_SPRITES_UNITS; side = PUD_SIDE_HUMAN; \
                }
@@ -284,30 +274,30 @@ war2_sprites_decode(War2_Data                *w2,
 #define ORC_BUILDING_SWITCH(a_, b_, c_, d_) \
                { \
                   switch (era) { \
-                   case PUD_ERA_FOREST:    entries[1] = a_; break; \
-                   case PUD_ERA_WINTER:    entries[1] = b_; break; \
-                   case PUD_ERA_WASTELAND: entries[1] = c_; break; \
-                   case PUD_ERA_SWAMP:     entries[1] = d_; break; \
+                   case PUD_ERA_FOREST:    entry = a_; break; \
+                   case PUD_ERA_WINTER:    entry = b_; break; \
+                   case PUD_ERA_WASTELAND: entry = c_; break; \
+                   case PUD_ERA_SWAMP:     entry = d_; break; \
                   } \
                   type = WAR2_SPRITES_BUILDINGS; side = PUD_SIDE_ORC; \
                }
 #define HUMAN_BUILDING_SWITCH(a_, b_, c_, d_) \
                { \
                   switch (era) { \
-                   case PUD_ERA_FOREST:    entries[1] = a_; break; \
-                   case PUD_ERA_WINTER:    entries[1] = b_; break; \
-                   case PUD_ERA_WASTELAND: entries[1] = c_; break; \
-                   case PUD_ERA_SWAMP:     entries[1] = d_; break; \
+                   case PUD_ERA_FOREST:    entry = a_; break; \
+                   case PUD_ERA_WINTER:    entry = b_; break; \
+                   case PUD_ERA_WASTELAND: entry = c_; break; \
+                   case PUD_ERA_SWAMP:     entry = d_; break; \
                   } \
                   type = WAR2_SPRITES_BUILDINGS; side = PUD_SIDE_HUMAN; \
                }
 #define NEUTRAL_BUILDING_SWITCH(a_, b_, c_, d_) \
                { \
                   switch (era) { \
-                   case PUD_ERA_FOREST:    entries[1] = a_; break; \
-                   case PUD_ERA_WINTER:    entries[1] = b_; break; \
-                   case PUD_ERA_WASTELAND: entries[1] = c_; break; \
-                   case PUD_ERA_SWAMP:     entries[1] = d_; break; \
+                   case PUD_ERA_FOREST:    entry = a_; break; \
+                   case PUD_ERA_WINTER:    entry = b_; break; \
+                   case PUD_ERA_WASTELAND: entry = c_; break; \
+                   case PUD_ERA_SWAMP:     entry = d_; break; \
                   } \
                   type = WAR2_SPRITES_BUILDINGS; side = PUD_SIDE_NEUTRAL; \
                }
@@ -404,19 +394,22 @@ war2_sprites_decode(War2_Data                *w2,
      }
 
    /* Set entry for palette conversion */
-   switch (era)
+   if (type == WAR2_SPRITES_ICONS)
      {
-      case PUD_ERA_FOREST:    entries[0] = 2;   if (type == WAR2_SPRITES_ICONS) entries[1] = 356; break;
-      case PUD_ERA_WINTER:    entries[0] = 18;  if (type == WAR2_SPRITES_ICONS) entries[1] = 357; break;
-      case PUD_ERA_WASTELAND: entries[0] = 10;  if (type == WAR2_SPRITES_ICONS) entries[1] = 358; break;
-      case PUD_ERA_SWAMP:     entries[0] = 438; if (type == WAR2_SPRITES_ICONS) entries[1] = 471; break;
+        switch (era)
+          {
+           case PUD_ERA_FOREST:    entry = 356; break;
+           case PUD_ERA_WINTER:    entry = 357; break;
+           case PUD_ERA_WASTELAND: entry = 358; break;
+           case PUD_ERA_SWAMP:     entry = 471; break;
+          }
      }
 
    /* Check object is valid (assigned entry) */
-   if (entries[1] == 0)
+   if (entry == 0)
      DIE_RETURN(PUD_FALSE, "Invalid object [%u]", object);
    WAR2_VERBOSE(w2, 1, "Decoding entry [%i] for object [%u] (%s,%s)",
-                entries[1], object,
+                entry, object,
                 (type == WAR2_SPRITES_ICONS) ? "<ICON>" : pud_unit_to_string(object, PUD_FALSE),
                 pud_era_to_string(era));
 
@@ -426,7 +419,7 @@ war2_sprites_decode(War2_Data                *w2,
    ud.sprite_type = type;
    ud.side = side;
 
-   return _sprites_entries_parse(w2, &ud, entries, func, data);
+   return _sprites_entry_parse(w2, &ud, entry, func, data);
 }
 
 PUDAPI void

@@ -49,6 +49,13 @@ extern "C" { /* } For dumb editors */
 typedef struct _War2_Data War2_Data;
 
 /**
+ * @def WAR2_PALETTE_SIZE
+ * The size of elements in a color palette
+ * @since 1.0.0
+ */
+#define WAR2_PALETTE_SIZE 256
+
+/**
  * @typedef War2_Sprites
  * Holds values for different types of sprites
  * @since 1.0.0
@@ -67,7 +74,6 @@ typedef enum
  */
 typedef struct
 {
-   Pud_Color     palette[256]; /**< Color palette used */
    Pud_Era       era; /**< Current era */
    unsigned int  tiles; /**< Total amount of decoded tiles */
 } War2_Tileset_Descriptor;
@@ -78,7 +84,6 @@ typedef struct
  */
 typedef struct
 {
-   Pud_Color    palette[256]; /**< Color palette used */
    Pud_Player   color; /**< Color of the sprite */
    Pud_Era      era; /**< Era of the sprite */
    Pud_Side     side; /**< Side (when appliable) */
@@ -204,14 +209,12 @@ PUDAPI unsigned char *war2_entry_extract(War2_Data *w2, unsigned int entry, size
 /**
  * Extract a palette from a data file
  *
- * The result MUST be manually freed by the caller with the free() function.
- *
- * @param w2 A valid handle to Warcraft 2 data file
- * @param entry The ID of the entry to extract
- * @return The palette in the entry @c entry. NULL on failure
+ * @param[in] w2 A valid handle to Warcraft 2 data file
+ * @param[in] era The era for the palette
+ * @return The palette associated to @p era
  * @since 1.0.0
  */
-PUDAPI unsigned char *war2_palette_extract(War2_Data *w2, unsigned int entry);
+PUDAPI const Pud_Color *war2_palette_get(const War2_Data *w2, Pud_Era era);
 
 /**
  * Decode a tileset in the data file for a given era

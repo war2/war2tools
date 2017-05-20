@@ -41,6 +41,40 @@ war2_shutdown(void)
    /* Nothing to do */
 }
 
+
+static Pud_Bool
+_palette_extract(War2_Data *w2, unsigned int entry,
+                 Pud_Color *palette)
+{
+   unsigned char *ptr;
+   size_t size;
+   unsigned int i;
+
+   ptr = war2_entry_extract(w2, entry, &size);
+   if (!ptr)
+     DIE_RETURN(PUD_FALSE, "Failed to extract entry palette [%u]", entry);
+   if (size != 768)
+     {
+        free(ptr);
+        DIE_RETURN(PUD_FALSE, "Invalid size [%zu]. Should be 256*3=768", size);
+     }
+
+   /* I don't know why is the bitshift needed (no doc so no explaination) but
+    * this gives the right colorspace (thanks wargus) */
+   for (i = 0; i < WAR2_PALETTE_SIZE; ++i)
+     {
+        const unsigned char *const p = &(ptr[i * 3]);
+        palette[i].r = p[0] << 2;
+        palette[i].g = p[1] << 2;
+        palette[i].b = p[2] << 2;
+        palette[i].a = 0xff;
+     }
+   palette[0].a = 0x00;
+
+   free(ptr);
+   return PUD_TRUE;
+}
+
 PUDAPI War2_Data *
 war2_open(const char *file)
 {
@@ -98,6 +132,11 @@ war2_open(const char *file)
         w2->entries[i] = w2->mem_map + l;
      }
 
+   _palette_extract(w2, 2, w2->forest);
+   _palette_extract(w2, 18, w2->winter);
+   _palette_extract(w2, 10, w2->wasteland);
+   _palette_extract(w2, 438, w2->swamp);
+
    return w2;
 
 err_free_all:
@@ -110,23 +149,19 @@ err:
    return NULL;
 }
 
-PUDAPI unsigned char *
-war2_palette_extract(War2_Data    *w2,
-                     unsigned int  entry)
+PUDAPI const Pud_Color *
+war2_palette_get(const War2_Data *w2, Pud_Era era)
 {
-   unsigned char *ptr;
-   size_t size;
-
-   ptr = war2_entry_extract(w2, entry, &size);
-   if (!ptr)
-     DIE_RETURN(NULL, "Failed to extract entry palette [%u]", entry);
-   if (size != 768)
+   switch (era)
      {
-        free(ptr);
-        DIE_RETURN(NULL, "Invalid size [%zu]. Should be 256*3=768", size);
+      case PUD_ERA_FOREST: return w2->forest;
+      case PUD_ERA_WINTER: return w2->winter;
+      case PUD_ERA_WASTELAND: return w2->wasteland;
+      case PUD_ERA_SWAMP: return w2->swamp;
+      default: return NULL;
      }
-   return ptr;
 }
+
 
 PUDAPI unsigned char *
 war2_entry_extract(War2_Data    *w2,

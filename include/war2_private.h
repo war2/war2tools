@@ -56,6 +56,11 @@ struct _War2_Data
    uint16_t        entries_count;
    unsigned char **entries;
 
+   Pud_Color forest[WAR2_PALETTE_SIZE];
+   Pud_Color winter[WAR2_PALETTE_SIZE];
+   Pud_Color wasteland[WAR2_PALETTE_SIZE];
+   Pud_Color swamp[WAR2_PALETTE_SIZE];
+
    int verbose;
 };
 
@@ -128,7 +133,5 @@ war2_mem_map_ok(War2_Data *w2)
    return (w2->ptr < w2->mem_map + w2->mem_map_size)
       ? PUD_TRUE : PUD_FALSE;
 }
-
-PUDAPI_INTERNAL void war2_palette_convert(const unsigned char *ptr, Pud_Color palette[256]);
 
 #endif /* ! _WAR2_PRIVATE_H_ */

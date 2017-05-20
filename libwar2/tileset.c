@@ -23,7 +23,8 @@
 #include "war2_private.h"
 
 static void
-_tile_decode(War2_Tileset_Descriptor  *ts,
+_tile_decode(const Pud_Color *palette,
+             War2_Tileset_Descriptor  *ts,
              War2_Tileset_Decode_Func  func,
              void                     *func_data,
              unsigned char            *ptr,
@@ -73,7 +74,7 @@ _tile_decode(War2_Tileset_Descriptor  *ts,
                   const int yblock = y + ((i_img / 4) * 8);
 
                   /* Convert the byte to color thanks to the palette */
-                  img[xblock + 32 * yblock] = ts->palette[col];
+                  img[xblock + 32 * yblock] = palette[col];
                }
           }
      }
@@ -92,6 +93,7 @@ _ts_entries_parse(War2_Data                *w2,
    size_t size, map_size;
    int tile;
    int i, j, k;
+   const Pud_Color *const palette = war2_palette_get(w2, ts->era);
 
    /* If no callback has been specified, do nothing */
    if (!func)
@@ -100,28 +102,22 @@ _ts_entries_parse(War2_Data                *w2,
         return PUD_TRUE;
      }
 
-   /* Extract palette - 256x3 */
-   ptr = war2_palette_extract(w2, entries[0]);
-   if (!ptr) DIE_RETURN(PUD_FALSE, "Failed to get palette");
-   war2_palette_convert(ptr, ts->palette);
-   free(ptr);
-
    /* Get minitiles info */
-   ptr = war2_entry_extract(w2, entries[1], &size);
+   ptr = war2_entry_extract(w2, entries[0], &size);
    if (!ptr)
-     DIE_RETURN(PUD_FALSE, "Failed to extract entry minitile info [%i]", entries[1]);
-   data = war2_entry_extract(w2, entries[2], NULL);
+     DIE_RETURN(PUD_FALSE, "Failed to extract entry minitile info [%i]", entries[0]);
+   data = war2_entry_extract(w2, entries[1], NULL);
    if (!data)
      {
         free(ptr);
-        DIE_RETURN(PUD_FALSE, "Failed to extract entry minitile data [%i]", entries[2]);
+        DIE_RETURN(PUD_FALSE, "Failed to extract entry minitile data [%i]", entries[1]);
      }
-   map = war2_entry_extract(w2, entries[3], &map_size);
+   map = war2_entry_extract(w2, entries[2], &map_size);
    if (!map)
      {
         free(ptr);
         free(data);
-        DIE_RETURN(PUD_FALSE, "Failed to extract entry map [%i]", entries[3]);
+        DIE_RETURN(PUD_FALSE, "Failed to extract entry map [%i]", entries[2]);
      }
    ts->tiles = size / 32;
 
@@ -130,7 +126,7 @@ _ts_entries_parse(War2_Data                *w2,
         for (i = 0; i <= 0xf; i++)
           {
              tile = (j * 0x10) + i;
-             _tile_decode(ts, func, func_data, ptr, data, map, tile);
+             _tile_decode(palette, ts, func, func_data, ptr, data, map, tile);
           }
      }
 
@@ -141,7 +137,7 @@ _ts_entries_parse(War2_Data                *w2,
              for (k = 0x0; k <= 0xf; k++)
                {
                   tile = (j * 0x100) + (i * 0x10) + k;
-                  _tile_decode(ts, func, func_data, ptr, data, map, tile);
+                  _tile_decode(palette, ts, func, func_data, ptr, data, map, tile);
                }
           }
      }
@@ -202,10 +198,10 @@ war2_tileset_decode(War2_Data                *w2,
                     void                     *data)
 {
    /* Last 3 entries are unknown (cf. doc) */
-   const unsigned int forest[] = { 2, 3, 4, 5/*, 6, 7, 8*/ };
-   const unsigned int wasteland[] = { 10, 11, 12, 13/*, 14, 15, 16*/ };
-   const unsigned int winter[] = { 18, 19, 20, 21/*, 22, 23, 24*/ };
-   const unsigned int swamp[] = { 438, 439, 440, 441/*, 442, 443, 444*/ };
+   const unsigned int forest[] = { 3, 4, 5/*, 6, 7, 8*/ };
+   const unsigned int wasteland[] = { 11, 12, 13/*, 14, 15, 16*/ };
+   const unsigned int winter[] = { 19, 20, 21/*, 22, 23, 24*/ };
+   const unsigned int swamp[] = { 439, 440, 441/*, 442, 443, 444*/ };
    const unsigned int *entries;
    War2_Tileset_Descriptor ts;
    unsigned int tiles;

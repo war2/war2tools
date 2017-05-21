@@ -63,7 +63,7 @@ pud_minimap_bitmap_generate(const Pud        *pud,
    for (i = 0; i < pud->units_count; i++)
      {
         u = &(pud->units[i]);
-        c = pud_minimap_color_for_unit(u->type, u->owner);
+        c = pud_minimap_color_for_unit(u->type, u->player);
 
         w = pud->units_descr[u->type].size_w;
         h = pud->units_descr[u->type].size_h;

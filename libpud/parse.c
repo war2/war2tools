@@ -735,11 +735,11 @@ pud_parse_unit(Pud *pud)
 
    for (i = 0; i < units; ++i)
      {
-        pud->units[i].x     = READ16(pud, ECHAP(err));
-        pud->units[i].y     = READ16(pud, ECHAP(err));
-        pud->units[i].type  = READ8(pud, ECHAP(err));
-        pud->units[i].owner = READ8(pud, ECHAP(err));
-        pud->units[i].alter = READ16(pud, ECHAP(err));
+        pud->units[i].x      = READ16(pud, ECHAP(err));
+        pud->units[i].y      = READ16(pud, ECHAP(err));
+        pud->units[i].type   = READ8(pud, ECHAP(err));
+        pud->units[i].player = READ8(pud, ECHAP(err));
+        pud->units[i].alter  = READ16(pud, ECHAP(err));
      }
 
    pud->starting_points = 0;

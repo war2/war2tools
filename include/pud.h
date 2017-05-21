@@ -826,7 +826,7 @@ typedef struct
    uint16_t x; /**< X coordinate of the cell it resides */
    uint16_t y; /**< Y coordinate of the cell it resides */
    uint8_t  type; /**< Type of unit @see Pud_Unit */
-   uint8_t  owner; /**< Owner @see Pud_Owner */
+   uint8_t  player; /**< Player @see Pud_Player */
    uint16_t alter; /**< Special value. Used by resources providers and neutrals */
 } Pud_Unit_Info;
 
@@ -1715,14 +1715,14 @@ PUDAPI uint16_t pud_tile_get(const Pud *pud, unsigned int x, unsigned int y);
  * @param pud A valid pud handle
  * @param x The X coordinate of the cell
  * @param y The Y coordinate of the cell
- * @param owner The owner of the unit
+ * @param player The player of the unit
  * @param unit The unit to add
  * @param alter This value depends on the unit type. Refer to the Pud format
  * documentation for more details.
  * @return PUD_TRUE on success, PUD_FALSE on failure
  * @since 1.0.0
  */
-PUDAPI Pud_Bool pud_unit_add(Pud *pud, unsigned int x, unsigned int y, Pud_Player owner, Pud_Unit unit, uint16_t alter);
+PUDAPI Pud_Bool pud_unit_add(Pud *pud, unsigned int x, unsigned int y, Pud_Player player, Pud_Unit unit, uint16_t alter);
 
 /**
  * Get the side of a player in a given Pud file

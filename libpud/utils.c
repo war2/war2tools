@@ -804,7 +804,7 @@ pud_dump(const Pud *pud,
         fprintf(stream, "   Unit %04i.........:\n", i);
         fprintf(stream, "      X,Y............: %i,%i\n", pud->units[i].x, pud->units[i].y);
         fprintf(stream, "      Type...........: %s (0x%x)\n", pud_unit_to_string(pud->units[i].type, PUD_TRUE), pud->units[i].type);
-        fprintf(stream, "      Owner..........: 0x%x\n", pud->units[i].owner);
+        fprintf(stream, "      Player.........: 0x%x\n", pud->units[i].player);
         fprintf(stream, "      Alter..........: %u\n", pud->units[i].alter);
      }
 

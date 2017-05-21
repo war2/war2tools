@@ -542,7 +542,7 @@ pud_write(const Pud  *pud,
         W16(p->units[i].x, 1);
         W16(p->units[i].y, 1);
         W8(p->units[i].type, 1);
-        W8(p->units[i].owner, 1);
+        W8(p->units[i].player, 1);
         W16(p->units[i].alter, 1);
      }
 
@@ -599,7 +599,7 @@ PUDAPI Pud_Bool
 pud_unit_add(Pud          *pud,
              unsigned int  x,
              unsigned int  y,
-             Pud_Player    owner,
+             Pud_Player    player,
              Pud_Unit      unit,
              uint16_t      alter)
 {
@@ -620,11 +620,11 @@ pud_unit_add(Pud          *pud,
      }
 
    const Pud_Unit_Info u = {
-      .x     = x,
-      .y     = y,
-      .type  = unit,
-      .owner = owner,
-      .alter = alter
+      .x      = x,
+      .y      = y,
+      .type   = unit,
+      .player = player,
+      .alter  = alter
    };
 
    if ((x > pud->map_w - 1) || (y > pud->map_h - 1))
@@ -696,8 +696,8 @@ pud_check(Pud                   *pud,
      {
         u = &(pud->units[i]);
 
-        /* Check for any invalid owner (Pud_Player) */
-        if (!((u->owner < 8) || (u->owner == PUD_PLAYER_NEUTRAL)))
+        /* Check for any invalid player (Pud_Player) */
+        if (!((u->player < 8) || (u->player == PUD_PLAYER_NEUTRAL)))
           {
              ret = PUD_ERROR_INVALID_PLAYER;
              if (err) err->data.unit = u;
@@ -710,17 +710,17 @@ pud_check(Pud                   *pud,
              ++starting_locations;
 
              /* Did we already register the start location for this player. */
-             if (players_start_loc[u->owner] == PUD_TRUE)
+             if (players_start_loc[u->player] == PUD_TRUE)
                {
                   ret = PUD_ERROR_TOO_MUCH_START_LOCATIONS;
                   if (err) err->data.unit = u;
                   goto end;
                }
-             players_start_loc[u->owner] = PUD_TRUE;
+             players_start_loc[u->player] = PUD_TRUE;
           }
         else
           {
-             players_units[u->owner]++;
+             players_units[u->player]++;
           }
      }
 

@@ -155,7 +155,13 @@ _unit_process(const Unit *u, unsigned int object, Eina_Strbuf *table)
    eina_strbuf_append_printf(
       table,
       "      },\n" /* end of sprites */
-      "   },\n"     /* end of unit */
+      "      sprites_count = %u,\n"
+      "      sprite_box_width = %u,\n"
+      "      sprite_box_height = %u,\n"
+      "   },\n",   /* end of unit */
+      u->sprites_count,
+      max_w,
+      max_h
    );
 
 

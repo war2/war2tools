@@ -2,7 +2,7 @@
  * main.c
  * pud
  *
- * Copyright (c) 2014 - 2016 Jean Guyomarc'h
+ * Copyright (c) 2014 - 2017 Jean Guyomarc'h
  */
 
 #include "pudutils.h"
@@ -31,7 +31,7 @@ static const struct option _options[] =
      {"regm",     no_argument,          0, 'R'},
      {"sqm",      no_argument,          0, 'Q'},
      {"sections", no_argument,          0, 's'},
-     {"cursor",   required_argument,    0, 'C'},
+     {"cursor",   optional_argument,    0, 'C'},
      {"war",      no_argument,          0, 'W'},
      {"verbose",  no_argument,          0, 'v'},
      {"help",     no_argument,          0, 'h'},
@@ -62,7 +62,8 @@ _usage(FILE *stream)
            "    -Q | --sqm            Writes the movement map\n"
            "    -U | --ui <entry>     Extract an UI image from a War2 file.\n"
            "    -s | --sections       Gets sections in the PUD file.\n"
-           "    -C | --cursor <entry> Extract the cursor for the specified entry.\n"
+           "    -C | --cursor [entry] Extract the cursor for the specified entry. If [entry] is not\n"
+           "                          specified, all the cursors are extracted.\n"
            "    -S | --sprite <entry> Extract the graphic entry specified. Only when -W is enabled.\n"
            "                  <color> An output file (with -o) and type (-p,-j,-g) must be provided.\n"
            "                          Color must be a string (red, blue, ...). Arguments must be\n"
@@ -256,7 +257,7 @@ main(int    argc,
    /* Getopt */
    while (1)
      {
-        c = getopt_long(argc, argv, "o:pjsS:hgWPRQvt:C:U:", _options, &opt_idx);
+        c = getopt_long(argc, argv, "o:pjsS:hgWPRQvt:C::U:", _options, &opt_idx);
         if (c == -1) break;
 
         switch (c)
@@ -282,7 +283,7 @@ main(int    argc,
 
            case 'C':
               cursor.enabled = 1;
-              cursor.entry = strtol(optarg, &ptr, 10);
+              if (optarg) { cursor.entry = strtol(optarg, &ptr, 10); }
               break;
 
            case 'R':
@@ -369,13 +370,26 @@ main(int    argc,
              int hotx, hoty;
              unsigned int w, h;
              Pud_Color *img;
+             War2_Cursor it, first, last;
 
              _check_output_enabled();
 
-             img = war2_cursors_decode(w2, cursor.entry, &hotx, &hoty, &w, &h);
-             printf("hotx: %i, hoty: %i\n", hotx, hoty);
-             _write_output(img, w, h, cursor.entry);
-             free(img);
+             if (cursor.entry)
+               {
+                  first = last = cursor.entry;
+               }
+             else
+               {
+                  first = __WAR2_CURSOR_FIRST;
+                  last = __WAR2_CURSOR_LAST - 1;
+               }
+             for (it = first; it <= last; it++)
+               {
+                  img = war2_cursors_decode(w2, it, &hotx, &hoty, &w, &h);
+                  printf("hotx: %i, hoty: %i\n", hotx, hoty);
+                  _write_output(img, w, h, it);
+                  free(img);
+               }
           }
         else if (ui.enabled)
           {

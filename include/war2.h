@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014-2016 Jean Guyomarc'h
+ * Copyright (c) 2014-2017 Jean Guyomarc'h
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
@@ -77,6 +77,39 @@ typedef struct
    Pud_Era       era; /**< Current era */
    unsigned int  tiles; /**< Total amount of decoded tiles */
 } War2_Tileset_Descriptor;
+
+/**
+ * Type to map a cursor to its associated entry
+ * @since 1.0.0
+ */
+typedef enum
+{
+   WAR2_CURSOR_HUMAN_POINTER            = 301, /**< Human normal selector */
+   WAR2_CURSOR_ORC_POINTER              = 302, /**< Orc normal selector */
+   WAR2_CURSOR_HUMAN_POINTER_NOCLICK    = 303, /**< Human forbidden selector */
+   WAR2_CURSOR_ORC_POINTER_NOCLICK      = 304, /**< Orc forbidden selector */
+   WAR2_CURSOR_YELLOW_EAGLE             = 305, /**< Yellow eagle */
+   WAR2_CURSOR_YELLOW_CROSSHAIRS        = 306, /**< Yellow crosshairs */
+   WAR2_CURSOR_RED_EAGLE                = 307, /**< Red eagle */
+   WAR2_CURSOR_RED_CROSSHAIRS           = 308, /**< Red crosshairs */
+   WAR2_CURSOR_GREEN_EAGLE              = 309, /**< Green eagle */
+   WAR2_CURSOR_GREEN_CROSSHAIRS         = 310, /**< Green crosshairs */
+   WAR2_CURSOR_MAGNIFYING_GLASS         = 311, /**< Magnifying glass */
+   WAR2_CURSOR_SELECTOR                 = 312, /**< Units selector */
+   WAR2_CURSOR_HOURGLASS                = 313, /**< Hourglass */
+   WAR2_CURSOR_CREDITS                  = 314, /**< Credits pointer */
+   WAR2_CURSOR_ARROW_NORTH              = 315, /**< Scroll arrow (north) */
+   WAR2_CURSOR_ARROW_NORTH_EAST         = 316, /**< Scroll arrow (north east) */
+   WAR2_CURSOR_ARROW_EAST               = 317, /**< Scroll arraow (east) */
+   WAR2_CURSOR_ARROW_SOUTH_EAST         = 318, /**< Scroll arrow (south east) */
+   WAR2_CURSOR_ARROW_SOUTH              = 319, /**< Scroll arrow (south) */
+   WAR2_CURSOR_ARROW_SOUTH_WEST         = 320, /**< Scroll arrow (south west) */
+   WAR2_CURSOR_ARROW_WEST               = 321, /**< Scroll arrow (west) */
+   WAR2_CURSOR_ARROW_NORTH_WEST         = 322, /**< Scroll arrow (north west) */
+
+   __WAR2_CURSOR_LAST, /**< Sentinel. Can be used to terminate an iteration */
+   __WAR2_CURSOR_FIRST                  = WAR2_CURSOR_HUMAN_POINTER /**< Alias to the first cursor */
+} War2_Cursor;
 
 /**
  * Type that holds information about a current sprite deconding

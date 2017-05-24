@@ -32,7 +32,7 @@ static const struct option _options[] =
      {"sqm",      no_argument,          0, 'Q'},
      {"sections", no_argument,          0, 's'},
      {"cursor",   optional_argument,    0, 'C'},
-     {"war",      no_argument,          0, 'W'},
+     {"war",      no_argument,          0, 'w'},
      {"verbose",  no_argument,          0, 'v'},
      {"help",     no_argument,          0, 'h'},
      {NULL,       0,                    0, '\0'}
@@ -48,7 +48,7 @@ _usage(FILE *stream)
            "    "PROGRAM" [options] <file.pud>\n"
            "\n"
            "Options:\n"
-           "    -W | --war            The file to parse is a .WAR file instead of a .PUD\n"
+           "    -w | --war            The file to parse is a .WAR file instead of a .PUD\n"
            "    -P | --print          Prints the data in stdout\n"
            "    -o | --output <file>  When -p or -j is present outputs the file with the provided filename\n"
            "    -p | --ppm            Outputs the minimap as a ppm file. If --out is not specified,\n"
@@ -257,7 +257,7 @@ main(int    argc,
    /* Getopt */
    while (1)
      {
-        c = getopt_long(argc, argv, "o:pjsS:hgWPRQvt:C::U:", _options, &opt_idx);
+        c = getopt_long(argc, argv, "o:pjsS:hgwPRQvt:C:U:", _options, &opt_idx);
         if (c == -1) break;
 
         switch (c)
@@ -298,7 +298,7 @@ main(int    argc,
               sections.enabled = 1;
               break;
 
-           case 'W':
+           case 'w':
               war2 = PUD_TRUE;
               break;
 

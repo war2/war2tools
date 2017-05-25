@@ -48,7 +48,6 @@ typedef struct
    Sprite sprites;
    unsigned int sprites_count;
    Eina_Tmpstr *file;
-   Eina_Strbuf *buf;
 } Unit;
 
 static void
@@ -88,7 +87,7 @@ _unit_clean(Unit *u)
 }
 
 static void
-_unit_process(const Unit *u, unsigned int object, Eina_Strbuf *table)
+_unit_process(const Unit *u, unsigned int object)
 {
    const Sprite *iter = u->sprites.next;
    char file[1024];
@@ -112,27 +111,9 @@ _unit_process(const Unit *u, unsigned int object, Eina_Strbuf *table)
    img = cairo_image_surface_create(CAIRO_FORMAT_ARGB32, max_w * 5, max_h * total_rows);
    cr = cairo_create(img);
 
-
-   eina_strbuf_append_printf(
-      table,
-      "   %s = {\n"
-      "      name = \"%s\",\n"
-      "      size = %u,\n"
-      "      sprites = {\n",
-      pud_unit_to_string(object, PUD_FALSE),
-      pud_unit_to_string(object, PUD_TRUE),
-      pud_unit_size_get(object)
-   );
-
    iter = u->sprites.next;
    while (iter)
      {
-        eina_strbuf_append_printf(
-           table,
-           "         { x = %2i, y = %2i, w = %2u, h = %2u },\n",
-           iter->x, iter->y, iter->w, iter->h
-        );
-
         war2_png_write(u->file, iter->w, iter->h, (unsigned char *)iter->data);
         im = cairo_image_surface_create_from_png(u->file);
 
@@ -151,19 +132,6 @@ _unit_process(const Unit *u, unsigned int object, Eina_Strbuf *table)
              row++;
           }
      }
-
-   eina_strbuf_append_printf(
-      table,
-      "      },\n" /* end of sprites */
-      "      sprites_count = %u,\n"
-      "      sprite_box_width = %u,\n"
-      "      sprite_box_height = %u,\n"
-      "   },\n",   /* end of unit */
-      u->sprites_count,
-      max_w,
-      max_h
-   );
-
 
    snprintf(file, sizeof(file), "%s.png",
             pud_unit_to_string(object, PUD_FALSE));
@@ -216,9 +184,6 @@ main(int                argc,
      }
 
    Eina_Tmpstr *file;
-   Eina_Strbuf *const strbuf = eina_strbuf_new();
-
-   eina_strbuf_append(strbuf, "{\n");
    const int fd = eina_file_mkstemp("tmp.sprites-XXXXXX.png", &file);
 
    for (object = 0; object < PUD_UNIT_NONE; object++)
@@ -228,21 +193,17 @@ main(int                argc,
            .sprites_count = 0,
            .sprites.next = NULL,
            .file = file,
-           .buf = strbuf,
         };
         if (war2_sprites_decode(w2, PUD_PLAYER_RED,
                                 PUD_ERA_FOREST, object,
                                 _decode_sprite_cb, &unit))
           {
 
-             _unit_process(&unit, object, strbuf);
+             _unit_process(&unit, object);
           }
         _unit_clean(&unit);
      }
 
-   eina_strbuf_append(strbuf, "}\n");
-   printf("%s", eina_strbuf_string_get(strbuf));
-   eina_strbuf_free(strbuf);
    close(fd);
    ecore_file_unlink(file);
    eina_tmpstr_del(file);

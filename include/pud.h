@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014-2016 Jean Guyomarc'h
+ * Copyright (c) 2014-2017 Jean Guyomarc'h
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
@@ -33,7 +33,7 @@
 #ifndef __LIBPUD_PUD_H__
 #define __LIBPUD_PUD_H__
 #ifdef __cplusplus
-extern "C" { /* } For dump editors */
+extern "C" { /* } For dumb editors */
 #endif
 
 #include <stdint.h>
@@ -326,6 +326,14 @@ typedef enum
    PUD_ICON_DARK_PORTAL                          = 80,
    PUD_ICON_CIRCLE_OF_POWER                      = 81,
    PUD_ICON_RUNESTONE                            = 82,
+   PUD_ICON_HUMAN_MOVE                           = 83,
+   PUD_ICON_ORC_MOVE                             = 84,
+   /* Icon 85 is invalid */
+   PUD_ICON_COLLECT                              = 86,
+   PUD_ICON_BUILD_STAGE_1                        = 87,
+   PUD_ICON_BUILD_STAGE_2                        = 88,
+   PUD_ICON_RETURN_HUMAN_RESOURCES               = 89,
+   PUD_ICON_RETURN_ORC_RESOURCES                 = 90,
    PUD_ICON_CANCEL                               = 91,
    PUD_ICON_HUMAN_WALL                           = 92,
    PUD_ICON_ORC_WALL                             = 93,
@@ -336,6 +344,14 @@ typedef enum
    PUD_ICON_CRITTER_SEAL                         = PUD_ICON_CRITTER,
    PUD_ICON_CRITTER_PIG                          = PUD_ICON_CRITTER,
    PUD_ICON_CRITTER_RED_PIG                      = PUD_ICON_CRITTER,
+   PUD_ICON_HUMAN_PATROL                         = 178,
+   PUD_ICON_ORC_PATROL_                          = 179,
+   PUD_ICON_HUMAN_STAND_GROUND                   = 180,
+   PUD_ICON_ORC_STAND_GROUND                     = 181,
+   PUD_ICON_HUMAN_ATTACK_GROUND                  = 182,
+   PUD_ICON_ORC_ATTACK_GROUND                    = 183,
+   PUD_ICON_HUMAN_PATROL_ALTERNATE               = 184,
+   PUD_ICON_ORC_PATROL_ALTERNATE                 = 185,
    PUD_ICON_KARGATH_BLADEFIST                    = 186,
    PUD_ICON_ALLERIA                              = 187,
    PUD_ICON_DANATH                               = 188,
@@ -349,30 +365,50 @@ typedef enum
    PUD_ICON_ATTACK_PEON                          = PUD_ICON_PEON,
    PUD_ICON_ATTACK_PEASANT                       = PUD_ICON_PEASANT,
 
+   PUD_ICON_SWORD_0                              = 116,
    PUD_ICON_SWORD_1                              = 117,
    PUD_ICON_SWORD_2                              = 118,
+   PUD_ICON_AXE_0                                = 119,
    PUD_ICON_AXE_1                                = 120,
    PUD_ICON_AXE_2                                = 121,
+   PUD_ICON_ARROW_0                              = 124,
    PUD_ICON_ARROW_1                              = 125,
    PUD_ICON_ARROW_2                              = 126,
+   PUD_ICON_SPEAR_0                              = 127,
    PUD_ICON_SPEAR_1                              = 128,
    PUD_ICON_SPEAR_2                              = 129,
+   PUD_ICON_HUMAN_SHIELD_0                       = 164,
    PUD_ICON_HUMAN_SHIELD_1                       = 165,
    PUD_ICON_HUMAN_SHIELD_2                       = 166,
+   PUD_ICON_ORC_SHIELD_0                         = 167,
    PUD_ICON_ORC_SHIELD_1                         = 168,
    PUD_ICON_ORC_SHIELD_2                         = 169,
+   PUD_ICON_HUMAN_SHIP_CANNON_0                  = 144,
    PUD_ICON_HUMAN_SHIP_CANNON_1                  = 145,
    PUD_ICON_HUMAN_SHIP_CANNON_2                  = 146,
+   PUD_ICON_ORC_SHIP_CANNON_0                    = 147,
    PUD_ICON_ORC_SHIP_CANNON_1                    = 148,
    PUD_ICON_ORC_SHIP_CANNON_2                    = 149,
+   PUD_ICON_HUMAN_SHIP_ARMOR_0                   = 153,
    PUD_ICON_HUMAN_SHIP_ARMOR_1                   = 154,
    PUD_ICON_HUMAN_SHIP_ARMOR_2                   = 155,
+   PUD_ICON_HUMAN_MOVE_NAVAL                     = 156,
+   PUD_ICON_ORC_MOVE_NAVAL                       = 157,
+   PUD_ICON_HUMAN_RETURN_OIL                     = 158,
+   PUD_ICON_ORC_RETURN_OIL                       = 159,
+   PUD_ICON_HUMAN_COLLECT_OIL                    = 160,
+   PUD_ICON_ORC_COLLECT_OIL                      = 161,
+   PUD_ICON_HUMAN_UNLOAD                         = 162,
+   PUD_ICON_ORC_UNLOAD                           = 163,
+   PUD_ICON_ORC_SHIP_ARMOR_0                     = 150,
    PUD_ICON_ORC_SHIP_ARMOR_1                     = 151,
    PUD_ICON_ORC_SHIP_ARMOR_2                     = 152,
    PUD_ICON_CATAPULT_1                           = 138,
    PUD_ICON_CATAPULT_2                           = 139,
    PUD_ICON_BALLISTA_1                           = 140,
    PUD_ICON_BALLISTA_2                           = 141,
+   PUD_ICON_EXPLOSIVE                            = 142,
+   PUD_ICON_MOLOTOV                              = 143,
    PUD_ICON_TRAIN_RANGERS                        = 6,
    PUD_ICON_LONGBOW                              = 132,
    PUD_ICON_RANGER_SCOUTING                      = 133,
@@ -386,6 +422,7 @@ typedef enum
    PUD_ICON_HOLY_VISION                          = 106,
    PUD_ICON_HEALING                              = 107,
    PUD_ICON_EXORCISM                             = 110,
+   PUD_ICON_BURN                                 = 111, /**< Unused spell */
    PUD_ICON_FLAME_SHIELD                         = 100,
    PUD_ICON_FIREBALL                             = 101,
    PUD_ICON_SLOW                                 = 94,

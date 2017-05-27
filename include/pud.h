@@ -423,6 +423,8 @@ typedef enum
    PUD_ICON_HEALING                              = 107,
    PUD_ICON_EXORCISM                             = 110,
    PUD_ICON_BURN                                 = 111, /**< Unused spell */
+   PUD_ICON_LIGHTNING                            = 99,
+   PUD_ICON_TOUCH_OF_DARKNESS                    = 102,
    PUD_ICON_FLAME_SHIELD                         = 100,
    PUD_ICON_FIREBALL                             = 101,
    PUD_ICON_SLOW                                 = 94,

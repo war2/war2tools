@@ -887,7 +887,7 @@ typedef struct
    /**
     * Owners for each players.
     *
-    * Each of the fiels within this structure are of type Pud_Owner
+    * Each of the fields within this structure are of type Pud_Owner
     * This structure is affected by the War2 defaults.
     * @see Pud_Owner
     * @since 1.0.0
@@ -901,7 +901,7 @@ typedef struct
    /**
     * Sides that each player has
     *
-    * Each of the fiels within this structure are of type Pud_Side_
+    * Each of the fields within this structure are of type Pud_Side
     * This structure is affected by the War2 defaults.
     * @see Pud_Side
     * @since 1.0.0
@@ -929,7 +929,7 @@ typedef struct
    /**
     * Artificial Intelligence (AI) of computers
     *
-    * Each of the fiels within this structure are of type Pud_AI
+    * Each of the fields within this structure are of type Pud_AI
     * This structure is affected by the War2 defaults.
     * @see Pud_AI
     * @since 1.0.0

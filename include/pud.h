@@ -345,7 +345,7 @@ typedef enum
    PUD_ICON_CRITTER_PIG                          = PUD_ICON_CRITTER,
    PUD_ICON_CRITTER_RED_PIG                      = PUD_ICON_CRITTER,
    PUD_ICON_HUMAN_PATROL                         = 178,
-   PUD_ICON_ORC_PATROL_                          = 179,
+   PUD_ICON_ORC_PATROL                           = 179,
    PUD_ICON_HUMAN_STAND_GROUND                   = 180,
    PUD_ICON_ORC_STAND_GROUND                     = 181,
    PUD_ICON_HUMAN_ATTACK_GROUND                  = 182,

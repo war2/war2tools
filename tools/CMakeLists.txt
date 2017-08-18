@@ -68,6 +68,14 @@ if (CAIRO_FOUND AND EINA_FOUND AND ECORE_FILE_FOUND)
       ${EINA_LIBRARIES} ${EVIL_LIBRARIES}
       ${ECORE_FILE_LIBRARIES}
    )
+
+   add_executable(gen_icons_atlas gen_icons_atlas.c)
+   target_link_libraries(gen_icons_atlas
+      ${LIBWAR2_LIBRARIES} ${CAIRO_LIBRARIES}
+      ${EINA_LIBRARIES} ${EVIL_LIBRARIES}
+      ${ECORE_FILE_LIBRARIES}
+      m
+   )
 endif ()
 
 if (ECORE_FILE_FOUND)

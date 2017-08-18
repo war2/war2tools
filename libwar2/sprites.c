@@ -219,6 +219,7 @@ war2_sprites_decode_entry(War2_Data                *w2,
 
    ud.color = player_color;
    ud.object = entry;
+   ud.era = PUD_ERA_FOREST;
 
    return _sprites_entry_parse(w2, &ud, entry, func, data);
 }

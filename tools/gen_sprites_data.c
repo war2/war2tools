@@ -48,7 +48,20 @@ typedef struct
    Sprite sprites;
    unsigned int sprites_count;
    Eina_Tmpstr *file;
+   const char *path;
 } Unit;
+
+typedef struct
+{
+   const uint16_t section;
+   const char *const name;
+} Animation;
+
+static const Animation _animations[] =
+{
+   { 352, "action", },
+   { 0, NULL },
+};
 
 static void
 _unit_sprite_add(Unit *u, int x, int y,
@@ -87,7 +100,53 @@ _unit_clean(Unit *u)
 }
 
 static void
-_unit_process(const Unit *u, unsigned int object)
+_draw(const Unit *u,
+      const Sprite *s,
+      cairo_t *cr,
+      unsigned int col, unsigned int row,
+      unsigned int max_w, unsigned int max_h,
+      int can_flip)
+{
+   cairo_matrix_t mat;
+   cairo_surface_t *im;
+   const int flip = ((col == 5) || (col == 6) || (col == 7));
+   const double w = max_w * col;
+   const double h = max_h * row;
+   const double at_x = max_w * col;
+
+   if (flip)
+     {
+        cairo_matrix_init(&mat,
+                          -1.0               , 0.0,
+                          0.0                , 1.0,
+                          (2.0 * at_x) + s->w, 0.0);
+        cairo_save(cr);
+        cairo_transform(cr, &mat);
+     }
+
+   war2_png_write(u->file, s->w, s->h, (unsigned char *)s->data);
+   im = cairo_image_surface_create_from_png(u->file);
+
+
+   cairo_set_source_surface(cr, im, w, h);
+   cairo_rectangle(cr, w, h, s->w, s->h);
+   cairo_fill(cr);
+
+   if (flip)
+     {
+        cairo_restore(cr);
+     }
+
+   if ((can_flip) && ((col == 1) || (col == 2) || (col == 3)))
+     {
+        _draw(u, s, cr, 8 - col, row, max_w, max_h, 0);
+     }
+
+   cairo_surface_destroy(im);
+}
+
+static void
+_common_process(const Unit *u, unsigned int cols, unsigned int add)
 {
    const Sprite *iter = u->sprites.next;
    char file[1024];
@@ -104,37 +163,32 @@ _unit_process(const Unit *u, unsigned int object)
         iter = iter->next;
      }
 
-   unsigned int total_rows = u->sprites_count / 5;
-   const unsigned int extra = u->sprites_count % 5;
+   unsigned int total_rows = u->sprites_count / cols;
+   const unsigned int extra = u->sprites_count % cols;
    if (extra != 0) total_rows++;
 
-   img = cairo_image_surface_create(CAIRO_FORMAT_ARGB32, max_w * 5, max_h * total_rows);
+   img = cairo_image_surface_create(CAIRO_FORMAT_ARGB32,
+                                    max_w * (cols + add),
+                                    max_h * total_rows);
    cr = cairo_create(img);
 
    iter = u->sprites.next;
    while (iter)
      {
-        war2_png_write(u->file, iter->w, iter->h, (unsigned char *)iter->data);
-        im = cairo_image_surface_create_from_png(u->file);
-
-        const double w = max_w * col;
-        const double h = max_h * row;
-        cairo_set_source_surface(cr, im, w, h);
-        cairo_rectangle(cr, w, h, iter->w, iter->h);
-        cairo_fill(cr);
-
-        cairo_surface_destroy(im);
-        iter = iter->next;
+        _draw(u, iter, cr, col, row, max_w, max_h, (add != 0));
         col++;
-        if (col >= 5)
+        if (col >= cols)
           {
              col = 0;
              row++;
           }
+
+        iter = iter->next;
      }
 
-   snprintf(file, sizeof(file), "%s.png",
-            pud_unit_to_string(object, PUD_FALSE));
+   snprintf(file, sizeof(file), "%s/%s.png",
+            u->path, pud_unit_to_string(u->unit, PUD_FALSE));
+   printf("=> %s\n", file);
 
 
    cairo_surface_flush(img);
@@ -142,6 +196,24 @@ _unit_process(const Unit *u, unsigned int object)
 
    cairo_destroy(cr);
    cairo_surface_destroy(img);
+}
+
+static void
+_animation_process(const Unit *u)
+{
+   _common_process(u, u->sprites_count, 0);
+}
+
+static void
+_unit_process(const Unit *u)
+{
+   _common_process(u, 5, 3);
+}
+
+static void
+_building_process(const Unit *u)
+{
+   _common_process(u, 3, 0);
 }
 
 static void
@@ -164,7 +236,9 @@ main(int                argc,
      const char *const *argv)
 {
    int rc = EXIT_FAILURE;
-   unsigned int object;
+   unsigned int object, era, color;
+   War2_Sprites_Decode_Func func;
+   char path[4096];
 
    if (argc != 2)
      {
@@ -186,21 +260,60 @@ main(int                argc,
    Eina_Tmpstr *file;
    const int fd = eina_file_mkstemp("tmp.sprites-XXXXXX.png", &file);
 
-   for (object = 0; object < PUD_UNIT_NONE; object++)
+
+   //for (era = PUD_ERA_FOREST; era <= PUD_ERA_SWAMP; era++)
+   era = PUD_ERA_FOREST;
      {
-        Unit unit = {
-           .unit = object,
+        //for (color = 1; color <= 8; color++)
+        color = 1;
+          {
+             snprintf(path, sizeof(path), "%s/%s/%u/",
+                      (pud_unit_building_is(object) ? "buildings" : "units"),
+                      pud_era_to_string(era), color);
+
+             ecore_file_mkpath(path);
+             for (object = 0; object < PUD_UNIT_NONE; object++)
+            // object = PUD_UNIT_FOOTMAN;
+               {
+                  Unit unit = {
+                     .unit = object,
+                     .sprites_count = 0,
+                     .sprites.next = NULL,
+                     .file = file,
+                     .path = path,
+                  };
+
+                  if (war2_sprites_decode(w2, color - 1, era, object,
+                                          _decode_sprite_cb, &unit))
+                    {
+                       if (pud_unit_building_is(object))
+                         {
+                            _building_process(&unit);
+                         }
+                       else
+                         {
+                            _unit_process(&unit);
+                         }
+                    }
+                  _unit_clean(&unit);
+               }
+          }
+     }
+
+   const Animation *a;
+   for (a = _animations; a->section != 0; a++)
+     {
+        Unit unit = { /* This is a fake 'unit'. Bad name. */
+           .unit = WAR2_SPRITES_ICONS,
            .sprites_count = 0,
            .sprites.next = NULL,
            .file = file,
+           .path = "animations",
         };
-        if (war2_sprites_decode(w2, PUD_PLAYER_RED,
-                                PUD_ERA_FOREST, object,
-                                _decode_sprite_cb, &unit))
-          {
-
-             _unit_process(&unit, object);
-          }
+        ecore_file_mkpath(unit.path);
+        war2_sprites_decode_entry(w2, PUD_PLAYER_RED, a->section,
+                                  _decode_sprite_cb, &unit);
+        _animation_process(&unit);
         _unit_clean(&unit);
      }
 

@@ -892,7 +892,7 @@ typedef struct
     * @see Pud_Owner
     * @since 1.0.0
     */
-   struct {
+   struct owner {
       uint8_t players[8]; /**< Real players (from 1 to 8) */
       uint8_t unusable[7]; /**< Phantom players */
       uint8_t neutral; /**< Neutral player (critters, dark portal, gold mine, ...) */
@@ -906,7 +906,7 @@ typedef struct
     * @see Pud_Side
     * @since 1.0.0
     */
-   struct {
+   struct side {
       uint8_t players[8]; /**< Real players (from 1 to 8) */
       uint8_t unusable[7]; /**< Phantom players */
       uint8_t neutral; /**< Neutral player (critters, dark portal, gold mine, ...) */
@@ -918,7 +918,7 @@ typedef struct
     * This structure is affected by the War2 defaults.
     * @since 1.0.0
     */
-   struct {
+   struct resources {
       uint16_t players[8]; /**< Real players (from 1 to 8) */
       uint16_t unusable[7]; /**< Phantom players */
       uint16_t neutral; /**< Neutral player (critters, dark portal, gold mine, ...) */
@@ -934,7 +934,7 @@ typedef struct
     * @see Pud_AI
     * @since 1.0.0
     */
-   struct {
+   struct ai {
       uint8_t players[8]; /**< Real players (from 1 to 8) */
       uint8_t unusable[7]; /**< Phantom players */
       uint8_t neutral; /**< Neutral player (critters, dark portal, gold mine, ...) */
@@ -946,7 +946,7 @@ typedef struct
     * This structure is affected by the War2 defaults.
     * @since 1.0.0
     */
-   struct {
+   struct allow {
       Pud_Allow players[8]; /**< Real players (from 1 to 8) */
       Pud_Allow unusable[7]; /**< Phantom players */
       Pud_Allow neutral; /**< Neutral player (critters, dark portal, gold mine, ...) */

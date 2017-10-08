@@ -426,7 +426,7 @@ pud_parse_alow(Pud *pud)
 
    uint32_t chk;
    uint32_t buf[16];
-   typeof(pud->unit_alow) *ptrs[] = {
+   struct allow *ptrs[] = {
       &(pud->unit_alow),
       &(pud->spell_start),
       &(pud->spell_alow),

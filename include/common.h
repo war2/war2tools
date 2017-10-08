@@ -30,7 +30,9 @@
 # include <unistd.h>
 #endif
 
-#ifdef HAVE_ACCESS
+#if defined(MSVC)
+# include <io.h>
+#elif defined(HAVE_ACCESS)
 # include <unistd.h>
 #endif
 
@@ -152,7 +154,9 @@ common_file_exists(const char *path)
 {
    if (!path) return 0;
 
-#ifdef HAVE_ACCESS
+#ifdef HAVE_MSVC
+   return (_access_s(path, 0) == 0) ? 1 : 0;
+#elif defined(HAVE_ACCESS)
    return (access(path, F_OK) == 0) ? 1 : 0;
 #else
 

@@ -81,6 +81,11 @@ add_custom_target(uninstall
    COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_SOURCE_DIR}/cmake/uninstall.cmake
 )
 
+if (MSVC)
+   add_definitions(/DHAVE_MSVC)
+endif ()
+
+
 check_function(mmap)
 check_function(access)
 check_function(strndup)

@@ -164,29 +164,17 @@ pud_parse_era(Pud *pud)
 
    PUD_TRAP_SETUP(pud) { return PUD_FALSE; }
    w = PUD_READ16(pud);
-   switch (w)
-     {
-      case 0x00:
-      case 0x04 ... 0xff:
-         pud->era = PUD_ERA_FOREST;
-         break;
 
-      case 0x01:
-         pud->era = PUD_ERA_WINTER;
-         break;
-
-      case 0x02:
-         pud->era = PUD_ERA_WASTELAND;
-         break;
-
-      case 0x03:
-         pud->era = PUD_ERA_SWAMP;
-         break;
-
-      default:
-         DIE_RETURN(PUD_FALSE, "Failed to parse Era [0x%x]", w);
-         break;
-     }
+   if ((w == 0x00) || ((w >= 0x04) && (w <= 0xff)))
+      pud->era = PUD_ERA_FOREST;
+   else if (w == 0x01)
+      pud->era = PUD_ERA_WINTER;
+   else if (w == 0x02)
+      pud->era = PUD_ERA_WASTELAND;
+   else if (w == 0x03)
+      pud->era = PUD_ERA_SWAMP;
+   else
+      DIE_RETURN(PUD_FALSE, "Failed to parse Era [0x%x]", w);
 
    return PUD_TRUE;
 }

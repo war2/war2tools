@@ -25,30 +25,18 @@
 PUDAPI Pud_Owner
 pud_owner_convert(uint8_t code)
 {
-   switch (code)
-     {
-      case 0x00:
-      case 0x02:
-      case 0x08 ... 0xff:
-         return PUD_OWNER_PASSIVE_COMPUTER;
-
-      case 0x01:
-      case 0x04:
-         return PUD_OWNER_COMPUTER;
-
-      case 0x05:
-         return PUD_OWNER_HUMAN;
-
-      case 0x06:
-         return PUD_OWNER_RESCUE_PASSIVE;
-
-      case 0x07:
-         return PUD_OWNER_RESCUE_ACTIVE;
-
-      case 0x03:
-      default:
-         return PUD_OWNER_NOBODY;
-     }
+   if (code == 0x00 || code == 0x02 || (code >= 0x08 && code <= 0xff))
+      return PUD_OWNER_PASSIVE_COMPUTER;
+   else if (code == 0x01 || code == 0x04)
+      return PUD_OWNER_COMPUTER;
+   else if (code == 0x05)
+      return PUD_OWNER_HUMAN;
+   else if (code == 0x06)
+      return PUD_OWNER_RESCUE_PASSIVE;
+   else if (code == 0x07)
+      return PUD_OWNER_RESCUE_ACTIVE;
+   else
+      return PUD_OWNER_NOBODY;
 }
 
 PUDAPI Pud_Side

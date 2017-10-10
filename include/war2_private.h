@@ -35,20 +35,11 @@
 #include "pud_private.h"
 #include "debug.h"
 #include "war2.h"
-
-#undef FAIL
-#undef ECHAP
-#undef READ8
-#undef READ16
-#undef READ32
-#undef READBUF
-
+#include "common.h"
 
 struct _War2_Data
 {
-   unsigned char *mem_map;
-   size_t         mem_map_size;
-   unsigned char *ptr;
+   Pud_Mmap *mem_map;
 
    uint32_t     magic;
    uint16_t     fid;
@@ -64,61 +55,10 @@ struct _War2_Data
    int verbose;
 };
 
-
-#define FAIL(ret_) return ret_
-#define ECHAP(lab_) goto lab_
-
-#define READ8(w, ...) \
-   ({ \
-    uint8_t x__[1]; \
-    const size_t size__ = sizeof(x__[0]); \
-    if (!(war2_mem_map_ok(w))) { \
-    ERR("Read outside of memory map!"); \
-    __VA_ARGS__; \
-    } \
-    memcpy(&(x__[0]), w->ptr, size__); \
-    w->ptr += size__; \
-    x__[0]; \
-    })
-
-#define READ16(w, ...) \
-   ({ \
-    uint16_t x__[1]; \
-    const size_t size__ = sizeof(x__[0]); \
-    if (!(war2_mem_map_ok(w))) { \
-    ERR("Read outside of memory map!"); \
-    __VA_ARGS__; \
-    } \
-    memcpy(&(x__[0]), w->ptr, size__); \
-    w->ptr += size__; \
-    x__[0]; \
-    })
-
-#define READ32(w, ...) \
-   ({ \
-    uint32_t x__[1]; \
-    const size_t size__ = sizeof(x__[0]); \
-    if (!(war2_mem_map_ok(w))) { \
-    ERR("Read outside of memory map!"); \
-    __VA_ARGS__; \
-    } \
-    memcpy(&(x__[0]), w->ptr, size__); \
-    w->ptr += size__; \
-    x__[0]; \
-    })
-
-#define READBUF(w, buf, type, count, ...) \
-   do { \
-      void *ptr__ = (buf); \
-      const size_t size__ = sizeof(type) * (count); \
-      if (!(war2_mem_map_ok(w))) { \
-         ERR("Read outside of memory map!"); \
-         __VA_ARGS__; \
-      } \
-      memcpy(ptr__, w->ptr, size__); \
-      w->ptr += size__; \
-   } while (0)
-
+#define WAR2_TRAP_SETUP(W2) COMMON_TRAP_SETUP(W2->mem_map)
+#define WAR2_READ8(W2) common_read8(w2->mem_map)
+#define WAR2_READ16(W2) common_read16(w2->mem_map)
+#define WAR2_READ32(W2) common_read32(w2->mem_map)
 
 #define WAR2_VERBOSE(w2, lvl, msg, ...) \
    do { \
@@ -127,11 +67,6 @@ struct _War2_Data
       } \
    } while (0)
 
-static inline Pud_Bool
-war2_mem_map_ok(War2_Data *w2)
-{
-   return (w2->ptr < w2->mem_map + w2->mem_map_size)
-      ? PUD_TRUE : PUD_FALSE;
-}
+
 
 #endif /* ! _WAR2_PRIVATE_H_ */

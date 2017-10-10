@@ -29,27 +29,18 @@
 #include <string.h>
 #include <errno.h>
 #include <stdint.h>
+#include <setjmp.h>
 #include <time.h>
 
 #include "debug.h"
 #include "pud.h"
 
-#ifdef __GNUC__
-# if __GNUC__ >= 4
-#  define PUDAPI_INTERNAL __attribute__ ((visibility("hidden")))
-# else /* if __GNUC__ >= 4 */
-#  define PUDAPI_INTERNAL
-# endif /* if __GNUC__ >= 4 */
-#else /* ifdef __GNUC__ */
-# define PUDAPI_INTERNAL
-#endif /* ifdef __GNUC__ */
+#include "common.h"
 
 struct _Pud_Private
 {
    Pud_Open_Mode  open_mode;
-   unsigned char *mem_map;
-   unsigned char *ptr;
-   size_t         mem_map_size;
+   Pud_Mmap *mem_map;
 
    /* Bitfield: is section X present? */
    uint32_t     sections;
@@ -65,15 +56,6 @@ struct _Pud_Private
    Pud_Bool default_udta; /* [defaults] */
    Pud_Bool default_ugrd; /* [defaults] */
 };
-
-
-static inline Pud_Bool
-pud_mem_map_ok(Pud *pud)
-{
-   const Pud_Private *const priv = pud->private_data;
-   return (priv->ptr < priv->mem_map + priv->mem_map_size)
-      ? PUD_TRUE : PUD_FALSE;
-}
 
 /* Visual hint when returning nothing */
 #define VOID
@@ -103,64 +85,11 @@ pud_mem_map_ok(Pud *pud)
       } \
    } while (0)
 
-
-
-#define FAIL(ret_) return ret_
-#define ECHAP(lab_) goto lab_
-
-#define READ8(p, ...) \
-   ({ \
-    uint8_t x__[1]; \
-    const size_t size__ = sizeof(x__[0]); \
-    if (!(pud_mem_map_ok(p))) { \
-    ERR("Read outside of memory map!"); \
-    __VA_ARGS__; \
-    } \
-    memcpy(&(x__[0]), p->private_data->ptr, size__); \
-    p->private_data->ptr += size__; \
-    x__[0]; \
-    })
-
-#define READ16(p, ...) \
-   ({ \
-    uint16_t x__[1]; \
-    const size_t size__ = sizeof(x__[0]); \
-    if (!(pud_mem_map_ok(p))) { \
-    ERR("Read outside of memory map!"); \
-    __VA_ARGS__; \
-    } \
-    memcpy(&(x__[0]), p->private_data->ptr, size__); \
-    p->private_data->ptr += size__; \
-    x__[0]; \
-    })
-
-#define READ32(p, ...) \
-   ({ \
-    uint32_t x__[1]; \
-    const size_t size__ = sizeof(x__[0]); \
-    if (!(pud_mem_map_ok(p))) { \
-    ERR("Read outside of memory map!"); \
-    __VA_ARGS__; \
-    } \
-    memcpy(&(x__[0]), p->private_data->ptr, size__); \
-    p->private_data->ptr += size__; \
-    x__[0]; \
-    })
-
-#define READBUF(p, buf, type, count, ...) \
-   do { \
-      void *ptr__ = (buf); \
-      const size_t size__ = sizeof(type) * (count); \
-      if (!(pud_mem_map_ok(p))) { \
-         ERR("Read outside of memory map!"); \
-         __VA_ARGS__; \
-      } \
-      memcpy(ptr__, p->private_data->ptr, size__); \
-      p->private_data->ptr += size__; \
-   } while (0)
-
-
-#define ARRAY_SIZE(arr) (sizeof(arr) / sizeof((arr)[0]))
+#define PUD_TRAP_SETUP(pud_) COMMON_TRAP_SETUP((pud_)->private_data->mem_map)
+#define PUD_READ8(pud_) common_read8((pud_)->private_data->mem_map)
+#define PUD_READ16(pud_) common_read16((pud_)->private_data->mem_map)
+#define PUD_READ32(pud_) common_read32((pud_)->private_data->mem_map)
+#define PUD_READ_BUFFER(pud_, buf_, size_) common_read_buffer((pud_)->private_data->mem_map, buf_, size_)
 
 
 //============================================================================//
@@ -171,5 +100,6 @@ PUDAPI_INTERNAL const char *long2bin(uint32_t x);
 PUDAPI_INTERNAL Pud_Color color_make(uint8_t r, uint8_t g, uint8_t b, uint8_t a);
 PUDAPI_INTERNAL const char *mode2str(Pud_Open_Mode mode);
 PUDAPI_INTERNAL uint32_t pud_go_to_section(Pud *pud, Pud_Section sec);
+
 
 #endif /* ! _PRIVATE_H_ */

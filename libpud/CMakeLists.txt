@@ -1,5 +1,6 @@
 add_library(libpud
    pud.c
+   common.c
    defaults.c
    img.c
    parse.c

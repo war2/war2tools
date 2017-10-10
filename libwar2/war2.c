@@ -90,12 +90,20 @@ war2_open(const char *file)
    if (!w2) DIE_GOTO(err, "Failed to allocate memory");
 
    /* Map file */
-   w2->mem_map = common_file_mmap(file, &(w2->mem_map_size));
+   w2->mem_map = common_file_mmap(file);
    if (!w2->mem_map) DIE_GOTO(err_free, "Failed to map file");
-   w2->ptr = w2->mem_map;
+
+   WAR2_TRAP_SETUP(w2) {
+      if (w2->entries) free(w2->entries);
+err_unmap:
+      common_file_munmap(w2->mem_map);
+err_free:
+      free(w2);
+      return NULL;
+   }
 
    /* Read magic */
-   w2->magic = READ32(w2, ECHAP(err_unmap));
+   w2->magic = WAR2_READ32(w2);
    switch (w2->magic)
      {
       case 0x00000019: // Handled
@@ -108,10 +116,10 @@ war2_open(const char *file)
      }
 
    /* Get the entries */
-   w2->entries_count = READ16(w2, ECHAP(err_unmap));
+   w2->entries_count = WAR2_READ16(w2);
 
    /* File ID */
-   w2->fid = READ16(w2, ECHAP(err_unmap));
+   w2->fid = WAR2_READ16(w2);
 
    /* Allocate entries table */
    w2->entries = calloc(w2->entries_count, sizeof(unsigned char *));
@@ -121,15 +129,15 @@ war2_open(const char *file)
    for (i = 0; i < w2->entries_count; i++)
      {
         /* Get offset and set starting point of sections */
-        l = READ32(w2, ECHAP(err_free_all));
-        if (l >= w2->mem_map_size)
+        l = WAR2_READ32(w2);
+        if (l >= w2->mem_map->size)
           {
              ERR("Entry %i has offset [%u] larger than file size [%zu]. Skipping...",
-                 i, l, w2->mem_map_size);
+                 i, l, w2->mem_map->size);
              w2->entries[i] = NULL;
              continue;
           }
-        w2->entries[i] = w2->mem_map + l;
+        w2->entries[i] = w2->mem_map->map + l;
      }
 
    _palette_extract(w2, 2, w2->forest);
@@ -139,12 +147,6 @@ war2_open(const char *file)
 
    return w2;
 
-err_free_all:
-   free(w2->entries);
-err_unmap:
-   common_file_munmap(w2->mem_map, w2->mem_map_size);
-err_free:
-   free(w2);
 err:
    return NULL;
 }
@@ -180,11 +182,18 @@ war2_entry_extract(War2_Data    *w2,
      DIE_RETURN(NULL, "Invalid entry [%i]. Entries range is: [0 ; %u].",
                 entry, w2->entries_count - 1);
 
+   WAR2_TRAP_SETUP(w2) {
+fail:
+      if (size_ret) *size_ret = 0;
+      free(ptr);
+      return NULL;
+   }
+
    /* Go at entry */
-   w2->ptr = w2->entries[entry];
+   w2->mem_map->ptr = w2->entries[entry];
 
    /* Uncompressed length (3 bytes) & Flags (1 byte) */
-   l = READ32(w2, FAIL(NULL));
+   l = WAR2_READ32(w2);
    flags = l >> 24;
    ulen = l & 0x00ffffff;
    WAR2_VERBOSE(w2, 2, "Entry %i: uncompressed length: %i. Flags: 0x%02x",
@@ -197,7 +206,7 @@ war2_entry_extract(War2_Data    *w2,
    switch (flags)
      {
       case 0x00: // Uncompressed
-         memcpy(ptr, w2->ptr, ulen);
+         memcpy(ptr, w2->mem_map->ptr, ulen);
          break;
 
       case 0x20: // Compressed
@@ -206,7 +215,7 @@ war2_entry_extract(War2_Data    *w2,
          e = ptr + ulen;
          while (p < e)
            {
-              bits = READ8(w2, ECHAP(fail));
+              bits = WAR2_READ8(w2);
               for (i = 0; i < 8; i++)
                 {
                    /*
@@ -217,13 +226,13 @@ war2_entry_extract(War2_Data    *w2,
                     */
                    if (bits & 1)
                      {
-                        b = READ8(w2, ECHAP(fail));
+                        b = WAR2_READ8(w2);
                         *(p++) = b;
                         buf[bi++ & 0xfff] = b;
                      }
                    else
                      {
-                        w = READ16(w2, ECHAP(fail));
+                        w = WAR2_READ16(w2);
                         j = (w >> 12) + 3;
                         w &= 0x0fff;
                         while (j--)
@@ -245,18 +254,13 @@ war2_entry_extract(War2_Data    *w2,
    WAR2_VERBOSE(w2, 1, "Extracted entry [%i] of size %i bytes", entry, ulen);
    if (size_ret) *size_ret = ulen;
    return ptr;
-
-fail:
-   if (size_ret) *size_ret = 0;
-   free(ptr);
-   return NULL;
 }
 
 PUDAPI void
 war2_close(War2_Data *w2)
 {
    if (!w2) return;
-   common_file_munmap(w2->mem_map, w2->mem_map_size);
+   common_file_munmap(w2->mem_map);
    free(w2->entries);
    free(w2);
 }

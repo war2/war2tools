@@ -45,13 +45,14 @@ pud_parse_type(Pud *pud)
    PUD_VERBOSE(pud, 2, "At section TYPE (size = %u)", chk);
    HAS_SECTION(PUD_SECTION_TYPE);
 
+   PUD_TRAP_SETUP(pud) { return PUD_FALSE; }
    /* Read 10bytes + 2 unused */
-   READBUF(pud, buf, uint8_t, 12, FAIL(PUD_FALSE));
+   PUD_READ_BUFFER(pud, buf, 12);
    if (memcmp(buf, type, 10))
      DIE_RETURN(PUD_FALSE, "TYPE section has a wrong header (not a WAR2 MAP)");
 
    /* Read ID TAG */
-   l = READ32(pud, FAIL(PUD_FALSE));
+   l = PUD_READ32(pud);
 
    pud->tag = l;
 
@@ -71,7 +72,8 @@ pud_parse_ver(Pud *pud)
    PUD_VERBOSE(pud, 2, "At section VER (size = %u)", chk);
    HAS_SECTION(PUD_SECTION_VER);
 
-   w = READ16(pud, FAIL(PUD_FALSE));
+   PUD_TRAP_SETUP(pud) { return PUD_FALSE; }
+   w = PUD_READ16(pud);
 
    pud->version = w;
    return PUD_TRUE;
@@ -90,8 +92,8 @@ pud_parse_desc(Pud *pud)
    PUD_VERBOSE(pud, 2, "At section DESC (size = %u)", chk);
    HAS_SECTION(PUD_SECTION_DESC);
 
-   READBUF(pud, buf, char, 32, FAIL(PUD_FALSE));
-   memcpy(pud->description, buf, 32 * sizeof(char));
+   PUD_TRAP_SETUP(pud) { return PUD_FALSE; }
+   PUD_READ_BUFFER(pud, pud->description, 32);
 
    return PUD_TRUE;
 }
@@ -109,14 +111,10 @@ pud_parse_ownr(Pud *pud)
    PUD_VERBOSE(pud, 2, "At section OWNR (size = %u)", len);
    HAS_SECTION(PUD_SECTION_OWNR);
 
-   READBUF(pud, buf, uint8_t, 8, FAIL(PUD_FALSE));
-   memcpy(pud->owner.players, buf, 8 * sizeof(uint8_t));
-
-   READBUF(pud, buf, uint8_t, 7, FAIL(PUD_FALSE));
-   memcpy(pud->owner.unusable, buf, 7 * sizeof(uint8_t));
-
-   READBUF(pud, buf, uint8_t, 1, FAIL(PUD_FALSE));
-   memcpy(&(pud->owner.neutral), buf, 1 * sizeof(uint8_t));
+   PUD_TRAP_SETUP(pud) { return PUD_FALSE; }
+   PUD_READ_BUFFER(pud, pud->owner.players, 8);
+   PUD_READ_BUFFER(pud, pud->owner.unusable, 7);
+   PUD_READ_BUFFER(pud, &(pud->owner.neutral), 1);
 
    return PUD_TRUE;
 }
@@ -126,22 +124,15 @@ pud_parse_side(Pud *pud)
 {
    PUD_SANITY_CHECK(pud, PUD_OPEN_MODE_R, PUD_FALSE);
 
-   uint8_t buf[8];
-   uint32_t len;
-
-   len = pud_go_to_section(pud, PUD_SECTION_SIDE);
+   const uint32_t len = pud_go_to_section(pud, PUD_SECTION_SIDE);
    if (!len) DIE_RETURN(PUD_FALSE, "Failed to reach section SIDE");
    PUD_VERBOSE(pud, 2, "At section SIDE (size = %u)", len);
    HAS_SECTION(PUD_SECTION_SIDE);
 
-   READBUF(pud, buf, uint8_t, 8, FAIL(PUD_FALSE));
-   memcpy(pud->side.players, buf, 8 * sizeof(uint8_t));
-
-   READBUF(pud, buf, uint8_t, 7, FAIL(PUD_FALSE));
-   memcpy(pud->side.unusable, buf, 7 * sizeof(uint8_t));
-
-   READBUF(pud, buf, uint8_t, 1, FAIL(PUD_FALSE));
-   memcpy(&(pud->side.neutral), buf, 1 * sizeof(uint8_t));
+   PUD_TRAP_SETUP(pud) { return PUD_FALSE; }
+   PUD_READ_BUFFER(pud, pud->side.players, 8);
+   PUD_READ_BUFFER(pud, pud->side.unusable, 7);
+   PUD_READ_BUFFER(pud, &(pud->side.neutral), 1);
 
    return PUD_TRUE;
 }
@@ -171,7 +162,8 @@ pud_parse_era(Pud *pud)
         HAS_SECTION(PUD_SECTION_ERAX);
      }
 
-   w = READ16(pud, FAIL(PUD_FALSE));
+   PUD_TRAP_SETUP(pud) { return PUD_FALSE; }
+   w = PUD_READ16(pud);
    switch (w)
      {
       case 0x00:
@@ -214,8 +206,10 @@ pud_parse_dim(Pud *pud)
    PUD_VERBOSE(pud, 2, "At section DIM (size = %u)", chk);
    HAS_SECTION(PUD_SECTION_DIM);
 
-   x = READ16(pud, FAIL(PUD_FALSE));
-   y = READ16(pud, FAIL(PUD_FALSE));
+   PUD_TRAP_SETUP(pud) { return PUD_FALSE; }
+
+   x = PUD_READ16(pud);
+   y = PUD_READ16(pud);
 
    if ((x == 32) && (y == 32))
      dim = PUD_DIMENSIONS_32_32;
@@ -254,55 +248,56 @@ pud_parse_udta(Pud *pud)
    PUD_VERBOSE(pud, 2, "At section UDTA (size = %u)", chk);
    HAS_SECTION(PUD_SECTION_UDTA);
 
+   PUD_TRAP_SETUP(pud) { return PUD_FALSE; }
+
    /* Use default data */
-   READBUF(pud, wb, uint16_t, 1, FAIL(PUD_FALSE));
-   pud->private_data->default_udta = !!wb[0];
+   pud->private_data->default_udta = !!PUD_READ16(pud);
 
    /* Overlap frames */
-   READBUF(pud, wb, uint16_t, 110, FAIL(PUD_FALSE));
+   PUD_READ_BUFFER(pud, wb, sizeof(uint16_t) * 110);
    for (i = 0; i < 110; i++)
      pud->units_descr[i].overlap_frames = wb[i];
 
    /* Obsolete data */
-   READBUF(pud, pud->obsolete_udta, uint16_t, 508, FAIL(PUD_FALSE));
+   PUD_READ_BUFFER(pud, pud->obsolete_udta, sizeof(uint16_t) * 508);
 
    /* Sight (why the hell is it on 32 bits!?) */
-   READBUF(pud, lb, uint32_t, 110, FAIL(PUD_FALSE));
+   PUD_READ_BUFFER(pud, lb, sizeof(uint32_t) * 110);
    for (i = 0; i < 110; i++)
      pud->units_descr[i].sight = lb[i];
 
    /* Hit points */
-   READBUF(pud, wb, uint16_t, 110, FAIL(PUD_FALSE));
+   PUD_READ_BUFFER(pud, wb, sizeof(uint16_t) * 110);
    for (i = 0; i < 110; i++)
      pud->units_descr[i].hp = wb[i];
 
    /* Magic */
-   READBUF(pud, bb, uint8_t, 110, FAIL(PUD_FALSE));
+   PUD_READ_BUFFER(pud, bb, sizeof(uint8_t) * 110);
    for (i = 0; i < 110; i++)
      pud->units_descr[i].has_magic = !!bb[i];
 
    /* Build time */
-   READBUF(pud, bb, uint8_t, 110, FAIL(PUD_FALSE));
+   PUD_READ_BUFFER(pud, bb, sizeof(uint8_t) * 110);
    for (i = 0; i < 110; i++)
      pud->units_descr[i].build_time = bb[i];
 
    /* Gold cost */
-   READBUF(pud, bb, uint8_t, 110, FAIL(PUD_FALSE));
+   PUD_READ_BUFFER(pud, bb, sizeof(uint8_t) * 110);
    for (i = 0; i < 110; i++)
      pud->units_descr[i].gold_cost = bb[i];
 
    /* Lumber cost */
-   READBUF(pud, bb, uint8_t, 110, FAIL(PUD_FALSE));
+   PUD_READ_BUFFER(pud, bb, sizeof(uint8_t) * 110);
    for (i = 0; i < 110; i++)
      pud->units_descr[i].lumber_cost = bb[i];
 
    /* Oil cost */
-   READBUF(pud, bb, uint8_t, 110, FAIL(PUD_FALSE));
+   PUD_READ_BUFFER(pud, bb, sizeof(uint8_t) * 110);
    for (i = 0; i < 110; i++)
      pud->units_descr[i].oil_cost = bb[i];
 
    /* Unit size */
-   READBUF(pud, lb, uint32_t, 110, FAIL(PUD_FALSE));
+   PUD_READ_BUFFER(pud, lb, sizeof(uint32_t) * 110);
    for (i = 0; i < 110; i++)
      {
         pud->units_descr[i].size_w = (lb[i] >> 16) & 0x0000ffff;
@@ -310,7 +305,7 @@ pud_parse_udta(Pud *pud)
      }
 
    /* Unit box */
-   READBUF(pud, lb, uint32_t, 110, FAIL(PUD_FALSE));
+   PUD_READ_BUFFER(pud, lb, sizeof(uint32_t) * 110);
    for (i = 0; i < 110; i++)
      {
         pud->units_descr[i].box_w = (lb[i] >> 16) & 0x0000ffff;
@@ -318,101 +313,101 @@ pud_parse_udta(Pud *pud)
      }
 
    /* Attack range */
-   READBUF(pud, bb, uint8_t, 110, FAIL(PUD_FALSE));
+   PUD_READ_BUFFER(pud, bb, sizeof(uint8_t) * 110);
    for (i = 0; i < 110; i++)
      pud->units_descr[i].range = bb[i];
 
    /* React range (computer) */
-   READBUF(pud, bb, uint8_t, 110, FAIL(PUD_FALSE));
+   PUD_READ_BUFFER(pud, bb, sizeof(uint8_t) * 110);
    for (i = 0; i < 110; i++)
      pud->units_descr[i].computer_react_range = bb[i];
 
    /* React range (human) */
-   READBUF(pud, bb, uint8_t, 110, FAIL(PUD_FALSE));
+   PUD_READ_BUFFER(pud, bb, sizeof(uint8_t) * 110);
    for (i = 0; i < 110; i++)
      pud->units_descr[i].human_react_range = bb[i];
 
    /* Armor */
-   READBUF(pud, bb, uint8_t, 110, FAIL(PUD_FALSE));
+   PUD_READ_BUFFER(pud, bb, sizeof(uint8_t) * 110);
    for (i = 0; i < 110; i++)
      pud->units_descr[i].armor = bb[i];
 
    /* Selectable via rectangle */
-   READBUF(pud, bb, uint8_t, 110, FAIL(PUD_FALSE));
+   PUD_READ_BUFFER(pud, bb, sizeof(uint8_t) * 110);
    for (i = 0; i < 110; i++)
      pud->units_descr[i].rect_sel = !!bb[i];
 
    /* Priority */
-   READBUF(pud, bb, uint8_t, 110, FAIL(PUD_FALSE));
+   PUD_READ_BUFFER(pud, bb, sizeof(uint8_t) * 110);
    for (i = 0; i < 110; i++)
      pud->units_descr[i].priority = bb[i];
 
    /* Basic damage */
-   READBUF(pud, bb, uint8_t, 110, FAIL(PUD_FALSE));
+   PUD_READ_BUFFER(pud, bb, sizeof(uint8_t) * 110);
    for (i = 0; i < 110; i++)
      pud->units_descr[i].basic_damage = bb[i];
 
    /* Piercing damage */
-   READBUF(pud, bb, uint8_t, 110, FAIL(PUD_FALSE));
+   PUD_READ_BUFFER(pud, bb, sizeof(uint8_t) * 110);
    for (i = 0; i < 110; i++)
      pud->units_descr[i].piercing_damage = bb[i];
 
    /* Weapons upgradable */
-   READBUF(pud, bb, uint8_t, 110, FAIL(PUD_FALSE));
+   PUD_READ_BUFFER(pud, bb, sizeof(uint8_t) * 110);
    for (i = 0; i < 110; i++)
      pud->units_descr[i].weapons_upgradable = !!bb[i];
 
    /* Armor upgradable */
-   READBUF(pud, bb, uint8_t, 110, FAIL(PUD_FALSE));
+   PUD_READ_BUFFER(pud, bb, sizeof(uint8_t) * 110);
    for (i = 0; i < 110; i++)
      pud->units_descr[i].armor_upgradable = !!bb[i];
 
    /* Missile weapon */
-   READBUF(pud, bb, uint8_t, 110, FAIL(PUD_FALSE));
+   PUD_READ_BUFFER(pud, bb, sizeof(uint8_t) * 110);
    for (i = 0; i < 110; i++)
      pud->units_descr[i].missile_weapon = bb[i];
 
    /* Unit type */
-   READBUF(pud, bb, uint8_t, 110, FAIL(PUD_FALSE));
+   PUD_READ_BUFFER(pud, bb, sizeof(uint8_t) * 110);
    for (i = 0; i < 110; i++)
      pud->units_descr[i].type = bb[i];
 
    /* Decay rate */
-   READBUF(pud, bb, uint8_t, 110, FAIL(PUD_FALSE));
+   PUD_READ_BUFFER(pud, bb, sizeof(uint8_t) * 110);
    for (i = 0; i < 110; i++)
      pud->units_descr[i].decay_rate = bb[i];
 
    /* Annoy computer factor */
-   READBUF(pud, bb, uint8_t, 110, FAIL(PUD_FALSE));
+   PUD_READ_BUFFER(pud, bb, sizeof(uint8_t) * 110);
    for (i = 0; i < 110; i++)
      pud->units_descr[i].annoy = bb[i];
 
    /* 2nd mouse button action */
-   READBUF(pud, bb, uint8_t, 58, FAIL(PUD_FALSE));
+   PUD_READ_BUFFER(pud, bb, sizeof(uint8_t) * 58);
    for (i = 0; i < 58; i++)
      pud->units_descr[i].mouse_right_btn = bb[i];
    for (; i < 110; i++)
      pud->units_descr[i].mouse_right_btn = 0xff;
 
    /* Point value for killing unit */
-   READBUF(pud, wb, uint16_t, 110, FAIL(PUD_FALSE));
+   PUD_READ_BUFFER(pud, wb, sizeof(uint16_t) * 110);
    for (i = 0; i < 110; i++)
      pud->units_descr[i].point_value = wb[i];
 
    /* Can target */
-   READBUF(pud, bb, uint8_t, 110, FAIL(PUD_FALSE));
+   PUD_READ_BUFFER(pud, bb, sizeof(uint8_t) * 110);
    for (i = 0; i < 110; i++)
      pud->units_descr[i].can_target = bb[i];
 
    /* Flags */
-   READBUF(pud, lb, uint32_t, 110, FAIL(PUD_FALSE));
+   PUD_READ_BUFFER(pud, lb, sizeof(uint32_t) * 110);
    for (i = 0; i < 110; i++)
      pud->units_descr[i].flags = lb[i];
 
    /* Obsolete */
    if (chk == 5950)
      {
-        READBUF(pud, lb, uint16_t, 127, FAIL(PUD_FALSE));
+        PUD_READ_BUFFER(pud, lb, sizeof(uint16_t) * 127);
         PUD_VERBOSE(pud, 1, "Obsolete section in UDTA found. Skipping...");
      }
 
@@ -448,9 +443,10 @@ pud_parse_alow(Pud *pud)
    PUD_VERBOSE(pud, 2, "At section ALOW (size = %u)", chk);
    HAS_SECTION(PUD_SECTION_ALOW);
 
+   PUD_TRAP_SETUP(pud) { return PUD_FALSE; }
    for (i = 0; i < ptrs_count; i++)
      {
-        READBUF(pud, buf, uint32_t, 16, FAIL(PUD_FALSE));
+        PUD_READ_BUFFER(pud, buf, sizeof(uint32_t) * 16);
 
         memcpy(&(ptrs[i]->players[0]),  &(buf[0]),  sizeof(uint32_t) * 8);
         memcpy(&(ptrs[i]->unusable[0]), &(buf[8]),  sizeof(uint32_t) * 7);
@@ -476,42 +472,44 @@ pud_parse_ugrd(Pud *pud)
    PUD_VERBOSE(pud, 2, "At section UGRD (size = %u)", chk);
    HAS_SECTION(PUD_SECTION_UGRD);
 
+   PUD_TRAP_SETUP(pud) { return PUD_FALSE; }
+
    /* Use default data */
-   READBUF(pud, wb, uint16_t, 1, FAIL(PUD_FALSE));
+   PUD_READ_BUFFER(pud, wb, sizeof(uint16_t));
    pud->private_data->default_ugrd = !!wb[0];
 
    /* upgrades time */
-   READBUF(pud, bb, uint8_t, 52, FAIL(PUD_FALSE));
+   PUD_READ_BUFFER(pud, bb, sizeof(uint8_t) * 52);
    for (i = 0; i < 52; i++)
      pud->upgrades[i].time = bb[i];
 
    /* Gold cost */
-   READBUF(pud, wb, uint16_t, 52, FAIL(PUD_FALSE));
+   PUD_READ_BUFFER(pud, wb, sizeof(uint16_t) * 52);
    for (i = 0; i < 52; i++)
      pud->upgrades[i].gold = wb[i];
 
    /* Lumber cost */
-   READBUF(pud, wb, uint16_t, 52, FAIL(PUD_FALSE));
+   PUD_READ_BUFFER(pud, wb, sizeof(uint16_t) * 52);
    for (i = 0; i < 52; i++)
      pud->upgrades[i].lumber = wb[i];
 
    /* Oil cost */
-   READBUF(pud, wb, uint16_t, 52, FAIL(PUD_FALSE));
+   PUD_READ_BUFFER(pud, wb, sizeof(uint16_t) * 52);
    for (i = 0; i < 52; i++)
      pud->upgrades[i].oil = wb[i];
 
    /* Icon */
-   READBUF(pud, wb, uint16_t, 52, FAIL(PUD_FALSE));
+   PUD_READ_BUFFER(pud, wb, sizeof(uint16_t) * 52);
    for (i = 0; i < 52; i++)
      pud->upgrades[i].icon = wb[i];
 
    /* Group */
-   READBUF(pud, wb, uint16_t, 52, FAIL(PUD_FALSE));
+   PUD_READ_BUFFER(pud, wb, sizeof(uint16_t) * 52);
    for (i = 0; i < 52; i++)
      pud->upgrades[i].group = wb[i];
 
    /* Flags */
-   READBUF(pud, lb, uint32_t, 52, FAIL(PUD_FALSE));
+   PUD_READ_BUFFER(pud, lb, sizeof(uint32_t) * 52);
    for (i = 0; i < 52; i++)
      pud->upgrades[i].flags = lb[i];
 
@@ -531,7 +529,8 @@ pud_parse_sgld(Pud *pud)
    PUD_VERBOSE(pud, 2, "At section SGLD (size = %u)", chk);
    HAS_SECTION(PUD_SECTION_SGLD);
 
-   READBUF(pud, buf, uint16_t, 16, FAIL(PUD_FALSE));
+   PUD_TRAP_SETUP(pud) { return PUD_FALSE; }
+   PUD_READ_BUFFER(pud, buf, sizeof(uint16_t) * 16);
 
    memcpy(&(pud->sgld.players[0]),  &(buf[0]),  sizeof(uint16_t) * 8);
    memcpy(&(pud->sgld.unusable[0]), &(buf[8]),  sizeof(uint16_t) * 7);
@@ -553,7 +552,8 @@ pud_parse_slbr(Pud *pud)
    PUD_VERBOSE(pud, 2, "At section SLBR (size = %u)", chk);
    HAS_SECTION(PUD_SECTION_SLBR);
 
-   READBUF(pud, buf, uint16_t, 16, FAIL(PUD_FALSE));
+   PUD_TRAP_SETUP(pud) { return PUD_FALSE; }
+   PUD_READ_BUFFER(pud, buf, sizeof(uint16_t) * 16);
 
    memcpy(&(pud->slbr.players[0]),  &(buf[0]),  sizeof(uint16_t) * 8);
    memcpy(&(pud->slbr.unusable[0]), &(buf[8]),  sizeof(uint16_t) * 7);
@@ -575,7 +575,8 @@ pud_parse_soil(Pud *pud)
    PUD_VERBOSE(pud, 2, "At section SOIL (size = %u)", chk);
    HAS_SECTION(PUD_SECTION_SOIL);
 
-   READBUF(pud, buf, uint16_t, 16, FAIL(PUD_FALSE));
+   PUD_TRAP_SETUP(pud) { return PUD_FALSE; }
+   PUD_READ_BUFFER(pud, buf, sizeof(uint16_t) * 16);
 
    memcpy(&(pud->soil.players[0]),  &(buf[0]),  sizeof(uint16_t) * 8);
    memcpy(&(pud->soil.unusable[0]), &(buf[8]),  sizeof(uint16_t) * 7);
@@ -597,7 +598,7 @@ pud_parse_aipl(Pud *pud)
    PUD_VERBOSE(pud, 2, "At section AIPL (size = %u)", chk);
    HAS_SECTION(PUD_SECTION_AIPL);
 
-   READBUF(pud, buf, uint8_t, 16, FAIL(PUD_FALSE));
+   PUD_READ_BUFFER(pud, buf, sizeof(uint8_t) * 16);
 
    memcpy(&(pud->ai.players[0]),  &(buf[0]),  sizeof(uint8_t) * 8);
    memcpy(&(pud->ai.unusable[0]), &(buf[8]),  sizeof(uint8_t) * 7);
@@ -626,7 +627,7 @@ pud_parse_mtxm(Pud *pud)
 
    for (i = 0; i < pud->tiles; i++)
      {
-        w = READ16(pud, FAIL(0));
+        w = PUD_READ16(pud);
         pud->tiles_map[i] = w;
      }
 
@@ -653,7 +654,7 @@ pud_parse_sqm(Pud *pud)
 
    for (i = 0; i < pud->tiles; i++)
      {
-        w = READ16(pud, FAIL(0));
+        w = PUD_READ16(pud);
         pud->movement_map[i] = w;
      }
 
@@ -677,7 +678,7 @@ pud_parse_oilm(Pud *pud)
           pud->oil_map = malloc(pud->tiles * sizeof(uint8_t));
         for (i = 0; i < pud->tiles; i++)
           {
-             b = READ8(pud, FAIL(0));
+             b = PUD_READ8(pud);
              pud->oil_map[i] = b;
           }
      }
@@ -694,6 +695,8 @@ pud_parse_regm(Pud *pud)
    uint16_t w;
    unsigned int i;
 
+   PUD_TRAP_SETUP(pud) { return PUD_FALSE; }
+
    chk = pud_go_to_section(pud, PUD_SECTION_REGM);
    if (!chk) DIE_RETURN(PUD_FALSE, "Failed to reach section REGM");
    PUD_VERBOSE(pud, 2, "At section REGM (size = %u)", chk);
@@ -705,7 +708,7 @@ pud_parse_regm(Pud *pud)
 
    for (i = 0; i < pud->tiles; i++)
      {
-        w = READ16(pud, FAIL(0));
+        w = PUD_READ16(pud);
         pud->action_map[i] = w;
      }
 
@@ -733,13 +736,15 @@ pud_parse_unit(Pud *pud)
    memset(pud->units, 0, size);
    pud->units_count = units;
 
+   PUD_TRAP_SETUP(pud) { return PUD_FALSE; }
+
    for (i = 0; i < units; ++i)
      {
-        pud->units[i].x      = READ16(pud, ECHAP(err));
-        pud->units[i].y      = READ16(pud, ECHAP(err));
-        pud->units[i].type   = READ8(pud, ECHAP(err));
-        pud->units[i].player = READ8(pud, ECHAP(err));
-        pud->units[i].alter  = READ16(pud, ECHAP(err));
+        pud->units[i].x      = PUD_READ16(pud);
+        pud->units[i].y      = PUD_READ16(pud);
+        pud->units[i].type   = PUD_READ8(pud);
+        pud->units[i].player = PUD_READ8(pud);
+        pud->units[i].alter  = PUD_READ16(pud);
      }
 
    pud->starting_points = 0;

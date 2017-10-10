@@ -20,7 +20,6 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-#include "common.h"
 #include "pud_private.h"
 
 static const char * const _pud_sections[] =
@@ -94,7 +93,7 @@ pud_go_to_section(Pud         *pud,
    /* If the section to search for is before the current section,
     * rewind the file to catch it. If it is after, do nothing */
    if (sec <= pud->private_data->current_section)
-     pud->private_data->ptr = pud->private_data->mem_map;
+      common_mmap_ptr_reset(pud->private_data->mem_map);
 
    /* Tell the PUD we are pointing at the last section.
     * In case of success the pud will be pointing at the section
@@ -102,21 +101,25 @@ pud_go_to_section(Pud         *pud,
     * On failure, it will have to rewind itself on next call */
    pud->private_data->current_section = PUD_SECTION_UNIT;
 
-   READBUF(pud, buf, char, 4, FAIL(0));
+   PUD_TRAP_SETUP(pud) {
+     return 0;
+   }
 
-   while (pud_mem_map_ok(pud))
+   PUD_READ_BUFFER(pud, buf, 4);
+
+   while (common_mem_map_ok(pud->private_data->mem_map, 4))
      {
         if (!strncmp(buf, sec_str, 4))
           {
              /* Update current section */
              pud->private_data->current_section = sec;
 
-             l = READ32(pud, FAIL(0));
+             l = PUD_READ32(pud);
              return l;
           }
 
         memmove(buf, &(buf[1]), 3 * sizeof(char));
-        b = READ8(pud, FAIL(0));
+        b = PUD_READ8(pud);
         buf[3] = b;
      }
 
@@ -141,7 +144,7 @@ _private_free(Pud_Private *priv)
    if (priv)
      {
         if (priv->mem_map)
-          common_file_munmap(priv->mem_map, priv->mem_map_size);
+          common_file_munmap(priv->mem_map);
         free(priv);
      }
 }
@@ -174,9 +177,8 @@ pud_open(const char    *file,
      {
         if (mode & PUD_OPEN_MODE_R)
           {
-             pud->private_data->mem_map = common_file_mmap(file, &pud->private_data->mem_map_size);
+             pud->private_data->mem_map = common_file_mmap(file);
              if (!pud->private_data->mem_map) DIE_GOTO(err, "Failed to map file \"%s\"", file);
-             pud->private_data->ptr = pud->private_data->mem_map;
 
              if (!(mode & PUD_OPEN_MODE_NO_PARSE))
                {

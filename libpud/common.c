@@ -28,7 +28,7 @@
 # include <unistd.h>
 #endif
 
-#if defined(MSVC)
+#if defined(HAVE_MSVC)
 # include <io.h>
 #elif defined(HAVE_ACCESS)
 # include <unistd.h>
@@ -158,7 +158,7 @@ common_file_munmap(Pud_Mmap *map)
 #ifdef HAVE_MMAP
    munmap(map->map, map->size);
 #else
-   (void) size;
+//   (void) size; MSVC-Compiler: Unknown Parameter?
    free(map->map);
 #endif
    free(map);

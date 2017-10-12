@@ -1,4 +1,4 @@
-add_library(libpud
+set(libpud_src 
    pud.c
    common.c
    defaults.c
@@ -9,6 +9,12 @@ add_library(libpud
    utils.c
    random.c
 )
+
+if (MSVC)
+	add_library(libpud STATIC ${libpud_src})
+else ()
+	add_library(libpud SHARED ${libpud_src})
+endif ()
 
 target_include_directories(libpud
    PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}

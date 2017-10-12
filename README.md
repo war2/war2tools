@@ -10,7 +10,9 @@ This repository contains tools to manipulate PUD files. PUDs are Warcraft II map
 The build system used is `cmake`:
 
 - `mkdir -p build && cd build`
-- `cmake ..`
+- `cmake ..`, or `cmake -DBUILD_TOOLS=ON ..` if you want to build development tools
+  bundled with war2tools. You are probably not interested in them, and they will
+  not be installed.
 - `cmake --build .`
 
 To install:

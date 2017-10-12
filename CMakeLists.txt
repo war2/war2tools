@@ -87,6 +87,8 @@ if (MSVC)
 endif ()
 
 
+option(BUILD_TOOLS "This option build dev tools if set to ON." OFF)
+
 check_function(mmap)
 check_function(access)
 check_function(strndup)
@@ -98,7 +100,10 @@ add_subdirectory(libwar2)
 add_subdirectory(pc)
 add_subdirectory(pud)
 add_subdirectory(include)
-add_subdirectory(tools)
+
+if (BUILD_TOOLS)
+   add_subdirectory(tools)
+endif ()
 add_subdirectory(doc)
 
 if (CHECK_FOUND)

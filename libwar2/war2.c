@@ -137,7 +137,7 @@ err_free:
              w2->entries[i] = NULL;
              continue;
           }
-        w2->entries[i] = w2->mem_map->map + l;
+        w2->entries[i] = (unsigned char*)(w2->mem_map->map) + l;
      }
 
    _palette_extract(w2, 2, w2->forest);

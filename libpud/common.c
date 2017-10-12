@@ -158,7 +158,6 @@ common_file_munmap(Pud_Mmap *map)
 #ifdef HAVE_MMAP
    munmap(map->map, map->size);
 #else
-//   (void) size; MSVC-Compiler: Unknown Parameter?
    free(map->map);
 #endif
    free(map);

@@ -7,7 +7,10 @@
 
 #include <pud.h>
 #include <string.h>
+
+#ifdef HAVE_MSVC
 #define strcasecmp _stricmp // See https://stackoverflow.com/questions/7248509/strcasecmp-was-not-declared-in-this-scope
+#endif
 
 #define W(m, ...) fprintf(stdout, m "\n", ## __VA_ARGS__)
 #define WN(m, ...) fprintf(stdout, m, ## __VA_ARGS__)

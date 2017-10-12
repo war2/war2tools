@@ -7,7 +7,9 @@
 
 #include <pud.h>
 #include <string.h>
+#ifdef HAVE_MSVC
 #define strcasecmp _stricmp // See https://stackoverflow.com/questions/7248509/strcasecmp-was-not-declared-in-this-scope
+#endif
 #include "../include/debug.h"
 
 static void

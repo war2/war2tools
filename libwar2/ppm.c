@@ -31,7 +31,7 @@ war2_ppm_write(const char          *file,
 {
    const unsigned int size = w * h * 4u;
    FILE *f;
-   int i;
+   unsigned int i;
 
    f = fopen(file, "w+");
    if (f == NULL) return PUD_FALSE;

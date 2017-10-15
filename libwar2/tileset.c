@@ -204,7 +204,6 @@ war2_tileset_decode(War2_Data                *w2,
    const unsigned int swamp[] = { 439, 440, 441/*, 442, 443, 444*/ };
    const unsigned int *entries;
    War2_Tileset_Descriptor ts;
-   unsigned int tiles;
 
    ts.era = era;
 

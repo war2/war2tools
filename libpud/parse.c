@@ -85,7 +85,6 @@ pud_parse_desc(Pud *pud)
    PUD_SANITY_CHECK(pud, PUD_OPEN_MODE_R, PUD_FALSE);
 
    uint32_t chk;
-   char buf[32];
 
    chk = pud_go_to_section(pud, PUD_SECTION_DESC);
    if (!chk) DIE_RETURN(PUD_FALSE, "Failed to reach section DESC");
@@ -103,7 +102,6 @@ pud_parse_ownr(Pud *pud)
 {
    PUD_SANITY_CHECK(pud, PUD_OPEN_MODE_R, PUD_FALSE);
 
-   uint8_t buf[8];
    uint32_t len;
 
    len = pud_go_to_section(pud, PUD_SECTION_OWNR);
@@ -724,8 +722,6 @@ pud_parse_unit(Pud *pud)
    memset(pud->units, 0, size);
    pud->units_count = units;
 
-   PUD_TRAP_SETUP(pud) { return PUD_FALSE; }
-
    for (i = 0; i < units; ++i)
      {
         pud->units[i].x      = PUD_READ16(pud);
@@ -751,11 +747,5 @@ pud_parse_unit(Pud *pud)
           pud->starting_points++;
      }
 
-
    return PUD_TRUE;
-
-err:
-   free(pud->units);
-   pud->units = NULL;
-   return PUD_FALSE;
 }

@@ -34,7 +34,6 @@ war2_cursors_decode(War2_Data *w2,
    size_t size, img_size;
    uint16_t hotx, hoty, width, height;
    Pud_Color *img_rgba;
-   unsigned char *ptr;
    unsigned int k;
    const Pud_Color *const palette = war2_palette_get(w2, PUD_ERA_FOREST);
 

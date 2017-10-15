@@ -15,12 +15,9 @@ The build system used is `cmake`:
   not be installed.
 - `cmake --build .`
 
-To install:
-- `sudo make install`
-- Possibly `sudo ldconfig` on GNU/Linux
-
-To uninstall:
-- `sudo make uninstall`
+To install (as root):
+- `cmake --build . --target install`
+- Possibly `ldconfig` on GNU/Linux (as root)
 
 
 libpud
@@ -71,6 +68,8 @@ It allows to export the minimap of a PUD to an image. Supported formats:
 - png
 - ppm
 
+To disable the compilation of `pud`, pass `-DBUILD_PUD_UTIL=OFF` to cmake.
+
 tools
 -----
 
@@ -83,6 +82,8 @@ Those binaries are mostly helpers to create the libraries.
 - `tilemap`: used to generate parts of `libpud/tiles.c`
 - `tiler`: generates a map with all possible tiles
 - `tiles`: used to generate parts of `libpud/tiles.c`
+
+To enable the compilation of the tools, pass `-DBUILD_TOOLS=ON` to cmake.`
 
 
 License

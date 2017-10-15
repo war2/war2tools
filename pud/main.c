@@ -6,6 +6,12 @@
  */
 
 #include "pudutils.h"
+#include <string.h>
+
+#ifdef HAVE_MSVC
+// See http://botsikas.blogspot.de/2011/12/strcasecmp-identifier-not-found-when.html
+# define strncasecmp _strnicmp
+#endif
 
 #ifndef HAVE_STRNDUP
 static char *
@@ -247,7 +253,6 @@ main(int    argc,
    const char *file;
    Pud *pud = NULL;
    War2_Data *w2 = NULL;
-   War2_Sprites_Descriptor *ud;
    int verbose = 0;
    uint16_t w;
    Pud_Bool war2 = PUD_FALSE;

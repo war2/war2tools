@@ -58,7 +58,9 @@ struct _Pud_Private
 };
 
 /* Visual hint when returning nothing */
+#ifndef VOID
 #define VOID
+#endif
 
 #define PUD_VERBOSE(pud, lvl, msg, ...) \
    do { \

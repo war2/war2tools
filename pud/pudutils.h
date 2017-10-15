@@ -10,7 +10,12 @@
 
 #include <pud.h>
 #include <war2.h>
-#include <getopt.h>
+
+#ifdef HAVE_MSVC
+# include "getopt_mingw.h"
+#else
+# include <getopt.h>
+#endif
 
 #include "../include/pud_private.h"
 

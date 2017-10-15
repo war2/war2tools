@@ -5,7 +5,7 @@ if (PNG_FOUND)
    add_definitions(-DHAVE_PNG=1)
 endif()
 
-add_library(libwar2
+set(libwar2_src
    war2.c
    tileset.c
    ui.c
@@ -15,6 +15,13 @@ add_library(libwar2
    jpeg.c
    ppm.c
 )
+
+if (MSVC)
+	add_library(libwar2 STATIC ${libwar2_src})
+else ()
+	add_library(libwar2 SHARED ${libwar2_src})
+endif ()
+
 SET_TARGET_PROPERTIES(libwar2 PROPERTIES PREFIX "")
 
 target_include_directories(

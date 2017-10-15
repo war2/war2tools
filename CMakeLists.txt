@@ -88,6 +88,7 @@ endif ()
 
 
 option(BUILD_TOOLS "This option build dev tools if set to ON." OFF)
+option(BUILD_PUD_UTIL "Build the pud program" ON)
 
 check_function(mmap)
 check_function(access)
@@ -98,7 +99,10 @@ check_function(strndup)
 add_subdirectory(libpud)
 add_subdirectory(libwar2)
 add_subdirectory(pc)
-add_subdirectory(pud)
+
+if (BUILD_PUD_UTIL)
+   add_subdirectory(pud)
+endif ()
 add_subdirectory(include)
 
 if (BUILD_TOOLS)

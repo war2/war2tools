@@ -30,41 +30,38 @@ war2_cursors_decode(War2_Data *w2,
                     unsigned int *w,
                     unsigned int *h)
 {
-   unsigned char *mem;
    size_t size, img_size;
    uint16_t hotx, hoty, width, height;
    Pud_Color *img_rgba;
    unsigned int k;
    const Pud_Color *const palette = war2_palette_get(w2, PUD_ERA_FOREST);
+   unsigned char *const mem = war2_entry_extract(w2, entry, &size);
+   unsigned char *ptr = mem;
 
-   mem = war2_entry_extract(w2, entry, &size);
    if (! mem) DIE_RETURN(NULL, "Failed to extract entry");
-
    /*
     * x, y, w and h are encoded in the first 2*4 = 8 bytes of the entry.
     * What is left of the entry is the image data.
     */
-   memcpy(&hotx, &(mem[0]), sizeof(uint16_t));
-   memcpy(&hoty, &(mem[2]), sizeof(uint16_t));
-   memcpy(&width, &(mem[4]), sizeof(uint16_t));
-   memcpy(&height, &(mem[6]), sizeof(uint16_t));
-   mem += 8;
+   memcpy(&hotx, &(ptr[0]), sizeof(uint16_t));
+   memcpy(&hoty, &(ptr[2]), sizeof(uint16_t));
+   memcpy(&width, &(ptr[4]), sizeof(uint16_t));
+   memcpy(&height, &(ptr[6]), sizeof(uint16_t));
+   ptr += 8;
 
    img_size = width * height;
    img_rgba = malloc(img_size * sizeof(Pud_Color));
    if (! img_rgba) DIE_GOTO(fail, "Failed to allocate memory");
 
    for (k = 0; k < img_size; k++)
-     img_rgba[k] = palette[mem[k]];
-
-   /* Free. Don't forget to go back of 8 bytes */
-   mem -= 8;
-   free(mem);
+     img_rgba[k] = palette[ptr[k]];
 
    if (x) *x = hotx;
    if (y) *y = hoty;
    if (w) *w = width;
    if (h) *h = height;
+
+   free(mem);
    return img_rgba;
 
 fail:

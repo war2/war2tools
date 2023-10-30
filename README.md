@@ -50,15 +50,6 @@ TODO:
 - [ ] Cinematics
 
 
-quicklook
----------
-
-Quicklook plugin for OSX. Allows to preview minimaps of PUD files in the Finder.
-Installation steps:
-- `make quicklook`
-- `sudo cp -r build/quicklook/Pud.qlgenerator /Library/QuickLook`
-
-
 pud
 ---
 

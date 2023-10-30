@@ -69,6 +69,20 @@ typedef enum
 } War2_Sprites;
 
 /**
+ * @typedef War2_Font
+ *
+ * Holds values for the different fonts contained in War2 data.
+ */
+typedef enum
+{
+   WAR2_FONT_TITLE_LARGE = 0, /**< Large font for episode titles */
+   WAR2_FONT_TITLE_SMALL = 1, /**< Small font for episode titles */
+   WAR2_FONT_MENU_LARGE  = 2, /**< Large font for menus */
+   WAR2_FONT_MENU_SMALL  = 3, /**< Small font for menus */
+   WAR2_FONT_GAME        = 4, /**< In-game font */
+} War2_Font;
+
+/**
  * Type that holds information about a current tileset decoding
  * @since 1.0.0
  */
@@ -123,6 +137,41 @@ typedef struct
    unsigned int object; /**< Decoded object */
    War2_Sprites sprite_type; /**< Sprite type */
 } War2_Sprites_Descriptor;
+
+/**
+ * User-provided callbacks used to decode a font
+ */
+typedef struct
+{
+   /**
+    * Called before processing individual glyphs
+    */
+   void (*start)(void *data, size_t nb_glyphs, size_t max_width, size_t max_height);
+   /**
+    * Called after processing individual glyphs
+    */
+   void (*end)(void *data);
+   /**
+    * Called when processing a new glyph
+    */
+   void (*glyph_start)(void *data, uint8_t glyph, size_t width, size_t height, size_t x_offset, size_t y_offset);
+   /**
+    * Called when done processing a glyph
+    */
+   void (*glyph_end)(void *data, uint8_t glyph);
+   /**
+    * Called for each pixel of a glyph
+    */
+   void (*glyph_pixel)(void *data, uint8_t glyph, size_t x, size_t y, Pud_Color color);
+   /**
+    * Called for an empty glyph
+    */
+   void (*glyph_empty)(void *data, uint8_t glyph);
+   /**
+    * User-provided data. This is given to every callback function.
+    */
+   void *data;
+} War2_Font_Decoder;
 
 
 /**
@@ -282,6 +331,12 @@ war2_sprites_decode(War2_Data                *w2,
                     War2_Sprites_Decode_Func  func,
                     void                     *data);
 
+
+PUDAPI Pud_Bool
+war2_font_decode(War2_Data *w2,
+                 War2_Font font_to_decode,
+                 const War2_Font_Decoder *decoder);
+
 /**
  * Decode sprites in a given entry
  *
@@ -347,7 +402,10 @@ war2_ui_decode(War2_Data *w2,
  * @param file The path where to save the png file
  * @param w The width of the bitmap
  * @param h The height of the bitmap
- * @param data The bitmap data
+ * @param data The bitmap data. Each pixel is actually a Pud_Color element
+ *             (24-bit colors with 8-bits alpha). The bitmap is represented as
+ *             a 1D array: the first row of @p w pixels, the second row of @p w
+ *             pixels, and so on...
  * @return PUD_TRUE on success, PUD_FALSE on failure
  * @since 1.0.0
  */

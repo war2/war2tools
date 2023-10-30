@@ -991,6 +991,11 @@ typedef struct
    unsigned char a; /**< 8-bits alpha component */
 } Pud_Color;
 
+static inline Pud_Color pud_color(const unsigned char r, const unsigned char g, const unsigned char b, const unsigned char a)
+{
+   return ((Pud_Color){ .r = r, .g = g, .b = b, .a = a, });
+}
+
 /**
  * @typedef Pud_Error
  * Type that holds possible error values raised by pud_check()

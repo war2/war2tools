@@ -1,7 +1,5 @@
 /*
- * sprites_colorize.c
- *
- * Copyright (c) 2015 Jean Guyomarc'h
+ * Copyright (c) Jean Guyomarc'h
  */
 
 #include "ppm.h"

@@ -201,7 +201,7 @@ common_file_exists(const char *path)
 PUDAPI void
 common_trap_hook(void)
 {
-   /* Do nothing. The debugger will hok there if need be. */
+   /* Do nothing. The debugger will hook there if need be. */
 }
 
 PUDAPI Pud_Bool

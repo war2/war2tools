@@ -8,6 +8,7 @@ endif()
 set(libwar2_src
    war2.c
    tileset.c
+   font.c
    ui.c
    sprites.c
    cursors.c

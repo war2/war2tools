@@ -1,0 +1,5 @@
+/**
+ * @file pud_config.h
+ */
+
+#cmakedefine PUD_WITH_LUA

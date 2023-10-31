@@ -1,4 +1,4 @@
-set(libpud_src 
+set(libpud_src
    pud.c
    common.c
    defaults.c
@@ -16,9 +16,13 @@ else ()
 	add_library(libpud SHARED ${libpud_src})
 endif ()
 
+target_link_libraries(libpud ${LUA_LIBRARIES})
+
 target_include_directories(libpud
    PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}
-   PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../include
+   PRIVATE ${CMAKE_SOURCE_DIR}/include
+   PUBLIC ${CMAKE_BINARY_DIR}/include
+   PUBLIC ${LUA_INCLUDE_DIR}
 )
 
 # Disable the prefix because it is already in the name

@@ -40,6 +40,8 @@ extern "C" { /* } For dumb editors */
 #include <stddef.h>
 #include <stdio.h>
 
+#include <pud_config.h>
+
 
 /**
  * @defgroup Pud_Types Pud Types
@@ -69,6 +71,12 @@ extern "C" { /* } For dumb editors */
  * @since 1.0.0
  */
 # define PUDAPI
+#endif
+
+#ifdef PUD_WITH_LUA
+# define LUA_LIB
+# include "lua.h"
+# include "lauxlib.h"
 #endif
 
 

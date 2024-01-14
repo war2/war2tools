@@ -441,12 +441,12 @@ typedef enum
    PUD_ICON_BLIZZARD                             = 105,
    PUD_ICON_BLOODLUST                            = 112,
    PUD_ICON_RAISE_DEAD                           = 114,
-   PUD_ICON_DEATH_COIL                           = 103,
+   PUD_ICON_DEATH_COIL                           = 108,
    PUD_ICON_WHIRLWIND                            = 104,
    PUD_ICON_HASTE                                = 96,
    PUD_ICON_UNHOLY_ARMOR                         = 98,
    PUD_ICON_RUNES                                = 97,
-   PUD_ICON_DEATH_AND_DECAY                      = 108,
+   PUD_ICON_DEATH_AND_DECAY                      = 103,
 } Pud_Icon;
 
 /**

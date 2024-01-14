@@ -74,7 +74,13 @@ _icons_cb(void                          *data EINA_UNUSED,
    const int px = 0, py = img_nb * ICON_H;
    cairo_surface_t *img;
 
-   if ((w != ICON_W) || (h != ICON_H)) return;
+   // Size does not fit :/
+   if ((w > ICON_W) || (h > ICON_H)) {
+      fprintf(stderr, "Icon %" PRIu16 " has size (%u,%u). Max allowed "
+              "for display: (%i,%i)\n",
+              img_nb, w, h, ICON_W, ICON_H);
+      return;
+   }
 
    fd = eina_file_mkstemp("tmp.atlas-XXXXXX.png", &file);
    if (EINA_UNLIKELY(fd < 0))

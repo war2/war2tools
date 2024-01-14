@@ -336,7 +336,7 @@ typedef enum
    PUD_ICON_RUNESTONE                            = 82,
    PUD_ICON_HUMAN_MOVE                           = 83,
    PUD_ICON_ORC_MOVE                             = 84,
-   /* Icon 85 is invalid */
+   PUD_ICON_REPAIR                               = 85,
    PUD_ICON_COLLECT                              = 86,
    PUD_ICON_BUILD_STAGE_1                        = 87,
    PUD_ICON_BUILD_STAGE_2                        = 88,

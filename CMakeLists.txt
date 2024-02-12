@@ -102,7 +102,6 @@ if (WITH_LUA_BINDINGS)
 endif ()
 
 set(PUD_WITH_LUA ${WITH_LUA_BINDINGS})
-configure_file(include/pud_config.h.in include/pud_config.h)
 
 check_function(mmap)
 check_function(access)

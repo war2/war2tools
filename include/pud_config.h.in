@@ -2,4 +2,9 @@
  * @file pud_config.h
  */
 
+#ifndef PUD_CONFIG_H__
+#define PUD_CONFIG_H__
+
 #cmakedefine PUD_WITH_LUA
+
+#endif /* ! PUD_CONFIG_H__ */
